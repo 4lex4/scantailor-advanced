@@ -25,52 +25,54 @@ namespace output {
 class ColorParams;
 
 class RenderParams {
-public:
-    RenderParams() : m_mask(0) {
-    }
+ public:
+  RenderParams() : m_mask(0) {}
 
-    explicit RenderParams(const ColorParams& colorParams, const SplittingOptions& splittingOptions);
+  explicit RenderParams(const ColorParams& colorParams, const SplittingOptions& splittingOptions);
 
-    bool cutMargins() const;
+  bool fillOffcut() const;
 
-    bool normalizeIllumination() const;
+  bool fillMargins() const;
 
-    bool normalizeIlluminationColor() const;
+  bool normalizeIllumination() const;
 
-    bool needBinarization() const;
+  bool normalizeIlluminationColor() const;
 
-    bool mixedOutput() const;
+  bool needBinarization() const;
 
-    bool binaryOutput() const;
+  bool mixedOutput() const;
 
-    bool needSavitzkyGolaySmoothing() const;
+  bool binaryOutput() const;
 
-    bool needMorphologicalSmoothing() const;
+  bool needSavitzkyGolaySmoothing() const;
 
-    bool splitOutput() const;
+  bool needMorphologicalSmoothing() const;
 
-    bool originalBackground() const;
+  bool splitOutput() const;
 
-    bool needColorSegmentation() const;
+  bool originalBackground() const;
 
-    bool posterize() const;
+  bool needColorSegmentation() const;
 
-private:
-    enum {
-        CUT_MARGINS = 1,
-        NORMALIZE_ILLUMINATION = 1 << 1,
-        NEED_BINARIZATION = 1 << 2,
-        MIXED_OUTPUT = 1 << 3,
-        NORMALIZE_ILLUMINATION_COLOR = 1 << 4,
-        SAVITZKY_GOLAY_SMOOTHING = 1 << 5,
-        MORPHOLOGICAL_SMOOTHING = 1 << 6,
-        SPLIT_OUTPUT = 1 << 7,
-        ORIGINAL_BACKGROUND = 1 << 8,
-        COLOR_SEGMENTATION = 1 << 9,
-        POSTERIZE = 1 << 10
-    };
+  bool posterize() const;
 
-    int m_mask;
+ private:
+  enum {
+    FILL_MARGINS = 1,
+    NORMALIZE_ILLUMINATION = 1 << 1,
+    NEED_BINARIZATION = 1 << 2,
+    MIXED_OUTPUT = 1 << 3,
+    NORMALIZE_ILLUMINATION_COLOR = 1 << 4,
+    SAVITZKY_GOLAY_SMOOTHING = 1 << 5,
+    MORPHOLOGICAL_SMOOTHING = 1 << 6,
+    SPLIT_OUTPUT = 1 << 7,
+    ORIGINAL_BACKGROUND = 1 << 8,
+    COLOR_SEGMENTATION = 1 << 9,
+    POSTERIZE = 1 << 10,
+    FILL_OFFCUT = 1 << 11
+  };
+
+  int m_mask;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_RENDER_PARAMS_H_

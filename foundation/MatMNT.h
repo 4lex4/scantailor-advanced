@@ -21,7 +21,7 @@
 
 #include <cstddef>
 
-template<size_t M, size_t N, typename T>
+template <size_t M, size_t N, typename T>
 class MatMNT;
 
 typedef MatMNT<2, 2, float> Mat22f;
@@ -36,87 +36,79 @@ typedef MatMNT<4, 4, double> Mat44d;
  *
  * \note The memory layout is always column-major, as that's what MatrixCalc uses.
  */
-template<size_t M, size_t N, typename T>
+template <size_t M, size_t N, typename T>
 class MatMNT {
-public:
-    typedef T type;
-    enum { ROWS = static_cast<int>(M), COLS = static_cast<int>(N) };
+ public:
+  typedef T type;
+  enum { ROWS = static_cast<int>(M), COLS = static_cast<int>(N) };
 
-    /**
-     * \brief Initializes matrix elements to T().
-     */
-    MatMNT();
+  /**
+   * \brief Initializes matrix elements to T().
+   */
+  MatMNT();
 
-    /**
-     * \brief Construction from an array of elements of possibly different type.
-     *
-     * Conversion is done by static casts.  Data elements must be in column-major order.
-     */
-    template<typename OT>
-    explicit MatMNT(const OT* data);
+  /**
+   * \brief Construction from an array of elements of possibly different type.
+   *
+   * Conversion is done by static casts.  Data elements must be in column-major order.
+   */
+  template <typename OT>
+  explicit MatMNT(const OT* data);
 
-    /**
-     * \brief Construction from a matrix of same dimensions but another type.
-     *
-     * Conversion is done by static casts.
-     */
-    template<typename OT>
-    explicit MatMNT(const MatMNT<M, N, OT>& other);
+  /**
+   * \brief Construction from a matrix of same dimensions but another type.
+   *
+   * Conversion is done by static casts.
+   */
+  template <typename OT>
+  explicit MatMNT(const MatMNT<M, N, OT>& other);
 
-    /**
-     * \brief Assignment from a matrix of same dimensions but another type.
-     *
-     * Conversion is done by static casts.
-     */
-    template<typename OT>
-    MatMNT& operator=(const MatMNT<M, N, OT>& other);
+  /**
+   * \brief Assignment from a matrix of same dimensions but another type.
+   *
+   * Conversion is done by static casts.
+   */
+  template <typename OT>
+  MatMNT& operator=(const MatMNT<M, N, OT>& other);
 
-    const T* data() const {
-        return m_data;
-    }
+  const T* data() const { return m_data; }
 
-    T* data() {
-        return m_data;
-    }
+  T* data() { return m_data; }
 
-    const T& operator()(int i, int j) const {
-        return m_data[i + j * M];
-    }
+  const T& operator()(int i, int j) const { return m_data[i + j * M]; }
 
-    T& operator()(int i, int j) {
-        return m_data[i + j * M];
-    }
+  T& operator()(int i, int j) { return m_data[i + j * M]; }
 
-private:
-    T m_data[M * N];
+ private:
+  T m_data[M * N];
 };
 
 
-template<size_t M, size_t N, typename T>
+template <size_t M, size_t N, typename T>
 MatMNT<M, N, T>::MatMNT() {
-    const size_t len = ROWS * COLS;
-    for (size_t i = 0; i < len; ++i) {
-        m_data[i] = T();
-    }
+  const size_t len = ROWS * COLS;
+  for (size_t i = 0; i < len; ++i) {
+    m_data[i] = T();
+  }
 }
 
-template<size_t M, size_t N, typename T>
-template<typename OT>
+template <size_t M, size_t N, typename T>
+template <typename OT>
 MatMNT<M, N, T>::MatMNT(const OT* data) {
-    const size_t len = ROWS * COLS;
-    for (size_t i = 0; i < len; ++i) {
-        m_data[i] = static_cast<T>(data[i]);
-    }
+  const size_t len = ROWS * COLS;
+  for (size_t i = 0; i < len; ++i) {
+    m_data[i] = static_cast<T>(data[i]);
+  }
 }
 
-template<size_t M, size_t N, typename T>
-template<typename OT>
+template <size_t M, size_t N, typename T>
+template <typename OT>
 MatMNT<M, N, T>::MatMNT(const MatMNT<M, N, OT>& other) {
-    const OT* data = other.data();
-    const size_t len = ROWS * COLS;
-    for (size_t i = 0; i < len; ++i) {
-        m_data[i] = static_cast<T>(data[i]);
-    }
+  const OT* data = other.data();
+  const size_t len = ROWS * COLS;
+  for (size_t i = 0; i < len; ++i) {
+    m_data[i] = static_cast<T>(data[i]);
+  }
 }
 
 #endif  // ifndef MAT_MNT_H_

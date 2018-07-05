@@ -19,19 +19,19 @@
 #include "SelectedPage.h"
 
 SelectedPage::SelectedPage(const PageId& page_id, PageView view) {
-    set(page_id, view);
+  set(page_id, view);
 }
 
 void SelectedPage::set(const PageId& page_id, PageView view) {
-    if ((view == PAGE_VIEW) || (page_id.imageId() != m_pageId.imageId())) {
-        m_pageId = page_id;
-    }
+  if ((view == PAGE_VIEW) || (page_id.imageId() != m_pageId.imageId())) {
+    m_pageId = page_id;
+  }
 }
 
 PageId SelectedPage::get(PageView view) const {
-    if (view == PAGE_VIEW) {
-        return m_pageId;
-    } else {
-        return PageId(m_pageId.imageId(), PageId::SINGLE_PAGE);
-    }
+  if (view == PAGE_VIEW) {
+    return m_pageId;
+  } else {
+    return PageId(m_pageId.imageId(), PageId::SINGLE_PAGE);
+  }
 }

@@ -19,24 +19,24 @@
 #ifndef OUTPUT_IMAGEVIEW_H_
 #define OUTPUT_IMAGEVIEW_H_
 
-#include "ImageViewBase.h"
-#include "DragHandler.h"
-#include "ZoomHandler.h"
 #include <QColor>
+#include "DragHandler.h"
+#include "ImageViewBase.h"
+#include "ZoomHandler.h"
 
 class ImageTransformation;
 
 namespace output {
 class ImageView : public ImageViewBase {
-    Q_OBJECT
-public:
-    ImageView(const QImage& image, const QImage& downscaled_image);
+  Q_OBJECT
+ public:
+  ImageView(const QImage& image, const QImage& downscaled_image);
 
-    ~ImageView() override;
+  ~ImageView() override;
 
-private:
-    DragHandler m_dragHandler;
-    ZoomHandler m_zoomHandler;
+ private:
+  DragHandler m_dragHandler;
+  ZoomHandler m_zoomHandler;
 };
 }  // namespace output
 #endif

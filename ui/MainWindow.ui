@@ -174,7 +174,7 @@
           </size>
          </property>
          <property name="statusTip">
-          <string>Use Home, End, PgUp (or Q), PgDown (or W) to navigate between pages.</string>
+          <string>Use Home, End, PgUp/Q, PgDown/W to navigate between pages or Shift+PgUp/Q and Shift+PgDown/W to navigate between selected ones. Alt+Wheel - scale thumbnails.</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignHCenter|Qt::AlignTop</set>
@@ -203,7 +203,7 @@
    <property name="minimumSize">
     <size>
      <width>274</width>
-     <height>134</height>
+     <height>204</height>
     </size>
    </property>
    <property name="features">
@@ -220,7 +220,7 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_5">
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -276,11 +276,49 @@
       </widget>
      </item>
      <item>
-      <widget class="NonOwningWidget" name="filterOptions" native="true"/>
+      <widget class="QScrollArea" name="scrollArea">
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>256</width>
+          <height>185</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="NonOwningWidget" name="filterOptions" native="true"/>
+         </item>
+        </layout>
+       </widget>
+      </widget>
      </item>
     </layout>
-    <zorder>filterOptions</zorder>
-    <zorder>filterList</zorder>
    </widget>
   </widget>
   <action name="actionDebug">
@@ -293,18 +331,24 @@
    <property name="text">
     <string>Debug Mode</string>
    </property>
+   <property name="shortcut">
+    <string notr="true"/>
+   </property>
   </action>
   <action name="actionSaveProject">
    <property name="text">
     <string>Save Project</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string notr="true">Ctrl+S</string>
    </property>
   </action>
   <action name="actionSaveProjectAs">
    <property name="text">
     <string>Save Project As ...</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionNextPage">
@@ -312,7 +356,7 @@
     <string>Next Page</string>
    </property>
    <property name="shortcut">
-    <string>PgDown</string>
+    <string notr="true">PgDown</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
@@ -323,7 +367,7 @@
     <string>Previous Page</string>
    </property>
    <property name="shortcut">
-    <string>PgUp</string>
+    <string notr="true">PgUp</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
@@ -334,7 +378,7 @@
     <string>New Project ...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+N</string>
+    <string notr="true">Ctrl+N</string>
    </property>
   </action>
   <action name="actionOpenProject">
@@ -342,7 +386,7 @@
     <string>Open Project ...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+O</string>
+    <string notr="true">Ctrl+O</string>
    </property>
   </action>
   <action name="actionPrevPageQ">
@@ -350,7 +394,7 @@
     <string>Previous Page</string>
    </property>
    <property name="shortcut">
-    <string>Q</string>
+    <string notr="true">Q</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
@@ -361,7 +405,7 @@
     <string>Next Page</string>
    </property>
    <property name="shortcut">
-    <string>W</string>
+    <string notr="true">W</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
@@ -372,7 +416,7 @@
     <string>Close Project</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+W</string>
+    <string notr="true">Ctrl+W</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -380,12 +424,15 @@
     <string>Quit</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Q</string>
+    <string notr="true">Ctrl+Q</string>
    </property>
   </action>
   <action name="actionSettings">
    <property name="text">
     <string>Settings ...</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionFirstPage">
@@ -393,7 +440,7 @@
     <string>First Page</string>
    </property>
    <property name="shortcut">
-    <string>Home</string>
+    <string notr="true">Home</string>
    </property>
   </action>
   <action name="actionLastPage">
@@ -401,22 +448,31 @@
     <string>Last Page</string>
    </property>
    <property name="shortcut">
-    <string>End</string>
+    <string notr="true">End</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
    </property>
+   <property name="shortcut">
+    <string notr="true"/>
+   </property>
   </action>
   <action name="actionFixDpi">
    <property name="text">
     <string>Fix DPI ...</string>
    </property>
+   <property name="shortcut">
+    <string notr="true"/>
+   </property>
   </action>
   <action name="actionRelinking">
    <property name="text">
     <string>Relinking ...</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionSwitchFilter1">
@@ -424,7 +480,7 @@
     <string>Switch filter to orientation</string>
    </property>
    <property name="shortcut">
-    <string>O</string>
+    <string notr="true">O</string>
    </property>
   </action>
   <action name="actionSwitchFilter2">
@@ -435,7 +491,7 @@
     <string>Switch filter to split pages</string>
    </property>
    <property name="shortcut">
-    <string>E</string>
+    <string notr="true">E</string>
    </property>
   </action>
   <action name="actionSwitchFilter3">
@@ -446,7 +502,7 @@
     <string>Switch filter to deskew</string>
    </property>
    <property name="shortcut">
-    <string>N</string>
+    <string notr="true">N</string>
    </property>
   </action>
   <action name="actionSwitchFilter4">
@@ -457,7 +513,7 @@
     <string>Switch filter to select content</string>
    </property>
    <property name="shortcut">
-    <string>V</string>
+    <string notr="true">V</string>
    </property>
   </action>
   <action name="actionSwitchFilter5">
@@ -468,7 +524,7 @@
     <string>Switch filter to margins</string>
    </property>
    <property name="shortcut">
-    <string>K</string>
+    <string notr="true">K</string>
    </property>
   </action>
   <action name="actionSwitchFilter6">
@@ -479,7 +535,7 @@
     <string>Switch filter to output</string>
    </property>
    <property name="shortcut">
-    <string>P</string>
+    <string notr="true">P</string>
    </property>
   </action>
   <action name="actionPixels">
@@ -488,6 +544,12 @@
    </property>
    <property name="text">
     <string>Pixels</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionMilimeters">
@@ -500,6 +562,12 @@
    <property name="text">
     <string>Millimetres</string>
    </property>
+   <property name="shortcut">
+    <string notr="true"/>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionInches">
    <property name="checkable">
@@ -507,6 +575,12 @@
    </property>
    <property name="text">
     <string>Inches</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionCentimetres">
@@ -516,10 +590,75 @@
    <property name="text">
     <string>Centimetres</string>
    </property>
+   <property name="shortcut">
+    <string notr="true"/>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionDefaults">
    <property name="text">
     <string>Default parameters ...</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
+   </property>
+  </action>
+  <action name="actionPrevSelectedPageQ">
+   <property name="text">
+    <string>Previous Selected Page</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous Selected Page</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Shift+Q</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionNextSelectedPageW">
+   <property name="text">
+    <string>Next Selected Page</string>
+   </property>
+   <property name="toolTip">
+    <string>Next Selected Page</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Shift+W</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionNextSelectedPage">
+   <property name="text">
+    <string>Next Selected Page</string>
+   </property>
+   <property name="toolTip">
+    <string>Next Selected Page</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Shift+PgDown</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionPrevSelectedPage">
+   <property name="text">
+    <string>Previous Selected Page</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous Selected Page</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Shift+PgUp</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

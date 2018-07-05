@@ -3,10 +3,10 @@
 #define SCANTAILOR_SPLITIMAGE_H
 
 
-#include <QtGui/QImage>
-#include <memory>
-#include <functional>
 #include <imageproc/BinaryImage.h>
+#include <QtGui/QImage>
+#include <functional>
+#include <memory>
 
 namespace output {
 
@@ -20,42 +20,45 @@ namespace output {
  *      SplitImage::getBackgroundImage() to get the image layers.
  */
 class SplitImage {
-public:
-    SplitImage();
+ public:
+  enum ForegroundType {
+    COLOR_FOREGROUND,
+    BINARY_FOREGROUND,
+    INDEXED_FOREGROUND
+  };
 
-    SplitImage(const QImage& foreground, const QImage& background);
+  SplitImage();
 
-    SplitImage(const QImage& foreground, const QImage& background, const QImage& originalBackground);
+  SplitImage(const QImage& foreground, const QImage& background);
 
-    QImage toImage() const;
+  SplitImage(const QImage& foreground, const QImage& background, const QImage& originalBackground);
 
-    QImage getForegroundImage() const;
+  QImage toImage() const;
 
-    void setForegroundImage(const QImage& foregroundImage);
+  QImage getForegroundImage() const;
 
-    QImage getBackgroundImage() const;
+  void setForegroundImage(const QImage& foregroundImage);
 
-    void setBackgroundImage(const QImage& backgroundImage);
+  QImage getBackgroundImage() const;
 
-    void setMask(const imageproc::BinaryImage& mask, bool binaryForeground);
+  void setBackgroundImage(const QImage& backgroundImage);
 
-    void applyToLayerImages(const std::function<void(QImage&)>& consumer);
+  void setMask(const imageproc::BinaryImage& mask, ForegroundType foregroundType);
 
-    bool isNull() const;
+  void applyToLayerImages(const std::function<void(QImage&)>& consumer);
 
-    const QImage& getOriginalBackgroundImage() const;
+  bool isNull() const;
 
-    void setOriginalBackgroundImage(const QImage& originalBackgroundImage);
+  const QImage& getOriginalBackgroundImage() const;
 
-    void setIndexedForeground(bool indexedForeground);
+  void setOriginalBackgroundImage(const QImage& originalBackgroundImage);
 
-private:
-    bool binaryForeground;
-    bool indexedForeground;
-    imageproc::BinaryImage mask;
-    QImage foregroundImage;
-    QImage backgroundImage;
-    QImage originalBackgroundImage;
+ private:
+  imageproc::BinaryImage m_mask;
+  QImage m_foregroundImage;
+  QImage m_backgroundImage;
+  QImage m_originalBackgroundImage;
+  ForegroundType m_foregroundType = COLOR_FOREGROUND;
 };
 }  // namespace output
 

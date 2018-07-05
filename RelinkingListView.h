@@ -26,23 +26,23 @@ class QRect;
 class QModelIndex;
 
 class RelinkingListView : public QListView {
-public:
-    explicit RelinkingListView(QWidget* parent = nullptr);
+ public:
+  explicit RelinkingListView(QWidget* parent = nullptr);
 
-protected:
-    void paintEvent(QPaintEvent* e) override;
+ protected:
+  void paintEvent(QPaintEvent* e) override;
 
-private:
-    class Delegate;
-    class IndicationGroup;
+ private:
+  class Delegate;
+  class IndicationGroup;
 
-    class GroupAggregator;
+  class GroupAggregator;
 
-    void maybeDrawStatusLayer(QPainter* painter, const QModelIndex& item_index, const QRect& item_paint_rect);
+  void maybeDrawStatusLayer(QPainter* painter, const QModelIndex& item_index, const QRect& item_paint_rect);
 
-    void drawStatusLayer(QPainter* painter);
+  void drawStatusLayer(QPainter* painter);
 
-    bool m_statusLayerDrawn;
+  bool m_statusLayerDrawn;
 };
 
 

@@ -19,26 +19,27 @@
 #ifndef OUTPUT_OPTIONSWIDGET_H_
 #define OUTPUT_OPTIONSWIDGET_H_
 
-#include "ui_OutputOptionsWidget.h"
-#include "FilterOptionsWidget.h"
-#include "intrusive_ptr.h"
-#include "PageId.h"
-#include "PageSelectionAccessor.h"
+#include <QtCore/QObjectCleanupHandler>
+#include <QtCore/QPointer>
+#include <QtCore/QTimer>
+#include <QtWidgets/QStackedLayout>
+#include <list>
+#include <memory>
+#include <set>
+#include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
-#include "DewarpingOptions.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
+#include "DewarpingOptions.h"
 #include "Dpi.h"
+#include "FilterOptionsWidget.h"
 #include "ImageViewTab.h"
-#include "Params.h"
-#include "BinarizationOptionsWidget.h"
 #include "OutputProcessingParams.h"
-#include <set>
-#include <QtWidgets/QStackedLayout>
-#include <QtCore/QPointer>
-#include <QtCore/QObjectCleanupHandler>
-#include <memory>
-#include <QtCore/QTimer>
+#include "PageId.h"
+#include "PageSelectionAccessor.h"
+#include "Params.h"
+#include "intrusive_ptr.h"
+#include "ui_OutputOptionsWidget.h"
 
 namespace dewarping {
 class DistortionModel;
@@ -48,151 +49,161 @@ namespace output {
 class Settings;
 
 class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidget {
-    Q_OBJECT
-public:
-    OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
+  Q_OBJECT
+ public:
+  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
 
-    ~OptionsWidget() override;
+  ~OptionsWidget() override;
 
-    void preUpdateUI(const PageId& page_id);
+  void preUpdateUI(const PageId& page_id);
 
-    void postUpdateUI();
+  void postUpdateUI();
 
-    ImageViewTab lastTab() const;
+  ImageViewTab lastTab() const;
 
-    const DepthPerception& depthPerception() const;
+  const DepthPerception& depthPerception() const;
 
-signals:
+ signals:
 
-    void despeckleLevelChanged(DespeckleLevel level, bool* handled);
+  void despeckleLevelChanged(double level, bool* handled);
 
-    void depthPerceptionChanged(double val);
+  void depthPerceptionChanged(double val);
 
-public slots:
+ public slots:
 
-    void tabChanged(ImageViewTab tab);
+  void tabChanged(ImageViewTab tab);
 
-    void distortionModelChanged(const dewarping::DistortionModel& model);
+  void distortionModelChanged(const dewarping::DistortionModel& model);
 
-private slots:
+ private slots:
 
-    void changeDpiButtonClicked();
+  void changeDpiButtonClicked();
 
-    void applyColorsButtonClicked();
+  void applyColorsButtonClicked();
 
-    void applySplittingButtonClicked();
+  void applySplittingButtonClicked();
 
-    void dpiChanged(const std::set<PageId>& pages, const Dpi& dpi);
+  void dpiChanged(const std::set<PageId>& pages, const Dpi& dpi);
 
-    void applyColorsConfirmed(const std::set<PageId>& pages);
+  void applyColorsConfirmed(const std::set<PageId>& pages);
 
-    void applySplittingOptionsConfirmed(const std::set<PageId>& pages);
+  void applySplittingOptionsConfirmed(const std::set<PageId>& pages);
 
-    void colorModeChanged(int idx);
+  void colorModeChanged(int idx);
 
-    void thresholdMethodChanged(int idx);
+  void blackOnWhiteToggled(bool value);
 
-    void fillingColorChanged(int idx);
+  void applyProcessingParamsClicked();
 
-    void pictureShapeChanged(int idx);
+  void applyProcessingParamsConfirmed(const std::set<PageId>& pages);
 
-    void pictureShapeSensitivityChanged(int value);
+  void thresholdMethodChanged(int idx);
 
-    void higherSearchSensivityToggled(bool checked);
+  void fillingColorChanged(int idx);
 
-    void colorSegmentationToggled(bool checked);
+  void pictureShapeChanged(int idx);
 
-    void reduceNoiseChanged(int value);
+  void pictureShapeSensitivityChanged(int value);
 
-    void redAdjustmentChanged(int value);
+  void higherSearchSensivityToggled(bool checked);
 
-    void greenAdjustmentChanged(int value);
+  void colorSegmentationToggled(bool checked);
 
-    void blueAdjustmentChanged(int value);
+  void reduceNoiseChanged(int value);
 
-    void posterizeToggled(bool checked);
+  void redAdjustmentChanged(int value);
 
-    void posterizeLevelChanged(int value);
+  void greenAdjustmentChanged(int value);
 
-    void posterizeNormalizationToggled(bool checked);
+  void blueAdjustmentChanged(int value);
 
-    void posterizeForceBwToggled(bool checked);
+  void posterizeToggled(bool checked);
 
-    void cutMarginsToggled(bool checked);
+  void posterizeLevelChanged(int value);
 
-    void equalizeIlluminationToggled(bool checked);
+  void posterizeNormalizationToggled(bool checked);
 
-    void equalizeIlluminationColorToggled(bool checked);
+  void posterizeForceBwToggled(bool checked);
 
-    void savitzkyGolaySmoothingToggled(bool checked);
+  void fillMarginsToggled(bool checked);
 
-    void morphologicalSmoothingToggled(bool checked);
+  void fillOffcutToggled(bool checked);
 
-    void splittingToggled(bool checked);
+  void equalizeIlluminationToggled(bool checked);
 
-    void bwForegroundToggled(bool checked);
+  void equalizeIlluminationColorToggled(bool checked);
 
-    void colorForegroundToggled(bool checked);
+  void savitzkyGolaySmoothingToggled(bool checked);
 
-    void originalBackgroundToggled(bool checked);
+  void morphologicalSmoothingToggled(bool checked);
 
-    void binarizationSettingsChanged();
+  void splittingToggled(bool checked);
 
-    void despeckleOffSelected();
+  void bwForegroundToggled(bool checked);
 
-    void despeckleCautiousSelected();
+  void colorForegroundToggled(bool checked);
 
-    void despeckleNormalSelected();
+  void originalBackgroundToggled(bool checked);
 
-    void despeckleAggressiveSelected();
+  void binarizationSettingsChanged();
 
-    void applyDespeckleButtonClicked();
+  void despeckleToggled(bool checked);
 
-    void applyDespeckleConfirmed(const std::set<PageId>& pages);
+  void despeckleSliderReleased();
 
-    void changeDewarpingButtonClicked();
+  void despeckleSliderValueChanged(int value);
 
-    void dewarpingChanged(const std::set<PageId>& pages, const DewarpingOptions& opt);
+  void applyDespeckleButtonClicked();
 
-    void applyDepthPerceptionButtonClicked();
+  void applyDespeckleConfirmed(const std::set<PageId>& pages);
 
-    void applyDepthPerceptionConfirmed(const std::set<PageId>& pages);
+  void changeDewarpingButtonClicked();
 
-    void depthPerceptionChangedSlot(int val);
+  void dewarpingChanged(const std::set<PageId>& pages, const DewarpingOptions& opt);
 
-    void updateBinarizationOptionsDisplay(int idx);
+  void applyDepthPerceptionButtonClicked();
 
-    void sendReloadRequested();
+  void applyDepthPerceptionConfirmed(const std::set<PageId>& pages);
 
-private:
-    void handleDespeckleLevelChange(DespeckleLevel level);
+  void depthPerceptionChangedSlot(int val);
 
-    void reloadIfNecessary();
+  void updateBinarizationOptionsDisplay(int idx);
 
-    void updateDpiDisplay();
+  void sendReloadRequested();
 
-    void updateColorsDisplay();
+ private:
+  void handleDespeckleLevelChange(double level, bool delay = false);
 
-    void updateDewarpingDisplay();
+  void reloadIfNecessary();
 
-    void addBinarizationOptionsWidget(BinarizationOptionsWidget* widget);
+  void updateDpiDisplay();
 
-    void setupUiConnections();
+  void updateColorsDisplay();
 
-    void removeUiConnections();
+  void updateDewarpingDisplay();
 
-    intrusive_ptr<Settings> m_ptrSettings;
-    PageSelectionAccessor m_pageSelectionAccessor;
-    PageId m_pageId;
-    Dpi m_outputDpi;
-    ColorParams m_colorParams;
-    SplittingOptions m_splittingOptions;
-    PictureShapeOptions m_pictureShapeOptions;
-    DepthPerception m_depthPerception;
-    DewarpingOptions m_dewarpingOptions;
-    DespeckleLevel m_despeckleLevel;
-    ImageViewTab m_lastTab;
-    QTimer delayedReloadRequest;
+  void updateProcessingDisplay();
+
+  void addBinarizationOptionsWidget(BinarizationOptionsWidget* widget);
+
+  void setupUiConnections();
+
+  void removeUiConnections();
+
+  intrusive_ptr<Settings> m_settings;
+  PageSelectionAccessor m_pageSelectionAccessor;
+  PageId m_pageId;
+  Dpi m_outputDpi;
+  ColorParams m_colorParams;
+  SplittingOptions m_splittingOptions;
+  PictureShapeOptions m_pictureShapeOptions;
+  DepthPerception m_depthPerception;
+  DewarpingOptions m_dewarpingOptions;
+  double m_despeckleLevel;
+  ImageViewTab m_lastTab;
+  QTimer m_delayedReloadRequest;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_OPTIONSWIDGET_H_

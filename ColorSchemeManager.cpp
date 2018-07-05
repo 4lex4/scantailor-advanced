@@ -1,36 +1,43 @@
 
-#include <QtWidgets/QStyleFactory>
-#include <QtWidgets/QApplication>
-#include <QtGui/QFont>
 #include "ColorSchemeManager.h"
+#include <QtGui/QFont>
+#include <QtWidgets/QApplication>
 
-std::unique_ptr<ColorSchemeManager> ColorSchemeManager::m_ptrInstance = nullptr;
+std::unique_ptr<ColorSchemeManager> ColorSchemeManager::m_instance = nullptr;
 
 ColorSchemeManager* ColorSchemeManager::instance() {
-    if (m_ptrInstance == nullptr) {
-        m_ptrInstance.reset(new ColorSchemeManager());
-    }
+  if (m_instance == nullptr) {
+    m_instance.reset(new ColorSchemeManager());
+  }
 
-    return m_ptrInstance.get();
+  return m_instance.get();
 }
 
 void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {
-    qApp->setStyle(QStyleFactory::create("Fusion"));
-
-    qApp->setPalette(*colorScheme.getPalette());
-
-    std::unique_ptr<QString> styleSheet = colorScheme.getStyleSheet();
-    if (styleSheet != nullptr) {
-        qApp->setStyleSheet(*styleSheet);
-    }
-
-    m_ptrColorParams = colorScheme.getColorParams();
+  if (QStyle* style = colorScheme.getStyle()) {
+    qApp->setStyle(style);
+  }
+  qApp->setPalette(colorScheme.getPalette());
+  if (std::unique_ptr<QString> styleSheet = colorScheme.getStyleSheet()) {
+    qApp->setStyleSheet(*styleSheet);
+  }
+  m_colorParams = colorScheme.getColorParams();
 }
 
-QBrush ColorSchemeManager::getColorParam(const std::string& colorParam, const QBrush& defaultColor) const {
-    if (m_ptrColorParams->find(colorParam) != m_ptrColorParams->end()) {
-        return m_ptrColorParams->at(colorParam);
-    } else {
-        return defaultColor;
-    }
+QBrush ColorSchemeManager::getColorParam(const ColorScheme::ColorParam colorParam, const QBrush& defaultBrush) const {
+  const auto it = m_colorParams.find(colorParam);
+  if (it != m_colorParams.end()) {
+    return QBrush(it->second, defaultBrush.style());
+  } else {
+    return defaultBrush;
+  }
+}
+
+QColor ColorSchemeManager::getColorParam(ColorScheme::ColorParam colorParam, const QColor& defaultColor) const {
+  const auto it = m_colorParams.find(colorParam);
+  if (it != m_colorParams.end()) {
+    return it->second;
+  } else {
+    return defaultColor;
+  }
 }

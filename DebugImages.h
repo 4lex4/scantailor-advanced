@@ -19,12 +19,12 @@
 #ifndef DEBUG_IMAGES_H_
 #define DEBUG_IMAGES_H_
 
-#include "ref_countable.h"
-#include "intrusive_ptr.h"
-#include "AutoRemovingFile.h"
-#include <boost/function.hpp>
 #include <QString>
+#include <boost/function.hpp>
 #include <deque>
+#include "AutoRemovingFile.h"
+#include "intrusive_ptr.h"
+#include "ref_countable.h"
 
 class QImage;
 class QWidget;
@@ -37,43 +37,40 @@ class BinaryImage;
  * \brief A sequence of image + label pairs.
  */
 class DebugImages {
-public:
-    void add(const QImage& image,
-             const QString& label,
-             const boost::function<QWidget*(const QImage&)>& image_view_factory
-             = boost::function<QWidget*(const QImage&)>());
+ public:
+  void add(const QImage& image,
+           const QString& label,
+           const boost::function<QWidget*(const QImage&)>& image_view_factory
+           = boost::function<QWidget*(const QImage&)>());
 
-    void add(const imageproc::BinaryImage& image,
-             const QString& label,
-             const boost::function<QWidget*(const QImage&)>& image_view_factory
-             = boost::function<QWidget*(const QImage&)>());
+  void add(const imageproc::BinaryImage& image,
+           const QString& label,
+           const boost::function<QWidget*(const QImage&)>& image_view_factory
+           = boost::function<QWidget*(const QImage&)>());
 
-    bool empty() const {
-        return m_sequence.empty();
-    }
+  bool empty() const { return m_sequence.empty(); }
 
-    /**
-     * \brief Removes and returns the first item in the sequence.
-     *
-     * The label and viewer widget factory (that may not be bound)
-     * are returned by taking pointers to them as arguments.
-     * Returns a null AutoRemovingFile if image sequence is empty.
-     */
-    AutoRemovingFile retrieveNext(QString* label = nullptr,
-                                  boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr);
+  /**
+   * \brief Removes and returns the first item in the sequence.
+   *
+   * The label and viewer widget factory (that may not be bound)
+   * are returned by taking pointers to them as arguments.
+   * Returns a null AutoRemovingFile if image sequence is empty.
+   */
+  AutoRemovingFile retrieveNext(QString* label = nullptr,
+                                boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr);
 
-private:
-    struct Item : public ref_countable {
-        AutoRemovingFile file;
-        QString label;
-        boost::function<QWidget*(const QImage&)> imageViewFactory;
+ private:
+  struct Item : public ref_countable {
+    AutoRemovingFile file;
+    QString label;
+    boost::function<QWidget*(const QImage&)> imageViewFactory;
 
-        Item(AutoRemovingFile f, const QString& l, const boost::function<QWidget*(const QImage&)>& imf)
-                : file(f), label(l), imageViewFactory(imf) {
-        }
-    };
+    Item(AutoRemovingFile f, const QString& l, const boost::function<QWidget*(const QImage&)>& imf)
+        : file(f), label(l), imageViewFactory(imf) {}
+  };
 
-    std::deque<intrusive_ptr<Item>> m_sequence;
+  std::deque<intrusive_ptr<Item>> m_sequence;
 };
 
 

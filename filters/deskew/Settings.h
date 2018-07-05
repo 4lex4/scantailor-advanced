@@ -19,49 +19,49 @@
 #ifndef DESKEW_SETTINGS_H_
 #define DESKEW_SETTINGS_H_
 
-#include "ref_countable.h"
+#include <DeviationProvider.h>
+#include <QMutex>
+#include <memory>
+#include <set>
+#include <unordered_map>
 #include "NonCopyable.h"
 #include "PageId.h"
 #include "Params.h"
-#include <QMutex>
-#include <memory>
-#include <unordered_map>
-#include <set>
-#include <DeviationProvider.h>
+#include "ref_countable.h"
 
 class AbstractRelinker;
 
 namespace deskew {
 class Settings : public ref_countable {
-    DECLARE_NON_COPYABLE(Settings)
+  DECLARE_NON_COPYABLE(Settings)
 
-public:
-    Settings();
+ public:
+  Settings();
 
-    ~Settings() override;
+  ~Settings() override;
 
-    void clear();
+  void clear();
 
-    void performRelinking(const AbstractRelinker& relinker);
+  void performRelinking(const AbstractRelinker& relinker);
 
-    void setPageParams(const PageId& page_id, const Params& params);
+  void setPageParams(const PageId& page_id, const Params& params);
 
-    void clearPageParams(const PageId& page_id);
+  void clearPageParams(const PageId& page_id);
 
-    std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
+  std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
 
-    bool isParamsNull(const PageId& page_id) const;
+  bool isParamsNull(const PageId& page_id) const;
 
-    void setDegrees(const std::set<PageId>& pages, const Params& params);
+  void setDegrees(const std::set<PageId>& pages, const Params& params);
 
-    const DeviationProvider<PageId>& deviationProvider() const;
+  const DeviationProvider<PageId>& deviationProvider() const;
 
-private:
-    typedef std::unordered_map<PageId, Params> PerPageParams;
+ private:
+  typedef std::unordered_map<PageId, Params> PerPageParams;
 
-    mutable QMutex m_mutex;
-    PerPageParams m_perPageParams;
-    DeviationProvider<PageId> m_deviationProvider;
+  mutable QMutex m_mutex;
+  PerPageParams m_perPageParams;
+  DeviationProvider<PageId> m_deviationProvider;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_SETTINGS_H_

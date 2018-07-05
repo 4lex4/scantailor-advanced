@@ -19,9 +19,9 @@
 #ifndef IMAGEPROC_GRAYSCALE_H_
 #define IMAGEPROC_GRAYSCALE_H_
 
-#include "GrayImage.h"
-#include <QVector>
 #include <QColor>
+#include <QVector>
+#include "GrayImage.h"
 
 class QImage;
 class QSize;
@@ -30,33 +30,29 @@ namespace imageproc {
 class BinaryImage;
 
 class GrayscaleHistogram {
-public:
-    explicit GrayscaleHistogram(const QImage& img);
+ public:
+  explicit GrayscaleHistogram(const QImage& img);
 
-    GrayscaleHistogram(const QImage& img, const BinaryImage& mask);
+  GrayscaleHistogram(const QImage& img, const BinaryImage& mask);
 
-    inline int& operator[](int idx) {
-        return m_pixels[idx];
-    }
+  inline int& operator[](int idx) { return m_pixels[idx]; }
 
-    inline int operator[](int idx) const {
-        return m_pixels[idx];
-    }
+  inline int operator[](int idx) const { return m_pixels[idx]; }
 
-private:
-    void fromMonoImage(const QImage& img);
+ private:
+  void fromMonoImage(const QImage& img);
 
-    void fromMonoMSBImage(const QImage& img, const BinaryImage& mask);
+  void fromMonoMSBImage(const QImage& img, const BinaryImage& mask);
 
-    void fromGrayscaleImage(const QImage& img);
+  void fromGrayscaleImage(const QImage& img);
 
-    void fromGrayscaleImage(const QImage& img, const BinaryImage& mask);
+  void fromGrayscaleImage(const QImage& img, const BinaryImage& mask);
 
-    void fromAnyImage(const QImage& img);
+  void fromAnyImage(const QImage& img);
 
-    void fromAnyImage(const QImage& img, const BinaryImage& mask);
+  void fromAnyImage(const QImage& img, const BinaryImage& mask);
 
-    int m_pixels[256];
+  int m_pixels[256];
 };
 
 

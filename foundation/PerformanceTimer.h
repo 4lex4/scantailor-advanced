@@ -22,14 +22,13 @@
 #include <ctime>
 
 class PerformanceTimer {
-public:
-    PerformanceTimer() : m_start(clock()) {
-    }
+ public:
+  PerformanceTimer() : m_start(clock()) {}
 
-    void print(const char* prefix = "");
+  void print(const char* prefix = "");
 
-private:
-    const clock_t m_start;
+ private:
+  const clock_t m_start;
 };
 
 

@@ -29,78 +29,83 @@ namespace output {
 enum FillingColor { FILL_BACKGROUND, FILL_WHITE };
 
 class ColorCommonOptions {
-public:
-    class PosterizationOptions {
-    public:
-        PosterizationOptions();
+ public:
+  class PosterizationOptions {
+   public:
+    PosterizationOptions();
 
-        explicit PosterizationOptions(const QDomElement& el);
-
-        QDomElement toXml(QDomDocument& doc, const QString& name) const;
-
-        bool operator==(const PosterizationOptions& other) const;
-
-        bool operator!=(const PosterizationOptions& other) const;
-
-        bool isEnabled() const;
-
-        void setEnabled(bool enabled);
-
-        int getLevel() const;
-
-        void setLevel(int level);
-
-        bool isNormalizationEnabled() const;
-
-        void setNormalizationEnabled(bool normalizationEnabled);
-
-        bool isForceBlackAndWhite() const;
-
-        void setForceBlackAndWhite(bool forceBlackAndWhite);
-
-    private:
-        bool enabled;
-        int level;
-        bool normalizationEnabled;
-        bool forceBlackAndWhite;
-    };
-
-    ColorCommonOptions();
-
-    explicit ColorCommonOptions(const QDomElement& el);
+    explicit PosterizationOptions(const QDomElement& el);
 
     QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    bool cutMargins() const;
+    bool operator==(const PosterizationOptions& other) const;
 
-    void setCutMargins(bool val);
+    bool operator!=(const PosterizationOptions& other) const;
 
-    bool normalizeIllumination() const;
+    bool isEnabled() const;
 
-    void setNormalizeIllumination(bool val);
+    void setEnabled(bool enabled);
 
-    FillingColor getFillingColor() const;
+    int getLevel() const;
 
-    void setFillingColor(FillingColor fillingColor);
+    void setLevel(int level);
 
-    bool operator==(const ColorCommonOptions& other) const;
+    bool isNormalizationEnabled() const;
 
-    bool operator!=(const ColorCommonOptions& other) const;
+    void setNormalizationEnabled(bool normalizationEnabled);
 
-    const PosterizationOptions& getPosterizationOptions() const;
+    bool isForceBlackAndWhite() const;
 
-    void setPosterizationOptions(const PosterizationOptions& posterizationOptions);
+    void setForceBlackAndWhite(bool forceBlackAndWhite);
 
-private:
-    static FillingColor parseFillingColor(const QString& str);
+   private:
+    bool m_isEnabled;
+    int m_level;
+    bool m_isNormalizationEnabled;
+    bool m_forceBlackAndWhite;
+  };
 
-    static QString formatFillingColor(FillingColor type);
+  ColorCommonOptions();
+
+  explicit ColorCommonOptions(const QDomElement& el);
+
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
+
+  bool fillOffcut() const;
+
+  void setFillOffcut(bool fillOffcut);
+
+  bool fillMargins() const;
+
+  void setFillMargins(bool val);
+
+  bool normalizeIllumination() const;
+
+  void setNormalizeIllumination(bool val);
+
+  FillingColor getFillingColor() const;
+
+  void setFillingColor(FillingColor fillingColor);
+
+  bool operator==(const ColorCommonOptions& other) const;
+
+  bool operator!=(const ColorCommonOptions& other) const;
+
+  const PosterizationOptions& getPosterizationOptions() const;
+
+  void setPosterizationOptions(const PosterizationOptions& posterizationOptions);
+
+ private:
+  static FillingColor parseFillingColor(const QString& str);
+
+  static QString formatFillingColor(FillingColor type);
 
 
-    bool m_cutMargins;
-    bool m_normalizeIllumination;
-    FillingColor m_fillingColor;
-    PosterizationOptions posterizationOptions;
+  bool m_fillOffcut;
+  bool m_fillMargins;
+  bool m_normalizeIllumination;
+  FillingColor m_fillingColor;
+  PosterizationOptions m_posterizationOptions;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_COLOR_GRAYSCALE_OPTIONS_H_

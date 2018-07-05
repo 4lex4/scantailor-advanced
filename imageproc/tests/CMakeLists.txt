@@ -1,43 +1,43 @@
-INCLUDE_DIRECTORIES(BEFORE ..)
+include_directories(BEFORE ..)
 
-SET(
-        sources
-        main.cpp
-        TestBinaryImage.cpp TestReduceThreshold.cpp
-        TestSlicedHistogram.cpp
-        TestConnCompEraser.cpp TestConnCompEraserExt.cpp
-        TestGrayscale.cpp
-        TestRasterOp.cpp TestShear.cpp
-        TestOrthogonalRotation.cpp
-        TestSkewFinder.cpp
-        TestScale.cpp
-        TestTransform.cpp
-        TestMorphology.cpp
-        TestBinarize.cpp
-        TestPolygonRasterizer.cpp
-        TestSeedFill.cpp
-        TestSEDM.cpp
-        TestRastLineFinder.cpp
-        Utils.cpp Utils.h
+set(
+    sources
+    main.cpp
+    TestBinaryImage.cpp TestReduceThreshold.cpp
+    TestSlicedHistogram.cpp
+    TestConnCompEraser.cpp TestConnCompEraserExt.cpp
+    TestGrayscale.cpp
+    TestRasterOp.cpp TestShear.cpp
+    TestOrthogonalRotation.cpp
+    TestSkewFinder.cpp
+    TestScale.cpp
+    TestTransform.cpp
+    TestMorphology.cpp
+    TestBinarize.cpp
+    TestPolygonRasterizer.cpp
+    TestSeedFill.cpp
+    TestSEDM.cpp
+    TestRastLineFinder.cpp
+    Utils.cpp Utils.h
 )
-SOURCE_GROUP("Sources" FILES ${sources})
+source_group("Sources" FILES ${sources})
 
-SET(
-        libs
-        imageproc math foundation Qt5::Widgets Qt5::Xml
-        ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-        ${Boost_PRG_EXECUTION_MONITOR_LIBRARY} ${EXTRA_LIBS}
+set(
+    libs
+    imageproc math foundation Qt5::Widgets Qt5::Xml
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+    ${Boost_PRG_EXECUTION_MONITOR_LIBRARY} ${EXTRA_LIBS}
 )
 
-REMOVE_DEFINITIONS(-DBUILDING_IMAGEPROC)
-ADD_EXECUTABLE(imageproc_tests ${sources})
-TARGET_LINK_LIBRARIES(imageproc_tests ${libs})
+remove_definitions(-DBUILDING_IMAGEPROC)
+add_executable(imageproc_tests ${sources})
+target_link_libraries(imageproc_tests ${libs})
 
 # We want the executable located where we copy all the DLLs.
-SET_TARGET_PROPERTIES(
-        imageproc_tests PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
+set_target_properties(
+    imageproc_tests PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
 )
 
-ADD_TEST(NAME imageproc_tests COMMAND imageproc_tests --log_level=message)
+add_test(NAME imageproc_tests COMMAND imageproc_tests --log_level=message)
 

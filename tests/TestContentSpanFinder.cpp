@@ -16,11 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ContentSpanFinder.h"
-#include "imageproc/SlicedHistogram.h"
-#include "Span.h"
-#include <vector>
 #include <boost/test/auto_unit_test.hpp>
+#include <vector>
+#include "ContentSpanFinder.h"
+#include "Span.h"
+#include "imageproc/SlicedHistogram.h"
 
 namespace Tests {
 using namespace imageproc;
@@ -28,88 +28,88 @@ using namespace imageproc;
 BOOST_AUTO_TEST_SUITE(ContentSpanFinderTestSuite);
 
 BOOST_AUTO_TEST_CASE(test_empty_input) {
-    ContentSpanFinder span_finder;
+  ContentSpanFinder span_finder;
 
-    std::vector<Span> spans;
-    span_finder.find(SlicedHistogram(), [&](const Span& span) { spans.push_back(span); });
+  std::vector<Span> spans;
+  span_finder.find(SlicedHistogram(), [&](const Span& span) { spans.push_back(span); });
 
-    BOOST_CHECK(spans.empty());
+  BOOST_CHECK(spans.empty());
 }
 
 BOOST_AUTO_TEST_CASE(test_min_content_width) {
-    SlicedHistogram hist;
-    hist.setSize(9);
-    hist[0] = 0;
-    hist[1] = 1;
-    hist[2] = 0;
-    hist[3] = 1;
-    hist[4] = 1;
-    hist[5] = 1;
-    hist[6] = 0;
-    hist[7] = 1;
-    hist[8] = 1;
+  SlicedHistogram hist;
+  hist.setSize(9);
+  hist[0] = 0;
+  hist[1] = 1;
+  hist[2] = 0;
+  hist[3] = 1;
+  hist[4] = 1;
+  hist[5] = 1;
+  hist[6] = 0;
+  hist[7] = 1;
+  hist[8] = 1;
 
-    ContentSpanFinder span_finder;
-    span_finder.setMinContentWidth(2);
+  ContentSpanFinder span_finder;
+  span_finder.setMinContentWidth(2);
 
-    std::vector<Span> spans;
-    span_finder.find(hist, [&](const Span& span) { spans.push_back(span); });
+  std::vector<Span> spans;
+  span_finder.find(hist, [&](const Span& span) { spans.push_back(span); });
 
-    BOOST_REQUIRE(spans.size() == 2);
-    BOOST_REQUIRE(spans[0] == Span(3, 3 + 3));
-    BOOST_REQUIRE(spans[1] == Span(7, 7 + 2));
+  BOOST_REQUIRE(spans.size() == 2);
+  BOOST_REQUIRE(spans[0] == Span(3, 3 + 3));
+  BOOST_REQUIRE(spans[1] == Span(7, 7 + 2));
 }
 
 BOOST_AUTO_TEST_CASE(test_min_whitespace_width) {
-    SlicedHistogram hist;
-    hist.setSize(9);
-    hist[0] = 0;
-    hist[1] = 1;
-    hist[2] = 0;
-    hist[3] = 1;
-    hist[4] = 1;
-    hist[5] = 0;
-    hist[6] = 0;
-    hist[7] = 1;
-    hist[8] = 1;
+  SlicedHistogram hist;
+  hist.setSize(9);
+  hist[0] = 0;
+  hist[1] = 1;
+  hist[2] = 0;
+  hist[3] = 1;
+  hist[4] = 1;
+  hist[5] = 0;
+  hist[6] = 0;
+  hist[7] = 1;
+  hist[8] = 1;
 
-    ContentSpanFinder span_finder;
-    span_finder.setMinWhitespaceWidth(2);
+  ContentSpanFinder span_finder;
+  span_finder.setMinWhitespaceWidth(2);
 
-    std::vector<Span> spans;
-    span_finder.find(hist, [&](const Span& span) { spans.push_back(span); });
+  std::vector<Span> spans;
+  span_finder.find(hist, [&](const Span& span) { spans.push_back(span); });
 
-    BOOST_REQUIRE(spans.size() == 2);
-    BOOST_REQUIRE(spans[0] == Span(1, 1 + 4));
-    BOOST_REQUIRE(spans[1] == Span(7, 7 + 2));
+  BOOST_REQUIRE(spans.size() == 2);
+  BOOST_REQUIRE(spans[0] == Span(1, 1 + 4));
+  BOOST_REQUIRE(spans[1] == Span(7, 7 + 2));
 }
 
 BOOST_AUTO_TEST_CASE(test_min_content_and_whitespace_width) {
-    SlicedHistogram hist;
-    hist.setSize(9);
-    hist[0] = 0;
-    hist[1] = 1;
-    hist[2] = 0;
-    hist[3] = 1;
-    hist[4] = 1;
-    hist[5] = 0;
-    hist[6] = 0;
-    hist[7] = 1;
-    hist[8] = 0;
+  SlicedHistogram hist;
+  hist.setSize(9);
+  hist[0] = 0;
+  hist[1] = 1;
+  hist[2] = 0;
+  hist[3] = 1;
+  hist[4] = 1;
+  hist[5] = 0;
+  hist[6] = 0;
+  hist[7] = 1;
+  hist[8] = 0;
 
-    ContentSpanFinder span_finder;
-    span_finder.setMinContentWidth(2);
-    span_finder.setMinWhitespaceWidth(2);
+  ContentSpanFinder span_finder;
+  span_finder.setMinContentWidth(2);
+  span_finder.setMinWhitespaceWidth(2);
 
-    std::vector<Span> spans;
-    span_finder.find(hist, [&](const Span& span) { spans.push_back(span); });
+  std::vector<Span> spans;
+  span_finder.find(hist, [&](const Span& span) { spans.push_back(span); });
 
-    // Note that although a content block at index 1 is too short,
-    // it's still allowed to merge with content at positions 3 and 4
-    // because the whitespace between them is too short as well.
+  // Note that although a content block at index 1 is too short,
+  // it's still allowed to merge with content at positions 3 and 4
+  // because the whitespace between them is too short as well.
 
-    BOOST_REQUIRE(spans.size() == 1);
-    BOOST_REQUIRE(spans[0] == Span(1, 1 + 4));
+  BOOST_REQUIRE(spans.size() == 1);
+  BOOST_REQUIRE(spans[0] == Span(1, 1 + 4));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -19,66 +19,44 @@
 #ifndef PROXIMITY_H_
 #define PROXIMITY_H_
 
-#include <limits>
 #include <cmath>
+#include <limits>
 
 class QPointF;
 class QLineF;
 
 class Proximity {
-public:
-    Proximity() : m_sqDist(std::numeric_limits<double>::max()) {
-    }
+ public:
+  Proximity() : m_sqDist(std::numeric_limits<double>::max()) {}
 
-    Proximity(const QPointF& p1, const QPointF& p2);
+  Proximity(const QPointF& p1, const QPointF& p2);
 
-    static Proximity fromDist(double dist) {
-        return Proximity(dist * dist);
-    }
+  static Proximity fromDist(double dist) { return Proximity(dist * dist); }
 
-    static Proximity fromSqDist(double sqDist) {
-        return Proximity(sqDist);
-    }
+  static Proximity fromSqDist(double sqDist) { return Proximity(sqDist); }
 
-    static Proximity pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* point_on_segment = nullptr);
+  static Proximity pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* point_on_segment = nullptr);
 
-    double dist() const {
-        return std::sqrt(m_sqDist);
-    }
+  double dist() const { return std::sqrt(m_sqDist); }
 
-    double sqDist() const {
-        return m_sqDist;
-    }
+  double sqDist() const { return m_sqDist; }
 
-    bool operator==(const Proximity& rhs) const {
-        return m_sqDist == rhs.m_sqDist;
-    }
+  bool operator==(const Proximity& rhs) const { return m_sqDist == rhs.m_sqDist; }
 
-    bool operator!=(const Proximity& rhs) const {
-        return m_sqDist != rhs.m_sqDist;
-    }
+  bool operator!=(const Proximity& rhs) const { return m_sqDist != rhs.m_sqDist; }
 
-    bool operator<(const Proximity& rhs) const {
-        return m_sqDist < rhs.m_sqDist;
-    }
+  bool operator<(const Proximity& rhs) const { return m_sqDist < rhs.m_sqDist; }
 
-    bool operator>(const Proximity& rhs) const {
-        return m_sqDist > rhs.m_sqDist;
-    }
+  bool operator>(const Proximity& rhs) const { return m_sqDist > rhs.m_sqDist; }
 
-    bool operator<=(const Proximity& rhs) const {
-        return m_sqDist <= rhs.m_sqDist;
-    }
+  bool operator<=(const Proximity& rhs) const { return m_sqDist <= rhs.m_sqDist; }
 
-    bool operator>=(const Proximity& rhs) const {
-        return m_sqDist >= rhs.m_sqDist;
-    }
+  bool operator>=(const Proximity& rhs) const { return m_sqDist >= rhs.m_sqDist; }
 
-private:
-    explicit Proximity(double sqDist) : m_sqDist(sqDist) {
-    }
+ private:
+  explicit Proximity(double sqDist) : m_sqDist(sqDist) {}
 
-    double m_sqDist;
+  double m_sqDist;
 };
 
 

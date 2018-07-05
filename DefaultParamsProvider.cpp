@@ -1,59 +1,59 @@
 
+#include "DefaultParamsProvider.h"
 #include <QtCore/QSettings>
 #include <cassert>
-#include "DefaultParamsProvider.h"
-#include "DefaultParamsProfileManager.h"
 #include "DefaultParams.h"
+#include "DefaultParamsProfileManager.h"
 
-std::unique_ptr<DefaultParamsProvider> DefaultParamsProvider::instance = nullptr;
+std::unique_ptr<DefaultParamsProvider> DefaultParamsProvider::m_instance = nullptr;
 
 DefaultParamsProvider::DefaultParamsProvider() {
-    QSettings settings;
-    DefaultParamsProfileManager defaultParamsProfileManager;
+  QSettings settings;
+  DefaultParamsProfileManager defaultParamsProfileManager;
 
-    const QString profile = settings.value("settings/current_profile", "Default").toString();
-    if (profile == "Default") {
-        this->params = defaultParamsProfileManager.createDefaultProfile();
-        this->profileName = profile;
-    } else if (profile == "Source") {
-        this->params = defaultParamsProfileManager.createSourceProfile();
-        this->profileName = profile;
+  const QString profile = settings.value("settings/current_profile", "Default").toString();
+  if (profile == "Default") {
+    m_params = defaultParamsProfileManager.createDefaultProfile();
+    m_profileName = profile;
+  } else if (profile == "Source") {
+    m_params = defaultParamsProfileManager.createSourceProfile();
+    m_profileName = profile;
+  } else {
+    std::unique_ptr<DefaultParams> params = defaultParamsProfileManager.readProfile(profile);
+    if (params != nullptr) {
+      m_params = std::move(params);
+      m_profileName = profile;
     } else {
-        std::unique_ptr<DefaultParams> params = defaultParamsProfileManager.readProfile(profile);
-        if (params != nullptr) {
-            this->params = std::move(params);
-            this->profileName = profile;
-        } else {
-            this->params = defaultParamsProfileManager.createDefaultProfile();
-            this->profileName = "Default";
-            settings.setValue("settings/current_profile", "Default");
-        }
+      m_params = defaultParamsProfileManager.createDefaultProfile();
+      m_profileName = "Default";
+      settings.setValue("settings/current_profile", "Default");
     }
+  }
 }
 
 DefaultParamsProvider* DefaultParamsProvider::getInstance() {
-    if (instance == nullptr) {
-        instance.reset(new DefaultParamsProvider());
-    }
+  if (m_instance == nullptr) {
+    m_instance.reset(new DefaultParamsProvider());
+  }
 
-    return instance.get();
+  return m_instance.get();
 }
 
 const QString& DefaultParamsProvider::getProfileName() const {
-    return profileName;
+  return m_profileName;
 }
 
 DefaultParams DefaultParamsProvider::getParams() const {
-    assert(params != nullptr);
+  assert(m_params != nullptr);
 
-    return *params;
+  return *m_params;
 }
 
 void DefaultParamsProvider::setParams(std::unique_ptr<DefaultParams> params, const QString& name) {
-    if (params == nullptr) {
-        return;
-    }
+  if (params == nullptr) {
+    return;
+  }
 
-    this->params = std::move(params);
-    this->profileName = name;
+  m_params = std::move(params);
+  m_profileName = name;
 }

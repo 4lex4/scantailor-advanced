@@ -28,36 +28,36 @@ namespace dewarping {
 class DistortionModel;
 
 class DewarpingPointMapper {
-public:
-    DewarpingPointMapper(const dewarping::DistortionModel& distortion_model,
-                         double depth_perception,
-                         const QTransform& distortion_model_to_output,
-                         const QRect& output_content_rect,
-                         const QTransform& postTransform = QTransform());
+ public:
+  DewarpingPointMapper(const dewarping::DistortionModel& distortion_model,
+                       double depth_perception,
+                       const QTransform& distortion_model_to_output,
+                       const QRect& output_content_rect,
+                       const QTransform& postTransform = QTransform());
 
-    /**
-     * Similar to CylindricalSurfaceDewarper::mapToDewarpedSpace(),
-     * except it maps to dewarped image coordinates rather than
-     * to normalized dewarped coordinates.
-     */
-    QPointF mapToDewarpedSpace(const QPointF& warped_pt) const;
+  /**
+   * Similar to CylindricalSurfaceDewarper::mapToDewarpedSpace(),
+   * except it maps to dewarped image coordinates rather than
+   * to normalized dewarped coordinates.
+   */
+  QPointF mapToDewarpedSpace(const QPointF& warped_pt) const;
 
-    /**
-     * Similar to CylindricalSurfaceDewarper::mapToWarpedSpace(),
-     * except it maps from dewarped image coordinates rather than
-     * from normalized dewarped coordinates.
-     */
-    QPointF mapToWarpedSpace(const QPointF& dewarped_pt) const;
+  /**
+   * Similar to CylindricalSurfaceDewarper::mapToWarpedSpace(),
+   * except it maps from dewarped image coordinates rather than
+   * from normalized dewarped coordinates.
+   */
+  QPointF mapToWarpedSpace(const QPointF& dewarped_pt) const;
 
-private:
-    CylindricalSurfaceDewarper m_dewarper;
-    double m_modelDomainLeft;
-    double m_modelDomainTop;
-    double m_modelXScaleFromNormalized;
-    double m_modelYScaleFromNormalized;
-    double m_modelXScaleToNormalized;
-    double m_modelYScaleToNormalized;
-    QTransform m_postTransform;
+ private:
+  CylindricalSurfaceDewarper m_dewarper;
+  double m_modelDomainLeft;
+  double m_modelDomainTop;
+  double m_modelXScaleFromNormalized;
+  double m_modelYScaleFromNormalized;
+  double m_modelXScaleToNormalized;
+  double m_modelYScaleToNormalized;
+  QTransform m_postTransform;
 };
 }  // namespace dewarping
 #endif  // ifndef DEWARPING_DEWARPING_POINT_MAPPER_H_

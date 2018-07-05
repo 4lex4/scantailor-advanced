@@ -3,46 +3,47 @@
 #ifndef SCANTAILOR_SAUVOLABINARIZATIONOPTIONS_H
 #define SCANTAILOR_SAUVOLABINARIZATIONOPTIONS_H
 
-#include "ui_SauvolaBinarizationOptionsWidget.h"
+#include <QtCore>
+#include <list>
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
-#include "intrusive_ptr.h"
 #include "Settings.h"
-#include <QtCore>
+#include "intrusive_ptr.h"
+#include "ui_SauvolaBinarizationOptionsWidget.h"
 
 namespace output {
 class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
                                          private Ui::SauvolaBinarizationOptionsWidget {
-    Q_OBJECT
+  Q_OBJECT
+ public:
+  explicit SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
 
-private:
-    intrusive_ptr<Settings> m_ptrSettings;
-    PageId m_pageId;
-    ColorParams m_colorParams;
-    QTimer delayedStateChanger;
-    OutputProcessingParams m_outputProcessingParams;
+  ~SauvolaBinarizationOptionsWidget() override = default;
 
-public:
-    explicit SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
+  void updateUi(const PageId& m_pageId) override;
 
-    ~SauvolaBinarizationOptionsWidget() override = default;
+ private slots:
 
-    void preUpdateUI(const PageId& m_pageId) override;
+  void windowSizeChanged(int value);
 
-private slots:
+  void sauvolaCoefChanged(double value);
 
-    void windowSizeChanged(int value);
+  void sendStateChanged();
 
-    void sauvolaCoefChanged(double value);
+ private:
+  void updateView();
 
-    void sendStateChanged();
+  void setupUiConnections();
 
-private:
-    void updateView();
+  void removeUiConnections();
 
-    void setupUiConnections();
+  intrusive_ptr<Settings> m_settings;
+  PageId m_pageId;
+  ColorParams m_colorParams;
+  QTimer m_delayedStateChanger;
+  OutputProcessingParams m_outputProcessingParams;
 
-    void removeUiConnections();
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace output
 

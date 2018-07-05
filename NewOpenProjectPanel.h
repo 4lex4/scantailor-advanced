@@ -19,30 +19,30 @@
 #ifndef NEW_OPEN_PROJECT_PANEL_H_
 #define NEW_OPEN_PROJECT_PANEL_H_
 
-#include "ui_NewOpenProjectPanel.h"
 #include <QWidget>
 #include <memory>
+#include "ui_NewOpenProjectPanel.h"
 
 class QString;
 
 class NewOpenProjectPanel : public QWidget, private Ui::NewOpenProjectPanel {
-    Q_OBJECT
-public:
-    explicit NewOpenProjectPanel(QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  explicit NewOpenProjectPanel(QWidget* parent = nullptr);
 
-signals:
+ signals:
 
-    void newProject();
+  void newProject();
 
-    void openProject();
+  void openProject();
 
-    void openRecentProject(const QString& project_file);
+  void openRecentProject(const QString& project_file);
 
-protected:
-    void paintEvent(QPaintEvent*) override;
+ protected:
+  void paintEvent(QPaintEvent*) override;
 
-private:
-    void addRecentProject(const QString& file_path);
+ private:
+  void addRecentProject(const QString& file_path);
 };
 
 

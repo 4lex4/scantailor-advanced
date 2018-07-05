@@ -16,27 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DebugImageView.h"
 #include "TabbedDebugImages.h"
+#include "DebugImageView.h"
 
 TabbedDebugImages::TabbedDebugImages(QWidget* parent) : QTabWidget(parent) {
-    setDocumentMode(true);
-    connect(this, SIGNAL(currentChanged(int)), SLOT(currentTabChanged(int)));
+  setDocumentMode(true);
+  connect(this, SIGNAL(currentChanged(int)), SLOT(currentTabChanged(int)));
 }
 
 void TabbedDebugImages::currentTabChanged(const int idx) {
-    if (auto* div = dynamic_cast<DebugImageView*>(widget(idx))) {
-        div->unlink();
-        m_liveViews.push_back(*div);
-        removeExcessLiveViews();
-        div->setLive(true);
-    }
+  if (auto* div = dynamic_cast<DebugImageView*>(widget(idx))) {
+    div->unlink();
+    m_liveViews.push_back(*div);
+    removeExcessLiveViews();
+    div->setLive(true);
+  }
 }
 
 void TabbedDebugImages::removeExcessLiveViews() {
-    auto remaining = static_cast<int>(m_liveViews.size());
-    for (; remaining > MAX_LIVE_VIEWS; --remaining) {
-        m_liveViews.front().setLive(false);
-        m_liveViews.erase(m_liveViews.begin());
-    }
+  auto remaining = static_cast<int>(m_liveViews.size());
+  for (; remaining > MAX_LIVE_VIEWS; --remaining) {
+    m_liveViews.front().setLive(false);
+    m_liveViews.erase(m_liveViews.begin());
+  }
 }

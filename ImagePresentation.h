@@ -19,9 +19,9 @@
 #ifndef IMAGE_PRESENTATION_H_
 #define IMAGE_PRESENTATION_H_
 
-#include <QTransform>
 #include <QPolygonF>
 #include <QRectF>
+#include <QTransform>
 
 /**
  * Image presentation consists of 3 components:
@@ -34,44 +34,30 @@
  *     or extra controls.
  */
 class ImagePresentation {
-    // Member-wise copying is OK.
-public:
-    ImagePresentation(const QTransform& xform, const QPolygonF& crop_area)
-            : m_xform(xform), m_cropArea(crop_area), m_displayArea(crop_area.boundingRect()) {
-    }
+  // Member-wise copying is OK.
+ public:
+  ImagePresentation(const QTransform& xform, const QPolygonF& crop_area)
+      : m_xform(xform), m_cropArea(crop_area), m_displayArea(crop_area.boundingRect()) {}
 
-    ImagePresentation(const QTransform& xform, const QPolygonF& crop_area, const QRectF& display_area)
-            : m_xform(xform), m_cropArea(crop_area), m_displayArea(display_area) {
-    }
+  ImagePresentation(const QTransform& xform, const QPolygonF& crop_area, const QRectF& display_area)
+      : m_xform(xform), m_cropArea(crop_area), m_displayArea(display_area) {}
 
-    const QTransform& transform() const {
-        return m_xform;
-    }
+  const QTransform& transform() const { return m_xform; }
 
-    void setTransform(const QTransform& xform) {
-        m_xform = xform;
-    }
+  void setTransform(const QTransform& xform) { m_xform = xform; }
 
-    const QPolygonF& cropArea() const {
-        return m_cropArea;
-    }
+  const QPolygonF& cropArea() const { return m_cropArea; }
 
-    void setCropArea(const QPolygonF& crop_area) {
-        m_cropArea = crop_area;
-    }
+  void setCropArea(const QPolygonF& crop_area) { m_cropArea = crop_area; }
 
-    const QRectF& displayArea() const {
-        return m_displayArea;
-    }
+  const QRectF& displayArea() const { return m_displayArea; }
 
-    void setDisplayArea(const QRectF& display_area) {
-        m_displayArea = display_area;
-    }
+  void setDisplayArea(const QRectF& display_area) { m_displayArea = display_area; }
 
-private:
-    QTransform m_xform;
-    QPolygonF m_cropArea;
-    QRectF m_displayArea;
+ private:
+  QTransform m_xform;
+  QPolygonF m_cropArea;
+  QRectF m_displayArea;
 };
 
 

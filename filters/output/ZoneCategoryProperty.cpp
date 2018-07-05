@@ -18,69 +18,68 @@
  */
 
 #include "ZoneCategoryProperty.h"
-#include "PropertyFactory.h"
 #include <QDomDocument>
+#include "PropertyFactory.h"
 
 namespace output {
 const char ZoneCategoryProperty::m_propertyName[] = "ZoneCategoryProperty";
 
 ZoneCategoryProperty::ZoneCategoryProperty(const QDomElement& el)
-        : m_zone_category(zoneCategoryFromString(el.attribute("zone_category"))) {
-}
+    : m_zone_category(zoneCategoryFromString(el.attribute("zone_category"))) {}
 
 void ZoneCategoryProperty::registerIn(PropertyFactory& factory) {
-    factory.registerProperty(m_propertyName, &ZoneCategoryProperty::construct);
+  factory.registerProperty(m_propertyName, &ZoneCategoryProperty::construct);
 }
 
 intrusive_ptr<Property> ZoneCategoryProperty::clone() const {
-    return make_intrusive<ZoneCategoryProperty>(*this);
+  return make_intrusive<ZoneCategoryProperty>(*this);
 }
 
 QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, const QString& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("type", m_propertyName);
-    el.setAttribute("zone_category", zoneCategoryToString(m_zone_category));
+  QDomElement el(doc.createElement(name));
+  el.setAttribute("type", m_propertyName);
+  el.setAttribute("zone_category", zoneCategoryToString(m_zone_category));
 
-    return el;
+  return el;
 }
 
 intrusive_ptr<Property> ZoneCategoryProperty::construct(const QDomElement& el) {
-    return make_intrusive<ZoneCategoryProperty>(el);
+  return make_intrusive<ZoneCategoryProperty>(el);
 }
 
 ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategoryFromString(const QString& str) {
-    if (str == "manual") {
-        return MANUAL;
-    } else if (str == "rectangular_outline") {
-        return RECTANGULAR_OUTLINE;
-    } else {
-        return MANUAL;
-    }
+  if (str == "manual") {
+    return MANUAL;
+  } else if (str == "rectangular_outline") {
+    return RECTANGULAR_OUTLINE;
+  } else {
+    return MANUAL;
+  }
 }
 
 QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zone_category) {
-    const char* str = nullptr;
+  const char* str = nullptr;
 
-    switch (zone_category) {
-        case MANUAL:
-            str = "manual";
-            break;
-        case RECTANGULAR_OUTLINE:
-            str = "rectangular_outline";
-            break;
-        default:
-            str = "";
-            break;
-    }
+  switch (zone_category) {
+    case MANUAL:
+      str = "manual";
+      break;
+    case RECTANGULAR_OUTLINE:
+      str = "rectangular_outline";
+      break;
+    default:
+      str = "";
+      break;
+  }
 
-    return str;
+  return str;
 }
 
 ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zone_category() const {
-    return m_zone_category;
+  return m_zone_category;
 }
 
 void ZoneCategoryProperty::setZoneCategory(ZoneCategoryProperty::ZoneCategory zone_category) {
-    m_zone_category = zone_category;
+  m_zone_category = zone_category;
 }
 }  // namespace output

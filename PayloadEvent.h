@@ -21,22 +21,17 @@
 
 #include <QEvent>
 
-template<typename T>
+template <typename T>
 class PayloadEvent : public QEvent {
-public:
-    explicit PayloadEvent(const T& payload) : QEvent(User), m_payload(payload) {
-    }
+ public:
+  explicit PayloadEvent(const T& payload) : QEvent(User), m_payload(payload) {}
 
-    const T& payload() const {
-        return m_payload;
-    }
+  const T& payload() const { return m_payload; }
 
-    T& payload() {
-        return m_payload;
-    }
+  T& payload() { return m_payload; }
 
-private:
-    T m_payload;
+ private:
+  T m_payload;
 };
 
 

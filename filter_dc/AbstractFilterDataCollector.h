@@ -20,8 +20,8 @@
 #define ABSTRACTFILTERDATACOLLECTOR_H_
 
 class AbstractFilterDataCollector {
-public:
-    virtual ~AbstractFilterDataCollector() = default;
+ public:
+  virtual ~AbstractFilterDataCollector() = default;
 };
 
 

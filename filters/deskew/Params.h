@@ -19,38 +19,38 @@
 #ifndef DESKEW_PARAMS_H_
 #define DESKEW_PARAMS_H_
 
-#include "Dependencies.h"
-#include "AutoManualMode.h"
 #include <QString>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include "AutoManualMode.h"
+#include "Dependencies.h"
 
 class QDomDocument;
 class QDomElement;
 
 namespace deskew {
 class Params {
-public:
-    // Member-wise copying is OK.
+ public:
+  // Member-wise copying is OK.
 
-    Params(double deskew_angle_deg, const Dependencies& deps, AutoManualMode mode);
+  Params(double deskew_angle_deg, const Dependencies& deps, AutoManualMode mode);
 
-    explicit Params(const QDomElement& deskew_el);
+  explicit Params(const QDomElement& deskew_el);
 
-    ~Params();
+  ~Params();
 
-    double deskewAngle() const;
+  double deskewAngle() const;
 
-    const Dependencies& dependencies() const;
+  const Dependencies& dependencies() const;
 
-    AutoManualMode mode() const;
+  AutoManualMode mode() const;
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-private:
-    double m_deskewAngleDeg;
-    Dependencies m_deps;
-    AutoManualMode m_mode;
+ private:
+  double m_deskewAngleDeg;
+  Dependencies m_deps;
+  AutoManualMode m_mode;
 };
 }  // namespace deskew
 #endif  // ifndef DESKEW_PARAMS_H_

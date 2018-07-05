@@ -17,39 +17,37 @@
  */
 
 #include "Params.h"
-#include "../../Utils.h"
 #include <QDomDocument>
+#include "../../Utils.h"
 
 namespace deskew {
 Params::Params(const double deskew_angle_deg, const Dependencies& deps, const AutoManualMode mode)
-        : m_deskewAngleDeg(deskew_angle_deg), m_deps(deps), m_mode(mode) {
-}
+    : m_deskewAngleDeg(deskew_angle_deg), m_deps(deps), m_mode(mode) {}
 
 Params::Params(const QDomElement& deskew_el)
-        : m_deskewAngleDeg(deskew_el.attribute("angle").toDouble()),
-          m_deps(deskew_el.namedItem("dependencies").toElement()),
-          m_mode(deskew_el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO) {
-}
+    : m_deskewAngleDeg(deskew_el.attribute("angle").toDouble()),
+      m_deps(deskew_el.namedItem("dependencies").toElement()),
+      m_mode(deskew_el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO) {}
 
 Params::~Params() = default;
 
 QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("mode", m_mode == MODE_AUTO ? "auto" : "manual");
-    el.setAttribute("angle", Utils::doubleToString(m_deskewAngleDeg));
-    el.appendChild(m_deps.toXml(doc, "dependencies"));
+  QDomElement el(doc.createElement(name));
+  el.setAttribute("mode", m_mode == MODE_AUTO ? "auto" : "manual");
+  el.setAttribute("angle", Utils::doubleToString(m_deskewAngleDeg));
+  el.appendChild(m_deps.toXml(doc, "dependencies"));
 
-    return el;
+  return el;
 }
 
 double Params::deskewAngle() const {
-    return m_deskewAngleDeg;
+  return m_deskewAngleDeg;
 }
 const Dependencies& Params::dependencies() const {
-    return m_deps;
+  return m_deps;
 }
 
 AutoManualMode Params::mode() const {
-    return m_mode;
+  return m_mode;
 }
 }  // namespace deskew

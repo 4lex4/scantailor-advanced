@@ -19,9 +19,9 @@
 #ifndef ZONE_SET_H_
 #define ZONE_SET_H_
 
-#include "Zone.h"
 #include <boost/iterator/iterator_facade.hpp>
 #include <list>
+#include "Zone.h"
 
 class PropertyFactory;
 class QDomDocument;
@@ -29,39 +29,29 @@ class QDomElement;
 class QString;
 
 class ZoneSet {
-public:
-    typedef std::list<Zone>::const_iterator const_iterator;
+ public:
+  typedef std::list<Zone>::const_iterator const_iterator;
 
-    ZoneSet() = default;
+  ZoneSet() = default;
 
-    ZoneSet(const QDomElement& el, const PropertyFactory& prop_factory);
+  ZoneSet(const QDomElement& el, const PropertyFactory& prop_factory);
 
-    virtual ~ZoneSet() = default;
+  virtual ~ZoneSet() = default;
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    bool empty() const {
-        return m_zones.empty();
-    }
+  bool empty() const { return m_zones.empty(); }
 
-    void add(const Zone& zone) {
-        m_zones.push_back(zone);
-    }
+  void add(const Zone& zone) { m_zones.push_back(zone); }
 
-    const_iterator erase(const_iterator position) {
-        return m_zones.erase(position);
-    }
+  const_iterator erase(const_iterator position) { return m_zones.erase(position); }
 
-    const_iterator begin() const {
-        return m_zones.begin();
-    }
+  const_iterator begin() const { return m_zones.begin(); }
 
-    const_iterator end() const {
-        return m_zones.end();
-    }
+  const_iterator end() const { return m_zones.end(); }
 
-private:
-    std::list<Zone> m_zones;
+ private:
+  std::list<Zone> m_zones;
 };
 
 

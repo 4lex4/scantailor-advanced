@@ -20,31 +20,31 @@
 #include <QDomNode>
 
 ZoneSet::ZoneSet(const QDomElement& el, const PropertyFactory& prop_factory) {
-    const QString zone_str("zone");
+  const QString zone_str("zone");
 
-    QDomNode node(el.firstChild());
-    for (; !node.isNull(); node = node.nextSibling()) {
-        if (!node.isElement()) {
-            continue;
-        }
-        if (node.nodeName() != zone_str) {
-            continue;
-        }
-
-        const Zone zone(node.toElement(), prop_factory);
-        if (zone.isValid()) {
-            m_zones.push_back(zone);
-        }
+  QDomNode node(el.firstChild());
+  for (; !node.isNull(); node = node.nextSibling()) {
+    if (!node.isElement()) {
+      continue;
     }
+    if (node.nodeName() != zone_str) {
+      continue;
+    }
+
+    const Zone zone(node.toElement(), prop_factory);
+    if (zone.isValid()) {
+      m_zones.push_back(zone);
+    }
+  }
 }
 
 QDomElement ZoneSet::toXml(QDomDocument& doc, const QString& name) const {
-    const QString zone_str("zone");
+  const QString zone_str("zone");
 
-    QDomElement el(doc.createElement(name));
-    for (const Zone& zone : m_zones) {
-        el.appendChild(zone.toXml(doc, zone_str));
-    }
+  QDomElement el(doc.createElement(name));
+  for (const Zone& zone : m_zones) {
+    el.appendChild(zone.toXml(doc, zone_str));
+  }
 
-    return el;
+  return el;
 }

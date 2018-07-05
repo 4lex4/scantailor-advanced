@@ -19,11 +19,11 @@
 #ifndef ZONE_H_
 #define ZONE_H_
 
-#include "SerializableSpline.h"
-#include "intrusive_ptr.h"
 #include "PropertySet.h"
+#include "SerializableSpline.h"
 #include "filters/output/PictureLayerProperty.h"
 #include "filters/output/ZoneCategoryProperty.h"
+#include "intrusive_ptr.h"
 
 class PropertyFactory;
 class QDomDocument;
@@ -31,33 +31,27 @@ class QDomElement;
 class QString;
 
 class Zone {
-    // Member-wise copying is OK, but that will produce a partly shallow copy.
-public:
-    explicit Zone(const SerializableSpline& spline, const PropertySet& props = PropertySet());
+  // Member-wise copying is OK, but that will produce a partly shallow copy.
+ public:
+  explicit Zone(const SerializableSpline& spline, const PropertySet& props = PropertySet());
 
-    Zone(const QDomElement& el, const PropertyFactory& prop_factory);
+  Zone(const QDomElement& el, const PropertyFactory& prop_factory);
 
-    explicit Zone(const QPolygonF& polygon);
+  explicit Zone(const QPolygonF& polygon);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    const SerializableSpline& spline() const {
-        return m_spline;
-    }
+  const SerializableSpline& spline() const { return m_spline; }
 
-    PropertySet& properties() {
-        return m_props;
-    }
+  PropertySet& properties() { return m_props; }
 
-    const PropertySet& properties() const {
-        return m_props;
-    }
+  const PropertySet& properties() const { return m_props; }
 
-    bool isValid() const;
+  bool isValid() const;
 
-private:
-    SerializableSpline m_spline;
-    PropertySet m_props;
+ private:
+  SerializableSpline m_spline;
+  PropertySet m_props;
 };
 
 

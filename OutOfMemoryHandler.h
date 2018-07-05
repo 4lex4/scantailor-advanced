@@ -19,40 +19,40 @@
 #ifndef OUT_OF_MEMORY_HANDLER_H_
 #define OUT_OF_MEMORY_HANDLER_H_
 
-#include "NonCopyable.h"
-#include <QObject>
 #include <QMutex>
+#include <QObject>
 #include <boost/scoped_array.hpp>
 #include <cstddef>
+#include "NonCopyable.h"
 
 class OutOfMemoryHandler : public QObject {
-    Q_OBJECT
-    DECLARE_NON_COPYABLE(OutOfMemoryHandler)
+  Q_OBJECT
+  DECLARE_NON_COPYABLE(OutOfMemoryHandler)
 
-public:
-    static OutOfMemoryHandler& instance();
+ public:
+  static OutOfMemoryHandler& instance();
 
-    /**
-     * To be called once, before any OOM situations can occur.
-     */
-    void allocateEmergencyMemory(size_t bytes);
+  /**
+   * To be called once, before any OOM situations can occur.
+   */
+  void allocateEmergencyMemory(size_t bytes);
 
-    /** May be called from any thread. */
-    void handleOutOfMemorySituation();
+  /** May be called from any thread. */
+  void handleOutOfMemorySituation();
 
-    bool hadOutOfMemorySituation() const;
+  bool hadOutOfMemorySituation() const;
 
-signals:
+ signals:
 
-    /** Will be dispatched from the main thread. */
-    void outOfMemory();
+  /** Will be dispatched from the main thread. */
+  void outOfMemory();
 
-private:
-    OutOfMemoryHandler();
+ private:
+  OutOfMemoryHandler();
 
-    mutable QMutex m_mutex;
-    boost::scoped_array<char> m_emergencyBuffer;
-    bool m_hadOOM;
+  mutable QMutex m_mutex;
+  boost::scoped_array<char> m_emergencyBuffer;
+  bool m_hadOOM;
 };
 
 

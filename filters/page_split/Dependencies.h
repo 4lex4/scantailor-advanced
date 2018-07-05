@@ -19,9 +19,9 @@
 #ifndef PAGE_SPLIT_DEPENDENCIES_H_
 #define PAGE_SPLIT_DEPENDENCIES_H_
 
-#include "OrthogonalRotation.h"
-#include "LayoutType.h"
 #include <QSize>
+#include "LayoutType.h"
+#include "OrthogonalRotation.h"
 
 class QString;
 class QDomDocument;
@@ -36,28 +36,28 @@ class Params;
  * Once dependencies change, the stored page parameters are no longer valid.
  */
 class Dependencies {
-    // Member-wise copying is OK.
-public:
-    Dependencies();
+  // Member-wise copying is OK.
+ public:
+  Dependencies();
 
-    explicit Dependencies(const QDomElement& el);
+  explicit Dependencies(const QDomElement& el);
 
-    Dependencies(const QSize& image_size, OrthogonalRotation rotation, LayoutType layout_type);
+  Dependencies(const QSize& image_size, OrthogonalRotation rotation, LayoutType layout_type);
 
-    void setLayoutType(LayoutType type);
+  void setLayoutType(LayoutType type);
 
-    const OrthogonalRotation& orientation() const;
+  const OrthogonalRotation& orientation() const;
 
-    bool compatibleWith(const Params& params) const;
+  bool compatibleWith(const Params& params) const;
 
-    bool isNull() const;
+  bool isNull() const;
 
-    QDomElement toXml(QDomDocument& doc, const QString& tag_name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& tag_name) const;
 
-private:
-    QSize m_imageSize;
-    OrthogonalRotation m_rotation;
-    LayoutType m_layoutType;
+ private:
+  QSize m_imageSize;
+  OrthogonalRotation m_rotation;
+  LayoutType m_layoutType;
 };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_DEPENDENCIES_H_

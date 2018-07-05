@@ -22,17 +22,16 @@
 #include "PageSequence.h"
 
 PageSelectionAccessor::PageSelectionAccessor(intrusive_ptr<const PageSelectionProvider> provider)
-        : m_ptrProvider(std::move(provider)) {
-}
+    : m_provider(std::move(provider)) {}
 
 PageSequence PageSelectionAccessor::allPages() const {
-    return m_ptrProvider->allPages();
+  return m_provider->allPages();
 }
 
 std::set<PageId> PageSelectionAccessor::selectedPages() const {
-    return m_ptrProvider->selectedPages();
+  return m_provider->selectedPages();
 }
 
 std::vector<PageRange> PageSelectionAccessor::selectedRanges() const {
-    return m_ptrProvider->selectedRanges();
+  return m_provider->selectedRanges();
 }

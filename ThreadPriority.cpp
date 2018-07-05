@@ -21,81 +21,81 @@
 #include <cassert>
 
 QThread::Priority ThreadPriority::toQThreadPriority() const {
-    switch (m_prio) {
-        case Normal:
-            return QThread::NormalPriority;
-        case Low:
-            return QThread::LowPriority;
-        case Lowest:
-            return QThread::LowestPriority;
-        case Idle:
-            return QThread::IdlePriority;
-    }
+  switch (m_prio) {
+    case Normal:
+      return QThread::NormalPriority;
+    case Low:
+      return QThread::LowPriority;
+    case Lowest:
+      return QThread::LowestPriority;
+    case Idle:
+      return QThread::IdlePriority;
+  }
 
-    assert(!"Unreachable");
+  assert(!"Unreachable");
 
-    return QThread::NormalPriority;
+  return QThread::NormalPriority;
 }
 
 int ThreadPriority::toPosixNiceLevel() const {
-    switch (m_prio) {
-        case Normal:
-            return 0;
-        case Low:
-            return 6;
-        case Lowest:
-            return 12;
-        case Idle:
-            return 19;
-    }
+  switch (m_prio) {
+    case Normal:
+      return 0;
+    case Low:
+      return 6;
+    case Lowest:
+      return 12;
+    case Idle:
+      return 19;
+  }
 
-    assert(!"Unreachable");
+  assert(!"Unreachable");
 
-    return 0;
+  return 0;
 }
 
 ThreadPriority ThreadPriority::load(const QSettings& settings, const QString& key, Priority dflt) {
-    const QString str(settings.value(key).toString());
-    if (str == "normal") {
-        return Normal;
-    } else if (str == "low") {
-        return Low;
-    } else if (str == "lowest") {
-        return Lowest;
-    } else if (str == "idle") {
-        return Idle;
-    } else {
-        return dflt;
-    }
+  const QString str(settings.value(key).toString());
+  if (str == "normal") {
+    return Normal;
+  } else if (str == "low") {
+    return Low;
+  } else if (str == "lowest") {
+    return Lowest;
+  } else if (str == "idle") {
+    return Idle;
+  } else {
+    return dflt;
+  }
 }
 
 ThreadPriority ThreadPriority::load(const QString& key, Priority dflt) {
-    QSettings settings;
+  QSettings settings;
 
-    return load(settings, key, dflt);
+  return load(settings, key, dflt);
 }
 
 void ThreadPriority::save(QSettings& settings, const QString& key) {
-    const char* str = "";
-    switch (m_prio) {
-        case Normal:
-            str = "normal";
-            break;
-        case Low:
-            str = "low";
-            break;
-        case Lowest:
-            str = "lowest";
-            break;
-        case Idle:
-            str = "idle";
-            break;
-    }
+  const char* str = "";
+  switch (m_prio) {
+    case Normal:
+      str = "normal";
+      break;
+    case Low:
+      str = "low";
+      break;
+    case Lowest:
+      str = "lowest";
+      break;
+    case Idle:
+      str = "idle";
+      break;
+  }
 
-    settings.setValue(key, QString::fromLatin1(str));
+  settings.setValue(key, QString::fromLatin1(str));
 }
 
 void ThreadPriority::save(const QString& key) {
-    QSettings settings;
-    save(settings, key);
+  QSettings settings;
+  save(settings, key);
 }

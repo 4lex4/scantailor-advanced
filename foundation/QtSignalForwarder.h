@@ -19,9 +19,9 @@
 #ifndef QT_SIGNAL_FORWARDER_H_
 #define QT_SIGNAL_FORWARDER_H_
 
-#include "NonCopyable.h"
 #include <QObject>
 #include <boost/function.hpp>
+#include "NonCopyable.h"
 
 /**
  * \brief Connects to a Qt signal and forwards it to a boost::function.
@@ -30,28 +30,28 @@
  * at connection time.
  */
 class QtSignalForwarder : public QObject {
-    Q_OBJECT
-    DECLARE_NON_COPYABLE(QtSignalForwarder)
+  Q_OBJECT
+  DECLARE_NON_COPYABLE(QtSignalForwarder)
 
-public:
-    /**
-     * \brief Constructor.
-     *
-     * \param emitter The object that will emit a signal.  The forwarder
-     *        will become its child.
-     * \param signal The signal specification in the form of SIGNAL(name()).
-     *        Signals with arguments may be specified, but the arguments
-     *        won't be forwarded.
-     * \param slot A boost::function to forward the signal to.
-     */
-    QtSignalForwarder(QObject* emitter, const char* signal, const boost::function<void()>& slot);
+ public:
+  /**
+   * \brief Constructor.
+   *
+   * \param emitter The object that will emit a signal.  The forwarder
+   *        will become its child.
+   * \param signal The signal specification in the form of SIGNAL(name()).
+   *        Signals with arguments may be specified, but the arguments
+   *        won't be forwarded.
+   * \param slot A boost::function to forward the signal to.
+   */
+  QtSignalForwarder(QObject* emitter, const char* signal, const boost::function<void()>& slot);
 
-private slots:
+ private slots:
 
-    void handleSignal();
+  void handleSignal();
 
-private:
-    boost::function<void()> m_slot;
+ private:
+  boost::function<void()> m_slot;
 };
 
 

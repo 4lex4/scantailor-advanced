@@ -8,38 +8,37 @@ namespace output {
 enum SplittingMode { BLACK_AND_WHITE_FOREGROUND, COLOR_FOREGROUND };
 
 class SplittingOptions {
-public:
-    SplittingOptions();
+ public:
+  SplittingOptions();
 
-    explicit SplittingOptions(const QDomElement& el);
+  explicit SplittingOptions(const QDomElement& el);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    bool isSplitOutput() const;
+  bool isSplitOutput() const;
 
-    void setSplitOutput(bool splitOutput);
+  void setSplitOutput(bool splitOutput);
 
-    SplittingMode getSplittingMode() const;
+  SplittingMode getSplittingMode() const;
 
-    void setSplittingMode(SplittingMode foregroundType);
+  void setSplittingMode(SplittingMode foregroundType);
 
-    bool operator==(const SplittingOptions& other) const;
+  bool operator==(const SplittingOptions& other) const;
 
-    bool operator!=(const SplittingOptions& other) const;
+  bool operator!=(const SplittingOptions& other) const;
 
-    bool isOriginalBackground() const;
+  bool isOriginalBackgroundEnabled() const;
 
-    void setOriginalBackground(bool originalBackground);
+  void setOriginalBackgroundEnabled(bool enable);
 
-private:
-    static SplittingMode parseSplittingMode(const QString& str);
+ private:
+  static SplittingMode parseSplittingMode(const QString& str);
 
-    static QString formatSplittingMode(SplittingMode type);
+  static QString formatSplittingMode(SplittingMode type);
 
-
-    bool splitOutput;
-    SplittingMode splittingMode;
-    bool originalBackground;
+  bool m_isSplitOutput;
+  SplittingMode m_splittingMode;
+  bool m_isOriginalBackgroundEnabled;
 };
 }  // namespace output
 

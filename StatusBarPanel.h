@@ -2,52 +2,51 @@
 #ifndef SCANTAILOR_STATUSBARPANEL_H
 #define SCANTAILOR_STATUSBARPANEL_H
 
-#include <QtWidgets/QWidget>
 #include <QtCore/QMutex>
-#include "ui_StatusBarPanel.h"
-#include "UnitsObserver.h"
-#include "ImageViewInfoObserver.h"
+#include <QtWidgets/QWidget>
 #include "Dpi.h"
+#include "ImageViewInfoObserver.h"
 #include "ImageViewInfoProvider.h"
+#include "UnitsObserver.h"
+#include "ui_StatusBarPanel.h"
 
 class PageId;
 
 class StatusBarPanel : public QWidget, public UnitsObserver, public ImageViewInfoObserver {
-    Q_OBJECT
-private:
-    mutable QMutex mutex;
-    Ui::StatusBarPanel ui;
-    QPointF mousePos;
-    QSizeF physSize;
-    Dpi dpi;
-    ImageViewInfoProvider* infoProvider;
+  Q_OBJECT
+ public:
+  StatusBarPanel();
 
-public:
-    StatusBarPanel();
+  ~StatusBarPanel() override = default;
 
-    ~StatusBarPanel() override = default;
+ public:
+  void updateMousePos(const QPointF& mousePos) override;
 
-public:
-    void updateMousePos(const QPointF& mousePos) override;
+  void updatePhysSize(const QSizeF& physSize) override;
 
-    void updatePhysSize(const QSizeF& physSize) override;
+  void updateDpi(const Dpi& dpi) override;
 
-    void updateDpi(const Dpi& dpi) override;
+  void clearImageViewInfo() override;
 
-    void clearImageViewInfo() override;
+  void updatePage(int pageNumber, size_t pageCount, const PageId& pageId);
 
-    void updatePage(int pageNumber, size_t pageCount, const PageId& pageId);
+  void clear();
 
-    void clear();
+  void updateUnits(Units) override;
 
-    void updateUnits(Units) override;
+  void setInfoProvider(ImageViewInfoProvider* infoProvider) override;
 
-    void setInfoProvider(ImageViewInfoProvider* infoProvider) override;
+ private:
+  void mousePosChanged();
 
-private:
-    void mousePosChanged();
+  void physSizeChanged();
 
-    void physSizeChanged();
+  Ui::StatusBarPanel ui;
+  mutable QMutex m_mutex;
+  QPointF m_mousePos;
+  QSizeF m_physSize;
+  Dpi m_dpi;
+  ImageViewInfoProvider* m_infoProvider;
 };
 
 

@@ -17,25 +17,24 @@
  */
 
 #include "DraggableLineSegment.h"
-#include "ImageViewBase.h"
 #include <QPainter>
+#include "ImageViewBase.h"
 
-DraggableLineSegment::DraggableLineSegment() : m_proximityPriority(0) {
-}
+DraggableLineSegment::DraggableLineSegment() : m_proximityPriority(0) {}
 
 int DraggableLineSegment::proximityPriority() const {
-    return m_proximityPriority;
+  return m_proximityPriority;
 }
 
 Proximity DraggableLineSegment::proximity(const QPointF& mouse_pos) {
-    return Proximity::pointAndLineSegment(mouse_pos, lineSegmentPosition());
+  return Proximity::pointAndLineSegment(mouse_pos, lineSegmentPosition());
 }
 
 void DraggableLineSegment::dragInitiated(const QPointF& mouse_pos) {
-    m_initialMousePos = mouse_pos;
-    m_initialLinePos = lineSegmentPosition();
+  m_initialMousePos = mouse_pos;
+  m_initialLinePos = lineSegmentPosition();
 }
 
 void DraggableLineSegment::dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
-    lineSegmentMoveRequest(m_initialLinePos.translated(mouse_pos - m_initialMousePos), mask);
+  lineSegmentMoveRequest(m_initialLinePos.translated(mouse_pos - m_initialMousePos), mask);
 }

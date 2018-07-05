@@ -21,6 +21,6 @@
 
 namespace output {
 FillZonePropFactory::FillZonePropFactory() {
-    FillColorProperty::registerIn(*this);
+  FillColorProperty::registerIn(*this);
 }
 }  // namespace output

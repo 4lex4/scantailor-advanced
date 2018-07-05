@@ -202,6 +202,9 @@
              <property name="title">
               <string>Rotate</string>
              </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
              <layout class="QVBoxLayout" name="_2">
               <item>
                <layout class="QHBoxLayout" name="_3">
@@ -441,6 +444,9 @@
              <property name="title">
               <string>Page Layout</string>
              </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -678,6 +684,9 @@
              <property name="title">
               <string>Deskew</string>
              </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
                <layout class="QHBoxLayout" name="_6">
@@ -833,6 +842,9 @@
             <widget class="QGroupBox" name="groupBox_5">
              <property name="title">
               <string>Page Box</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
               <item row="0" column="0" colspan="2">
@@ -1010,6 +1022,9 @@
              <property name="title">
               <string>Content Box</string>
              </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
              <layout class="QGridLayout" name="gridLayout_4">
               <item row="0" column="1" colspan="2">
                <widget class="QPushButton" name="contentDetectDisableBtn">
@@ -1099,8 +1114,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>410</width>
+            <height>319</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_10">
@@ -1123,6 +1138,9 @@
               <widget class="QGroupBox" name="marginsGroup">
                <property name="title">
                 <string>Margins</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_14">
                 <item>
@@ -1387,6 +1405,9 @@
             <widget class="QGroupBox" name="alignmentGroup">
              <property name="title">
               <string>Alignment</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_12">
               <item>
@@ -1868,8 +1889,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>646</width>
-            <height>477</height>
+            <width>620</width>
+            <height>496</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_14">
@@ -1899,6 +1920,9 @@
                     </property>
                     <property name="title">
                      <string>Options</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_14">
                      <property name="leftMargin">
@@ -1944,9 +1968,16 @@
                         <number>5</number>
                        </property>
                        <item>
-                        <widget class="QCheckBox" name="cutMarginsCB">
+                        <widget class="QCheckBox" name="fillOffcutCB">
                          <property name="text">
-                          <string>Cut margins</string>
+                          <string>Fill offcut</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QCheckBox" name="fillMarginsCB">
+                         <property name="text">
+                          <string>Fill margins</string>
                          </property>
                         </widget>
                        </item>
@@ -2008,7 +2039,7 @@
                      <string>Filling</string>
                     </property>
                     <property name="alignment">
-                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                     <set>Qt::AlignCenter</set>
                     </property>
                     <property name="flat">
                      <bool>false</bool>
@@ -2064,6 +2095,9 @@
                     </property>
                     <property name="title">
                      <string>Color operations</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
                     </property>
                     <layout class="QHBoxLayout" name="horizontalLayout_28">
                      <property name="leftMargin">
@@ -2577,7 +2611,7 @@
                      <string>Threshold</string>
                     </property>
                     <property name="alignment">
-                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                     <set>Qt::AlignCenter</set>
                     </property>
                     <property name="flat">
                      <bool>false</bool>
@@ -2667,11 +2701,6 @@
                              </item>
                              <item>
                               <widget class="QLabel" name="thresholLabel">
-                               <property name="font">
-                                <font>
-                                 <pointsize>8</pointsize>
-                                </font>
-                               </property>
                                <property name="frameShape">
                                 <enum>QFrame::NoFrame</enum>
                                </property>
@@ -3044,6 +3073,9 @@
                    <widget class="QGroupBox" name="pictureShapeOptions">
                     <property name="title">
                      <string>Picture Shape</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
                     </property>
                     <layout class="QVBoxLayout" name="verticalLayout_20">
                      <item>
@@ -3420,139 +3452,94 @@
                 <bool>false</bool>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_23">
+                <property name="spacing">
+                 <number>6</number>
+                </property>
+                <property name="leftMargin">
+                 <number>15</number>
+                </property>
+                <property name="topMargin">
+                 <number>9</number>
+                </property>
+                <property name="rightMargin">
+                 <number>15</number>
+                </property>
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_20">
+                 <layout class="QVBoxLayout" name="verticalLayout_35">
                   <property name="spacing">
-                   <number>6</number>
+                   <number>4</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
                   </property>
                   <item>
-                   <spacer name="horizontalSpacer_51">
+                   <layout class="QHBoxLayout" name="horizontalLayout_37">
+                    <item>
+                     <spacer name="horizontalSpacer_51">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_36">
+                      <item>
+                       <widget class="QCheckBox" name="despeckleCB">
+                        <property name="text">
+                         <string>Despeckle</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_52">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="QSlider" name="despeckleSlider">
+                    <property name="minimum">
+                     <number>10</number>
+                    </property>
+                    <property name="maximum">
+                     <number>30</number>
+                    </property>
+                    <property name="singleStep">
+                     <number>2</number>
+                    </property>
+                    <property name="pageStep">
+                     <number>5</number>
+                    </property>
+                    <property name="value">
+                     <number>10</number>
+                    </property>
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
                     </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>1</width>
-                      <height>1</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QToolButton" name="despeckleOffBtn">
-                    <property name="statusTip">
-                     <string>No despeckling</string>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>32</width>
-                      <height>32</height>
-                     </size>
-                    </property>
-                    <property name="checkable">
-                     <bool>true</bool>
-                    </property>
-                    <property name="checked">
-                     <bool>true</bool>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>true</bool>
-                    </property>
                    </widget>
-                  </item>
-                  <item>
-                   <widget class="QToolButton" name="despeckleCautiousBtn">
-                    <property name="statusTip">
-                     <string>Cautious despeckling</string>
-                    </property>
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
-                      <normaloff>:/icons/despeckle-cautious.png.png</normaloff>:/icons/despeckle-cautious.png.png</iconset>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>32</width>
-                      <height>32</height>
-                     </size>
-                    </property>
-                    <property name="checkable">
-                     <bool>true</bool>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QToolButton" name="despeckleNormalBtn">
-                    <property name="statusTip">
-                     <string>Normal despeckling</string>
-                    </property>
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
-                      <normaloff>:/icons/despeckle-normal.png.png</normaloff>:/icons/despeckle-normal.png.png</iconset>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>32</width>
-                      <height>32</height>
-                     </size>
-                    </property>
-                    <property name="checkable">
-                     <bool>true</bool>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QToolButton" name="despeckleAggressiveBtn">
-                    <property name="statusTip">
-                     <string>Aggressive despeckling</string>
-                    </property>
-                    <property name="text">
-                     <string>...</string>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
-                      <normaloff>:/icons/despeckle-aggressive.png.png</normaloff>:/icons/despeckle-aggressive.png.png</iconset>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>32</width>
-                      <height>32</height>
-                     </size>
-                    </property>
-                    <property name="checkable">
-                     <bool>true</bool>
-                    </property>
-                    <property name="autoExclusive">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_52">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>1</width>
-                      <height>1</height>
-                     </size>
-                    </property>
-                   </spacer>
                   </item>
                  </layout>
                 </item>
@@ -3656,6 +3643,12 @@
                 <bool>false</bool>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_29">
+                <property name="leftMargin">
+                 <number>15</number>
+                </property>
+                <property name="rightMargin">
+                 <number>15</number>
+                </property>
                 <item>
                  <widget class="QSlider" name="depthPerceptionSlider">
                   <property name="minimum">
@@ -3677,6 +3670,19 @@
                 </item>
                </layout>
               </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_22">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>1</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>

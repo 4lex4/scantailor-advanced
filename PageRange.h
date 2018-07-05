@@ -19,18 +19,18 @@
 #ifndef PAGE_RANGE_H_
 #define PAGE_RANGE_H_
 
-#include "PageId.h"
-#include <vector>
 #include <set>
+#include <vector>
+#include "PageId.h"
 
 class PageRange {
-public:
-    /**
-     * \brief Ordered list of consecutive pages.
-     */
-    std::vector<PageId> pages;
+ public:
+  /**
+   * \brief Ordered list of consecutive pages.
+   */
+  std::vector<PageId> pages;
 
-    std::set<PageId> selectEveryOther(const PageId& base) const;
+  std::set<PageId> selectEveryOther(const PageId& base) const;
 };
 
 

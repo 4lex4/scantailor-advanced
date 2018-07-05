@@ -19,44 +19,43 @@
 #ifndef VALUE_CONV_H_
 #define VALUE_CONV_H_
 
-#include "NumericTraits.h"
 #include <cmath>
+#include "NumericTraits.h"
 
-template<typename ToType>
+template <typename ToType>
 class StaticCastValueConv {
-public:
-    template<typename FromType>
-    ToType operator()(FromType val) const {
-        return static_cast<ToType>(val);
-    }
+ public:
+  template <typename FromType>
+  ToType operator()(FromType val) const {
+    return static_cast<ToType>(val);
+  }
 };
 
 
-template<typename ToType>
+template <typename ToType>
 class RoundAndClipValueConv {
-public:
-    explicit RoundAndClipValueConv(ToType min = NumericTraits<ToType>::min(), ToType max = NumericTraits<ToType>::max())
-            : m_min(min), m_max(max) {
-    }
+ public:
+  explicit RoundAndClipValueConv(ToType min = NumericTraits<ToType>::min(), ToType max = NumericTraits<ToType>::max())
+      : m_min(min), m_max(max) {}
 
-    template<typename FromType>
-    ToType operator()(FromType val) const {
-        // To avoid possible "comparing signed to unsigned" warnings,
-        // we do the comparison with FromType.  It should be fine, as
-        // "Round" in the name of the class assumes it's a floating point type,
-        // and therefore should be "wider" than ToType.
-        if (val < FromType(m_min)) {
-            return m_min;
-        } else if (val > FromType(m_max)) {
-            return m_max;
-        } else {
-            return static_cast<ToType>(std::floor(val + 0.5));
-        }
+  template <typename FromType>
+  ToType operator()(FromType val) const {
+    // To avoid possible "comparing signed to unsigned" warnings,
+    // we do the comparison with FromType.  It should be fine, as
+    // "Round" in the name of the class assumes it's a floating point type,
+    // and therefore should be "wider" than ToType.
+    if (val < FromType(m_min)) {
+      return m_min;
+    } else if (val > FromType(m_max)) {
+      return m_max;
+    } else {
+      return static_cast<ToType>(std::floor(val + 0.5));
     }
+  }
 
-private:
-    ToType m_min;
-    ToType m_max;
+ private:
+  ToType m_min;
+  ToType m_max;
 };
 
 

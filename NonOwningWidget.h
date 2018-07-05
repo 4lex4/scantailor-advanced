@@ -26,10 +26,10 @@
  *        rather it calls setParent(0) on them.
  */
 class NonOwningWidget : public QWidget {
-public:
-    explicit NonOwningWidget(QWidget* parent = nullptr);
+ public:
+  explicit NonOwningWidget(QWidget* parent = nullptr);
 
-    ~NonOwningWidget() override;
+  ~NonOwningWidget() override;
 };
 
 

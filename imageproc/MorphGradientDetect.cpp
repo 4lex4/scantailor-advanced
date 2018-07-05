@@ -17,22 +17,22 @@
  */
 
 #include "MorphGradientDetect.h"
-#include "Morphology.h"
-#include "Grayscale.h"
 #include "GrayRasterOp.h"
+#include "Grayscale.h"
+#include "Morphology.h"
 
 namespace imageproc {
 GrayImage morphGradientDetectDarkSide(const GrayImage& image, const QSize& area) {
-    GrayImage lighter(erodeGray(image, area, 0x00));
-    grayRasterOp<GRopUnclippedSubtract<GRopDst, GRopSrc>>(lighter, image);
+  GrayImage lighter(erodeGray(image, area, 0x00));
+  grayRasterOp<GRopUnclippedSubtract<GRopDst, GRopSrc>>(lighter, image);
 
-    return lighter;
+  return lighter;
 }
 
 GrayImage morphGradientDetectLightSide(const GrayImage& image, const QSize& area) {
-    GrayImage darker(dilateGray(image, area, 0xff));
-    grayRasterOp<GRopUnclippedSubtract<GRopSrc, GRopDst>>(darker, image);
+  GrayImage darker(dilateGray(image, area, 0xff));
+  grayRasterOp<GRopUnclippedSubtract<GRopSrc, GRopDst>>(darker, image);
 
-    return darker;
+  return darker;
 }
 }  // namespace imageproc

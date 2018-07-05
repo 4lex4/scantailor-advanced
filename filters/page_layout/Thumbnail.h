@@ -19,37 +19,37 @@
 #ifndef PAGE_LAYOUT_THUMBNAIL_H_
 #define PAGE_LAYOUT_THUMBNAIL_H_
 
-#include "ThumbnailBase.h"
-#include "Params.h"
-#include "ImageTransformation.h"
-#include "intrusive_ptr.h"
-#include <QTransform>
 #include <QRectF>
+#include <QTransform>
+#include "ImageTransformation.h"
+#include "Params.h"
+#include "ThumbnailBase.h"
+#include "intrusive_ptr.h"
 
 class ThumbnailPixmapCache;
 class ImageId;
 
 namespace page_layout {
 class Thumbnail : public ThumbnailBase {
-public:
-    Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-              const QSizeF& max_size,
-              const ImageId& image_id,
-              const Params& params,
-              const ImageTransformation& xform,
-              const QPolygonF& phys_content_rect,
-              const QRectF& displayArea,
-              bool deviant);
+ public:
+  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+            const QSizeF& max_size,
+            const ImageId& image_id,
+            const Params& params,
+            const ImageTransformation& xform,
+            const QPolygonF& phys_content_rect,
+            const QRectF& displayArea,
+            bool deviant);
 
-    void paintOverImage(QPainter& painter,
-                        const QTransform& image_to_display,
-                        const QTransform& thumb_to_display) override;
+  void paintOverImage(QPainter& painter,
+                      const QTransform& image_to_display,
+                      const QTransform& thumb_to_display) override;
 
-private:
-    Params m_params;
-    QRectF m_virtContentRect;
-    QRectF m_virtOuterRect;
-    bool m_deviant;
+ private:
+  Params m_params;
+  QRectF m_virtContentRect;
+  QRectF m_virtOuterRect;
+  bool m_deviant;
 };
 }  // namespace page_layout
 #endif

@@ -18,13 +18,12 @@
 
 #include "NonOwningWidget.h"
 
-NonOwningWidget::NonOwningWidget(QWidget* parent) : QWidget(parent) {
-}
+NonOwningWidget::NonOwningWidget(QWidget* parent) : QWidget(parent) {}
 
 NonOwningWidget::~NonOwningWidget() {
-    for (QObject* child : children()) {
-        if (auto* widget = dynamic_cast<QWidget*>(child)) {
-            widget->setParent(nullptr);
-        }
+  for (QObject* child : children()) {
+    if (auto* widget = dynamic_cast<QWidget*>(child)) {
+      widget->setParent(nullptr);
     }
+  }
 }

@@ -2,152 +2,159 @@
 #ifndef SCANTAILOR_DEFAULTPARAMSDIALOG_H
 #define SCANTAILOR_DEFAULTPARAMSDIALOG_H
 
-#include <QtWidgets/QWidget>
-#include <unordered_map>
+#include <QButtonGroup>
+#include <QWidget>
+#include <list>
 #include <set>
-#include "ui_DefaultParamsDialog.h"
-#include "OrthogonalRotation.h"
-#include "DefaultParamsProfileManager.h"
+#include <unordered_map>
 #include "DefaultParams.h"
+#include "DefaultParamsProfileManager.h"
+#include "OrthogonalRotation.h"
+#include "ui_DefaultParamsDialog.h"
 
 class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
-    Q_OBJECT
-private:
-    QIcon chainIcon;
-    QIcon brokenChainIcon;
-    bool leftRightLinkEnabled;
-    bool topBottomLinkEnabled;
-    int ignoreMarginChanges;
-    OrthogonalRotation orthogonalRotation;
-    std::unordered_map<QToolButton*, page_layout::Alignment> alignmentByButton;
-    std::unique_ptr<QButtonGroup> alignmentButtonGroup;
-    DefaultParamsProfileManager profileManager;
-    int customDpiItemIdx;
-    QString customDpiValue;
-    int customProfileItemIdx;
-    Units currentUnits;
-    std::set<QString> reservedProfileNames;
-    int ignoreProfileChanges;
+  Q_OBJECT
+ public:
+  explicit DefaultParamsDialog(QWidget* parent = nullptr);
 
-public:
-    explicit DefaultParamsDialog(QWidget* parent = nullptr);
+  ~DefaultParamsDialog() override = default;
 
-    ~DefaultParamsDialog() override = default;
+ private slots:
 
-private slots:
+  void rotateLeft();
 
-    void rotateLeft();
+  void rotateRight();
 
-    void rotateRight();
+  void resetRotation();
 
-    void resetRotation();
+  void layoutModeChanged(int idx);
 
-    void layoutModeChanged(int idx);
+  void deskewModeChanged(bool auto_mode);
 
-    void deskewModeChanged(bool auto_mode);
+  void pageDetectAutoToggled();
 
-    void pageDetectAutoToggled();
+  void pageDetectManualToggled();
 
-    void pageDetectManualToggled();
+  void pageDetectDisableToggled();
 
-    void pageDetectDisableToggled();
+  void autoMarginsToggled(bool checked);
 
-    void autoMarginsToggled(bool checked);
+  void alignmentModeChanged(int idx);
 
-    void alignmentModeChanged(int idx);
+  void alignWithOthersToggled(bool);
 
-    void alignWithOthersToggled(bool);
+  void autoHorizontalAligningToggled(bool);
 
-    void autoHorizontalAligningToggled(bool);
+  void autoVerticalAligningToggled(bool);
 
-    void autoVerticalAligningToggled(bool);
+  void topBottomLinkClicked();
 
-    void topBottomLinkClicked();
+  void leftRightLinkClicked();
 
-    void leftRightLinkClicked();
+  void horMarginsChanged(double val);
 
-    void horMarginsChanged(double val);
+  void vertMarginsChanged(double val);
 
-    void vertMarginsChanged(double val);
+  void colorModeChanged(int idx);
 
-    void colorModeChanged(int idx);
+  void thresholdMethodChanged(int idx);
 
-    void thresholdMethodChanged(int idx);
+  void pictureShapeChanged(int idx);
 
-    void pictureShapeChanged(int idx);
+  void equalizeIlluminationToggled(bool checked);
 
-    void equalizeIlluminationToggled(bool checked);
+  void splittingToggled(bool checked);
 
-    void splittingToggled(bool checked);
+  void bwForegroundToggled(bool checked);
 
-    void bwForegroundToggled(bool checked);
+  void colorForegroundToggled(bool checked);
 
-    void colorForegroundToggled(bool checked);
+  void thresholdSliderValueChanged(int value);
 
-    void thresholdSliderValueChanged(int value);
+  void colorSegmentationToggled(bool checked);
 
-    void colorSegmentationToggled(bool checked);
+  void posterizeToggled(bool checked);
 
-    void posterizeToggled(bool checked);
+  void setLighterThreshold();
 
-    void setLighterThreshold();
+  void setDarkerThreshold();
 
-    void setDarkerThreshold();
+  void setNeutralThreshold();
 
-    void setNeutralThreshold();
+  void dpiSelectionChanged(int index);
 
-    void dpiSelectionChanged(int index);
+  void dpiEditTextChanged(const QString& text);
 
-    void dpiEditTextChanged(const QString& text);
+  void depthPerceptionChangedSlot(int val);
 
-    void depthPerceptionChangedSlot(int val);
+  void despeckleToggled(bool checked);
 
-    void profileChanged(int index);
+  void despeckleSliderValueChanged(int value);
 
-    void profileSavePressed();
+  void profileChanged(int index);
 
-    void profileDeletePressed();
+  void profileSavePressed();
 
-    void commitChanges();
+  void profileDeletePressed();
 
-private:
-    void updateFixOrientationDisplay(const DefaultParams::FixOrientationParams& params);
+  void commitChanges();
 
-    void updatePageSplitDisplay(const DefaultParams::PageSplitParams& params);
+ private:
+  void updateFixOrientationDisplay(const DefaultParams::FixOrientationParams& params);
 
-    void updateDeskewDisplay(const DefaultParams::DeskewParams& params);
+  void updatePageSplitDisplay(const DefaultParams::PageSplitParams& params);
 
-    void updateSelectContentDisplay(const DefaultParams::SelectContentParams& params);
+  void updateDeskewDisplay(const DefaultParams::DeskewParams& params);
 
-    void updatePageLayoutDisplay(const DefaultParams::PageLayoutParams& params);
+  void updateSelectContentDisplay(const DefaultParams::SelectContentParams& params);
 
-    void updateOutputDisplay(const DefaultParams::OutputParams& params);
+  void updatePageLayoutDisplay(const DefaultParams::PageLayoutParams& params);
 
-    void updateUnits(Units units);
+  void updateOutputDisplay(const DefaultParams::OutputParams& params);
 
-    void setupUiConnections();
+  void updateUnits(Units units);
 
-    void removeUiConnections();
+  void setupUiConnections();
 
-    void setRotation(const OrthogonalRotation& rotation);
+  void removeUiConnections();
 
-    void setRotationPixmap();
+  void setRotation(const OrthogonalRotation& rotation);
 
-    void updateAlignmentButtonsEnabled();
+  void setRotationPixmap();
 
-    void updateAutoModeButtons();
+  void updateAlignmentButtonsEnabled();
 
-    QToolButton* getCheckedAlignmentButton() const;
+  void updateAutoModeButtons();
 
-    void setLinkButtonLinked(QToolButton* button, bool linked);
+  QToolButton* getCheckedAlignmentButton() const;
 
-    void loadParams(const DefaultParams& params);
+  void setLinkButtonLinked(QToolButton* button, bool linked);
 
-    std::unique_ptr<DefaultParams> buildParams() const;
+  void loadParams(const DefaultParams& params);
 
-    bool isProfileNameReserved(const QString& name);
+  std::unique_ptr<DefaultParams> buildParams() const;
 
-    void setTabWidgetsEnabled(bool enabled);
+  bool isProfileNameReserved(const QString& name);
+
+  void setTabWidgetsEnabled(bool enabled);
+
+  QIcon m_chainIcon;
+  QIcon m_brokenChainIcon;
+  bool m_leftRightLinkEnabled;
+  bool m_topBottomLinkEnabled;
+  int m_ignoreMarginChanges;
+  OrthogonalRotation m_orthogonalRotation;
+  std::unordered_map<QToolButton*, page_layout::Alignment> m_alignmentByButton;
+  std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
+  DefaultParamsProfileManager m_profileManager;
+  int m_customDpiItemIdx;
+  QString m_customDpiValue;
+  int m_customProfileItemIdx;
+  Units m_currentUnits;
+  std::set<QString> m_reservedProfileNames;
+  int m_ignoreProfileChanges;
+
+  std::list<QMetaObject::Connection> m_connectionList;
 };
 
 

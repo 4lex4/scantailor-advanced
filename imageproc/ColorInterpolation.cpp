@@ -20,17 +20,17 @@
 
 namespace imageproc {
 QColor colorInterpolation(const QColor& from, const QColor& to, double dist) {
-    dist = qBound(0.0, dist, 1.0);
+  dist = qBound(0.0, dist, 1.0);
 
-    qreal r1, g1, b1, a1, r2, g2, b2, a2;
-    from.getRgbF(&r1, &g1, &b1, &a1);
-    to.getRgbF(&r2, &g2, &b2, &a2);
+  qreal r1, g1, b1, a1, r2, g2, b2, a2;
+  from.getRgbF(&r1, &g1, &b1, &a1);
+  to.getRgbF(&r2, &g2, &b2, &a2);
 
-    const qreal r = r1 + (r2 - r1) * dist;
-    const qreal g = g1 + (g2 - g1) * dist;
-    const qreal b = b1 + (b2 - b1) * dist;
-    const qreal a = a1 + (a2 - a1) * dist;
+  const qreal r = r1 + (r2 - r1) * dist;
+  const qreal g = g1 + (g2 - g1) * dist;
+  const qreal b = b1 + (b2 - b1) * dist;
+  const qreal a = a1 + (a2 - a1) * dist;
 
-    return QColor::fromRgbF(r, g, b, a);
+  return QColor::fromRgbF(r, g, b, a);
 }
 }  // namespace imageproc

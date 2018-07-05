@@ -2,54 +2,60 @@
 #ifndef SCANTAILOR_IMAGESETTINGS_H
 #define SCANTAILOR_IMAGESETTINGS_H
 
-
-#include <imageproc/BinaryThreshold.h>
-#include <unordered_map>
+#include <foundation/NonCopyable.h>
 #include <foundation/ref_countable.h>
-#include <QtXml/QDomDocument>
+#include <imageproc/BinaryThreshold.h>
 #include <QtCore/QMutex>
+#include <QtXml/QDomDocument>
 #include <memory>
+#include <unordered_map>
 #include "PageId.h"
 
 class AbstractRelinker;
 
 class ImageSettings : public ref_countable {
-public:
-    class PageParams {
-    public:
-        PageParams();
+  DECLARE_NON_COPYABLE(ImageSettings)
+ public:
+  class PageParams {
+   public:
+    PageParams();
 
-        explicit PageParams(const imageproc::BinaryThreshold& bwThreshold);
+    PageParams(const imageproc::BinaryThreshold& bwThreshold, bool blackOnWhite);
 
-        explicit PageParams(const QDomElement& el);
+    explicit PageParams(const QDomElement& el);
 
-        QDomElement toXml(QDomDocument& doc, const QString& name) const;
+    QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-        const imageproc::BinaryThreshold& getBwThreshold() const;
+    const imageproc::BinaryThreshold& getBwThreshold() const;
 
-        void setBwThreshold(const imageproc::BinaryThreshold& bwThreshold);
+    void setBwThreshold(const imageproc::BinaryThreshold& bwThreshold);
 
-    private:
-        imageproc::BinaryThreshold bwThreshold;
-    };
+    bool isBlackOnWhite() const;
 
-    ImageSettings() = default;
+    void setBlackOnWhite(bool blackOnWhite);
 
-    ~ImageSettings() override = default;
+   private:
+    imageproc::BinaryThreshold m_bwThreshold;
+    bool m_blackOnWhite;
+  };
 
-    void clear();
+  ImageSettings() = default;
 
-    void performRelinking(const AbstractRelinker& relinker);
+  ~ImageSettings() override = default;
 
-    void setPageParams(const PageId& page_id, const PageParams& params);
+  void clear();
 
-    std::unique_ptr<PageParams> getPageParams(const PageId& page_id) const;
+  void performRelinking(const AbstractRelinker& relinker);
 
-private:
-    typedef std::unordered_map<PageId, PageParams> PerPageParams;
+  void setPageParams(const PageId& page_id, const PageParams& params);
 
-    mutable QMutex mutex;
-    PerPageParams perPageParams;
+  std::unique_ptr<PageParams> getPageParams(const PageId& page_id) const;
+
+ private:
+  typedef std::unordered_map<PageId, PageParams> PerPageParams;
+
+  mutable QMutex m_mutex;
+  PerPageParams m_perPageParams;
 };
 
 

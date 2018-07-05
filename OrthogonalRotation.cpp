@@ -17,121 +17,121 @@
  */
 
 #include "OrthogonalRotation.h"
-#include <QSize>
 #include <QPointF>
+#include <QSize>
 #include <QTransform>
 #include <cassert>
 
 void OrthogonalRotation::nextClockwiseDirection() {
-    m_degrees += 90;
-    if (m_degrees == 360) {
-        m_degrees = 0;
-    }
+  m_degrees += 90;
+  if (m_degrees == 360) {
+    m_degrees = 0;
+  }
 }
 
 void OrthogonalRotation::prevClockwiseDirection() {
-    m_degrees -= 90;
-    if (m_degrees == -90) {
-        m_degrees = 270;
-    }
+  m_degrees -= 90;
+  if (m_degrees == -90) {
+    m_degrees = 270;
+  }
 }
 
 QSize OrthogonalRotation::rotate(const QSize& dimensions) const {
-    if ((m_degrees == 90) || (m_degrees == 270)) {
-        return QSize(dimensions.height(), dimensions.width());
-    } else {
-        return dimensions;
-    }
+  if ((m_degrees == 90) || (m_degrees == 270)) {
+    return QSize(dimensions.height(), dimensions.width());
+  } else {
+    return dimensions;
+  }
 }
 
 QSize OrthogonalRotation::unrotate(const QSize& dimensions) const {
-    return rotate(dimensions);
+  return rotate(dimensions);
 }
 
 QSizeF OrthogonalRotation::rotate(const QSizeF& dimensions) const {
-    if ((m_degrees == 90) || (m_degrees == 270)) {
-        return QSizeF(dimensions.height(), dimensions.width());
-    } else {
-        return dimensions;
-    }
+  if ((m_degrees == 90) || (m_degrees == 270)) {
+    return QSizeF(dimensions.height(), dimensions.width());
+  } else {
+    return dimensions;
+  }
 }
 
 QSizeF OrthogonalRotation::unrotate(const QSizeF& dimensions) const {
-    return rotate(dimensions);
+  return rotate(dimensions);
 }
 
 QPointF OrthogonalRotation::rotate(const QPointF& point, const double xmax, const double ymax) const {
-    QPointF rotated;
+  QPointF rotated;
 
-    switch (m_degrees) {
-        case 0:
-            rotated = point;
-            break;
-        case 90:
-            rotated.setX(ymax - point.y());
-            rotated.setY(point.x());
-            break;
-        case 180:
-            rotated.setX(xmax - point.x());
-            rotated.setY(ymax - point.y());
-            break;
-        case 270:
-            rotated.setX(point.y());
-            rotated.setY(xmax - point.x());
-            break;
-        default:
-            assert(!"Unreachable");
-    }
+  switch (m_degrees) {
+    case 0:
+      rotated = point;
+      break;
+    case 90:
+      rotated.setX(ymax - point.y());
+      rotated.setY(point.x());
+      break;
+    case 180:
+      rotated.setX(xmax - point.x());
+      rotated.setY(ymax - point.y());
+      break;
+    case 270:
+      rotated.setX(point.y());
+      rotated.setY(xmax - point.x());
+      break;
+    default:
+      assert(!"Unreachable");
+  }
 
-    return rotated;
+  return rotated;
 }
 
 QPointF OrthogonalRotation::unrotate(const QPointF& point, const double xmax, const double ymax) const {
-    QPointF unrotated;
+  QPointF unrotated;
 
-    switch (m_degrees) {
-        case 0:
-            unrotated = point;
-            break;
-        case 90:
-            unrotated.setX(point.y());
-            unrotated.setY(xmax - point.x());
-            break;
-        case 180:
-            unrotated.setX(xmax - point.x());
-            unrotated.setY(ymax - point.y());
-            break;
-        case 270:
-            unrotated.setX(ymax - point.y());
-            unrotated.setY(point.x());
-            break;
-        default:
-            assert(!"Unreachable");
-    }
+  switch (m_degrees) {
+    case 0:
+      unrotated = point;
+      break;
+    case 90:
+      unrotated.setX(point.y());
+      unrotated.setY(xmax - point.x());
+      break;
+    case 180:
+      unrotated.setX(xmax - point.x());
+      unrotated.setY(ymax - point.y());
+      break;
+    case 270:
+      unrotated.setX(ymax - point.y());
+      unrotated.setY(point.x());
+      break;
+    default:
+      assert(!"Unreachable");
+  }
 
-    return unrotated;
+  return unrotated;
 }
 
 QTransform OrthogonalRotation::transform(const QSizeF& dimensions) const {
-    QTransform t;
+  QTransform t;
 
-    switch (m_degrees) {
-        case 0:
-            return t;
-        case 90:
-            t.translate(dimensions.height(), 0);
-            break;
-        case 180:
-            t.translate(dimensions.width(), dimensions.height());
-            break;
-        case 270:
-            t.translate(0, dimensions.width());
-            break;
-        default:
-            assert(!"Unreachable");
-    }
+  switch (m_degrees) {
+    case 0:
+      return t;
+    case 90:
+      t.translate(dimensions.height(), 0);
+      break;
+    case 180:
+      t.translate(dimensions.width(), dimensions.height());
+      break;
+    case 270:
+      t.translate(0, dimensions.width());
+      break;
+    default:
+      assert(!"Unreachable");
+  }
 
-    t.rotate(m_degrees);
+  t.rotate(m_degrees);
 
-    return t;
+  return t;
 }

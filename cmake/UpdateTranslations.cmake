@@ -1,4 +1,4 @@
-# TRANSLATION_SOURCES(<translation set> <source files>)
+# translation_sources(<translation set> <source files>)
 #
 # Associates the specified source files with a translation set.  A translation
 # set corresponds to a family of *.ts files with the same prefix, one for each
@@ -9,91 +9,91 @@
 # This macro may be called multiple times, possibly from different directories.
 # The typical usage will be like this:
 #
-# TRANSLATION_SOURCES(myapp MainWindow.cpp MainWindow.h MainWindow.ui ...)
-# FINALIZE_TRANSLATION_SET(myapp myapp_de.ts myapp_ru.ts myapp_ja.ts ...)
-# UPDATE_TRANSLATIONS_TARGET(update_translations myapp)
+# translation_sources(myapp MainWindow.cpp MainWindow.h MainWindow.ui ...)
+# finalize_translation_set(myapp myapp_de.ts myapp_ru.ts myapp_ja.ts ...)
+# update_translations_target(update_translations myapp)
 #
-MACRO(TRANSLATION_SOURCES _set) #, _sources
-    FILE(GLOB _sources ABSOLUTE ${ARGN})
-    LIST(APPEND ${_set}_SOURCES ${_sources})
+macro (translation_sources _set) #, _sources
+  file(GLOB _sources ABSOLUTE ${ARGN})
+  list(APPEND ${_set}_SOURCES ${_sources})
 
-    GET_DIRECTORY_PROPERTY(_inc_dirs INCLUDE_DIRECTORIES)
-    FILE(GLOB _inc_dirs ${_inc_dirs} .)
-    LIST(APPEND ${_set}_INC_DIRS ${_inc_dirs})
+  get_directory_property(_inc_dirs INCLUDE_DIRECTORIES)
+  file(GLOB _inc_dirs ${_inc_dirs} .)
+  list(APPEND ${_set}_INC_DIRS ${_inc_dirs})
 
-    # If there is a parent scope, set these variables there as well.
-    GET_DIRECTORY_PROPERTY(_parent_dir PARENT_DIRECTORY)
-    IF (_parent_dir)
-        SET(${_set}_SOURCES ${${_set}_SOURCES} PARENT_SCOPE)
-        SET(${_set}_INC_DIRS ${${_set}_INC_DIRS} PARENT_SCOPE)
-    ENDIF ()
-ENDMACRO()
+  # If there is a parent scope, set these variables there as well.
+  get_directory_property(_parent_dir PARENT_DIRECTORY)
+  if (_parent_dir)
+    set(${_set}_SOURCES ${${_set}_SOURCES} PARENT_SCOPE)
+    set(${_set}_INC_DIRS ${${_set}_INC_DIRS} PARENT_SCOPE)
+  endif()
+endmacro()
 
 
-# FINALIZE_TRANSLATION_SET(<translation set>, <*.ts files>)
+# finalize_translation_set(<translation set>, <*.ts files>)
 #
 # Associates *.ts files with a translation set.
 # May be called multiple times for different translation sets.
-# To be followed by UPDATE_TRANSLATIONS_TARGET()
+# To be followed by update_translations_target()
 #
-MACRO(FINALIZE_TRANSLATION_SET _set) #, _ts_files
-    SET(_sources_str "")
-    FOREACH (_file ${${_set}_SOURCES})
-        SET(_sources_str "${_sources_str} \"${_file}\"")
-    ENDFOREACH ()
+macro (finalize_translation_set _set) #, _ts_files
+  set(_sources_str "")
+  foreach (_file ${${_set}_SOURCES})
+    set(_sources_str "${_sources_str} \"${_file}\"")
+  endforeach()
 
-    SET(_inc_dirs ${${_set}_INC_DIRS})
-    LIST(REMOVE_DUPLICATES _inc_dirs)
+  set(_inc_dirs ${${_set}_INC_DIRS})
+  list(REMOVE_DUPLICATES _inc_dirs)
 
-    SET(_filtered_inc_dirs "")
-    FOREACH (_dir ${_inc_dirs})
-        # We are going to accept include directories within our
-        # source and binary trees and reject all others.  Allowing lupdate
-        # to parse things like boost headers leads to spurious warnings.
-        FILE(RELATIVE_PATH _dir_rel_to_source "${CMAKE_SOURCE_DIR}" "${_dir}")
-        FILE(RELATIVE_PATH _dir_rel_to_binary "${CMAKE_BINARY_DIR}" "${_dir}")
-        IF (NOT _dir_rel_to_source MATCHES "\\.\\..*")
-            LIST(APPEND _filtered_inc_dirs "${_dir}")
-        ELSEIF (NOT _dir_rel_to_binary MATCHES "\\.\\..*")
-            LIST(APPEND _filtered_inc_dirs "${_dir}")
-        ENDIF ()
-    ENDFOREACH ()
+  set(_filtered_inc_dirs "")
+  foreach (_dir ${_inc_dirs})
+    # We are going to accept include directories within our
+    # source and binary trees and reject all others.  Allowing lupdate
+    # to parse things like boost headers leads to spurious warnings.
+    file(RELATIVE_PATH _dir_rel_to_source "${CMAKE_SOURCE_DIR}" "${_dir}")
+    file(RELATIVE_PATH _dir_rel_to_binary "${CMAKE_BINARY_DIR}" "${_dir}")
+    if (NOT _dir_rel_to_source MATCHES "\\.\\..*")
+      list(APPEND _filtered_inc_dirs "${_dir}")
+    elseif (NOT _dir_rel_to_binary MATCHES "\\.\\..*")
+      list(APPEND _filtered_inc_dirs "${_dir}")
+    endif()
+  endforeach()
 
-    SET(_inc_dirs_str "")
-    FOREACH (_dir ${_filtered_inc_dirs})
-        SET(_inc_dirs_str "${_inc_dirs_str} \"${_dir}\"")
-    ENDFOREACH ()
+  set(_inc_dirs_str "")
+  foreach (_dir ${_filtered_inc_dirs})
+    set(_inc_dirs_str "${_inc_dirs_str} \"${_dir}\"")
+  endforeach()
 
-    SET(_translations_str "")
-    FOREACH (_file ${ARGN})
-        GET_FILENAME_COMPONENT(_abs "${_file}" ABSOLUTE)
-        SET(_translations_str "${_translations_str} \"${_abs}\"")
-    ENDFOREACH (_file)
+  set(_translations_str "")
+  foreach (_file ${ARGN})
+    get_filename_component(_abs "${_file}" ABSOLUTE)
+    set(_translations_str "${_translations_str} \"${_abs}\"")
+  endforeach()
 
-    FILE(
-            WRITE "${CMAKE_BINARY_DIR}/update_translations_${_set}.pro"
-            "SOURCES = ${_sources_str}\nTRANSLATIONS = ${_translations_str}\nINCLUDEPATH = ${_inc_dirs_str}"
-    )
+  file(
+      WRITE "${CMAKE_BINARY_DIR}/update_translations_${_set}.pro"
+      "SOURCES = ${_sources_str}\nTRANSLATIONS = ${_translations_str}\nINCLUDEPATH = ${_inc_dirs_str}"
+  )
 
-    # Note that we can't create a custom target with *.ts files as output, because:
-    # 1. CMake would pollute our source tree with *.rule fules.
-    # 2. "make clean" would remove them.
-ENDMACRO()
+  # Note that we can't create a custom target with *.ts files as output, because:
+  # 1. CMake would pollute our source tree with *.rule fules.
+  # 2. "make clean" would remove them.
+endmacro()
 
 
-# UPDATE_TRANSLATIONS_TARGET(<target> <translation sets>)
+# update_translations_target(<target> <translation sets>)
 #
 # Creates a target that updates *.ts files assiciated with the specified
-# translation sets by FINALIZE_TRANSLATION_SET()
+# translation sets by finalize_translation_set()
 #
-MACRO(UPDATE_TRANSLATIONS_TARGET _target) #, _sets
-    SET(_commands "")
-    FOREACH (_set ${ARGN})
-        LIST(
-                APPEND _commands COMMAND Qt5::lupdate -locations absolute
-                -pro "${CMAKE_BINARY_DIR}/update_translations_${_set}.pro"
-        )
-    ENDFOREACH ()
+macro (update_translations_target _target) #, _sets
+  set(_commands "")
+  foreach (_set ${ARGN})
+    list(
+        APPEND _commands COMMAND Qt5::lupdate -locations absolute
+        -pro "${CMAKE_BINARY_DIR}/update_translations_${_set}.pro"
+    )
+  endforeach()
 
-    ADD_CUSTOM_TARGET(${_target} ${_commands} VERBATIM)
-ENDMACRO()
+  add_custom_target(${_target} ${_commands} VERBATIM)
+endmacro()

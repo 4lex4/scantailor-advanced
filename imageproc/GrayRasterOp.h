@@ -19,14 +19,14 @@
 #ifndef IMAGEPROC_GRAYRASTEROP_H_
 #define IMAGEPROC_GRAYRASTEROP_H_
 
-#include "Grayscale.h"
-#include "GrayImage.h"
 #include <QPoint>
 #include <QRect>
 #include <QSize>
-#include <stdexcept>
-#include <cstdint>
 #include <cassert>
+#include <cstdint>
+#include <stdexcept>
+#include "GrayImage.h"
+#include "Grayscale.h"
 
 namespace imageproc {
 /**
@@ -39,7 +39,7 @@ namespace imageproc {
  * combination of several GRop* class templates, such as
  * GRopSubtract\<GRopSrc, GRopDst\>.
  */
-template<typename GRop>
+template <typename GRop>
 void grayRasterOp(GrayImage& dst, const GrayImage& src);
 
 /**
@@ -47,10 +47,8 @@ void grayRasterOp(GrayImage& dst, const GrayImage& src);
  * \see grayRasterOp()
  */
 class GRopSrc {
-public:
-    static uint8_t transform(uint8_t src, uint8_t /*dst*/) {
-        return src;
-    }
+ public:
+  static uint8_t transform(uint8_t src, uint8_t /*dst*/) { return src; }
 };
 
 
@@ -59,10 +57,8 @@ public:
  * \see grayRasterOp()
  */
 class GRopDst {
-public:
-    static uint8_t transform(uint8_t /*src*/, uint8_t dst) {
-        return dst;
-    }
+ public:
+  static uint8_t transform(uint8_t /*src*/, uint8_t dst) { return dst; }
 };
 
 
@@ -70,12 +66,10 @@ public:
  * \brief Raster operation that inverts the gray level.
  * \see grayRasterOp()
  */
-template<typename Arg>
+template <typename Arg>
 class GRopInvert {
-public:
-    static uint8_t transform(uint8_t src, uint8_t dst) {
-        return uint8_t(0xff) - Arg::transform(src, dst);
-    }
+ public:
+  static uint8_t transform(uint8_t src, uint8_t dst) { return uint8_t(0xff) - Arg::transform(src, dst); }
 };
 
 
@@ -87,15 +81,15 @@ public:
  *
  * \see grayRasterOp()
  */
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 class GRopClippedSubtract {
-public:
-    static uint8_t transform(uint8_t src, uint8_t dst) {
-        const uint8_t lhs = Lhs::transform(src, dst);
-        const uint8_t rhs = Rhs::transform(src, dst);
+ public:
+  static uint8_t transform(uint8_t src, uint8_t dst) {
+    const uint8_t lhs = Lhs::transform(src, dst);
+    const uint8_t rhs = Rhs::transform(src, dst);
 
-        return lhs > rhs ? lhs - rhs : uint8_t(0);
-    }
+    return lhs > rhs ? lhs - rhs : uint8_t(0);
+  }
 };
 
 
@@ -107,15 +101,15 @@ public:
  *
  * \see grayRasterOp()
  */
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 class GRopUnclippedSubtract {
-public:
-    static uint8_t transform(uint8_t src, uint8_t dst) {
-        const uint8_t lhs = Lhs::transform(src, dst);
-        const uint8_t rhs = Rhs::transform(src, dst);
+ public:
+  static uint8_t transform(uint8_t src, uint8_t dst) {
+    const uint8_t lhs = Lhs::transform(src, dst);
+    const uint8_t rhs = Rhs::transform(src, dst);
 
-        return lhs - rhs;
-    }
+    return lhs - rhs;
+  }
 };
 
 
@@ -126,16 +120,16 @@ public:
  *
  * \see grayRasterOp()
  */
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 class GRopClippedAdd {
-public:
-    static uint8_t transform(uint8_t src, uint8_t dst) {
-        const unsigned lhs = Lhs::transform(src, dst);
-        const unsigned rhs = Rhs::transform(src, dst);
-        const unsigned sum = lhs + rhs;
+ public:
+  static uint8_t transform(uint8_t src, uint8_t dst) {
+    const unsigned lhs = Lhs::transform(src, dst);
+    const unsigned rhs = Rhs::transform(src, dst);
+    const unsigned sum = lhs + rhs;
 
-        return sum < 256 ? static_cast<uint8_t>(sum) : uint8_t(255);
-    }
+    return sum < 256 ? static_cast<uint8_t>(sum) : uint8_t(255);
+  }
 };
 
 
@@ -147,15 +141,15 @@ public:
  *
  * \see grayRasterOp()
  */
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 class GRopUnclippedAdd {
-public:
-    static uint8_t transform(uint8_t src, uint8_t dst) {
-        const uint8_t lhs = Lhs::transform(src, dst);
-        const uint8_t rhs = Rhs::transform(src, dst);
+ public:
+  static uint8_t transform(uint8_t src, uint8_t dst) {
+    const uint8_t lhs = Lhs::transform(src, dst);
+    const uint8_t rhs = Rhs::transform(src, dst);
 
-        return lhs + rhs;
-    }
+    return lhs + rhs;
+  }
 };
 
 
@@ -163,15 +157,15 @@ public:
  * \brief Raster operation that takes the darkest of its arguments.
  * \see grayRasterOp()
  */
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 class GRopDarkest {
-public:
-    static uint8_t transform(uint8_t src, uint8_t dst) {
-        const uint8_t lhs = Lhs::transform(src, dst);
-        const uint8_t rhs = Rhs::transform(src, dst);
+ public:
+  static uint8_t transform(uint8_t src, uint8_t dst) {
+    const uint8_t lhs = Lhs::transform(src, dst);
+    const uint8_t rhs = Rhs::transform(src, dst);
 
-        return lhs < rhs ? lhs : rhs;
-    }
+    return lhs < rhs ? lhs : rhs;
+  }
 };
 
 
@@ -179,43 +173,43 @@ public:
  * \brief Raster operation that takes the lightest of its arguments.
  * \see grayRasterOp()
  */
-template<typename Lhs, typename Rhs>
+template <typename Lhs, typename Rhs>
 class GRopLightest {
-public:
-    static uint8_t transform(uint8_t src, uint8_t dst) {
-        const uint8_t lhs = Lhs::transform(src, dst);
-        const uint8_t rhs = Rhs::transform(src, dst);
+ public:
+  static uint8_t transform(uint8_t src, uint8_t dst) {
+    const uint8_t lhs = Lhs::transform(src, dst);
+    const uint8_t rhs = Rhs::transform(src, dst);
 
-        return lhs > rhs ? lhs : rhs;
-    }
+    return lhs > rhs ? lhs : rhs;
+  }
 };
 
 
-template<typename GRop>
+template <typename GRop>
 void grayRasterOp(GrayImage& dst, const GrayImage& src) {
-    if (dst.isNull() || src.isNull()) {
-        throw std::invalid_argument("grayRasterOp: can't operate on null images");
+  if (dst.isNull() || src.isNull()) {
+    throw std::invalid_argument("grayRasterOp: can't operate on null images");
+  }
+
+  if (src.size() != dst.size()) {
+    throw std::invalid_argument("grayRasterOp: images sizes are not the same");
+  }
+
+  const uint8_t* src_line = src.data();
+  uint8_t* dst_line = dst.data();
+  const int src_stride = src.stride();
+  const int dst_stride = dst.stride();
+
+  const int width = src.width();
+  const int height = src.height();
+
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      dst_line[x] = GRop::transform(src_line[x], dst_line[x]);
     }
-
-    if (src.size() != dst.size()) {
-        throw std::invalid_argument("grayRasterOp: images sizes are not the same");
-    }
-
-    const uint8_t* src_line = src.data();
-    uint8_t* dst_line = dst.data();
-    const int src_stride = src.stride();
-    const int dst_stride = dst.stride();
-
-    const int width = src.width();
-    const int height = src.height();
-
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            dst_line[x] = GRop::transform(src_line[x], dst_line[x]);
-        }
-        src_line += src_stride;
-        dst_line += dst_stride;
-    }
+    src_line += src_stride;
+    dst_line += dst_stride;
+  }
 }
 }  // namespace imageproc
 #endif  // ifndef IMAGEPROC_GRAYRASTEROP_H_

@@ -2,38 +2,41 @@
 #ifndef SCANTAILOR_UNITSPROVIDER_H
 #define SCANTAILOR_UNITSPROVIDER_H
 
-#include <memory>
+#include <foundation/NonCopyable.h>
 #include <list>
+#include <memory>
 #include "UnitsObserver.h"
 
 class Dpi;
 
 class UnitsProvider {
-private:
-    static std::unique_ptr<UnitsProvider> instance;
+  DECLARE_NON_COPYABLE(UnitsProvider)
+ private:
+  UnitsProvider();
 
-    std::list<UnitsObserver*> observers;
-    Units units;
+ public:
+  static UnitsProvider* getInstance();
 
-    UnitsProvider();
+  Units getUnits() const;
 
-public:
-    static UnitsProvider* getInstance();
+  void setUnits(Units units);
 
-    Units getUnits() const;
+  void attachObserver(UnitsObserver* observer);
 
-    void setUnits(Units units);
+  void detachObserver(UnitsObserver* observer);
 
-    void attachObserver(UnitsObserver* observer);
+  void convertFrom(double& horizontalValue, double& verticalValue, Units fromUnits, const Dpi& dpi) const;
 
-    void detachObserver(UnitsObserver* observer);
+  void convertTo(double& horizontalValue, double& verticalValue, Units toUnits, const Dpi& dpi) const;
 
-    void convertFrom(double& horizontalValue, double& verticalValue, Units fromUnits, const Dpi& dpi) const;
+ protected:
+  void unitsChanged();
 
-    void convertTo(double& horizontalValue, double& verticalValue, Units toUnits, const Dpi& dpi) const;
+ private:
+  static std::unique_ptr<UnitsProvider> m_instance;
 
-protected:
-    void unitsChanged();
+  std::list<UnitsObserver*> m_observers;
+  Units m_units;
 };
 
 

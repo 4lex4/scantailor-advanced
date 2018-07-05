@@ -30,40 +30,40 @@ class QPainter;
  *        varying colors.
  */
 class BubbleAnimation {
-public:
-    explicit BubbleAnimation(int num_bubbles);
+ public:
+  explicit BubbleAnimation(int num_bubbles);
 
-    /**
-     * \brief Renders the next frame of the animation.
-     *
-     * \param head_color The color of the head of the string of bubbles.
-     * \param tail_color The color of the tail of the string of bubbles.
-     * \param pd The device to paint to.
-     * \param rect The rectangle in device coordinates to render to.
-     *        A null rectangle indicates the whole device area
-     *        is to be used.
-     * \return Whether more frames follow.  After returning false,
-     *         the next call will render the first frame again.
-     */
-    bool nextFrame(const QColor& head_color, const QColor& tail_color, QPaintDevice* pd, QRectF rect = QRectF());
+  /**
+   * \brief Renders the next frame of the animation.
+   *
+   * \param head_color The color of the head of the string of bubbles.
+   * \param tail_color The color of the tail of the string of bubbles.
+   * \param pd The device to paint to.
+   * \param rect The rectangle in device coordinates to render to.
+   *        A null rectangle indicates the whole device area
+   *        is to be used.
+   * \return Whether more frames follow.  After returning false,
+   *         the next call will render the first frame again.
+   */
+  bool nextFrame(const QColor& head_color, const QColor& tail_color, QPaintDevice* pd, QRectF rect = QRectF());
 
-    /**
-     * \brief Renders the next frame of the animation.
-     *
-     * \param head_color The color of the head of the string of bubbles.
-     * \param tail_color The color of the tail of the string of bubbles.
-     * \param painter The painter to use for drawing.
-     *        Saving and restoring its state is the responsibility
-     *        of the caller.
-     * \param rect The rectangle in painter coordinates to render to.
-     * \return Whether more frames follow.  After returning false,
-     *         the next call will render the first frame again.
-     */
-    bool nextFrame(const QColor& head_color, const QColor& tail_color, QPainter* painter, QRectF rect);
+  /**
+   * \brief Renders the next frame of the animation.
+   *
+   * \param head_color The color of the head of the string of bubbles.
+   * \param tail_color The color of the tail of the string of bubbles.
+   * \param painter The painter to use for drawing.
+   *        Saving and restoring its state is the responsibility
+   *        of the caller.
+   * \param rect The rectangle in painter coordinates to render to.
+   * \return Whether more frames follow.  After returning false,
+   *         the next call will render the first frame again.
+   */
+  bool nextFrame(const QColor& head_color, const QColor& tail_color, QPainter* painter, QRectF rect);
 
-private:
-    int m_numBubbles;
-    int m_curFrame;
+ private:
+  int m_numBubbles;
+  int m_curFrame;
 };
 
 

@@ -22,11 +22,11 @@
 #include <QSortFilterProxyModel>
 
 class RelinkingSortingModel : public QSortFilterProxyModel {
-public:
-    explicit RelinkingSortingModel(QObject* parent = nullptr);
+ public:
+  explicit RelinkingSortingModel(QObject* parent = nullptr);
 
-protected:
-    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+ protected:
+  bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
 };
 
 

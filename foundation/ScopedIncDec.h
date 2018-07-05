@@ -23,19 +23,15 @@
 #include <config.h>
 #endif
 
-template<class T>
+template <class T>
 class ScopedIncDec {
-public:
-    explicit ScopedIncDec(T& counter) : m_counter(counter) {
-        ++counter;
-    }
+ public:
+  explicit ScopedIncDec(T& counter) : m_counter(counter) { ++counter; }
 
-    ~ScopedIncDec() {
-        --m_counter;
-    }
+  ~ScopedIncDec() { --m_counter; }
 
-private:
-    T& m_counter;
+ private:
+  T& m_counter;
 };
 
 

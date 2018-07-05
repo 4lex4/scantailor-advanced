@@ -19,11 +19,11 @@
 #ifndef IMAGETRANSFORMATION_H_
 #define IMAGETRANSFORMATION_H_
 
-#include "OrthogonalRotation.h"
-#include "Dpi.h"
-#include <QTransform>
 #include <QPolygonF>
 #include <QRectF>
+#include <QTransform>
+#include "Dpi.h"
+#include "OrthogonalRotation.h"
 
 /**
  * \brief Provides a transformed view of an image.
@@ -60,215 +60,189 @@
  * Note that all transformation steps are optional.
  */
 class ImageTransformation {
-public:
-    // Member-wise copying is OK.
+ public:
+  // Member-wise copying is OK.
 
-    ImageTransformation(const QRectF& orig_image_rect, const Dpi& orig_dpi);
+  ImageTransformation(const QRectF& orig_image_rect, const Dpi& orig_dpi);
 
-    ~ImageTransformation();
+  ~ImageTransformation();
 
-    /**
-     * \brief Set the 1st step transformation, recalculating the following ones.
-     *
-     * \see \ref transformations Transformations.
-     */
-    void preScaleToDpi(const Dpi& dpi);
+  /**
+   * \brief Set the 1st step transformation, recalculating the following ones.
+   *
+   * \see \ref transformations Transformations.
+   */
+  void preScaleToDpi(const Dpi& dpi);
 
-    /**
-     * \brief Set the 1st step transformation, recalculating the following ones.
-     *
-     * Suppose the original image DPI is 300x600.  This will scale it to
-     * 300x300, the minimum of two.
-     *
-     * \note This transformation is applied automatically on construction.
-     *
-     * \see \ref transformations Transformations.
-     */
-    void preScaleToEqualizeDpi();
+  /**
+   * \brief Set the 1st step transformation, recalculating the following ones.
+   *
+   * Suppose the original image DPI is 300x600.  This will scale it to
+   * 300x300, the minimum of two.
+   *
+   * \note This transformation is applied automatically on construction.
+   *
+   * \see \ref transformations Transformations.
+   */
+  void preScaleToEqualizeDpi();
 
-    /**
-     * \brief Get the original image DPI.
-     */
-    const Dpi& origDpi() const {
-        return m_origDpi;
-    }
+  /**
+   * \brief Get the original image DPI.
+   */
+  const Dpi& origDpi() const { return m_origDpi; }
 
-    /**
-     * \brief Get the target DPI for pre-scaling.
-     *
-     * Note that if the original DPI was assymetric, pre-scaling to
-     * a symmetric DPI will be applied implicitly.
-     */
-    const Dpi& preScaledDpi() const {
-        return m_preScaledDpi;
-    }
+  /**
+   * \brief Get the target DPI for pre-scaling.
+   *
+   * Note that if the original DPI was assymetric, pre-scaling to
+   * a symmetric DPI will be applied implicitly.
+   */
+  const Dpi& preScaledDpi() const { return m_preScaledDpi; }
 
-    /**
-     * \brief Set the 2nd step transformation, resetting the following ones.
-     *
-     * \see \ref transformations Transformations.
-     */
-    void setPreRotation(OrthogonalRotation rotation);
+  /**
+   * \brief Set the 2nd step transformation, resetting the following ones.
+   *
+   * \see \ref transformations Transformations.
+   */
+  void setPreRotation(OrthogonalRotation rotation);
 
-    /**
-     * \brief Returns the 2nd step rotation.
-     */
-    OrthogonalRotation preRotation() const {
-        return m_preRotation;
-    }
+  /**
+   * \brief Returns the 2nd step rotation.
+   */
+  OrthogonalRotation preRotation() const { return m_preRotation; }
 
-    /**
-     * \brief Set the 3rd step transformation, resetting the following ones.
-     *
-     * Providing a null polygon has the same effect as providing a polygon
-     * that covers the entire image.  A crop area that exceedes the image
-     * is allowed.
-     *
-     * \see \ref transformations Transformations.
-     */
-    void setPreCropArea(const QPolygonF& area);
+  /**
+   * \brief Set the 3rd step transformation, resetting the following ones.
+   *
+   * Providing a null polygon has the same effect as providing a polygon
+   * that covers the entire image.  A crop area that exceedes the image
+   * is allowed.
+   *
+   * \see \ref transformations Transformations.
+   */
+  void setPreCropArea(const QPolygonF& area);
 
-    /**
-     * \brief Get the effective pre-crop area in pre-rotated coordinates.
-     *
-     * If pre-crop area was explicitly set with setPreCropArea(), then
-     * this function returns it as is.  Otherwise, the whole available
-     * area is returned.
-     */
-    const QPolygonF& preCropArea() const {
-        return m_preCropArea;
-    }
+  /**
+   * \brief Get the effective pre-crop area in pre-rotated coordinates.
+   *
+   * If pre-crop area was explicitly set with setPreCropArea(), then
+   * this function returns it as is.  Otherwise, the whole available
+   * area is returned.
+   */
+  const QPolygonF& preCropArea() const { return m_preCropArea; }
 
-    /**
-     * \brief Returns the pre-crop area after all transformations.
-     *
-     * If no pre-crop area was set, the whole image is assumed to be
-     * the pre-crop area.
-     */
-    const QPolygonF& resultingPreCropArea() const {
-        return m_resultingPreCropArea;
-    }
+  /**
+   * \brief Returns the pre-crop area after all transformations.
+   *
+   * If no pre-crop area was set, the whole image is assumed to be
+   * the pre-crop area.
+   */
+  const QPolygonF& resultingPreCropArea() const { return m_resultingPreCropArea; }
 
-    /**
-     * \brief Set the 4th step transformation, resetting  the following ones.
-     *
-     * \see \ref transformations Transformations.
-     */
-    void setPostRotation(double degrees);
+  /**
+   * \brief Set the 4th step transformation, resetting  the following ones.
+   *
+   * \see \ref transformations Transformations.
+   */
+  void setPostRotation(double degrees);
 
-    /**
-     * \brief Returns the 4th step rotation in degrees, as specified.
-     */
-    double postRotation() const {
-        return m_postRotation;
-    }
+  /**
+   * \brief Returns the 4th step rotation in degrees, as specified.
+   */
+  double postRotation() const { return m_postRotation; }
 
-    /**
-     * \brief Returns the sine of the 4th step rotation angle.
-     */
-    double postRotationSin() const {
-        return m_postRotateXform.m12();
-    }
+  /**
+   * \brief Returns the sine of the 4th step rotation angle.
+   */
+  double postRotationSin() const { return m_postRotateXform.m12(); }
 
-    /**
-     * \brief Returns the cosine of the 3rd step rotation angle.
-     */
-    double postRotationCos() const {
-        return m_postRotateXform.m11();
-    }
+  /**
+   * \brief Returns the cosine of the 3rd step rotation angle.
+   */
+  double postRotationCos() const { return m_postRotateXform.m11(); }
 
-    /**
-     * \brief Set the 5th step transformation, resetting the following ones.
-     */
-    void setPostCropArea(const QPolygonF& area);
+  /**
+   * \brief Set the 5th step transformation, resetting the following ones.
+   */
+  void setPostCropArea(const QPolygonF& area);
 
-    /**
-     * \brief Returns the post-crop area after all transformations.
-     *
-     * If no post-crop area was set, the whole image is assumed to be
-     * the post-crop area.
-     */
-    const QPolygonF& resultingPostCropArea() const {
-        return m_resultingPostCropArea;
-    }
+  /**
+   * \brief Returns the post-crop area after all transformations.
+   *
+   * If no post-crop area was set, the whole image is assumed to be
+   * the post-crop area.
+   */
+  const QPolygonF& resultingPostCropArea() const { return m_resultingPostCropArea; }
 
-    /**
-     * \brief Set the 6th step transformation.
-     *
-     * Passing a null (default constructed) Dpi means "don't apply post-scaling".
-     */
-    void postScaleToDpi(const Dpi& dpi);
+  /**
+   * \brief Set the 6th step transformation.
+   *
+   * Passing a null (default constructed) Dpi means "don't apply post-scaling".
+   */
+  void postScaleToDpi(const Dpi& dpi);
 
-    /**
-     * \brief Returns the transformation matrix from the original
-     *        to resulting image coordinates.
-     */
-    const QTransform& transform() const {
-        return m_transform;
-    }
+  /**
+   * \brief Returns the transformation matrix from the original
+   *        to resulting image coordinates.
+   */
+  const QTransform& transform() const { return m_transform; }
 
-    /**
-     * \brief Returns the transformation matrix from the resulting
-     *        to original image coordinates.
-     */
-    const QTransform& transformBack() const {
-        return m_invTransform;
-    }
+  /**
+   * \brief Returns the transformation matrix from the resulting
+   *        to original image coordinates.
+   */
+  const QTransform& transformBack() const { return m_invTransform; }
 
-    /**
-     * \brief Returns the original image rectangle, as specified.
-     */
-    const QRectF& origRect() const {
-        return m_origRect;
-    }
+  /**
+   * \brief Returns the original image rectangle, as specified.
+   */
+  const QRectF& origRect() const { return m_origRect; }
 
-    /**
-     * \brief Returns the resulting image rectangle.
-     *
-     * The top-left corner of the resulting rectangle is expected
-     * to be very close to (0, 0), assuming the original rectangle
-     * had it at (0, 0), but it's not guaranteed to be exactly there.
-     */
-    const QRectF& resultingRect() const {
-        return m_resultingRect;
-    }
+  /**
+   * \brief Returns the resulting image rectangle.
+   *
+   * The top-left corner of the resulting rectangle is expected
+   * to be very close to (0, 0), assuming the original rectangle
+   * had it at (0, 0), but it's not guaranteed to be exactly there.
+   */
+  const QRectF& resultingRect() const { return m_resultingRect; }
 
-private:
-    QTransform calcCropXform(const QPolygonF& crop_area);
+ private:
+  QTransform calcCropXform(const QPolygonF& crop_area);
 
-    QTransform calcPostRotateXform(double degrees);
+  QTransform calcPostRotateXform(double degrees);
 
-    QTransform calcPostScaleXform(const Dpi& target_dpi);
+  QTransform calcPostScaleXform(const Dpi& target_dpi);
 
-    void resetPreCropArea();
+  void resetPreCropArea();
 
-    void resetPostRotation();
+  void resetPostRotation();
 
-    void resetPostCrop();
+  void resetPostCrop();
 
-    void resetPostScale();
+  void resetPostScale();
 
-    void update();
+  void update();
 
-    QTransform m_preScaleXform;
-    QTransform m_preRotateXform;
-    QTransform m_preCropXform;
-    QTransform m_postRotateXform;
-    QTransform m_postCropXform;
-    QTransform m_postScaleXform;
-    QTransform m_transform;
-    QTransform m_invTransform;
-    double m_postRotation;
-    QRectF m_origRect;
-    QRectF m_resultingRect;  // Managed by update().
-    QPolygonF m_preCropArea;
-    QPolygonF m_resultingPreCropArea;  // Managed by update().
-    QPolygonF m_postCropArea;
-    QPolygonF m_resultingPostCropArea;  // Managed by update().
-    Dpi m_origDpi;
-    Dpi m_preScaledDpi;   // Always set, as preScaleToEqualizeDpi() is called from the constructor.
-    Dpi m_postScaledDpi;  // Default constructed object if no post-scaling.
-    OrthogonalRotation m_preRotation;
+  QTransform m_preScaleXform;
+  QTransform m_preRotateXform;
+  QTransform m_preCropXform;
+  QTransform m_postRotateXform;
+  QTransform m_postCropXform;
+  QTransform m_postScaleXform;
+  QTransform m_transform;
+  QTransform m_invTransform;
+  double m_postRotation;
+  QRectF m_origRect;
+  QRectF m_resultingRect;  // Managed by update().
+  QPolygonF m_preCropArea;
+  QPolygonF m_resultingPreCropArea;  // Managed by update().
+  QPolygonF m_postCropArea;
+  QPolygonF m_resultingPostCropArea;  // Managed by update().
+  Dpi m_origDpi;
+  Dpi m_preScaledDpi;   // Always set, as preScaleToEqualizeDpi() is called from the constructor.
+  Dpi m_postScaledDpi;  // Default constructed object if no post-scaling.
+  OrthogonalRotation m_preRotation;
 };
 
 

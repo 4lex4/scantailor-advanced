@@ -23,8 +23,8 @@
 
 namespace output {
 class PictureZonePropFactory : public PropertyFactory {
-public:
-    PictureZonePropFactory();
+ public:
+  PictureZonePropFactory();
 };
 }  // namespace output
 #endif

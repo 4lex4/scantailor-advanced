@@ -4,17 +4,18 @@
 
 #include <QtCore>
 #include <QtGui>
-#include <QStyleFactory>
 #include <memory>
 #include "ColorScheme.h"
 
 class DarkScheme : public ColorScheme {
-public:
-    std::unique_ptr<QPalette> getPalette() const override;
+ public:
+  QStyle* getStyle() const override;
 
-    std::unique_ptr<QString> getStyleSheet() const override;
+  QPalette getPalette() const override;
 
-    std::unique_ptr<ColorParams> getColorParams() const override;
+  std::unique_ptr<QString> getStyleSheet() const override;
+
+  ColorParams getColorParams() const override;
 };
 
 

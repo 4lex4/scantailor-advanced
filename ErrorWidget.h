@@ -19,24 +19,23 @@
 #ifndef ERRORWIDGET_H_
 #define ERRORWIDGET_H_
 
-#include "ui_ErrorWidget.h"
 #include <QWidget>
 #include <Qt>
+#include "ui_ErrorWidget.h"
 
 class QString;
 
 class ErrorWidget : public QWidget, private Ui::ErrorWidget {
-    Q_OBJECT
-public:
-    explicit ErrorWidget(const QString& text, Qt::TextFormat fmt = Qt::AutoText);
+  Q_OBJECT
+ public:
+  explicit ErrorWidget(const QString& text, Qt::TextFormat fmt = Qt::AutoText);
 
-private slots:
+ private slots:
 
-    /**
-     * \see QLabel::linkActivated()
-     */
-    virtual void linkActivated(const QString& link) {
-    }
+  /**
+   * \see QLabel::linkActivated()
+   */
+  virtual void linkActivated(const QString& link) {}
 };
 
 

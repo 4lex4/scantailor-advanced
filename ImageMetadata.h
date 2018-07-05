@@ -23,48 +23,37 @@
 #include "Dpi.h"
 
 class ImageMetadata {
-    // Member-wise copying is OK.
-public:
-    enum DpiStatus { DPI_OK, DPI_UNDEFINED, DPI_TOO_LARGE, DPI_TOO_SMALL, DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE };
+  // Member-wise copying is OK.
+ public:
+  enum DpiStatus { DPI_OK, DPI_UNDEFINED, DPI_TOO_LARGE, DPI_TOO_SMALL, DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE };
 
-    ImageMetadata() = default;
+  ImageMetadata() = default;
 
-    ImageMetadata(QSize size, Dpi dpi) : m_size(size), m_dpi(dpi) {
-    }
+  ImageMetadata(QSize size, Dpi dpi) : m_size(size), m_dpi(dpi) {}
 
-    const QSize& size() const {
-        return m_size;
-    }
+  const QSize& size() const { return m_size; }
 
-    void setSize(const QSize& size) {
-        m_size = size;
-    }
+  void setSize(const QSize& size) { m_size = size; }
 
-    const Dpi& dpi() const {
-        return m_dpi;
-    }
+  const Dpi& dpi() const { return m_dpi; }
 
-    void setDpi(const Dpi& dpi) {
-        m_dpi = dpi;
-    }
+  void setDpi(const Dpi& dpi) { m_dpi = dpi; }
 
-    bool isDpiOK() const;
+  bool isDpiOK() const;
 
-    DpiStatus horizontalDpiStatus() const;
+  DpiStatus horizontalDpiStatus() const;
 
-    DpiStatus verticalDpiStatus() const;
+  DpiStatus verticalDpiStatus() const;
 
-    bool operator==(const ImageMetadata& other) const;
+  bool operator==(const ImageMetadata& other) const;
 
-    bool operator!=(const ImageMetadata& other) const {
-        return !(*this == other);
-    }
+  bool operator!=(const ImageMetadata& other) const { return !(*this == other); }
 
-private:
-    static DpiStatus dpiStatus(int pixel_size, int dpi);
+ private:
+  static DpiStatus dpiStatus(int pixel_size, int dpi);
 
-    QSize m_size;
-    Dpi m_dpi;
+  QSize m_size;
+  Dpi m_dpi;
 };
 
 

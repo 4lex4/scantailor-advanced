@@ -19,12 +19,12 @@
 #ifndef SELECT_CONTENT_PARAMS_H_
 #define SELECT_CONTENT_PARAMS_H_
 
-#include "Dependencies.h"
-#include "AutoManualMode.h"
-#include "Margins.h"
+#include <AutoManualMode.h>
 #include <QRectF>
 #include <QSizeF>
 #include <cmath>
+#include "Dependencies.h"
+#include "Margins.h"
 
 class QDomDocument;
 class QDomElement;
@@ -32,73 +32,61 @@ class QString;
 
 namespace select_content {
 class Params {
-public:
-    // Member-wise copying is OK.
+ public:
+  // Member-wise copying is OK.
 
-    explicit Params(const Dependencies& deps);
+  explicit Params(const Dependencies& deps);
 
-    Params(const QRectF& content_rect,
-           const QSizeF& size_mm,
-           const QRectF& page_rect,
-           const Dependencies& deps,
-           AutoManualMode content_detection_mode,
-           AutoManualMode page_detection_mode,
-           bool contentDetect,
-           bool pageDetect,
-           bool fineTuning);
+  Params(const QRectF& content_rect,
+         const QSizeF& size_mm,
+         const QRectF& page_rect,
+         const Dependencies& deps,
+         AutoManualMode content_detection_mode,
+         AutoManualMode page_detection_mode,
+         bool fine_tune_corners);
 
-    explicit Params(const QDomElement& filter_el);
+  explicit Params(const QDomElement& filter_el);
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-    ~Params();
+  ~Params();
 
-    const QRectF& contentRect() const;
+  const QRectF& contentRect() const;
 
-    const QRectF& pageRect() const;
+  const QRectF& pageRect() const;
 
-    const QSizeF& contentSizeMM() const;
+  const QSizeF& contentSizeMM() const;
 
-    const Dependencies& dependencies() const;
+  const Dependencies& dependencies() const;
 
-    AutoManualMode contentDetectionMode() const;
+  AutoManualMode contentDetectionMode() const;
 
-    AutoManualMode pageDetectionMode() const;
+  AutoManualMode pageDetectionMode() const;
 
-    bool isContentDetectionEnabled() const;
+  bool isFineTuningEnabled() const;
 
-    bool isPageDetectionEnabled() const;
+  void setContentDetectionMode(AutoManualMode mode);
 
-    bool isFineTuningEnabled() const;
+  void setPageDetectionMode(AutoManualMode mode);
 
-    void setContentDetectionMode(const AutoManualMode& mode);
+  void setContentRect(const QRectF& rect);
 
-    void setPageDetectionMode(const AutoManualMode& mode);
+  void setPageRect(const QRectF& rect);
 
-    void setContentRect(const QRectF& rect);
+  void setContentSizeMM(const QSizeF& size);
 
-    void setPageRect(const QRectF& rect);
+  void setDependencies(const Dependencies& deps);
 
-    void setContentSizeMM(const QSizeF& size);
+  void setFineTuneCornersEnabled(bool fine_tune_corners);
 
-    void setDependencies(const Dependencies& deps);
-
-    void setContentDetect(bool detect);
-
-    void setPageDetect(bool detect);
-
-    void setFineTuneCorners(bool fine_tune);
-
-private:
-    QRectF m_contentRect;
-    QRectF m_pageRect;
-    QSizeF m_contentSizeMM;
-    Dependencies m_deps;
-    AutoManualMode m_contentDetectionMode;
-    AutoManualMode m_pageDetectionMode;
-    bool m_contentDetectEnabled;
-    bool m_pageDetectEnabled;
-    bool m_fineTuneCorners;
+ private:
+  QRectF m_contentRect;
+  QRectF m_pageRect;
+  QSizeF m_contentSizeMM;
+  Dependencies m_deps;
+  AutoManualMode m_contentDetectionMode;
+  AutoManualMode m_pageDetectionMode;
+  bool m_fineTuneCorners;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_PARAMS_H_

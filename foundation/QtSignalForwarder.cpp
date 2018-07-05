@@ -19,10 +19,10 @@
 #include "QtSignalForwarder.h"
 
 QtSignalForwarder::QtSignalForwarder(QObject* emitter, const char* signal, const boost::function<void()>& slot)
-        : QObject(emitter), m_slot(slot) {
-    connect(emitter, signal, SLOT(handleSignal()));
+    : QObject(emitter), m_slot(slot) {
+  connect(emitter, signal, SLOT(handleSignal()));
 }
 
 void QtSignalForwarder::handleSignal() {
-    m_slot();
+  m_slot();
 }

@@ -19,25 +19,25 @@
 #ifndef PNGMETADATALOADER_H_
 #define PNGMETADATALOADER_H_
 
+#include <vector>
 #include "ImageMetadataLoader.h"
 #include "VirtualFunction.h"
-#include <vector>
 
 class QIODevice;
 class ImageMetadata;
 
 class PngMetadataLoader : public ImageMetadataLoader {
-public:
-    /**
-     * \brief Register this loader in the global registry.
-     *
-     * The same restrictions apply here as for
-     * ImageMetadataLoader::registerLoader()
-     */
-    static void registerMyself();
+ public:
+  /**
+   * \brief Register this loader in the global registry.
+   *
+   * The same restrictions apply here as for
+   * ImageMetadataLoader::registerLoader()
+   */
+  static void registerMyself();
 
-protected:
-    Status loadMetadata(QIODevice& io_device, const VirtualFunction<void, const ImageMetadata&>& out) override;
+ protected:
+  Status loadMetadata(QIODevice& io_device, const VirtualFunction<void, const ImageMetadata&>& out) override;
 };
 
 

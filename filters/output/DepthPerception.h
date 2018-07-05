@@ -26,27 +26,27 @@ namespace output {
  * \see imageproc::CylindricalSurfaceDewarper
  */
 class DepthPerception {
-public:
-    DepthPerception();
+ public:
+  DepthPerception();
 
-    explicit DepthPerception(double value);
+  explicit DepthPerception(double value);
 
-    explicit DepthPerception(const QString& from_string);
+  explicit DepthPerception(const QString& from_string);
 
-    QString toString() const;
+  QString toString() const;
 
-    void setValue(double value);
+  void setValue(double value);
 
-    double value() const;
+  double value() const;
 
-    static double minValue();
+  static double minValue();
 
-    static double defaultValue();
+  static double defaultValue();
 
-    static double maxValue();
+  static double maxValue();
 
-private:
-    double m_value;
+ private:
+  double m_value;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_DEPTH_PERCEPTION_H_

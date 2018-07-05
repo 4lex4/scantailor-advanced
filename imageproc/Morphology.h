@@ -19,8 +19,8 @@
 #ifndef IMAGEPROC_MORPHOLOGY_H_
 #define IMAGEPROC_MORPHOLOGY_H_
 
-#include "BWColor.h"
 #include <vector>
+#include "BWColor.h"
 
 class QSize;
 class QRect;
@@ -31,87 +31,73 @@ class BinaryImage;
 class GrayImage;
 
 class Brick {
-public:
-    /**
-     * \brief Constructs a brick with origin at the center.
-     */
-    Brick(const QSize& size);
+ public:
+  /**
+   * \brief Constructs a brick with origin at the center.
+   */
+  Brick(const QSize& size);
 
-    /**
-     * \brief Constructs a brick with origin specified relative to its size.
-     *
-     * For example, a 3x3 brick with origin at the center would be
-     * constructed as follows:
-     * \code
-     * Brick brick(QSize(3, 3), QPoint(1, 1));
-     * \endcode
-     * \note Origin doesn't have to be inside the brick.
-     */
-    Brick(const QSize& size, const QPoint& origin);
+  /**
+   * \brief Constructs a brick with origin specified relative to its size.
+   *
+   * For example, a 3x3 brick with origin at the center would be
+   * constructed as follows:
+   * \code
+   * Brick brick(QSize(3, 3), QPoint(1, 1));
+   * \endcode
+   * \note Origin doesn't have to be inside the brick.
+   */
+  Brick(const QSize& size, const QPoint& origin);
 
-    /**
-     * \brief Constructs a brick by specifying its bounds.
-     *
-     * Note that all bounds are inclusive.  The order of the arguments
-     * is the same as for QRect::adjust().
-     */
-    Brick(int min_x, int min_y, int max_x, int max_y);
+  /**
+   * \brief Constructs a brick by specifying its bounds.
+   *
+   * Note that all bounds are inclusive.  The order of the arguments
+   * is the same as for QRect::adjust().
+   */
+  Brick(int min_x, int min_y, int max_x, int max_y);
 
-    /**
-     * \brief Get the minimum (inclusive) X offset from the origin.
-     */
-    int minX() const {
-        return m_minX;
-    }
+  /**
+   * \brief Get the minimum (inclusive) X offset from the origin.
+   */
+  int minX() const { return m_minX; }
 
-    /**
-     * \brief Get the maximum (inclusive) X offset from the origin.
-     */
-    int maxX() const {
-        return m_maxX;
-    }
+  /**
+   * \brief Get the maximum (inclusive) X offset from the origin.
+   */
+  int maxX() const { return m_maxX; }
 
-    /**
-     * \brief Get the minimum (inclusive) Y offset from the origin.
-     */
-    int minY() const {
-        return m_minY;
-    }
+  /**
+   * \brief Get the minimum (inclusive) Y offset from the origin.
+   */
+  int minY() const { return m_minY; }
 
-    /**
-     * \brief Get the maximum (inclusive) Y offset from the origin.
-     */
-    int maxY() const {
-        return m_maxY;
-    }
+  /**
+   * \brief Get the maximum (inclusive) Y offset from the origin.
+   */
+  int maxY() const { return m_maxY; }
 
-    int width() const {
-        return m_maxX - m_minX + 1;
-    }
+  int width() const { return m_maxX - m_minX + 1; }
 
-    int height() const {
-        return m_maxY - m_minY + 1;
-    }
+  int height() const { return m_maxY - m_minY + 1; }
 
-    bool isEmpty() const {
-        return m_minX > m_maxX || m_minY > m_maxY;
-    }
+  bool isEmpty() const { return m_minX > m_maxX || m_minY > m_maxY; }
 
-    /**
-     * \brief Flips the brick both horizontally and vertically around the origin.
-     */
-    void flip();
+  /**
+   * \brief Flips the brick both horizontally and vertically around the origin.
+   */
+  void flip();
 
-    /**
-     * \brief Returns a brick flipped both horizontally and vertically around the origin.
-     */
-    Brick flipped() const;
+  /**
+   * \brief Returns a brick flipped both horizontally and vertically around the origin.
+   */
+  Brick flipped() const;
 
-private:
-    int m_minX;
-    int m_maxX;
-    int m_minY;
-    int m_maxY;
+ private:
+  int m_minX;
+  int m_maxX;
+  int m_minY;
+  int m_maxY;
 };
 
 

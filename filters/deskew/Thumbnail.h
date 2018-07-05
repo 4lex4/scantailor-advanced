@@ -29,19 +29,19 @@ class ImageTransformation;
 
 namespace deskew {
 class Thumbnail : public ThumbnailBase {
-public:
-    Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-              const QSizeF& max_size,
-              const ImageId& image_id,
-              const ImageTransformation& xform,
-              bool deviant = false);
+ public:
+  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+            const QSizeF& max_size,
+            const ImageId& image_id,
+            const ImageTransformation& xform,
+            bool deviant = false);
 
-    void prePaintOverImage(QPainter& painter,
-                           const QTransform& image_to_display,
-                           const QTransform& thumb_to_display) override;
+  void prePaintOverImage(QPainter& painter,
+                         const QTransform& image_to_display,
+                         const QTransform& thumb_to_display) override;
 
-private:
-    bool m_deviant;
+ private:
+  bool m_deviant;
 };
 }  // namespace deskew
 #endif

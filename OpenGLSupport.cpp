@@ -17,42 +17,42 @@
  */
 
 #include "OpenGLSupport.h"
-#include <QSettings>
-#include <QSurfaceFormat>
+#include <QOffscreenSurface>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
-#include <QOffscreenSurface>
+#include <QSettings>
+#include <QSurfaceFormat>
 
 bool OpenGLSupport::supported() {
-    QSurfaceFormat format;
-    format.setSamples(2);
-    format.setAlphaBufferSize(8);
+  QSurfaceFormat format;
+  format.setSamples(2);
+  format.setAlphaBufferSize(8);
 
-    QOpenGLContext context;
-    context.setFormat(format);
-    if (!context.create()) {
-        return false;
-    }
-    format = context.format();
+  QOpenGLContext context;
+  context.setFormat(format);
+  if (!context.create()) {
+    return false;
+  }
+  format = context.format();
 
-    if (format.samples() < 2) {
-        return false;
-    }
-    if (!format.hasAlpha()) {
-        return false;
-    }
+  if (format.samples() < 2) {
+    return false;
+  }
+  if (!format.hasAlpha()) {
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 QString OpenGLSupport::deviceName() {
-    QString name;
-    QOpenGLContext context;
-    QOffscreenSurface surface;
-    if (context.create() && (surface.create(), true) && context.makeCurrent(&surface)) {
-        name = QString::fromUtf8((const char*) context.functions()->glGetString(GL_RENDERER));
-        context.doneCurrent();
-    }
+  QString name;
+  QOpenGLContext context;
+  QOffscreenSurface surface;
+  if (context.create() && (surface.create(), true) && context.makeCurrent(&surface)) {
+    name = QString::fromUtf8((const char*) context.functions()->glGetString(GL_RENDERER));
+    context.doneCurrent();
+  }
 
-    return name;
+  return name;
 }

@@ -1,37 +1,45 @@
 
-#include "BlackWhiteOptions.h"
 #include "OutputProcessingParams.h"
 #include <QDomDocument>
+#include "BlackWhiteOptions.h"
 
 namespace output {
 
-OutputProcessingParams::OutputProcessingParams() : autoZonesFound(false) {
-}
+OutputProcessingParams::OutputProcessingParams() : m_autoZonesFound(false), m_blackOnWhiteSetManually(false) {}
 
 OutputProcessingParams::OutputProcessingParams(const QDomElement& el)
-        : autoZonesFound(el.attribute("autoZonesFound") == "1") {
-}
+    : m_autoZonesFound(el.attribute("autoZonesFound") == "1"),
+      m_blackOnWhiteSetManually(el.attribute("blackOnWhiteSetManually") == "1") {}
 
 QDomElement OutputProcessingParams::toXml(QDomDocument& doc, const QString& name) const {
-    QDomElement el(doc.createElement(name));
-    el.setAttribute("autoZonesFound", autoZonesFound ? "1" : "0");
+  QDomElement el(doc.createElement(name));
+  el.setAttribute("autoZonesFound", m_autoZonesFound ? "1" : "0");
+  el.setAttribute("blackOnWhiteSetManually", m_blackOnWhiteSetManually ? "1" : "0");
 
-    return el;
+  return el;
 }
 
 bool OutputProcessingParams::operator==(const OutputProcessingParams& other) const {
-    return (autoZonesFound == other.autoZonesFound);
+  return (m_autoZonesFound == other.m_autoZonesFound) && (m_blackOnWhiteSetManually == other.m_blackOnWhiteSetManually);
 }
 
 bool OutputProcessingParams::operator!=(const OutputProcessingParams& other) const {
-    return !(*this == other);
+  return !(*this == other);
 }
 
 bool output::OutputProcessingParams::isAutoZonesFound() const {
-    return autoZonesFound;
+  return m_autoZonesFound;
 }
 
 void output::OutputProcessingParams::setAutoZonesFound(bool autoZonesFound) {
-    OutputProcessingParams::autoZonesFound = autoZonesFound;
+  OutputProcessingParams::m_autoZonesFound = autoZonesFound;
+}
+
+bool OutputProcessingParams::isBlackOnWhiteSetManually() const {
+  return m_blackOnWhiteSetManually;
+}
+
+void OutputProcessingParams::setBlackOnWhiteSetManually(bool blackOnWhiteSetManually) {
+  OutputProcessingParams::m_blackOnWhiteSetManually = blackOnWhiteSetManually;
 }
 }  // namespace output

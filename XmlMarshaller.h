@@ -35,34 +35,33 @@ class QRect;
 class QRectF;
 
 class XmlMarshaller {
-public:
-    explicit XmlMarshaller(const QDomDocument& doc) : m_doc(doc) {
-    }
+ public:
+  explicit XmlMarshaller(const QDomDocument& doc) : m_doc(doc) {}
 
-    QDomElement string(const QString& str, const QString& name);
+  QDomElement string(const QString& str, const QString& name);
 
-    QDomElement size(const QSize& size, const QString& name);
+  QDomElement size(const QSize& size, const QString& name);
 
-    QDomElement sizeF(const QSizeF& size, const QString& name);
+  QDomElement sizeF(const QSizeF& size, const QString& name);
 
-    QDomElement dpi(const Dpi& dpi, const QString& name);
+  QDomElement dpi(const Dpi& dpi, const QString& name);
 
-    QDomElement rotation(const OrthogonalRotation& rotation, const QString& name);
+  QDomElement rotation(const OrthogonalRotation& rotation, const QString& name);
 
-    QDomElement pointF(const QPointF& p, const QString& name);
+  QDomElement pointF(const QPointF& p, const QString& name);
 
-    QDomElement lineF(const QLineF& line, const QString& name);
+  QDomElement lineF(const QLineF& line, const QString& name);
 
-    QDomElement rect(const QRect& rect, const QString& name);
+  QDomElement rect(const QRect& rect, const QString& name);
 
-    QDomElement rectF(const QRectF& rect, const QString& name);
+  QDomElement rectF(const QRectF& rect, const QString& name);
 
-    QDomElement polygonF(const QPolygonF& poly, const QString& name);
+  QDomElement polygonF(const QPolygonF& poly, const QString& name);
 
-    QDomElement margins(const Margins& margins, const QString& name);
+  QDomElement margins(const Margins& margins, const QString& name);
 
-private:
-    QDomDocument m_doc;
+ private:
+  QDomDocument m_doc;
 };
 
 

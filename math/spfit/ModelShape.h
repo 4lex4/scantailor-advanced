@@ -19,9 +19,9 @@
 #ifndef SPFIT_MODEL_SHAPE_H_
 #define SPFIT_MODEL_SHAPE_H_
 
-#include "SqDistApproximant.h"
-#include "FittableSpline.h"
 #include <QPointF>
+#include "FittableSpline.h"
+#include "SqDistApproximant.h"
 
 namespace spfit {
 /**
@@ -30,14 +30,14 @@ namespace spfit {
  * Could be a polyline or maybe a point cloud.
  */
 class ModelShape {
-public:
-    virtual ~ModelShape() = default;
+ public:
+  virtual ~ModelShape() = default;
 
-    /**
-     * Returns a function that approximates the squared distance to the model.
-     * The function is only accurate in the neighbourhood of \p pt.
-     */
-    virtual SqDistApproximant localSqDistApproximant(const QPointF& pt, FittableSpline::SampleFlags flags) const = 0;
+  /**
+   * Returns a function that approximates the squared distance to the model.
+   * The function is only accurate in the neighbourhood of \p pt.
+   */
+  virtual SqDistApproximant localSqDistApproximant(const QPointF& pt, FittableSpline::SampleFlags flags) const = 0;
 };
 }  // namespace spfit
 #endif

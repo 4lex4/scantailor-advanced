@@ -19,10 +19,10 @@
 #ifndef OUTPUT_FILL_COLOR_PROPERTY_H_
 #define OUTPUT_FILL_COLOR_PROPERTY_H_
 
-#include "Property.h"
-#include "intrusive_ptr.h"
 #include <QColor>
 #include <Qt>
+#include "Property.h"
+#include "intrusive_ptr.h"
 
 class PropertyFactory;
 class QDomDocument;
@@ -31,31 +31,31 @@ class QString;
 
 namespace output {
 class FillColorProperty : public Property {
-public:
-    explicit FillColorProperty(const QColor& color = Qt::white);
+ public:
+  explicit FillColorProperty(const QColor& color = Qt::white);
 
-    explicit FillColorProperty(const QDomElement& el);
+  explicit FillColorProperty(const QDomElement& el);
 
-    static void registerIn(PropertyFactory& factory);
+  static void registerIn(PropertyFactory& factory);
 
-    intrusive_ptr<Property> clone() const override;
+  intrusive_ptr<Property> clone() const override;
 
-    QDomElement toXml(QDomDocument& doc, const QString& name) const override;
+  QDomElement toXml(QDomDocument& doc, const QString& name) const override;
 
-    QColor color() const;
+  QColor color() const;
 
-    void setColor(const QColor& color);
+  void setColor(const QColor& color);
 
-private:
-    static intrusive_ptr<Property> construct(const QDomElement& el);
+ private:
+  static intrusive_ptr<Property> construct(const QDomElement& el);
 
-    static QRgb rgbFromString(const QString& str);
+  static QRgb rgbFromString(const QString& str);
 
-    static QString rgbToString(QRgb rgb);
+  static QString rgbToString(QRgb rgb);
 
 
-    static const char m_propertyName[];
-    QRgb m_rgb;
+  static const char m_propertyName[];
+  QRgb m_rgb;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_FILL_COLOR_PROPERTY_H_

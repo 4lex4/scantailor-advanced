@@ -17,13 +17,15 @@
  */
 
 #include "ErrorWidget.h"
+#include <QIcon>
+#include <QStyle>
 
 ErrorWidget::ErrorWidget(const QString& text, Qt::TextFormat fmt) {
-    setupUi(this);
-    textLabel->setTextFormat(fmt);
-    textLabel->setText(text);
-    QIcon icon(QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning));
-    imageLabel->setPixmap(icon.pixmap(48, 48));
+  setupUi(this);
+  textLabel->setTextFormat(fmt);
+  textLabel->setText(text);
+  QIcon icon(QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning));
+  imageLabel->setPixmap(icon.pixmap(48, 48));
 
-    connect(textLabel, SIGNAL(linkActivated(const QString&)), SLOT(linkActivated(const QString&)));
+  connect(textLabel, SIGNAL(linkActivated(const QString&)), SLOT(linkActivated(const QString&)));
 }

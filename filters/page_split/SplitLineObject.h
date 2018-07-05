@@ -23,24 +23,20 @@
 
 namespace page_split {
 class SplitLineObject : public DraggableObject {
-protected:
-    virtual Proximity lineProximity(const QPointF& widget_mouse_pos, const InteractionState& interaction) const = 0;
+ protected:
+  virtual Proximity lineProximity(const QPointF& widget_mouse_pos, const InteractionState& interaction) const = 0;
 
-    virtual QPointF linePosition(const InteractionState& interaction) const = 0;
+  virtual QPointF linePosition(const InteractionState& interaction) const = 0;
 
-    virtual void lineMoveRequest(const QPointF& widget_pos) = 0;
+  virtual void lineMoveRequest(const QPointF& widget_pos) = 0;
 
-    virtual Proximity proximity(const QPointF& widget_mouse_pos, const InteractionState& interaction) {
-        return lineProximity(widget_mouse_pos, interaction);
-    }
+  virtual Proximity proximity(const QPointF& widget_mouse_pos, const InteractionState& interaction) {
+    return lineProximity(widget_mouse_pos, interaction);
+  }
 
-    virtual QPointF position(const InteractionState& interaction) const {
-        return linePosition(interaction);
-    }
+  virtual QPointF position(const InteractionState& interaction) const { return linePosition(interaction); }
 
-    virtual void moveRequest(const QPointF& widget_pos) {
-        return lineMoveRequest(widget_pos);
-    }
+  virtual void moveRequest(const QPointF& widget_pos) { return lineMoveRequest(widget_pos); }
 };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_SPLIT_LINE_OBJECT_H_

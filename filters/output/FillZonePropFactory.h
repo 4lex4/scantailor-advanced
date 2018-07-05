@@ -23,8 +23,8 @@
 
 namespace output {
 class FillZonePropFactory : public PropertyFactory {
-public:
-    FillZonePropFactory();
+ public:
+  FillZonePropFactory();
 };
 }  // namespace output
 #endif

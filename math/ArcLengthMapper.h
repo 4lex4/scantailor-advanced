@@ -33,78 +33,77 @@
  * to be connected by straight lines.
  */
 class ArcLengthMapper {
-    // Member-wise copying is OK.
-public:
-    class Hint {
-        friend class ArcLengthMapper;
+  // Member-wise copying is OK.
+ public:
+  class Hint {
+    friend class ArcLengthMapper;
 
-    public:
-        Hint();
+   public:
+    Hint();
 
-    private:
-        void update(int new_segment);
+   private:
+    void update(int new_segment);
 
-        int m_lastSegment;
-        int m_direction;
-    };
+    int m_lastSegment;
+    int m_direction;
+  };
 
 
-    ArcLengthMapper();
+  ArcLengthMapper();
 
-    /**
-     * \brief Adds an x -> f(x) sample.
-     *
-     * Note that x value of every sample has to be bigger than that
-     * of the previous one.
-     */
-    void addSample(double x, double fx);
+  /**
+   * \brief Adds an x -> f(x) sample.
+   *
+   * Note that x value of every sample has to be bigger than that
+   * of the previous one.
+   */
+  void addSample(double x, double fx);
 
-    /**
-     * \brief Returns the total arc length from the first to the last sample.
-     */
-    double totalArcLength() const;
+  /**
+   * \brief Returns the total arc length from the first to the last sample.
+   */
+  double totalArcLength() const;
 
-    /**
-     * \brief Scales arc lengths at every sample so that the
-     *        total arc length becomes equal to the given value.
-     *
-     * Obviously, this should be done after all samples have been added.
-     * After calling this function, totalArcLength() will be returning
-     * the new value.
-     */
-    void normalizeRange(double total_arc_len);
+  /**
+   * \brief Scales arc lengths at every sample so that the
+   *        total arc length becomes equal to the given value.
+   *
+   * Obviously, this should be done after all samples have been added.
+   * After calling this function, totalArcLength() will be returning
+   * the new value.
+   */
+  void normalizeRange(double total_arc_len);
 
-    /**
-     * \brief Maps from arc length to the corresponding function argument.
-     *
-     * This works even for arc length beyond the first or last samples.
-     * When interpolation is impossible, the closest sample is returned.
-     * If no samples are present, zero is returned.  Providing the same
-     * hint on consecutive calls to this function improves performance.
-     */
-    double arcLenToX(double arc_len, Hint& hint) const;
+  /**
+   * \brief Maps from arc length to the corresponding function argument.
+   *
+   * This works even for arc length beyond the first or last samples.
+   * When interpolation is impossible, the closest sample is returned.
+   * If no samples are present, zero is returned.  Providing the same
+   * hint on consecutive calls to this function improves performance.
+   */
+  double arcLenToX(double arc_len, Hint& hint) const;
 
-    double xToArcLen(double x, Hint& hint) const;
+  double xToArcLen(double x, Hint& hint) const;
 
-private:
-    struct Sample {
-        double x;
-        double arcLen;
+ private:
+  struct Sample {
+    double x;
+    double arcLen;
 
-        Sample(double x, double arc_len) : x(x), arcLen(arc_len) {
-        }
-    };
+    Sample(double x, double arc_len) : x(x), arcLen(arc_len) {}
+  };
 
-    bool checkSegmentForArcLen(double arc_len, int segment) const;
+  bool checkSegmentForArcLen(double arc_len, int segment) const;
 
-    bool checkSegmentForX(double x, int segment) const;
+  bool checkSegmentForX(double x, int segment) const;
 
-    double interpolateArcLenInSegment(double arc_len, int segment) const;
+  double interpolateArcLenInSegment(double arc_len, int segment) const;
 
-    double interpolateXInSegment(double x, int segment) const;
+  double interpolateXInSegment(double x, int segment) const;
 
-    std::vector<Sample> m_samples;
-    double m_prevFX;
+  std::vector<Sample> m_samples;
+  double m_prevFX;
 };
 
 

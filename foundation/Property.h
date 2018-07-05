@@ -19,17 +19,17 @@
 #ifndef PROPERTY_H_
 #define PROPERTY_H_
 
-#include "ref_countable.h"
 #include "intrusive_ptr.h"
+#include "ref_countable.h"
 
 class QDomDocument;
 class QDomElement;
 
 class Property : public ref_countable {
-public:
-    virtual intrusive_ptr<Property> clone() const = 0;
+ public:
+  virtual intrusive_ptr<Property> clone() const = 0;
 
-    virtual QDomElement toXml(QDomDocument& doc, const QString& name) const = 0;
+  virtual QDomElement toXml(QDomDocument& doc, const QString& name) const = 0;
 };
 
 

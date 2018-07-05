@@ -7,64 +7,69 @@
 namespace output {
 
 SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-        : m_ptrSettings(std::move(settings)) {
-    setupUi(this);
+    : m_settings(std::move(settings)) {
+  setupUi(this);
 
-    delayedStateChanger.setSingleShot(true);
+  m_delayedStateChanger.setSingleShot(true);
 
-    setupUiConnections();
+  setupUiConnections();
 }
 
-void SauvolaBinarizationOptionsWidget::preUpdateUI(const PageId& page_id) {
-    removeUiConnections();
+void SauvolaBinarizationOptionsWidget::updateUi(const PageId& page_id) {
+  removeUiConnections();
 
-    const Params params(m_ptrSettings->getParams(page_id));
-    m_pageId = page_id;
-    m_colorParams = params.colorParams();
-    m_outputProcessingParams = m_ptrSettings->getOutputProcessingParams(page_id);
+  const Params params(m_settings->getParams(page_id));
+  m_pageId = page_id;
+  m_colorParams = params.colorParams();
+  m_outputProcessingParams = m_settings->getOutputProcessingParams(page_id);
 
-    updateView();
+  updateView();
 
-    setupUiConnections();
+  setupUiConnections();
 }
 
 void SauvolaBinarizationOptionsWidget::windowSizeChanged(int value) {
-    BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
-    opt.setWindowSize(value);
-    m_colorParams.setBlackWhiteOptions(opt);
-    m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+  opt.setWindowSize(value);
+  m_colorParams.setBlackWhiteOptions(opt);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
-    delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void SauvolaBinarizationOptionsWidget::sauvolaCoefChanged(double value) {
-    BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
-    opt.setSauvolaCoef(value);
-    m_colorParams.setBlackWhiteOptions(opt);
-    m_ptrSettings->setColorParams(m_pageId, m_colorParams);
+  BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+  opt.setSauvolaCoef(value);
+  m_colorParams.setBlackWhiteOptions(opt);
+  m_settings->setColorParams(m_pageId, m_colorParams);
 
-    delayedStateChanger.start(750);
+  m_delayedStateChanger.start(750);
 }
 
 void SauvolaBinarizationOptionsWidget::updateView() {
-    BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
-    windowSize->setValue(blackWhiteOptions.getWindowSize());
-    sauvolaCoef->setValue(blackWhiteOptions.getSauvolaCoef());
+  BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+  windowSize->setValue(blackWhiteOptions.getWindowSize());
+  sauvolaCoef->setValue(blackWhiteOptions.getSauvolaCoef());
 }
 
 void SauvolaBinarizationOptionsWidget::sendStateChanged() {
-    emit stateChanged();
+  emit stateChanged();
 }
+
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
 
 void SauvolaBinarizationOptionsWidget::setupUiConnections() {
-    connect(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
-    connect(sauvolaCoef, SIGNAL(valueChanged(double)), this, SLOT(sauvolaCoefChanged(double)));
-    connect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
+  CONNECT(sauvolaCoef, SIGNAL(valueChanged(double)), this, SLOT(sauvolaCoefChanged(double)));
+  CONNECT(&m_delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
 }
 
+#undef CONNECT
+
 void SauvolaBinarizationOptionsWidget::removeUiConnections() {
-    disconnect(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
-    disconnect(sauvolaCoef, SIGNAL(valueChanged(double)), this, SLOT(sauvolaCoefChanged(double)));
-    disconnect(&delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));
+  for (const auto& connection : m_connectionList) {
+    disconnect(connection);
+  }
+  m_connectionList.clear();
 }
 }  // namespace output

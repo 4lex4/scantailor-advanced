@@ -19,36 +19,35 @@
 #ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_
 #define SPFIT_POLYLINE_MODEL_SHAPE_H_
 
-#include "NonCopyable.h"
-#include "ModelShape.h"
-#include "SqDistApproximant.h"
-#include "XSpline.h"
-#include "VecNT.h"
-#include "FlagOps.h"
 #include <QPointF>
 #include <vector>
+#include "FlagOps.h"
+#include "ModelShape.h"
+#include "NonCopyable.h"
+#include "SqDistApproximant.h"
+#include "VecNT.h"
+#include "XSpline.h"
 
 namespace spfit {
 class PolylineModelShape : public ModelShape {
-    DECLARE_NON_COPYABLE(PolylineModelShape)
+  DECLARE_NON_COPYABLE(PolylineModelShape)
 
-public:
-    enum Flags { DEFAULT_FLAGS = 0, POLYLINE_FRONT = 1 << 0, POLYLINE_BACK = 1 << 1 };
+ public:
+  enum Flags { DEFAULT_FLAGS = 0, POLYLINE_FRONT = 1 << 0, POLYLINE_BACK = 1 << 1 };
 
-    explicit PolylineModelShape(const std::vector<QPointF>& polyline);
+  explicit PolylineModelShape(const std::vector<QPointF>& polyline);
 
-    SqDistApproximant localSqDistApproximant(const QPointF& pt,
-                                             FittableSpline::SampleFlags sample_flags) const override;
+  SqDistApproximant localSqDistApproximant(const QPointF& pt, FittableSpline::SampleFlags sample_flags) const override;
 
-protected:
-    virtual SqDistApproximant calcApproximant(const QPointF& pt,
-                                              FittableSpline::SampleFlags sample_flags,
-                                              Flags polyline_flags,
-                                              const FrenetFrame& frenet_frame,
-                                              double signed_curvature) const;
+ protected:
+  virtual SqDistApproximant calcApproximant(const QPointF& pt,
+                                            FittableSpline::SampleFlags sample_flags,
+                                            Flags polyline_flags,
+                                            const FrenetFrame& frenet_frame,
+                                            double signed_curvature) const;
 
-private:
-    std::vector<XSpline::PointAndDerivs> m_vertices;
+ private:
+  std::vector<XSpline::PointAndDerivs> m_vertices;
 };
 
 

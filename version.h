@@ -19,8 +19,8 @@
 #ifndef SCANTAILOR_VERSION_H_
 #define SCANTAILOR_VERSION_H_
 
-#define VERSION "1.0.14"
+#define VERSION "1.0.15"
 #define VERSION_QUAD ""  // Must be "x.x.x.x" or an empty string.
-#define PROJECT_VERSION 2
+#define PROJECT_VERSION 3
 
 #endif

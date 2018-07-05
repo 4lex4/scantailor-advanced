@@ -18,21 +18,18 @@
 
 #include "Utils.h"
 #include <QDir>
+#include <QSettings>
 #include <QTextDocument>
 
 #ifdef Q_OS_WIN
-
 #include <windows.h>
-
 #else
-
 #include <stdio.h>
 #endif
 
 bool Utils::overwritingRename(const QString& from, const QString& to) {
 #ifdef Q_OS_WIN
   return MoveFileExW((WCHAR*) from.utf16(), (WCHAR*) to.utf16(), MOVEFILE_REPLACE_EXISTING) != 0;
-
 #else
   return rename(QFile::encodeName(from).data(), QFile::encodeName(to).data()) == 0;
 #endif
@@ -61,7 +58,7 @@ QString Utils::outputDirToThumbDir(const QString& output_dir) {
 }
 
 intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& output_dir) {
-  const QSize max_pixmap_size(200, 200);
+  const QSize max_pixmap_size = QSettings().value("settings/thumbnail_quality", QSize(200, 200)).toSize();
   const QString thumbs_cache_path(outputDirToThumbDir(output_dir));
 
   return make_intrusive<ThumbnailPixmapCache>(thumbs_cache_path, max_pixmap_size, 40, 5);

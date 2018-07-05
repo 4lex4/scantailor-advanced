@@ -101,6 +101,10 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
     QMessageBox::information(this, tr("Information"),
                              tr("ScanTailor need to be restarted to apply the color scheme changes."));
   });
+
+  ui.thumbnailQualitySB->setValue(settings.value("settings/thumbnail_quality", QSize(200, 200)).toSize().width());
+  ui.thumbnailSizeSB->setValue(
+      settings.value("settings/max_logical_thumb_size", QSizeF(250, 160)).toSizeF().toSize().width());
 }
 
 SettingsDialog::~SettingsDialog() = default;
@@ -131,6 +135,16 @@ void SettingsDialog::commitChanges() {
 
   settings.setValue("settings/blackOnWhiteDetection", ui.blackOnWhiteDetectionCB->isChecked());
   settings.setValue("settings/blackOnWhiteDetectionAtOutput", ui.blackOnWhiteDetectionAtOutputCB->isChecked());
+
+  {
+    const int quality = ui.thumbnailQualitySB->value();
+    settings.setValue("settings/thumbnail_quality", QSize(quality, quality));
+  }
+  {
+    const double width = ui.thumbnailSizeSB->value();
+    const double height = std::round((width * (16.0 / 25.0)) * 100) / 100;
+    settings.setValue("settings/max_logical_thumb_size", QSizeF(width, height));
+  }
 
   emit settingsChanged();
 }

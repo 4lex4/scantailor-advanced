@@ -1392,6 +1392,11 @@ void MainWindow::onSettingsChanged() {
     app->installLanguage(settings.value("settings/language").toString());
   }
 
+  const QSizeF max_logical_thumb_size = settings.value("settings/max_logical_thumb_size").toSizeF();
+  if (m_maxLogicalThumbSize != max_logical_thumb_size) {
+    updateMaxLogicalThumbSize(max_logical_thumb_size);
+  }
+
   m_thumbSequence->invalidateAllThumbnails();
 }
 
@@ -2010,14 +2015,16 @@ void MainWindow::scaleThumbnails(const QWheelEvent* wheel_event) {
     const double dy = std::copysign(16.0, wheel_dist);
     const double width = qBound(100.0, m_maxLogicalThumbSize.width() + dx, 1000.0);
     const double height = qBound(64.0, m_maxLogicalThumbSize.height() + dy, 640.0);
-    m_maxLogicalThumbSize = QSizeF(width, height);
-    if (m_thumbSequence) {
-      m_thumbSequence->setMaxLogicalThumbSize(m_maxLogicalThumbSize);
-    }
-    
-    setupThumbView();
-    resetThumbSequence(currentPageOrderProvider(), ThumbnailSequence::KEEP_SELECTION);
+    updateMaxLogicalThumbSize(QSizeF(width, height));
 
     QSettings().setValue("settings/max_logical_thumb_size", m_maxLogicalThumbSize);
   }
+}
+
+void MainWindow::updateMaxLogicalThumbSize(const QSizeF& size) {
+  m_maxLogicalThumbSize = size;
+
+  m_thumbSequence->setMaxLogicalThumbSize(m_maxLogicalThumbSize);
+  setupThumbView();
+  resetThumbSequence(currentPageOrderProvider(), ThumbnailSequence::KEEP_SELECTION);
 }

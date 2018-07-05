@@ -297,6 +297,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void scaleThumbnails(const QWheelEvent* wheel_event);
 
+  void updateMaxLogicalThumbSize(const QSizeF& size);
+
   QSizeF m_maxLogicalThumbSize;
   intrusive_ptr<ProjectPages> m_pages;
   intrusive_ptr<StageSequence> m_stages;

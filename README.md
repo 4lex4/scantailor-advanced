@@ -227,6 +227,8 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     * Separate highlighting for selection leader in thumbnails.
     * Navigating between selected pages.
       Use **`Shift+PgUp/Q`** and **`Shift+PgDown/W`** to navigate between selected pages.
+      
+  * Added options in the settings to manage the quality and size of thumbnails.
 
   * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 

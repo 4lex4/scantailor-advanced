@@ -19,7 +19,7 @@
 #include "Filter.h"
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
-#include <OrderByCompleteness.h>
+#include <OrderByCompletenessProvider.h>
 #include <tiff.h>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -42,7 +42,7 @@ Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
   }
 
   const PageOrderOption::ProviderPtr default_order;
-  const auto order_by_completeness = make_intrusive<OrderByCompleteness>();
+  const auto order_by_completeness = make_intrusive<OrderByCompletenessProvider>();
   m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
   m_pageOrderOptions.emplace_back(tr("Order by completeness"), order_by_completeness);
 }

@@ -61,7 +61,7 @@ void CacheDrivenTask::process(const PageInfo& page_info,
                                                          m_settings->getAggregateContentRect()));
 
   ImageTransformation new_xform(xform);
-  new_xform.setPostCropArea(shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));
+  new_xform.setPostCropArea(Utils::shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));
 
   if (m_nextTask) {
     m_nextTask->process(page_info, collector, new_xform, content_rect_phys);
@@ -79,14 +79,5 @@ void CacheDrivenTask::process(const PageInfo& page_info,
                       xform, content_rect_phys, xform.transform().map(page_rect_phys).boundingRect(),
                       m_settings->deviationProvider().isDeviant(page_info.id(), deviationCoef, deviationThreshold))));
   }
-}  // CacheDrivenTask::process
-
-QPolygonF CacheDrivenTask::shiftToRoundedOrigin(const QPolygonF& poly) {
-  const double x = poly.boundingRect().left();
-  const double y = poly.boundingRect().top();
-  const double shift_value_x = -(x - std::round(x));
-  const double shift_value_y = -(y - std::round(y));
-
-  return poly.translated(shift_value_x, shift_value_y);
 }
 }  // namespace page_layout

@@ -104,7 +104,7 @@ FilterResultPtr Task::process(const TaskStatus& status,
                                                            m_settings->getAggregateContentRect()));
 
     ImageTransformation new_xform(data.xform());
-    new_xform.setPostCropArea(shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));
+    new_xform.setPostCropArea(Utils::shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));
 
     return m_nextTask->process(status, FilterData(data, new_xform), content_rect_phys);
   } else {
@@ -113,15 +113,6 @@ FilterResultPtr Task::process(const TaskStatus& status,
                                      adapted_content_rect, agg_hard_size_before != agg_hard_size_after,
                                      m_batchProcessing);
   }
-}
-
-QPolygonF Task::shiftToRoundedOrigin(const QPolygonF& poly) {
-  const double x = poly.boundingRect().left();
-  const double y = poly.boundingRect().top();
-  const double shift_value_x = -(x - std::round(x));
-  const double shift_value_y = -(y - std::round(y));
-
-  return poly.translated(shift_value_x, shift_value_y);
 }
 
 /*============================ Task::UiUpdater ==========================*/

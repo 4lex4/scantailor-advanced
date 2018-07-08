@@ -91,6 +91,8 @@ class Utils {
                                     const QSizeF& aggregate_hard_size_mm,
                                     const QRectF& agg_content_rect);
 
+  static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
+
  private:
   static QPointF getRightUnitVector(const QPolygonF& poly_rect);
 

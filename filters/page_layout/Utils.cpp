@@ -266,4 +266,13 @@ QPointF Utils::getDownUnitVector(const QPolygonF& poly_rect) {
 
   return QLineF(top_left, bottom_left).unitVector().p2() - top_left;
 }
+
+QPolygonF Utils::shiftToRoundedOrigin(const QPolygonF& poly) {
+  const double x = poly.boundingRect().left();
+  const double y = poly.boundingRect().top();
+  const double shift_value_x = -(x - std::round(x));
+  const double shift_value_y = -(y - std::round(y));
+
+  return poly.translated(shift_value_x, shift_value_y);
+}
 }  // namespace page_layout

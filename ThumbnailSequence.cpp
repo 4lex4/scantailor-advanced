@@ -102,6 +102,8 @@ class ThumbnailSequence::Impl {
 
   PageSequence toPageSequence() const;
 
+  void updateSceneItemsPos();
+
   void invalidateThumbnail(const PageId& page_id);
 
   void invalidateThumbnail(const PageInfo& page_info);
@@ -209,7 +211,7 @@ class ThumbnailSequence::Impl {
 
   int getGraphicsViewWidth() const;
 
-  void updateSceneItemsPos();
+  void orderItems();
 
   static const int SPACING = 3;
   ThumbnailSequence& m_owner;
@@ -408,6 +410,10 @@ void ThumbnailSequence::setMaxLogicalThumbSize(const QSizeF& size) {
   m_impl->setMaxLogicalThumbSize(size);
 }
 
+void ThumbnailSequence::updateSceneItemsPos() {
+  m_impl->updateSceneItemsPos();
+}
+
 /*======================== ThumbnailSequence::Impl ==========================*/
 
 ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& max_logical_thumb_size)
@@ -543,6 +549,15 @@ int ThumbnailSequence::Impl::getGraphicsViewWidth() const {
   return view_width;
 }
 
+void ThumbnailSequence::Impl::orderItems() {
+  // Sort pages in m_itemsInOrder using m_orderProvider.
+  if (m_orderProvider) {
+    m_itemsInOrder.sort([this](const Item& lhs, const Item& rhs) {
+      return m_orderProvider->precedes(lhs.pageId(), lhs.incompleteThumbnail, rhs.pageId(), rhs.incompleteThumbnail);
+    });
+  }
+}
+
 void ThumbnailSequence::Impl::updateSceneItemsPos() {
   m_sceneRect = QRectF(0.0, 0.0, 0.0, 0.0);
 
@@ -645,13 +660,7 @@ void ThumbnailSequence::Impl::invalidateAllThumbnails() {
     m_graphicsScene.addItem(new_composite);
   }
 
-  // Sort pages in m_itemsInOrder using m_orderProvider.
-  if (m_orderProvider) {
-    m_itemsInOrder.sort([this](const Item& lhs, const Item& rhs) {
-      return m_orderProvider->precedes(lhs.pageId(), lhs.incompleteThumbnail, rhs.pageId(), rhs.incompleteThumbnail);
-    });
-  }
-
+  orderItems();
   updateSceneItemsPos();
 }  // ThumbnailSequence::Impl::invalidateAllThumbnails
 
@@ -1300,6 +1309,7 @@ std::unique_ptr<ThumbnailSequence::CompositeItem> ThumbnailSequence::Impl::getCo
                                                                                             const PageInfo& page_info) {
   std::unique_ptr<QGraphicsItem> thumb(getThumbnail(page_info));
   std::unique_ptr<LabelGroup> label_group(getLabelGroup(page_info));
+
   std::unique_ptr<CompositeItem> composite(new CompositeItem(*this, std::move(thumb), std::move(label_group)));
   composite->setItem(item);
 

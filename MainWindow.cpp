@@ -283,6 +283,12 @@ MainWindow::MainWindow()
     }
   }
   m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
+
+  m_maxLogicalThumbSizeUpdater.setSingleShot(true);
+  connect(&m_maxLogicalThumbSizeUpdater, &QTimer::timeout, this, &MainWindow::updateMaxLogicalThumbSize);
+
+  m_sceneItemsPosUpdater.setSingleShot(true);
+  connect(&m_sceneItemsPosUpdater, &QTimer::timeout, m_thumbSequence.get(), &ThumbnailSequence::updateSceneItemsPos);
 }
 
 MainWindow::~MainWindow() {
@@ -438,7 +444,7 @@ void MainWindow::createBatchProcessingWidget() {
   connect(stop_btn, SIGNAL(clicked()), SLOT(stopBatchProcessing()));
 }  // MainWindow::createBatchProcessingWidget
 
-void MainWindow::setupThumbView() {
+void MainWindow::updateThumbViewMinWidth() {
   const int sb = thumbView->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
   int inner_width = thumbView->maximumViewportSize().width() - sb;
   if (thumbView->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents, 0, thumbView)) {
@@ -446,15 +452,19 @@ void MainWindow::setupThumbView() {
   }
   const int delta_x = thumbView->size().width() - inner_width;
   thumbView->setMinimumWidth((int) std::ceil(m_maxLogicalThumbSize.width() + delta_x));
+}
 
+void MainWindow::setupThumbView() {
+  updateThumbViewMinWidth();
   m_thumbSequence->attachView(thumbView);
-
   thumbView->installEventFilter(this);
 }
 
 bool MainWindow::eventFilter(QObject* obj, QEvent* ev) {
   if ((obj == thumbView) && (ev->type() == QEvent::Resize)) {
-    emit invalidateAllThumbnails();
+    if (!m_sceneItemsPosUpdater.isActive()) {
+      m_sceneItemsPosUpdater.start(150);
+    }
   }
 
   if ((obj == thumbView || obj == thumbView->verticalScrollBar()) && (ev->type() == QEvent::Wheel)) {
@@ -1385,6 +1395,7 @@ void MainWindow::openDefaultParamsDialog() {
 
 void MainWindow::onSettingsChanged() {
   QSettings settings;
+  bool need_invalidate = true;
 
   m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
 
@@ -1394,10 +1405,14 @@ void MainWindow::onSettingsChanged() {
 
   const QSizeF max_logical_thumb_size = settings.value("settings/max_logical_thumb_size").toSizeF();
   if (m_maxLogicalThumbSize != max_logical_thumb_size) {
-    updateMaxLogicalThumbSize(max_logical_thumb_size);
+    m_maxLogicalThumbSize = max_logical_thumb_size;
+    updateMaxLogicalThumbSize();
+    need_invalidate = false;
   }
 
-  m_thumbSequence->invalidateAllThumbnails();
+  if (need_invalidate) {
+    m_thumbSequence->invalidateAllThumbnails();
+  }
 }
 
 void MainWindow::showAboutDialog() {
@@ -2015,16 +2030,17 @@ void MainWindow::scaleThumbnails(const QWheelEvent* wheel_event) {
     const double dy = std::copysign(16.0, wheel_dist);
     const double width = qBound(100.0, m_maxLogicalThumbSize.width() + dx, 1000.0);
     const double height = qBound(64.0, m_maxLogicalThumbSize.height() + dy, 640.0);
-    updateMaxLogicalThumbSize(QSizeF(width, height));
+    m_maxLogicalThumbSize = QSizeF(width, height);
+    if (!m_maxLogicalThumbSizeUpdater.isActive()) {
+      m_maxLogicalThumbSizeUpdater.start(350);
+    }
 
     QSettings().setValue("settings/max_logical_thumb_size", m_maxLogicalThumbSize);
   }
 }
 
-void MainWindow::updateMaxLogicalThumbSize(const QSizeF& size) {
-  m_maxLogicalThumbSize = size;
-
+void MainWindow::updateMaxLogicalThumbSize() {
   m_thumbSequence->setMaxLogicalThumbSize(m_maxLogicalThumbSize);
-  setupThumbView();
+  updateThumbViewMinWidth();
   resetThumbSequence(currentPageOrderProvider(), ThumbnailSequence::KEEP_SELECTION);
 }

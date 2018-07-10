@@ -30,7 +30,7 @@ std::list<QString> DefaultParamsProfileManager::getProfileList() const {
     QList<QFileInfo> fileInfoList = dir.entryInfoList();
     for (const QFileInfo& fileInfo : fileInfoList) {
       if (fileInfo.isFile() && ((fileInfo.suffix() == "stp") || (fileInfo.suffix() == "xml"))) {
-        profileList.push_back(fileInfo.baseName());
+        profileList.push_back(fileInfo.completeBaseName());
       }
     }
   }

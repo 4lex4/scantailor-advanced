@@ -1582,7 +1582,7 @@ void MainWindow::updateWindowTitle() {
   } else if (cli.hasWindowTitle()) {
     project_name = cli.getWindowTitle();
   } else {
-    project_name = QFileInfo(m_projectFile).baseName();
+    project_name = QFileInfo(m_projectFile).completeBaseName();
   }
   const QString version(QString::fromUtf8(VERSION));
   setWindowTitle(tr("%2 - ScanTailor Advanced [%1bit]").arg(sizeof(void*) * 8).arg(project_name));

@@ -1246,7 +1246,7 @@ std::unique_ptr<QGraphicsItem> ThumbnailSequence::Impl::getThumbnail(const PageI
 std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabelGroup(const PageInfo& page_info) {
   const PageId& page_id = page_info.id();
   const QFileInfo file_info(page_id.imageId().filePath());
-  const QString file_name(file_info.baseName());
+  const QString file_name(file_info.completeBaseName());
 
   QString text;
   if (file_name.size() <= 15) {

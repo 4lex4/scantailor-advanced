@@ -100,8 +100,8 @@ FilterResultPtr Task::process(const TaskStatus& status,
 
   if (m_nextTask) {
     const QPolygonF content_rect_phys(data.xform().transformBack().map(adapted_content_rect));
-    const QPolygonF page_rect_phys(Utils::calcPageRectPhys(data.xform(), content_rect_phys, params, agg_hard_size_after,
-                                                           m_settings->getAggregateContentRect()));
+    const QPolygonF page_rect_phys(
+        Utils::calcPageRectPhys(data.xform(), content_rect_phys, params, agg_hard_size_after));
 
     ImageTransformation new_xform(data.xform());
     new_xform.setPostCropArea(Utils::shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));

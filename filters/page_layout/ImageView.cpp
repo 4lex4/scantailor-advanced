@@ -528,8 +528,7 @@ void ImageView::recalcBoxesAndFit(const Margins& margins_mm) {
   const QSizeF hard_size_mm(QLineF(poly_mm[0], poly_mm[1]).length(), QLineF(poly_mm[0], poly_mm[3]).length());
   const Margins soft_margins_mm(Utils::calcSoftMarginsMM(
       hard_size_mm, m_aggregateHardSizeMM, m_alignment, m_settings->getPageParams(m_pageId)->contentRect(),
-      m_settings->getPageParams(m_pageId)->contentSizeMM(), m_settings->getAggregateContentRect(),
-      m_settings->getPageParams(m_pageId)->pageRect()));
+      m_settings->getPageParams(m_pageId)->contentSizeMM(), m_settings->getPageParams(m_pageId)->pageRect()));
 
   Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
 
@@ -618,8 +617,7 @@ void ImageView::recalcOuterRect() {
   const QSizeF hard_size_mm(QLineF(poly_mm[0], poly_mm[1]).length(), QLineF(poly_mm[0], poly_mm[3]).length());
   const Margins soft_margins_mm(Utils::calcSoftMarginsMM(
       hard_size_mm, m_aggregateHardSizeMM, m_alignment, m_settings->getPageParams(m_pageId)->contentRect(),
-      m_settings->getPageParams(m_pageId)->contentSizeMM(), m_settings->getAggregateContentRect(),
-      m_settings->getPageParams(m_pageId)->pageRect()));
+      m_settings->getPageParams(m_pageId)->contentSizeMM(), m_settings->getPageParams(m_pageId)->pageRect()));
 
   Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
 

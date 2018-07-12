@@ -21,8 +21,6 @@
 #include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
 #include <UnitsConverter.h>
-#include <XmlMarshaller.h>
-#include <XmlUnmarshaller.h>
 #include <filters/output/CacheDrivenTask.h>
 #include <filters/output/Task.h>
 #include <boost/lambda/bind.hpp>
@@ -100,8 +98,6 @@ void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
   QDomElement filter_el(doc.createElement("page-layout"));
 
-  XmlMarshaller marshaller(doc);
-  filter_el.appendChild(marshaller.rectF(m_settings->getAggregateContentRect(), "aggregateContentRect"));
   filter_el.setAttribute("showMiddleRect", m_settings->isShowingMiddleRectEnabled() ? "1" : "0");
 
   if (!m_settings->guides().empty()) {
@@ -136,10 +132,6 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
 
   const QDomElement filter_el(filters_el.namedItem("page-layout").toElement());
 
-  const QDomElement rect_el = filter_el.namedItem("aggregateContentRect").toElement();
-  if (!rect_el.isNull()) {
-    m_settings->setAggregateContentRect(XmlUnmarshaller::rectF(rect_el));
-  }
   m_settings->enableShowingMiddleRect(filter_el.attribute("showMiddleRect") == "1");
 
   const QDomElement guides_el = filter_el.namedItem("guides").toElement();

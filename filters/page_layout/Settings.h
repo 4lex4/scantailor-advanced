@@ -93,12 +93,6 @@ class Settings : public ref_countable {
                                        QSizeF* agg_hard_size_before = nullptr,
                                        QSizeF* agg_hard_size_after = nullptr);
 
-  const QRectF& updateAggregateContentRect();
-
-  const QRectF& getAggregateContentRect();
-
-  void setAggregateContentRect(const QRectF& contentRect);
-
   /**
    * \brief Returns the hard margins for the specified page.
    *

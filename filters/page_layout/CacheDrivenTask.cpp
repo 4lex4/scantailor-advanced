@@ -56,9 +56,8 @@ void CacheDrivenTask::process(const PageInfo& page_info,
 
   const QRectF adapted_content_rect(Utils::adaptContentRect(xform, content_rect));
   const QPolygonF content_rect_phys(xform.transformBack().map(adapted_content_rect));
-  const QPolygonF page_rect_phys(Utils::calcPageRectPhys(xform, content_rect_phys, new_params,
-                                                         m_settings->getAggregateHardSizeMM(),
-                                                         m_settings->getAggregateContentRect()));
+  const QPolygonF page_rect_phys(
+      Utils::calcPageRectPhys(xform, content_rect_phys, new_params, m_settings->getAggregateHardSizeMM()));
 
   ImageTransformation new_xform(xform);
   new_xform.setPostCropArea(Utils::shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));

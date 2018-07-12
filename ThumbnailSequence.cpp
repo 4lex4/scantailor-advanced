@@ -563,7 +563,7 @@ void ThumbnailSequence::Impl::updateSceneItemsPos() {
 
   const int view_width = getGraphicsViewWidth();
   assert(view_width > 0);
-  double yoffset = SPACING;
+  double y_offset = SPACING;
 
   ItemsInOrder::iterator ord_it = m_itemsInOrder.begin();
   const ItemsInOrder::iterator ord_end(m_itemsInOrder.end());
@@ -571,13 +571,13 @@ void ThumbnailSequence::Impl::updateSceneItemsPos() {
   while (ord_it != ord_end) {
     int items_in_row = 0;
     double sum_item_widths = 0;
-    double xoffset = SPACING;
+    double x_offset = SPACING;
 
     // Determine how many items can fit into the current row.
     for (ItemsInOrder::iterator row_it = ord_it; row_it != ord_end; ++row_it) {
       const double item_width = row_it->composite->boundingRect().width();
-      xoffset += item_width + SPACING;
-      if (xoffset > view_width) {
+      x_offset += item_width + SPACING;
+      if (x_offset > view_width) {
         if (items_in_row == 0) {
           // At least one page must be in a row.
           items_in_row = 1;
@@ -589,20 +589,20 @@ void ThumbnailSequence::Impl::updateSceneItemsPos() {
       sum_item_widths += item_width;
     }
 
-    // Split width exceeding spacing between margins of the pages in the current row.
-    const double adj_spacing = std::ceil((view_width - sum_item_widths) / (items_in_row + 1));
-    xoffset = adj_spacing;
-    double next_yoffset = 0;
+    // Split free space between the items in the current row.
+    const double adj_spacing = std::floor((view_width - sum_item_widths) / (items_in_row + 1));
+    x_offset = adj_spacing;
+    double next_y_offset = 0;
     for (; items_in_row > 0; --items_in_row, ++ord_it) {
       CompositeItem* composite = ord_it->composite;
-      composite->setPos(xoffset, yoffset);
+      composite->setPos(x_offset, y_offset);
       composite->updateSceneRect(m_sceneRect);
-      xoffset += std::ceil(composite->boundingRect().width() + adj_spacing);
-      next_yoffset = std::max(composite->boundingRect().height() + SPACING, next_yoffset);
+      x_offset += composite->boundingRect().width() + adj_spacing;
+      next_y_offset = std::max(composite->boundingRect().height() + SPACING, next_y_offset);
     }
 
     if (ord_it != ord_end) {
-      yoffset += next_yoffset;
+      y_offset += next_y_offset;
     }
   }
 
@@ -1426,7 +1426,7 @@ ThumbnailSequence::CompositeItem::CompositeItem(ThumbnailSequence::Impl& owner,
   const QSizeF label_size(label_group->boundingRect().size());
 
   const int thumb_label_spacing = 1;
-  thumbnail->setPos(-0.5 * thumb_size.width(), 0.0);
+  thumbnail->setPos(0.0, 0.0);
   label_group->setPos(thumbnail->pos().x() + 0.5 * (thumb_size.width() - label_size.width()),
                       thumb_size.height() + thumb_label_spacing);
 
@@ -1461,9 +1461,7 @@ void ThumbnailSequence::CompositeItem::updateAppearence(bool selected, bool sele
 
 QRectF ThumbnailSequence::CompositeItem::boundingRect() const {
   QRectF rect(QGraphicsItemGroup::boundingRect());
-  qreal horizontalAdjustVal = std::max(70 - 0.5 * rect.size().width(), 10.0);
-  rect.adjust(-horizontalAdjustVal, -5, horizontalAdjustVal, 3);
-
+  rect.adjust(-10, -5, 10, 3);
   return rect;
 }
 

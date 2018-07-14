@@ -85,8 +85,8 @@ class PropertySet : public ref_countable {
 
 template <typename T>
 intrusive_ptr<T> PropertySet::locate() {
-  PropList::iterator it(m_props.begin());
-  const PropList::iterator end(m_props.end());
+  auto it(m_props.begin());
+  const auto end(m_props.end());
   for (; it != end; ++it) {
     if (T* obj = dynamic_cast<T*>(it->get())) {
       return intrusive_ptr<T>(obj);
@@ -98,8 +98,8 @@ intrusive_ptr<T> PropertySet::locate() {
 
 template <typename T>
 intrusive_ptr<const T> PropertySet::locate() const {
-  PropList::const_iterator it(m_props.begin());
-  const PropList::const_iterator end(m_props.end());
+  auto it(m_props.begin());
+  const auto end(m_props.end());
   for (; it != end; ++it) {
     if (const T* obj = dynamic_cast<const T*>(it->get())) {
       return intrusive_ptr<const T>(obj);

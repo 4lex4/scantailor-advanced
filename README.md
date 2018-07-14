@@ -355,7 +355,8 @@ has't been moved due to dirty realization. Their functionality is fully covered 
 * ##### Auto adjusting content area.
   Use **`double-click`** on content to automatically adjust the content area.  
   If the content is outside the area, the later will automatically be expanded and adjusted to the content at the position where double-click has been,
-  otherwise the area edge, nearest to that position, will be adjusted.
+  otherwise the area edge, nearest to that position, will be adjusted (on clicking hold **`Shift`** pressed to select
+  left or right edge only or **`Ctrl`** to select top or bottom one, or **`Shift+Ctrl`** to adjust both the nearest vertical and horizontal edges).
   
   It's much faster now to correct the content area if, for example, the page number has been missed by the auto algorithm.
   It is no more required to manually and laboriously move the corners and edges of the content box.

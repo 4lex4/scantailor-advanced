@@ -29,6 +29,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <boost/bind.hpp>
+#include <cmath>
 #include <map>
 #include "ImagePresentation.h"
 #include "ImageTransformation.h"
@@ -52,7 +53,9 @@ ImageView::ImageView(const QImage& image,
       m_pageRect(page_rect),
       m_minBoxSize(10.0, 10.0),
       m_pageRectEnabled(page_rect_enabled),
-      m_pageRectReloadRequested(false) {
+      m_pageRectReloadRequested(false),
+      m_adjustmentVerticalModifier(Qt::ControlModifier),
+      m_adjustmentHorizontalModifier(Qt::ShiftModifier) {
   setMouseTracking(true);
 
   interactionState().setDefaultStatusTip(
@@ -203,7 +206,7 @@ void ImageView::removeContentBox() {
 
   enableContentRectInteraction(false);
   m_contentRect = QRectF();
-  
+
   update();
   emit manualContentRectSet(m_contentRect);
 }
@@ -488,10 +491,13 @@ void ImageView::pageRectSetExternally(const QRectF& pageRect) {
     return;
   }
   m_pageRect = pageRect;
+
   forcePageRectDescribeContent();
+  if (m_pageRectReloadRequested) {
+    emit manualPageRectSet(m_pageRect);
+  }
 
   update();
-  emit manualPageRectSet(m_pageRect);
 }
 
 void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransformation& xform) {
@@ -518,12 +524,12 @@ void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransf
 void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
   if (event->button() == Qt::LeftButton) {
     if (!m_contentRect.isEmpty() && !m_contentImage.isNull()) {
-      correctContentBox(QPointF(0.5, 0.5) + event->pos());
+      correctContentBox(QPointF(0.5, 0.5) + event->pos(), event->modifiers());
     }
   }
 }
 
-void ImageView::correctContentBox(const QPointF& pos) {
+void ImageView::correctContentBox(const QPointF& pos, const Qt::KeyboardModifiers mask) {
   const QTransform widget_to_content_image(widgetToImage() * m_originalToContentImage);
   const QTransform content_image_to_virtual(m_contentImageToOriginal * imageToVirtual());
 
@@ -553,26 +559,44 @@ void ImageView::correctContentBox(const QPointF& pos) {
     m_contentRect |= found_area_in_virtual;
     forcePageRectDescribeContent();
   } else {
-    std::map<double, Edge> distanceMap;
-    distanceMap[pos_in_virtual.y() - m_contentRect.top()] = TOP;
-    distanceMap[pos_in_virtual.x() - m_contentRect.left()] = LEFT;
-    distanceMap[m_contentRect.bottom() - pos_in_virtual.y()] = BOTTOM;
-    distanceMap[m_contentRect.right() - pos_in_virtual.x()] = RIGHT;
+    const bool only_horizontal_direction = (mask == m_adjustmentHorizontalModifier);
+    const bool only_vertical_direction = (mask == m_adjustmentVerticalModifier);
+    const bool both_directions = (mask == (m_adjustmentVerticalModifier | m_adjustmentHorizontalModifier));
 
-    const Edge edge = distanceMap.begin()->second;
-    QPointF movePoint;
-    switch (edge) {
-      case TOP:
-      case LEFT:
-        movePoint = QPointF(found_area_in_virtual.left(), found_area_in_virtual.top());
-        break;
-      case BOTTOM:
-      case RIGHT:
-        movePoint = QPointF(found_area_in_virtual.right(), found_area_in_virtual.bottom());
-        break;
+    const double top_dist = pos_in_virtual.y() - m_contentRect.top();
+    const double left_dist = pos_in_virtual.x() - m_contentRect.left();
+    const double bottom_dist = m_contentRect.bottom() - pos_in_virtual.y();
+    const double right_dist = m_contentRect.right() - pos_in_virtual.x();
+    std::map<double, Edge> distance_map;
+    distance_map[top_dist] = TOP;
+    distance_map[left_dist] = LEFT;
+    distance_map[bottom_dist] = BOTTOM;
+    distance_map[right_dist] = RIGHT;
+
+    int edge_mask;
+    if (only_horizontal_direction) {
+      edge_mask = distance_map.at(std::min(left_dist, right_dist));
+    } else if (only_vertical_direction) {
+      edge_mask = distance_map.at(std::min(top_dist, bottom_dist));
+    } else if (both_directions) {
+      edge_mask = distance_map.at(std::min(left_dist, right_dist)) | distance_map.at(std::min(top_dist, bottom_dist));
+    } else {
+      edge_mask = distance_map.begin()->second;
     }
 
-    contentRectCornerMoveRequest(edge, virtualToWidget().map(movePoint));
+    QPointF movePoint;
+    if (edge_mask & TOP) {
+      movePoint.setY(found_area_in_virtual.top());
+    } else if (edge_mask & BOTTOM) {
+      movePoint.setY(found_area_in_virtual.bottom());
+    }
+    if (edge_mask & LEFT) {
+      movePoint.setX(found_area_in_virtual.left());
+    } else if (edge_mask & RIGHT) {
+      movePoint.setX(found_area_in_virtual.right());
+    }
+
+    contentRectCornerMoveRequest(edge_mask, virtualToWidget().map(movePoint));
   }
 
   update();

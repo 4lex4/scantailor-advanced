@@ -555,6 +555,14 @@
         <source>Despeckle</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The profile file is not compatible with the current application version. Remove?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DeskewApplyDialog</name>
@@ -975,6 +983,18 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <source>Next Selected Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Previous page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Next page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter selected pages only.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1647,6 +1667,10 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PageSplitModeDialog</name>
@@ -1799,18 +1823,10 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&gt;&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Remove selected files from project.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;&lt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

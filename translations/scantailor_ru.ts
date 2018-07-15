@@ -555,6 +555,14 @@
         <source>Despeckle</source>
         <translation>Удалить пятна</translation>
     </message>
+    <message>
+        <source>Mode:</source>
+        <translation>Режим:</translation>
+    </message>
+    <message>
+        <source>The profile file is not compatible with the current application version. Remove?</source>
+        <translation>Файл профиля несовместим с текущей версией приложения. Удалить?</translation>
+    </message>
 </context>
 <context>
     <name>DeskewApplyDialog</name>
@@ -979,6 +987,18 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <source>Next Selected Page</source>
         <translation>Следующая выделенная страница</translation>
+    </message>
+    <message>
+        <source>Previous page.</source>
+        <translation>Предыдущая страница.</translation>
+    </message>
+    <message>
+        <source>Next page.</source>
+        <translation>Следующая страница.</translation>
+    </message>
+    <message>
+        <source>Filter selected pages only.</source>
+        <translation>Только выделенные страницы.</translation>
     </message>
 </context>
 <context>
@@ -1664,6 +1684,10 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Двойной клик&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; по контенту - автоматически прикрепить контент к ближайшей направляющей. Удерживайте &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; для выбора только вертикальных направляющих или &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; для горизонтальных. Удерживайте &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; для прикрепления к ближайшим вертикальной и горизонтальной направляющим.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Используйте &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;контекстное меню&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; для включения/выключения отображения прямоугольника жестких полей.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>Mode:</source>
+        <translation>Режим:</translation>
+    </message>
 </context>
 <context>
     <name>PageSplitModeDialog</name>
@@ -1821,10 +1845,6 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Добавить выбранные файлы в проект.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>&gt;&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -1833,10 +1853,6 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Убрать выбранные файлы из проекта.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;&lt;</source>
-        <translation></translation>
     </message>
     <message>
         <source>Files In Project</source>

@@ -228,7 +228,9 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     * Navigating between selected pages.
       Use **`Shift+PgUp/Q`** and **`Shift+PgDown/W`** to navigate between selected pages.
       
-  * Added options in the settings to manage the quality and size of thumbnails.
+  * Added options in the settings to manage the quality and size of thumbnails.  
+    It's possible to switch thumbnail quality while working on a project with the changes applied immediately.
+    For every quality chosen a cache is created.
 
   * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 

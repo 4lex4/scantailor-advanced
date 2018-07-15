@@ -138,7 +138,7 @@
                <number>100</number>
               </property>
               <property name="maximum">
-               <number>1000</number>
+               <number>1500</number>
               </property>
               <property name="singleStep">
                <number>25</number>
@@ -181,7 +181,7 @@
                <number>100</number>
               </property>
               <property name="maximum">
-               <number>1000</number>
+               <number>2000</number>
               </property>
               <property name="singleStep">
                <number>25</number>

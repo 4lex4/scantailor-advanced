@@ -103,6 +103,10 @@ class ThumbnailPixmapCache::Impl : public QThread {
 
   void setThumbDir(const QString& thumb_dir);
 
+  const QSize& getMaxThumbSize() const;
+
+  void setMaxThumbSize(const QSize& max_size);
+
   Status request(const ImageId& image_id,
                  QPixmap& pixmap,
                  bool load_now = false,
@@ -150,7 +154,7 @@ class ThumbnailPixmapCache::Impl : public QThread {
 
   static QImage loadSaveThumbnail(const ImageId& image_id, const QString& thumb_dir, const QSize& max_thumb_size);
 
-  static QString getThumbFilePath(const ImageId& image_id, const QString& thumb_dir);
+  static QString getThumbFilePath(const ImageId& image_id, const QString& thumb_dir, const QSize& max_thumb_size);
 
   static QImage makeThumbnail(const QImage& image, const QSize& max_thumb_size);
 
@@ -163,6 +167,8 @@ class ThumbnailPixmapCache::Impl : public QThread {
   void removeExcessLocked();
 
   void removeItemLocked(const RemoveQueue::iterator& it);
+
+  void removeLoadedItemsLocked();
 
   void cachePixmapUnlocked(const ImageId& image_id, const QPixmap& pixmap);
 
@@ -277,6 +283,14 @@ void ThumbnailPixmapCache::ensureThumbnailExists(const ImageId& image_id, const 
 
 void ThumbnailPixmapCache::recreateThumbnail(const ImageId& image_id, const QImage& image) {
   m_impl->recreateThumbnail(image_id, image);
+}
+
+void ThumbnailPixmapCache::setMaxThumbSize(const QSize& max_size) {
+  m_impl->setMaxThumbSize(max_size);
+}
+
+const QSize& ThumbnailPixmapCache::getMaxThumbSize() const {
+  return m_impl->getMaxThumbSize();
 }
 
 /*======================= ThumbnailPixmapCache::Impl ========================*/
@@ -447,7 +461,7 @@ void ThumbnailPixmapCache::Impl::ensureThumbnailExists(const ImageId& image_id, 
   const QSize max_thumb_size(m_maxThumbSize);
   locker.unlock();
 
-  const QString thumb_file_path(getThumbFilePath(image_id, thumb_dir));
+  const QString thumb_file_path(getThumbFilePath(image_id, thumb_dir, m_maxThumbSize));
   if (QFile::exists(thumb_file_path)) {
     return;
   }
@@ -475,7 +489,7 @@ void ThumbnailPixmapCache::Impl::recreateThumbnail(const ImageId& image_id, cons
   const QSize max_thumb_size(m_maxThumbSize);
   locker.unlock();
 
-  const QString thumb_file_path(getThumbFilePath(image_id, thumb_dir));
+  const QString thumb_file_path(getThumbFilePath(image_id, thumb_dir, m_maxThumbSize));
   const QImage thumbnail(makeThumbnail(image, max_thumb_size));
   bool thumb_written = false;
 
@@ -592,7 +606,7 @@ void ThumbnailPixmapCache::Impl::backgroundProcessing() {
 QImage ThumbnailPixmapCache::Impl::loadSaveThumbnail(const ImageId& image_id,
                                                      const QString& thumb_dir,
                                                      const QSize& max_thumb_size) {
-  const QString thumb_file_path(getThumbFilePath(image_id, thumb_dir));
+  const QString thumb_file_path(getThumbFilePath(image_id, thumb_dir, max_thumb_size));
 
   QImage image(ImageLoader::load(thumb_file_path, 0));
   if (!image.isNull()) {
@@ -610,13 +624,16 @@ QImage ThumbnailPixmapCache::Impl::loadSaveThumbnail(const ImageId& image_id,
   return thumbnail;
 }
 
-QString ThumbnailPixmapCache::Impl::getThumbFilePath(const ImageId& image_id, const QString& thumb_dir) {
+QString ThumbnailPixmapCache::Impl::getThumbFilePath(const ImageId& image_id,
+                                                     const QString& thumb_dir,
+                                                     const QSize& max_thumb_size) {
   // Because a project may have several files with the same name (from
   // different directories), we add a hash of the original image path
   // to the thumbnail file name.
-  const QByteArray orig_path_hash(
-      QCryptographicHash::hash(image_id.filePath().toUtf8(), QCryptographicHash::Md5).toHex());
-  const QString orig_path_hash_str(QString::fromLatin1(orig_path_hash.data(), orig_path_hash.size()));
+  const QByteArray orig_path_hash = QCryptographicHash::hash(image_id.filePath().toUtf8(), QCryptographicHash::Md5)
+                                        .toBase64(QByteArray::Base64UrlEncoding | QByteArray::OmitTrailingEquals);
+  const QString orig_path_hash_str = QString::fromLatin1(orig_path_hash.data(), orig_path_hash.size());
+  const QString thumbnail_quality_str = QChar('q') + QString::number(max_thumb_size.width());
 
   const QFileInfo orig_img_path(image_id.filePath());
   QString thumb_file_path(thumb_dir);
@@ -626,6 +643,8 @@ QString ThumbnailPixmapCache::Impl::getThumbFilePath(const ImageId& image_id, co
   thumb_file_path += QString::number(image_id.zeroBasedPage());
   thumb_file_path += QChar('_');
   thumb_file_path += orig_path_hash_str;
+  thumb_file_path += QChar('_');
+  thumb_file_path += thumbnail_quality_str;
   thumb_file_path += QString::fromLatin1(".png");
 
   return thumb_file_path;
@@ -767,6 +786,23 @@ void ThumbnailPixmapCache::Impl::removeItemLocked(const RemoveQueue::iterator& i
   m_removeQueue.erase(it);
 }
 
+void ThumbnailPixmapCache::Impl::removeLoadedItemsLocked() {
+  if (m_numLoadedItems == 0) {
+    return;
+  }
+
+  for (auto it = m_removeQueue.begin(); it != m_removeQueue.end();) {
+    if (it->status == Item::LOADED) {
+      it = m_removeQueue.erase(it);
+    } else {
+      ++it;
+    }
+  }
+
+  m_numLoadedItems = 0;
+  m_endOfLoadedItems = m_removeQueue.end();
+}
+
 void ThumbnailPixmapCache::Impl::cachePixmapUnlocked(const ImageId& image_id, const QPixmap& pixmap) {
   const QMutexLocker locker(&m_mutex);
   cachePixmapLocked(image_id, pixmap);
@@ -842,6 +878,17 @@ void ThumbnailPixmapCache::Impl::cachePixmapLocked(const ImageId& image_id, cons
     ++m_numLoadedItems;
   }
 }  // ThumbnailPixmapCache::Impl::cachePixmapLocked
+
+const QSize& ThumbnailPixmapCache::Impl::getMaxThumbSize() const {
+  return m_maxThumbSize;
+}
+
+void ThumbnailPixmapCache::Impl::setMaxThumbSize(const QSize& max_size) {
+  const QMutexLocker locker(&m_mutex);
+
+  removeLoadedItemsLocked();
+  m_maxThumbSize = max_size;
+}
 
 /*====================== ThumbnailPixmapCache::Item =========================*/
 

@@ -1403,6 +1403,14 @@ void MainWindow::onSettingsChanged() {
     app->installLanguage(settings.value("settings/language").toString());
   }
 
+  if (m_thumbnailCache) {
+    const QSize max_thumb_size = settings.value("settings/thumbnail_quality").toSize();
+    if (m_thumbnailCache->getMaxThumbSize() != max_thumb_size) {
+      m_thumbnailCache->setMaxThumbSize(max_thumb_size);
+      need_invalidate = true;
+    }
+  }
+
   const QSizeF max_logical_thumb_size = settings.value("settings/max_logical_thumb_size").toSizeF();
   if (m_maxLogicalThumbSize != max_logical_thumb_size) {
     m_maxLogicalThumbSize = max_logical_thumb_size;

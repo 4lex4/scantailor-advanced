@@ -70,6 +70,10 @@ class ThumbnailPixmapCache : public ref_countable {
 
   void setThumbDir(const QString& thumb_dir);
 
+  const QSize& getMaxThumbSize() const;
+
+  void setMaxThumbSize(const QSize& max_size);
+
   /**
    * \brief Take the pixmap from cache, if it's there.
    *

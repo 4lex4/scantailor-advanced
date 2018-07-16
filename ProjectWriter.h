@@ -19,10 +19,11 @@
 #ifndef PROJECTWRITER_H_
 #define PROJECTWRITER_H_
 
+#include <foundation/Hashes.h>
 #include <QString>
 #include <Qt>
+#include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/member.hpp>
-#include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include <unordered_map>
@@ -106,28 +107,30 @@ class ProjectWriter {
   typedef boost::multi_index::multi_index_container<
       Directory,
       boost::multi_index::indexed_by<
-          boost::multi_index::ordered_unique<boost::multi_index::member<Directory, QString, &Directory::path>>,
+          boost::multi_index::hashed_unique<boost::multi_index::member<Directory, QString, &Directory::path>,
+                                            hashes::hash<QString>>,
           boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
       Directories;
 
   typedef boost::multi_index::multi_index_container<
       File,
       boost::multi_index::indexed_by<
-          boost::multi_index::ordered_unique<boost::multi_index::member<File, QString, &File::path>>,
+          boost::multi_index::hashed_unique<boost::multi_index::member<File, QString, &File::path>,
+                                            hashes::hash<QString>>,
           boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
       Files;
 
   typedef boost::multi_index::multi_index_container<
       Image,
       boost::multi_index::indexed_by<
-          boost::multi_index::ordered_unique<boost::multi_index::member<Image, ImageId, &Image::id>>,
+          boost::multi_index::hashed_unique<boost::multi_index::member<Image, ImageId, &Image::id>, std::hash<ImageId>>,
           boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
       Images;
 
   typedef boost::multi_index::multi_index_container<
       Page,
       boost::multi_index::indexed_by<
-          boost::multi_index::ordered_unique<boost::multi_index::member<Page, PageId, &Page::id>>,
+          boost::multi_index::hashed_unique<boost::multi_index::member<Page, PageId, &Page::id>, std::hash<PageId>>,
           boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
       Pages;
 

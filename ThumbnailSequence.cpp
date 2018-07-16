@@ -27,8 +27,8 @@
 #include <boost/function.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
+#include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/mem_fun.hpp>
-#include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include "ColorSchemeManager.h"
@@ -151,7 +151,7 @@ class ThumbnailSequence::Impl {
 
   typedef multi_index_container<
       Item,
-      indexed_by<ordered_unique<tag<ItemsByIdTag>, const_mem_fun<Item, const PageId&, &Item::pageId>>,
+      indexed_by<hashed_unique<tag<ItemsByIdTag>, const_mem_fun<Item, const PageId&, &Item::pageId>, std::hash<PageId>>,
                  sequenced<tag<ItemsInOrderTag>>,
                  sequenced<tag<SelectedThenUnselectedTag>>>>
       Container;
@@ -837,7 +837,7 @@ void ThumbnailSequence::Impl::insert(const PageInfo& page_info, BeforeOrAfter be
     // we are not searching for PageId(image) exactly, which implies
     // PageId::SINGLE_PAGE configuration, but rather we search for
     // a page with any configuration, as long as it references the same image.
-    ItemsById::iterator id_it(m_itemsById.lower_bound(PageId(image)));
+    ItemsById::iterator id_it(m_itemsById.find(PageId(image)));
     if ((id_it == m_itemsById.end()) || (id_it->pageInfo.imageId() != image)) {
       // Reference page not found.
       return;
@@ -858,7 +858,6 @@ void ThumbnailSequence::Impl::insert(const PageInfo& page_info, BeforeOrAfter be
 
   // If m_orderProvider is not set, ord_it won't change.
   ord_it = itemInsertPosition(m_itemsInOrder.begin(), m_itemsInOrder.end(), page_info.id(),
-
                               /*page_incomplete=*/true, ord_it);
 
   double offset = 0.0;

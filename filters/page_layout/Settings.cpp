@@ -21,6 +21,7 @@
 #include <QMutex>
 #include <boost/foreach.hpp>
 #include <boost/multi_index/composite_key.hpp>
+#include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -183,7 +184,7 @@ class Settings::Impl {
 
   typedef multi_index_container<
       Item,
-      indexed_by<ordered_unique<member<Item, PageId, &Item::pageId>>,
+      indexed_by<hashed_unique<member<Item, PageId, &Item::pageId>, std::hash<PageId>>,
                  sequenced<tag<SequencedTag>>,
                  ordered_non_unique<tag<DescWidthTag>,
                                     // ORDER BY alignedWithOthers DESC, hardWidthMM DESC
@@ -478,8 +479,8 @@ void Settings::Impl::setPageParams(const PageId& page_id, const Params& params) 
   const Item new_item(page_id, params.hardMarginsMM(), params.pageRect(), params.contentRect(), params.contentSizeMM(),
                       params.alignment(), params.isAutoMarginsEnabled());
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     m_items.insert(it, new_item);
   } else {
     m_items.replace(it, new_item);
@@ -500,9 +501,9 @@ Params Settings::Impl::updateContentSizeAndGetParams(const PageId& page_id,
     *agg_hard_size_before = getAggregateHardSizeMMLocked();
   }
 
-  const Container::iterator it(m_items.lower_bound(page_id));
+  const Container::iterator it(m_items.find(page_id));
   Container::iterator item_it(it);
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  if (it == m_items.end()) {
     const Item item(page_id, m_defaultHardMarginsMM, page_rect, content_rect, content_size_mm, m_defaultAlignment,
                     m_autoMarginsDefault);
     item_it = m_items.insert(it, item);
@@ -560,8 +561,8 @@ Margins Settings::Impl::getHardMarginsMM(const PageId& page_id) const {
 void Settings::Impl::setHardMarginsMM(const PageId& page_id, const Margins& margins_mm) {
   const QMutexLocker locker(&m_mutex);
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     const Item item(page_id, margins_mm, m_invalidRect, m_invalidRect, m_invalidSize, m_defaultAlignment,
                     m_autoMarginsDefault);
     m_items.insert(it, item);
@@ -588,8 +589,8 @@ Settings::AggregateSizeChanged Settings::Impl::setPageAlignment(const PageId& pa
 
   const QSizeF agg_size_before(getAggregateHardSizeMMLocked());
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     const Item item(page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect, m_invalidSize, alignment,
                     m_autoMarginsDefault);
     m_items.insert(it, item);
@@ -616,8 +617,8 @@ Settings::AggregateSizeChanged Settings::Impl::setContentSizeMM(const PageId& pa
 
   const QSizeF agg_size_before(getAggregateHardSizeMMLocked());
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     const Item item(page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect, content_size_mm, m_defaultAlignment,
                     m_autoMarginsDefault);
     m_items.insert(it, item);
@@ -728,8 +729,8 @@ bool Settings::Impl::isPageAutoMarginsEnabled(const PageId& page_id) {
 void Settings::Impl::setPageAutoMarginsEnabled(const PageId& page_id, const bool state) {
   const QMutexLocker locker(&m_mutex);
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     const Item item(page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect, m_invalidSize, m_defaultAlignment,
                     state);
     m_items.insert(it, item);

@@ -24,8 +24,8 @@
 #include <QFileInfo>
 #include <QThread>
 #include <boost/foreach.hpp>
+#include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/member.hpp>
-#include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include "AtomicFileOverwriter.h"
@@ -123,10 +123,11 @@ class ThumbnailPixmapCache::Impl : public QThread {
   class LoadQueueTag;
   class RemoveQueueTag;
 
-  typedef multi_index_container<Item,
-                                indexed_by<ordered_unique<tag<ItemsByKeyTag>, member<Item, ImageId, &Item::imageId>>,
-                                           sequenced<tag<LoadQueueTag>>,
-                                           sequenced<tag<RemoveQueueTag>>>>
+  typedef multi_index_container<
+      Item,
+      indexed_by<hashed_unique<tag<ItemsByKeyTag>, member<Item, ImageId, &Item::imageId>, std::hash<ImageId>>,
+                 sequenced<tag<LoadQueueTag>>,
+                 sequenced<tag<RemoveQueueTag>>>>
       Container;
 
   typedef Container::index<ItemsByKeyTag>::type ItemsByKey;

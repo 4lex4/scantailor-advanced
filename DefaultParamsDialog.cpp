@@ -226,9 +226,6 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
     alignmentMode->setCurrentIndex(1);
     autoAlignSettingsGroup->setVisible(false);
   }
-  updateAlignmentButtonsEnabled();
-  updateAutoModeButtons();
-
   alignWithOthersCB->setChecked(!alignment.isNull());
 
   for (const auto& kv : m_alignmentByButton) {
@@ -247,6 +244,10 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
       break;
     }
   }
+
+  updateAlignmentModeEnabled();
+  updateAlignmentButtonsEnabled();
+  updateAutoModeButtons();
 }
 
 void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams& params) {
@@ -479,7 +480,8 @@ void DefaultParamsDialog::alignmentModeChanged(const int idx) {
   updateAutoModeButtons();
 }
 
-void DefaultParamsDialog::alignWithOthersToggled(const bool) {
+void DefaultParamsDialog::alignWithOthersToggled(const bool state) {
+  updateAlignmentModeEnabled();
   updateAlignmentButtonsEnabled();
 }
 
@@ -500,6 +502,7 @@ void DefaultParamsDialog::colorModeChanged(const int idx) {
       break;
   }
   thresholdOptions->setEnabled(threshold_options_visible);
+  despecklePanel->setEnabled(threshold_options_visible);
   pictureShapeOptions->setEnabled(picture_shape_visible);
   splittingOptions->setEnabled(splitting_options_visible);
 
@@ -517,8 +520,7 @@ void DefaultParamsDialog::colorModeChanged(const int idx) {
   morphologicalSmoothingCB->setEnabled(colorMode != COLOR_GRAYSCALE);
 
   colorSegmentationCB->setEnabled(threshold_options_visible);
-  segmenterOptionsWidget->setEnabled(threshold_options_visible);
-  segmenterOptionsWidget->setEnabled(colorSegmentationCB->isChecked());
+  segmenterOptionsWidget->setEnabled(threshold_options_visible && colorSegmentationCB->isChecked());
   if (threshold_options_visible) {
     posterizeCB->setEnabled(colorSegmentationCB->isChecked());
     posterizeOptionsWidget->setEnabled(colorSegmentationCB->isChecked() && posterizeCB->isChecked());
@@ -910,15 +912,27 @@ void DefaultParamsDialog::profileChanged(const int index) {
     std::unique_ptr<DefaultParams> sourceProfile = m_profileManager.createSourceProfile();
     loadParams(*sourceProfile);
   } else {
-    std::unique_ptr<DefaultParams> profile = m_profileManager.readProfile(profileCB->itemData(index).toString());
-    if (profile != nullptr) {
+    const QString profileName = profileCB->currentData().toString();
+    DefaultParamsProfileManager::LoadStatus loadStatus;
+
+    std::unique_ptr<DefaultParams> profile = m_profileManager.readProfile(profileName, &loadStatus);
+    if (loadStatus == DefaultParamsProfileManager::SUCCESS) {
       profileSaveButton->setEnabled(true);
       profileDeleteButton->setEnabled(true);
       setTabWidgetsEnabled(true);
 
       loadParams(*profile);
     } else {
-      QMessageBox::critical(this, tr("Error"), tr("Error loading the profile."));
+      if (loadStatus == DefaultParamsProfileManager::INCOMPATIBLE_VERSION_ERROR) {
+        const int result = QMessageBox::warning(
+            this, tr("Error"), tr("The profile file is not compatible with the current application version. Remove?"),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        if (result == QMessageBox::Yes) {
+          m_profileManager.deleteProfile(profileName);
+        }
+      } else {
+        QMessageBox::critical(this, tr("Error"), tr("Error loading the profile."));
+      }
       profileCB->setCurrentIndex(0);
       profileCB->removeItem(index);
       m_customProfileItemIdx--;
@@ -1106,4 +1120,11 @@ void DefaultParamsDialog::despeckleSliderValueChanged(int value) {
   tooltip_pos.setX(qBound(0, tooltip_pos.x(), despeckleSlider->width()));
   tooltip_pos = despeckleSlider->mapToGlobal(tooltip_pos);
   QToolTip::showText(tooltip_pos, tooltip_text, despeckleSlider);
+}
+
+void DefaultParamsDialog::updateAlignmentModeEnabled() {
+  const bool is_alignment_null = !alignWithOthersCB->isChecked();
+
+  alignmentMode->setEnabled(!is_alignment_null);
+  autoAlignSettingsGroup->setEnabled(!is_alignment_null);
 }

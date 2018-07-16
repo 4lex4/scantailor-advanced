@@ -393,8 +393,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>193</width>
-            <height>162</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -635,8 +635,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>208</width>
-            <height>116</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -807,8 +807,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>208</width>
-            <height>314</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -1114,8 +1114,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>410</width>
-            <height>319</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_10">
@@ -1411,6 +1411,46 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_12">
               <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_26">
+                <item>
+                 <spacer name="horizontalSpacer_15">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>1</width>
+                    <height>1</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="alignWithOthersCB">
+                  <property name="text">
+                   <string>Match size with other pages</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_16">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>1</width>
+                    <height>1</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
                <layout class="QHBoxLayout" name="horizontalLayout_24">
                 <item>
                  <spacer name="horizontalSpacer_55">
@@ -1424,6 +1464,13 @@
                    </size>
                   </property>
                  </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="alignmentModeLabel">
+                  <property name="text">
+                   <string>Mode:</string>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QComboBox" name="alignmentMode">
@@ -1562,46 +1609,6 @@
                  </item>
                 </layout>
                </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_26">
-                <item>
-                 <spacer name="horizontalSpacer_15">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>1</width>
-                    <height>1</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="alignWithOthersCB">
-                  <property name="text">
-                   <string>Match size with other pages</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_16">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>1</width>
-                    <height>1</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_5">

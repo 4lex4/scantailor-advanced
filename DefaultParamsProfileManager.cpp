@@ -38,23 +38,32 @@ std::list<QString> DefaultParamsProfileManager::getProfileList() const {
   return profileList;
 }
 
-std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QString& name) const {
+std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QString& name, LoadStatus* status) const {
   QDir dir(m_path);
   QFileInfo profile(dir.absoluteFilePath(name + ".stp"));
   if (!profile.exists()) {
     profile = dir.absoluteFilePath(name + ".xml");
     if (!profile.exists()) {
+      if (status) {
+        *status = IO_ERROR;
+      }
       return nullptr;
     }
   }
 
   QFile profileFile(profile.filePath());
   if (!profileFile.open(QIODevice::ReadOnly)) {
+    if (status) {
+      *status = IO_ERROR;
+    }
     return nullptr;
   }
 
   QDomDocument doc;
   if (!doc.setContent(&profileFile)) {
+    if (status) {
+      *status = IO_ERROR;
+    }
     return nullptr;
   }
 
@@ -63,10 +72,16 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QS
   const QDomElement profileElement(doc.documentElement());
   const QString version = profileElement.attribute("version");
   if (version.isNull() || (version.toInt() != PROJECT_VERSION)) {
+    if (status) {
+      *status = INCOMPATIBLE_VERSION_ERROR;
+    }
     return nullptr;
   }
   const QDomElement defaultParamsElement(profileElement.namedItem("default-params").toElement());
 
+  if (status) {
+    *status = SUCCESS;
+  }
   return std::make_unique<DefaultParams>(defaultParamsElement);
 }
 

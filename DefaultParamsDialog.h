@@ -41,7 +41,7 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
 
   void alignmentModeChanged(int idx);
 
-  void alignWithOthersToggled(bool);
+  void alignWithOthersToggled(bool state);
 
   void autoHorizontalAligningToggled(bool);
 
@@ -125,6 +125,8 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
   void updateAlignmentButtonsEnabled();
 
   void updateAutoModeButtons();
+
+  void updateAlignmentModeEnabled();
 
   QToolButton* getCheckedAlignmentButton() const;
 

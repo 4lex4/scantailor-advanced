@@ -119,6 +119,8 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
 
   void updateAutoModeButtons();
 
+  void updateAlignmentModeEnabled();
+
   QToolButton* getCheckedAlignmentButton() const;
 
   void setupUiConnections();

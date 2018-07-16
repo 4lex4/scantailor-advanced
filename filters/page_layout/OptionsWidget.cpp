@@ -114,6 +114,7 @@ void OptionsWidget::preUpdateUI(const PageInfo& page_info, const Margins& margin
     autoAlignSettingsGroup->setVisible(false);
   }
   alignmentMode->blockSignals(false);
+  updateAlignmentModeEnabled();
   updateAlignmentButtonsEnabled();
   updateAutoModeButtons();
 
@@ -249,7 +250,13 @@ void OptionsWidget::leftRightLinkClicked() {
 }
 
 void OptionsWidget::alignWithOthersToggled() {
+  if (m_ignoreAlignmentButtonsChanges) {
+    return;
+  }
+
   m_alignment.setNull(!alignWithOthersCB->isChecked());
+
+  updateAlignmentModeEnabled();
   updateAlignmentButtonsEnabled();
   emit alignmentChanged(m_alignment);
 }
@@ -438,7 +445,6 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(applyAlignmentBtn, SIGNAL(clicked()), this, SLOT(showApplyAlignmentDialog()));
   CONNECT(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
   CONNECT(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
-
   for (const auto& kv : m_alignmentByButton) {
     CONNECT(kv.first, SIGNAL(clicked()), this, SLOT(alignmentButtonClicked()));
   }
@@ -470,6 +476,10 @@ const Alignment& OptionsWidget::alignment() const {
 }
 
 void OptionsWidget::autoHorizontalAligningToggled(const bool checked) {
+  if (m_ignoreAlignmentButtonsChanges) {
+    return;
+  }
+
   if (checked) {
     m_alignment.setHorizontal((alignmentMode->currentIndex() == 0) ? Alignment::HAUTO : Alignment::HORIGINAL);
   } else {
@@ -482,6 +492,10 @@ void OptionsWidget::autoHorizontalAligningToggled(const bool checked) {
 }
 
 void OptionsWidget::autoVerticalAligningToggled(const bool checked) {
+  if (m_ignoreAlignmentButtonsChanges) {
+    return;
+  }
+
   if (checked) {
     m_alignment.setVertical((alignmentMode->currentIndex() == 0) ? Alignment::VAUTO : Alignment::VORIGINAL);
   } else {
@@ -544,5 +558,12 @@ QToolButton* OptionsWidget::getCheckedAlignmentButton() const {
   }
 
   return checkedButton;
+}
+
+void OptionsWidget::updateAlignmentModeEnabled() {
+  const bool is_alignment_null = m_alignment.isNull();
+
+  alignmentMode->setEnabled(!is_alignment_null);
+  autoAlignSettingsGroup->setEnabled(!is_alignment_null);
 }
 }  // namespace page_layout

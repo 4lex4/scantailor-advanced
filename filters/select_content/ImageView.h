@@ -118,7 +118,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   void buildContentImage(const imageproc::GrayImage& gray_image, const ImageTransformation& xform);
 
-  void correctContentBox(const QPointF& pos);
+  void correctContentBox(const QPointF& pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
 
   QRect findContentInArea(const QRect& area) const;
 
@@ -172,6 +172,9 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   imageproc::BinaryImage m_contentImage;
   QTransform m_originalToContentImage;
   QTransform m_contentImageToOriginal;
+
+  Qt::KeyboardModifier m_adjustmentVerticalModifier;
+  Qt::KeyboardModifier m_adjustmentHorizontalModifier;
 };
 }  // namespace select_content
 #endif  // ifndef SELECT_CONTENT_IMAGEVIEW_H_

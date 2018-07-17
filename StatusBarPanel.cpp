@@ -38,7 +38,7 @@ void StatusBarPanel::clearImageViewInfo() {
 void StatusBarPanel::updatePage(int pageNumber, size_t pageCount, const PageId& pageId) {
   ui.pageNoLabel->setText(tr("p. %1 / %2").arg(pageNumber).arg(pageCount));
 
-  QString pageFileInfo = QFileInfo(pageId.imageId().filePath()).baseName();
+  QString pageFileInfo = QFileInfo(pageId.imageId().filePath()).completeBaseName();
   if (pageFileInfo.size() > 15) {
     pageFileInfo = "..." + pageFileInfo.right(13);
   }

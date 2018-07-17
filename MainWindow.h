@@ -218,6 +218,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
                           const QString& project_file_path = QString(),
                           const ProjectReader* project_reader = nullptr);
 
+  void updateThumbViewMinWidth();
+
   void setupThumbView();
 
   void showNewOpenProjectPanel();
@@ -297,7 +299,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void scaleThumbnails(const QWheelEvent* wheel_event);
 
-  void updateMaxLogicalThumbSize(const QSizeF& size);
+  void updateMaxLogicalThumbSize();
 
   QSizeF m_maxLogicalThumbSize;
   intrusive_ptr<ProjectPages> m_pages;
@@ -332,6 +334,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   bool m_autoSaveProject;
   std::unique_ptr<StatusBarPanel> m_statusBarPanel;
   std::unique_ptr<QActionGroup> m_unitsMenuActionGroup;
+  QTimer m_maxLogicalThumbSizeUpdater;
+  QTimer m_sceneItemsPosUpdater;
 };
 
 

@@ -51,8 +51,6 @@ class CacheDrivenTask : public ref_countable {
                const QRectF& content_rect);
 
  private:
-  static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
-
   intrusive_ptr<output::CacheDrivenTask> m_nextTask;
   intrusive_ptr<Settings> m_settings;
 };

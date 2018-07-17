@@ -4,9 +4,9 @@
 
 #include "PageOrderProvider.h"
 
-class OrderByCompleteness : public PageOrderProvider {
+class OrderByCompletenessProvider : public PageOrderProvider {
  public:
-  OrderByCompleteness() = default;
+  OrderByCompletenessProvider() = default;
 
   bool precedes(const PageId&, bool lhs_incomplete, const PageId&, bool rhs_incomplete) const override;
 };

@@ -19,6 +19,7 @@
 #include "Application.h"
 #include <config.h>
 #include <QDir>
+#include <QFontDatabase>
 #include <QTemporaryDir>
 #include "DebugImages.h"
 #include "ErrorWidget.h"
@@ -37,6 +38,8 @@
 Application::Application(int& argc, char** argv) : QApplication(argc, argv), m_currentLocale("en") {
   initTranslations();
   initPortableVersion();
+
+  QFontDatabase::addApplicationFont(":/fonts/symbols.ttf");
 }
 
 bool Application::notify(QObject* receiver, QEvent* e) {

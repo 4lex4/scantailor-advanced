@@ -17,13 +17,14 @@
  */
 
 #include "RelinkingModel.h"
+#include <foundation/Hashes.h>
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QWaitCondition>
 #include <boost/foreach.hpp>
+#include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/member.hpp>
-#include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include "OutOfMemoryHandler.h"
@@ -68,18 +69,19 @@ class RelinkingModel::StatusUpdateThread : private QThread {
     Task(const QString& p, int r) : path(p), row(r) {}
   };
 
-  class OrderedByPathTag;
+  class HashedByPathTag;
   class OrderedByPriorityTag;
 
   typedef boost::multi_index_container<
       Task,
       boost::multi_index::indexed_by<
-          boost::multi_index::ordered_unique<boost::multi_index::tag<OrderedByPathTag>,
-                                             boost::multi_index::member<Task, QString, &Task::path>>,
+          boost::multi_index::hashed_unique<boost::multi_index::tag<HashedByPathTag>,
+                                            boost::multi_index::member<Task, QString, &Task::path>,
+                                            hashes::hash<QString>>,
           boost::multi_index::sequenced<boost::multi_index::tag<OrderedByPriorityTag>>>>
       TaskList;
 
-  typedef TaskList::index<OrderedByPathTag>::type TasksByPath;
+  typedef TaskList::index<HashedByPathTag>::type TasksByPath;
   typedef TaskList::index<OrderedByPriorityTag>::type TasksByPriority;
 
   void run() override;
@@ -328,7 +330,7 @@ RelinkingModel::StatusUpdateThread::StatusUpdateThread(RelinkingModel* owner)
     : QThread(owner),
       m_owner(owner),
       m_tasks(),
-      m_tasksByPath(m_tasks.get<OrderedByPathTag>()),
+      m_tasksByPath(m_tasks.get<HashedByPathTag>()),
       m_tasksByPriority(m_tasks.get<OrderedByPriorityTag>()),
       m_exiting(false) {}
 

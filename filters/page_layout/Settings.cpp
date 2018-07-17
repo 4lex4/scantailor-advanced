@@ -21,6 +21,7 @@
 #include <QMutex>
 #include <boost/foreach.hpp>
 #include <boost/multi_index/composite_key.hpp>
+#include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/mem_fun.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -140,12 +141,6 @@ class Settings::Impl {
                                        QSizeF* agg_hard_size_before,
                                        QSizeF* agg_hard_size_after);
 
-  const QRectF& updateAggregateContentRect();
-
-  const QRectF& getAggregateContentRect() { return m_aggregateContentRect; }
-
-  void setAggregateContentRect(const QRectF& aggregateContentRect) { m_aggregateContentRect = aggregateContentRect; }
-
   Margins getHardMarginsMM(const PageId& page_id) const;
 
   void setHardMarginsMM(const PageId& page_id, const Margins& margins_mm);
@@ -183,7 +178,7 @@ class Settings::Impl {
 
   typedef multi_index_container<
       Item,
-      indexed_by<ordered_unique<member<Item, PageId, &Item::pageId>>,
+      indexed_by<hashed_unique<member<Item, PageId, &Item::pageId>, std::hash<PageId>>,
                  sequenced<tag<SequencedTag>>,
                  ordered_non_unique<tag<DescWidthTag>,
                                     // ORDER BY alignedWithOthers DESC, hardWidthMM DESC
@@ -212,7 +207,6 @@ class Settings::Impl {
   const QSizeF m_invalidSize;
   const Margins m_defaultHardMarginsMM;
   const Alignment m_defaultAlignment;
-  QRectF m_aggregateContentRect;
   const bool m_autoMarginsDefault;
   DeviationProvider<PageId> m_deviationProvider;
   std::vector<Guide> m_guides;
@@ -258,18 +252,6 @@ Params Settings::updateContentSizeAndGetParams(const PageId& page_id,
                                                QSizeF* agg_hard_size_after) {
   return m_impl->updateContentSizeAndGetParams(page_id, page_rect, content_rect, content_size_mm, agg_hard_size_before,
                                                agg_hard_size_after);
-}
-
-const QRectF& Settings::updateAggregateContentRect() {
-  return m_impl->updateAggregateContentRect();
-}
-
-const QRectF& Settings::getAggregateContentRect() {
-  return m_impl->getAggregateContentRect();
-}
-
-void Settings::setAggregateContentRect(const QRectF& contentRect) {
-  m_impl->setAggregateContentRect(contentRect);
 }
 
 Margins Settings::getHardMarginsMM(const PageId& page_id) const {
@@ -478,8 +460,8 @@ void Settings::Impl::setPageParams(const PageId& page_id, const Params& params) 
   const Item new_item(page_id, params.hardMarginsMM(), params.pageRect(), params.contentRect(), params.contentSizeMM(),
                       params.alignment(), params.isAutoMarginsEnabled());
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     m_items.insert(it, new_item);
   } else {
     m_items.replace(it, new_item);
@@ -500,9 +482,9 @@ Params Settings::Impl::updateContentSizeAndGetParams(const PageId& page_id,
     *agg_hard_size_before = getAggregateHardSizeMMLocked();
   }
 
-  const Container::iterator it(m_items.lower_bound(page_id));
+  const Container::iterator it(m_items.find(page_id));
   Container::iterator item_it(it);
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  if (it == m_items.end()) {
     const Item item(page_id, m_defaultHardMarginsMM, page_rect, content_rect, content_size_mm, m_defaultAlignment,
                     m_autoMarginsDefault);
     item_it = m_items.insert(it, item);
@@ -514,37 +496,11 @@ Params Settings::Impl::updateContentSizeAndGetParams(const PageId& page_id,
     *agg_hard_size_after = getAggregateHardSizeMMLocked();
   }
 
-  updateAggregateContentRect();
-
   m_deviationProvider.addOrUpdate(page_id);
 
   return Params(item_it->hardMarginsMM, item_it->pageRect, item_it->contentRect, item_it->contentSizeMM,
                 item_it->alignment, item_it->autoMargins);
 }  // Settings::Impl::updateContentSizeAndGetParams
-
-const QRectF& Settings::Impl::updateAggregateContentRect() {
-  Container::iterator it = m_items.begin();
-  if (it == m_items.end()) {
-    return m_aggregateContentRect;
-  }
-
-  m_aggregateContentRect = it->contentRect;
-  for (; it != m_items.end(); it++) {
-    if (it->contentRect == m_invalidRect) {
-      continue;
-    }
-    if (it->alignment.isNull()) {
-      continue;
-    }
-
-    const QRectF page_rect(it->pageRect);
-    QRectF content_rect(it->contentRect.translated(-page_rect.x(), -page_rect.y()));
-
-    m_aggregateContentRect |= content_rect;
-  }
-
-  return m_aggregateContentRect;
-}  // Settings::Impl::updateContentRect
 
 Margins Settings::Impl::getHardMarginsMM(const PageId& page_id) const {
   const QMutexLocker locker(&m_mutex);
@@ -560,8 +516,8 @@ Margins Settings::Impl::getHardMarginsMM(const PageId& page_id) const {
 void Settings::Impl::setHardMarginsMM(const PageId& page_id, const Margins& margins_mm) {
   const QMutexLocker locker(&m_mutex);
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     const Item item(page_id, margins_mm, m_invalidRect, m_invalidRect, m_invalidSize, m_defaultAlignment,
                     m_autoMarginsDefault);
     m_items.insert(it, item);
@@ -588,16 +544,12 @@ Settings::AggregateSizeChanged Settings::Impl::setPageAlignment(const PageId& pa
 
   const QSizeF agg_size_before(getAggregateHardSizeMMLocked());
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     const Item item(page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect, m_invalidSize, alignment,
                     m_autoMarginsDefault);
     m_items.insert(it, item);
   } else {
-    if (alignment.isNull() != it->alignment.isNull()) {
-      updateAggregateContentRect();
-    }
-
     m_items.modify(it, ModifyAlignment(alignment));
   }
 
@@ -616,8 +568,8 @@ Settings::AggregateSizeChanged Settings::Impl::setContentSizeMM(const PageId& pa
 
   const QSizeF agg_size_before(getAggregateHardSizeMMLocked());
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     const Item item(page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect, content_size_mm, m_defaultAlignment,
                     m_autoMarginsDefault);
     m_items.insert(it, item);
@@ -728,8 +680,8 @@ bool Settings::Impl::isPageAutoMarginsEnabled(const PageId& page_id) {
 void Settings::Impl::setPageAutoMarginsEnabled(const PageId& page_id, const bool state) {
   const QMutexLocker locker(&m_mutex);
 
-  const Container::iterator it(m_items.lower_bound(page_id));
-  if ((it == m_items.end()) || (page_id < it->pageId)) {
+  const Container::iterator it(m_items.find(page_id));
+  if (it == m_items.end()) {
     const Item item(page_id, m_defaultHardMarginsMM, m_invalidRect, m_invalidRect, m_invalidSize, m_defaultAlignment,
                     state);
     m_items.insert(it, item);

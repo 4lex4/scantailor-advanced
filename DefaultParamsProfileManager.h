@@ -17,9 +17,15 @@ class DefaultParamsProfileManager {
 
   explicit DefaultParamsProfileManager(const QString& path);
 
+  enum LoadStatus {
+    SUCCESS,
+    IO_ERROR,
+    INCOMPATIBLE_VERSION_ERROR
+  };
+
   std::list<QString> getProfileList() const;
 
-  std::unique_ptr<DefaultParams> readProfile(const QString& name) const;
+  std::unique_ptr<DefaultParams> readProfile(const QString& name, LoadStatus* status = nullptr) const;
 
   bool writeProfile(const DefaultParams& params, const QString& name) const;
 

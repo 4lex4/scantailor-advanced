@@ -100,7 +100,14 @@ class ThumbnailSequence : public QObject {
   PageSequence toPageSequence() const;
 
   /**
-   * \brief Updates appearence and possibly position of a thumbnail.
+   * \brief Updates position of all the thumbnails in the view.
+   *
+   * \note This function doesn't update thumbnails appearance.
+   */
+  void updateSceneItemsPos();
+
+  /**
+   * \brief Updates appearance and possibly position of a thumbnail.
    *
    * If thumbnail's size or position have changed and this thumbnail
    * is a selection leader, newSelectionLeader() signal will be emitted
@@ -121,7 +128,7 @@ class ThumbnailSequence : public QObject {
   void invalidateThumbnail(const PageInfo& page_info);
 
   /**
-   * \brief Updates appearence of all thumbnails and possibly their order.
+   * \brief Updates appearance of all thumbnails and possibly their order.
    *
    * Whether or not order will be updated depends on whether an order provider
    * was specified by the most recent reset() call.
@@ -166,11 +173,11 @@ class ThumbnailSequence : public QObject {
   PageInfo nextPage(const PageId& reference_page) const;
 
   /**
- * \brief Returns the selected page preceding the given one.
- *
- * A null PageInfo is returned if the given page wasn't found or
- * there are no pages preceding it.
- */
+   * \brief Returns the selected page preceding the given one.
+   *
+   * A null PageInfo is returned if the given page wasn't found or
+   * there are no pages preceding it.
+   */
   PageInfo prevSelectedPage(const PageId& reference_page) const;
 
   /**

@@ -501,7 +501,7 @@ set(common_sources
     BlackOnWhiteEstimator.cpp BlackOnWhiteEstimator.h
     ImageSettings.cpp ImageSettings.h
     EmptyTaskStatus.h
-    OrderByCompleteness.cpp OrderByCompleteness.h
+    OrderByCompletenessProvider.cpp OrderByCompletenessProvider.h
     version.h
     config.h.in
     ${common_ui_files})

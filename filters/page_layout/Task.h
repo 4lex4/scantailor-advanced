@@ -60,8 +60,6 @@ class Task : public ref_countable {
  private:
   class UiUpdater;
 
-  static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
-
   intrusive_ptr<Filter> m_filter;
   intrusive_ptr<output::Task> m_nextTask;
   intrusive_ptr<Settings> m_settings;

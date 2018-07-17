@@ -19,7 +19,7 @@
 
 #include "EditableZoneSet.h"
 
-EditableZoneSet::EditableZoneSet() = default;
+EditableZoneSet::EditableZoneSet() : m_zoneItems(), m_zoneItemsInOrder(m_zoneItems.get<ZoneItemOrderedTag>()) {}
 
 void EditableZoneSet::setDefaultProperties(const PropertySet& props) {
   m_defaultProps = props;
@@ -27,19 +27,16 @@ void EditableZoneSet::setDefaultProperties(const PropertySet& props) {
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline) {
   auto new_props = make_intrusive<PropertySet>(m_defaultProps);
-  m_splineMap.insert(Map::value_type(spline, new_props));
-  m_splineList.push_back(spline);
+  m_zoneItems.insert(ZoneItem(spline, new_props));
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline, const PropertySet& props) {
   auto new_props = make_intrusive<PropertySet>(props);
-  m_splineMap.insert(Map::value_type(spline, new_props));
-  m_splineList.push_back(spline);
+  m_zoneItems.insert(ZoneItem(spline, new_props));
 }
 
 void EditableZoneSet::removeZone(const EditableSpline::Ptr& spline) {
-  m_splineMap.erase(spline);
-  m_splineList.remove(spline);
+  m_zoneItems.erase(spline);
 }
 
 void EditableZoneSet::commit() {
@@ -47,8 +44,8 @@ void EditableZoneSet::commit() {
 }
 
 intrusive_ptr<PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) {
-  auto it(m_splineMap.find(spline));
-  if (it != m_splineMap.end()) {
+  auto it(m_zoneItems.find(spline));
+  if (it != m_zoneItems.end()) {
     return it->second;
   } else {
     return nullptr;
@@ -56,8 +53,8 @@ intrusive_ptr<PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::
 }
 
 intrusive_ptr<const PropertySet> EditableZoneSet::propertiesFor(const EditableSpline::Ptr& spline) const {
-  auto it(m_splineMap.find(spline));
-  if (it != m_splineMap.end()) {
+  auto it(m_zoneItems.find(spline));
+  if (it != m_zoneItems.end()) {
     return it->second;
   } else {
     return nullptr;

@@ -49,7 +49,7 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent) : QWidget(parent) {
 
 void NewOpenProjectPanel::addRecentProject(const QString& file_path) {
   const QFileInfo file_info(file_path);
-  QString base_name(file_info.baseName());
+  QString base_name(file_info.completeBaseName());
   if (base_name.isEmpty()) {
     base_name = QChar('_');
   }

@@ -69,10 +69,9 @@ class Utils {
   static Margins calcSoftMarginsMM(const QSizeF& hard_size_mm,
                                    const QSizeF& aggregate_hard_size_mm,
                                    const Alignment& alignment,
-                                   const QRectF& contentRect,
-                                   const QSizeF& contentSizeMM,
-                                   const QRectF& agg_content_rect,
-                                   const QRectF& pageRect);
+                                   const QRectF& content_rect,
+                                   const QSizeF& content_size_mm,
+                                   const QRectF& page_rect);
 
   static Margins calcMarginsMM(const ImageTransformation& xform, const QRectF& page_rect, const QRectF& content_rect);
 
@@ -88,8 +87,9 @@ class Utils {
   static QPolygonF calcPageRectPhys(const ImageTransformation& xform,
                                     const QPolygonF& content_rect_phys,
                                     const Params& params,
-                                    const QSizeF& aggregate_hard_size_mm,
-                                    const QRectF& agg_content_rect);
+                                    const QSizeF& aggregate_hard_size_mm);
+
+  static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
 
  private:
   static QPointF getRightUnitVector(const QPolygonF& poly_rect);

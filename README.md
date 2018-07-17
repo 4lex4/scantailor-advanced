@@ -227,10 +227,15 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     * Separate highlighting for selection leader in thumbnails.
     * Navigating between selected pages.
       Use **`Shift+PgUp/Q`** and **`Shift+PgDown/W`** to navigate between selected pages.
+    * Added buttons to navigate between pages.
       
   * Added options in the settings to manage the quality and size of thumbnails.  
     It's possible to switch thumbnail quality while working on a project with the changes applied immediately.
-    For every quality chosen a cache is created.
+    For every quality chosen a cache is created.  
+    *Usage example: you could use this feature for the preview purpose, which is faster than simple navigating between pages.
+    Undock the thumbnails panel, set the quality, for ex., to 700, and size to 1000. You can mark problem pages with `Ctrl+Click` on a thumbnail
+    and navigate between these selected pages after finishing to fix them. To finish the preview change the quality and size values back
+    and dock the panel.*  
 
   * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 

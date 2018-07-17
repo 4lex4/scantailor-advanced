@@ -225,6 +225,20 @@ MainWindow::MainWindow()
   connect(actionNextSelectedPageW, SIGNAL(triggered(bool)), this, SLOT(goNextSelectedPage()));
   connect(actionAbout, SIGNAL(triggered(bool)), this, SLOT(showAboutDialog()));
   connect(&OutOfMemoryHandler::instance(), SIGNAL(outOfMemory()), SLOT(handleOutOfMemorySituation()));
+  connect(prevPageBtn, &QToolButton::clicked, this, [this]() {
+    if (filterSelectedBtn->isChecked()) {
+      goPrevSelectedPage();
+    } else {
+      goPrevPage();
+    }
+  });
+  connect(nextPageBtn, &QToolButton::clicked, this, [this]() {
+    if (filterSelectedBtn->isChecked()) {
+      goNextSelectedPage();
+    } else {
+      goNextPage();
+    }
+  });
 
   connect(actionSwitchFilter1, SIGNAL(triggered(bool)), SLOT(switchFilter1()));
   connect(actionSwitchFilter2, SIGNAL(triggered(bool)), SLOT(switchFilter2()));

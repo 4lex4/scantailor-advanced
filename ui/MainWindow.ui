@@ -132,26 +132,66 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QToolButton" name="focusButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>2</number>
          </property>
-         <property name="statusTip">
-          <string>Keep current page in view.</string>
-         </property>
-         <property name="text">
-          <string>Follow page</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
+         <item>
+          <widget class="QToolButton" name="focusButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="statusTip">
+            <string>Keep current page in view.</string>
+           </property>
+           <property name="text">
+            <string>Follow page</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="prevPageBtn">
+           <property name="toolTip">
+            <string>Previous page.</string>
+           </property>
+           <property name="text">
+            <string notr="true">⯅</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="nextPageBtn">
+           <property name="toolTip">
+            <string>Next page.</string>
+           </property>
+           <property name="text">
+            <string notr="true">⯆</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="filterSelectedBtn">
+           <property name="toolTip">
+            <string>Filter selected pages only.</string>
+           </property>
+           <property name="text">
+            <string notr="true">✔</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QGraphicsView" name="thumbView">

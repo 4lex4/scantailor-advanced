@@ -36,16 +36,16 @@ int main(int argc, char** argv) {
 
 #ifdef _WIN32
   // Get rid of all references to Qt's installation directory.
-  app.setLibraryPaths(QStringList(app.applicationDirPath()));
+  Application::setLibraryPaths(QStringList(Application::applicationDirPath()));
 #endif
 
   // Initialize command line in gui mode.
-  CommandLine cli(app.arguments());
+  CommandLine cli(Application::arguments());
   CommandLine::set(cli);
 
   // This information is used by QSettings.
-  app.setApplicationName(APPLICATION_NAME);
-  app.setOrganizationName(ORGANIZATION_NAME);
+  Application::setApplicationName(APPLICATION_NAME);
+  Application::setOrganizationName(ORGANIZATION_NAME);
 
   PngMetadataLoader::registerMyself();
   TiffMetadataLoader::registerMyself();
@@ -87,5 +87,5 @@ int main(int argc, char** argv) {
     main_wnd->openProject(cli.projectFile());
   }
 
-  return app.exec();
+  return Application::exec();
 }  // main

@@ -4,6 +4,7 @@
 
 #include <QStyle>
 #include <QtGui/QPalette>
+#include <memory>
 #include <unordered_map>
 
 class ColorScheme {

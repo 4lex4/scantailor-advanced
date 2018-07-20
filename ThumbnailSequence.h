@@ -70,7 +70,9 @@ class ThumbnailSequence : public QObject {
     AVOID_SCROLLING_TO = 1 << 2
   };
 
-  explicit ThumbnailSequence(const QSizeF& max_logical_thumb_size);
+  enum ViewMode { SINGLE_COLUMN, MULTI_COLUMN };
+
+  explicit ThumbnailSequence(const QSizeF& max_logical_thumb_size, ViewMode view_mode);
 
   ~ThumbnailSequence() override;
 
@@ -233,6 +235,10 @@ class ThumbnailSequence : public QObject {
   const QSizeF& getMaxLogicalThumbSize() const;
 
   void setMaxLogicalThumbSize(const QSizeF& size);
+
+  ViewMode getViewMode() const;
+
+  void setViewMode(ViewMode mode);
 
  signals:
 

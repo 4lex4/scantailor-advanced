@@ -106,6 +106,8 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
   ui.thumbnailQualitySB->setValue(settings.value("settings/thumbnail_quality", QSize(200, 200)).toSize().width());
   ui.thumbnailSizeSB->setValue(
       settings.value("settings/max_logical_thumb_size", QSizeF(250, 160)).toSizeF().toSize().width());
+
+  ui.singleColumnThumbnailsCB->setChecked(settings.value("settings/single_column_thumbnail_display", false).toBool());
 }
 
 SettingsDialog::~SettingsDialog() = default;
@@ -146,6 +148,8 @@ void SettingsDialog::commitChanges() {
     const double height = std::round((width * (16.0 / 25.0)) * 100) / 100;
     settings.setValue("settings/max_logical_thumb_size", QSizeF(width, height));
   }
+
+  settings.setValue("settings/single_column_thumbnail_display", ui.singleColumnThumbnailsCB->isChecked());
 
   emit settingsChanged();
 }

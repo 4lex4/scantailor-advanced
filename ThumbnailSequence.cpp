@@ -86,7 +86,7 @@ class ThumbnailSequence::GraphicsScene : public QGraphicsScene {
 
 class ThumbnailSequence::Impl {
  public:
-  Impl(ThumbnailSequence& owner, const QSizeF& max_logical_thumb_size);
+  Impl(ThumbnailSequence& owner, const QSizeF& max_logical_thumb_size, ViewMode view_mode);
 
   ~Impl();
 
@@ -143,6 +143,10 @@ class ThumbnailSequence::Impl {
   const QSizeF& getMaxLogicalThumbSize() const;
 
   void setMaxLogicalThumbSize(const QSizeF& size);
+
+  ViewMode getViewMode() const;
+
+  void setViewMode(ViewMode mode);
 
  private:
   class ItemsByIdTag;
@@ -216,6 +220,7 @@ class ThumbnailSequence::Impl {
   static const int SPACING = 3;
   ThumbnailSequence& m_owner;
   QSizeF m_maxLogicalThumbSize;
+  ViewMode m_viewMode;
   Container m_items;
   ItemsById& m_itemsById;
   ItemsInOrder& m_itemsInOrder;
@@ -304,8 +309,8 @@ class ThumbnailSequence::CompositeItem : public QGraphicsItemGroup {
 
 /*============================= ThumbnailSequence ===========================*/
 
-ThumbnailSequence::ThumbnailSequence(const QSizeF& max_logical_thumb_size)
-    : m_impl(new Impl(*this, max_logical_thumb_size)) {}
+ThumbnailSequence::ThumbnailSequence(const QSizeF& max_logical_thumb_size, const ViewMode view_mode)
+    : m_impl(new Impl(*this, max_logical_thumb_size, view_mode)) {}
 
 ThumbnailSequence::~ThumbnailSequence() {}
 
@@ -414,16 +419,25 @@ void ThumbnailSequence::updateSceneItemsPos() {
   m_impl->updateSceneItemsPos();
 }
 
+ThumbnailSequence::ViewMode ThumbnailSequence::getViewMode() const {
+  return m_impl->getViewMode();
+}
+
+void ThumbnailSequence::setViewMode(ThumbnailSequence::ViewMode mode) {
+  m_impl->setViewMode(mode);
+}
+
 /*======================== ThumbnailSequence::Impl ==========================*/
 
-ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& max_logical_thumb_size)
+ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& max_logical_thumb_size, const ViewMode view_mode)
     : m_owner(owner),
       m_maxLogicalThumbSize(max_logical_thumb_size),
       m_items(),
       m_itemsById(m_items.get<ItemsByIdTag>()),
       m_itemsInOrder(m_items.get<ItemsInOrderTag>()),
       m_selectedThenUnselected(m_items.get<SelectedThenUnselectedTag>()),
-      m_selectionLeader(nullptr) {
+      m_selectionLeader(nullptr),
+      m_viewMode(view_mode) {
   m_graphicsScene.setContextMenuEventCallback(
       [&](QGraphicsSceneContextMenuEvent* evt) { this->sceneContextMenuEvent(evt); });
 }
@@ -573,20 +587,25 @@ void ThumbnailSequence::Impl::updateSceneItemsPos() {
     double sum_item_widths = 0;
     double x_offset = SPACING;
 
-    // Determine how many items can fit into the current row.
-    for (ItemsInOrder::iterator row_it = ord_it; row_it != ord_end; ++row_it) {
-      const double item_width = row_it->composite->boundingRect().width();
-      x_offset += item_width + SPACING;
-      if (x_offset > view_width) {
-        if (items_in_row == 0) {
-          // At least one page must be in a row.
-          items_in_row = 1;
-          sum_item_widths = item_width;
+    if (m_viewMode == MULTI_COLUMN) {
+      // Determine how many items can fit into the current row.
+      for (ItemsInOrder::iterator row_it = ord_it; row_it != ord_end; ++row_it) {
+        const double item_width = row_it->composite->boundingRect().width();
+        x_offset += item_width + SPACING;
+        if (x_offset > view_width) {
+          if (items_in_row == 0) {
+            // At least one page must be in a row.
+            items_in_row = 1;
+            sum_item_widths = item_width;
+          }
+          break;
         }
-        break;
+        items_in_row++;
+        sum_item_widths += item_width;
       }
-      items_in_row++;
-      sum_item_widths += item_width;
+    } else {
+      items_in_row = 1;
+      sum_item_widths = ord_it->composite->boundingRect().width();
     }
 
     // Split free space between the items in the current row.
@@ -1329,6 +1348,14 @@ const QSizeF& ThumbnailSequence::Impl::getMaxLogicalThumbSize() const {
 
 void ThumbnailSequence::Impl::setMaxLogicalThumbSize(const QSizeF& size) {
   m_maxLogicalThumbSize = size;
+}
+
+ThumbnailSequence::ViewMode ThumbnailSequence::Impl::getViewMode() const {
+  return m_viewMode;
+}
+
+void ThumbnailSequence::Impl::setViewMode(ThumbnailSequence::ViewMode mode) {
+  m_viewMode = mode;
 }
 
 /*==================== ThumbnailSequence::Item ======================*/

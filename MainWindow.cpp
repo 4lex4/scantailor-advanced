@@ -115,7 +115,12 @@ MainWindow::MainWindow()
   QSettings app_settings;
 
   m_maxLogicalThumbSize = app_settings.value("settings/max_logical_thumb_size", QSize(250, 160)).toSizeF();
-  m_thumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize);
+  const ThumbnailSequence::ViewMode view_mode
+      = (app_settings.value("settings/single_column_thumbnail_display", false).toBool())
+            ? ThumbnailSequence::SINGLE_COLUMN
+            : ThumbnailSequence::MULTI_COLUMN;
+
+  m_thumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize, view_mode);
 
   m_autoSaveTimer.setSingleShot(true);
   connect(&m_autoSaveTimer, SIGNAL(timeout()), SLOT(autoSaveProject()));
@@ -1421,7 +1426,16 @@ void MainWindow::onSettingsChanged() {
     const QSize max_thumb_size = settings.value("settings/thumbnail_quality").toSize();
     if (m_thumbnailCache->getMaxThumbSize() != max_thumb_size) {
       m_thumbnailCache->setMaxThumbSize(max_thumb_size);
-      need_invalidate = true;
+    }
+  }
+
+  {
+    const ThumbnailSequence::ViewMode view_mode
+        = (settings.value("settings/single_column_thumbnail_display", false).toBool())
+              ? ThumbnailSequence::SINGLE_COLUMN
+              : ThumbnailSequence::MULTI_COLUMN;
+    if (m_thumbSequence->getViewMode() != view_mode) {
+      m_thumbSequence->setViewMode(view_mode);
     }
   }
 

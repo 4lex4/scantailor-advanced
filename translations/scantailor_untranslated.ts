@@ -2130,7 +2130,7 @@ You should remove them from the project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Deksew:</source>
+        <source>Deskew:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

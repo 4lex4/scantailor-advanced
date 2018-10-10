@@ -2141,7 +2141,7 @@ Debería elimnarlos del proyecto.</translation>
         <translation>Parámetros</translation>
     </message>
     <message>
-        <source>Deksew:</source>
+        <source>Deskew:</source>
         <translation>Enderezar:</translation>
     </message>
     <message>

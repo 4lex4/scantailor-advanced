@@ -2159,7 +2159,7 @@ You should remove them from the project.</source>
         <translation>Параметры</translation>
     </message>
     <message>
-        <source>Deksew:</source>
+        <source>Deskew:</source>
         <translation>Комп. поворота:</translation>
     </message>
     <message>

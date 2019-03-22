@@ -29,18 +29,12 @@ if (UNIX)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
 
-set(
-    CMAKE_C_FLAGS "${CMAKE_C_FLAGS}"
-    CACHE STRING "Common C flags for all build configurations." FORCE
-)
-set(
-    CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
-    CACHE STRING "Common C++ flags for all build configurations." FORCE
-)
-set(
-    CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
-    CACHE STRING "Common link flags for all build configurations." FORCE
-)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}"
+    CACHE STRING "Common C flags for all build configurations." FORCE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
+    CACHE STRING "Common C++ flags for all build configurations." FORCE)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
+    CACHE STRING "Common link flags for all build configurations." FORCE)
 
 enable_testing()
 
@@ -48,8 +42,7 @@ enable_testing()
 # the whole project depend on the file we are parsing / copying.
 configure_file(
     "${PROJECT_SOURCE_DIR}/version.h"
-    "${PROJECT_BINARY_DIR}/.version.h" COPYONLY
-)
+    "${PROJECT_BINARY_DIR}/.version.h" COPYONLY)
 
 # Prevent this leftover from old builds to be used in favour
 # of the one in ${PROJECT_SOURCE_DIR}
@@ -62,8 +55,7 @@ file(READ "${PROJECT_SOURCE_DIR}/version.h" version_h_contents)
 string(
     REGEX REPLACE
     ".*#define[ \\t]+VERSION[ \\t]+\"([^\"]*)\".*"
-    "\\1" VERSION "${version_h_contents}"
-)
+    "\\1" VERSION "${version_h_contents}")
 if ("${VERSION}" STREQUAL "${version_h_contents}")
   message(FATAL_ERROR "Failed to extract VERSION from version.h")
 endif()
@@ -72,8 +64,7 @@ endif()
 string(
     REGEX REPLACE
     ".*#define[ \\t]+VERSION_QUAD[ \\t]+\"(([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)?)\".*"
-    "\\1" VERSION_QUAD "${version_h_contents}"
-)
+    "\\1" VERSION_QUAD "${version_h_contents}")
 if ("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
   message(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
 endif()
@@ -118,8 +109,7 @@ find_path(
     JPEG_INCLUDE_DIR jpeglib.h
     PATHS /usr/local/include /usr/include
     HINTS ${jpeg_dirs}
-    DOC "Path to libjpeg headers."
-)
+    DOC "Path to libjpeg headers.")
 if (NOT JPEG_INCLUDE_DIR)
   message(FATAL_ERROR "Could not find jpeg headers.\n")
 endif()
@@ -130,14 +120,12 @@ find_library(
     JPEG_LIBRARY_REL NAMES jpeg libjpeg.lib
     PATHS /usr/local/lib /usr/lib
     HINTS "${jpeg_dirs}/stage/lib"
-    DOC "Path to jpeg library."
-)
+    DOC "Path to jpeg library.")
 find_library(
     JPEG_LIBRARY_DEB NAMES jpegd libjpegd.lib
     PATHS /usr/local/lib /usr/lib
     HINTS "${jpeg_dirs}/stage/lib"
-    DOC "Path to jpeg library."
-)
+    DOC "Path to jpeg library.")
 
 if (JPEG_LIBRARY_REL AND NOT JPEG_LIBRARY_DEB)
   set(JPEG_LIBRARY_DEB ${JPEG_LIBRARY_REL})
@@ -153,8 +141,7 @@ find_path(
     ZLIB_INCLUDE_DIR zlib.h
     PATHS /usr/local/include /usr/include
     HINTS ${zlib_dirs}
-    DOC "Path to zlib headers."
-)
+    DOC "Path to zlib headers.")
 if (NOT ZLIB_INCLUDE_DIR)
   message(FATAL_ERROR "Could not find zlib headers.\n")
 endif()
@@ -165,14 +152,12 @@ find_library(
     ZLIB_LIBRARY_REL NAMES z zdll.lib
     PATHS /usr/local/lib /usr/lib
     HINTS "${zlib_dirs}/stage/lib"
-    DOC "Path to zlib library."
-)
+    DOC "Path to zlib library.")
 find_library(
     ZLIB_LIBRARY_DEB NAMES zd zdlld.lib
     PATHS /usr/local/lib /usr/lib
     HINTS "${zlib_dirs}/stage/lib"
-    DOC "Path to zlib library."
-)
+    DOC "Path to zlib library.")
 
 if (ZLIB_LIBRARY_REL AND NOT ZLIB_LIBRARY_DEB)
   set(ZLIB_LIBRARY_DEB ${ZLIB_LIBRARY_REL})
@@ -188,8 +173,7 @@ find_path(
     PNG_INCLUDE_DIR png.h
     PATHS /usr/local/include /usr/include
     HINTS ${png_dirs1} ${png_dirs2}
-    DOC "Path to libpng headers."
-)
+    DOC "Path to libpng headers.")
 if (NOT PNG_INCLUDE_DIR)
   message(FATAL_ERROR "Could not find libpng headers.\n")
 endif()
@@ -200,14 +184,12 @@ find_library(
     PNG_LIBRARY_REL NAMES png libpng.lib
     PATHS /usr/local/lib /usr/lib
     HINTS "${png_dirs1}/stage/lib" "${png_dirs2}/stage/lib"
-    DOC "Path to png library."
-)
+    DOC "Path to png library.")
 find_library(
     PNG_LIBRARY_DEB NAMES pngd libpngd.lib
     PATHS /usr/local/lib /usr/lib
     HINTS "${png_dirs1}/stage/lib" "${png_dirs2}/stage/lib"
-    DOC "Path to png library."
-)
+    DOC "Path to png library.")
 
 if (PNG_LIBRARY_REL AND NOT PNG_LIBRARY_DEB)
   set(PNG_LIBRARY_DEB ${PNG_LIBRARY_REL})
@@ -224,8 +206,7 @@ find_path(
     PATHS /usr/local/include /usr/include
     HINTS ${tiff_dirs}/libtiff
     PATH_SUFFIXES libtiff
-    DOC "Path to libtiff headers."
-)
+    DOC "Path to libtiff headers.")
 if (NOT TIFF_INCLUDE_DIR)
   message(FATAL_ERROR "Could not find libtiff headers.\n")
 endif()
@@ -237,15 +218,13 @@ find_library(
     PATHS /usr/local/lib /usr/lib
     HINTS "${tiff_dirs}/stage/lib"
     PATH_SUFFIXES libtiff
-    DOC "Path to tiff library."
-)
+    DOC "Path to tiff library.")
 find_library(
     TIFF_LIBRARY_DEB tiffd libtiffd.lib
     PATHS /usr/local/lib /usr/lib
     HINTS "${tiff_dirs}/stage/lib"
     PATH_SUFFIXES libtiff
-    DOC "Path to tiff library."
-)
+    DOC "Path to tiff library.")
 
 if (TIFF_LIBRARY_REL AND NOT TIFF_LIBRARY_DEB)
   set(TIFF_LIBRARY_DEB ${TIFF_LIBRARY_REL})
@@ -264,8 +243,7 @@ endif()
 if (WIN32)
   find_path(
       BOOST_ROOT boost-build.jam PATHS ${boost_dirs}
-      DOC "Path to top-level Boost source directory."
-  )
+      DOC "Path to top-level Boost source directory.")
   set(Boost_USE_STATIC_LIBS ON)
 else()
   add_definitions(-DBOOST_TEST_DYN_LINK)
@@ -549,8 +527,7 @@ if (WIN32)
   file(GLOB win32_resources resources/win32/*.ico)
   set_source_files_properties(
       "${rc_file}" PROPERTIES
-      OBJECT_DEPENDS ${win32_resources}
-  )
+      OBJECT_DEPENDS ${win32_resources})
   if (MINGW)
     # CMake doesn't know how to process .rc files with MinGW.
     set(win32_resource_file "${CMAKE_BINARY_DIR}/win32_resources.o")
@@ -559,8 +536,7 @@ if (WIN32)
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/win32"
         COMMAND windres -i "${rc_file}" -o "${win32_resource_file}"
         MAIN_DEPENDENCY "${rc_file}"
-        DEPENDS ${win32_resources}
-    )
+        DEPENDS ${win32_resources})
   else()
     set(win32_resource_file "${rc_file}")
   endif()
@@ -570,16 +546,14 @@ add_library(stcore STATIC ${common_sources} ${common_ui_sources})
 
 add_executable(
     scantailor WIN32 ${gui_only_sources} ${common_ui_sources} ${gui_only_ui_sources}
-    ${resource_sources} ${win32_resource_file} resources/icons/COPYING
-)
+    ${resource_sources} ${win32_resource_file} resources/icons/COPYING)
 
 target_link_libraries(
     scantailor
     fix_orientation page_split deskew select_content page_layout output stcore
     dewarping zones interaction imageproc math foundation
     ${Qt5Core_LIBRARIES} ${Qt5GUI_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
-    ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS}
-)
+    ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS})
 
 if (WIN32)
   install(TARGETS scantailor RUNTIME DESTINATION .)
@@ -590,8 +564,7 @@ endif()
 # Translations
 translation_sources(
     scantailor
-    ${common_sources} ${gui_only_sources} ${cli_only_sources}
-)
+    ${common_sources} ${gui_only_sources} ${cli_only_sources})
 file(GLOB TRANSLATION_FILES translations/scantailor_*.ts)
 
 finalize_translation_set(scantailor ${TRANSLATION_FILES})
@@ -745,24 +718,20 @@ if (WIN32)
   set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
   set(CPACK_PACKAGE_INSTALL_DIRECTORY "${CMAKE_PROJECT_NAME}")
   set(CPACK_NSIS_CREATE_ICONS_EXTRA
-      "CreateShortCut \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\scantailor.exe\\\""
-  )
+      "CreateShortCut \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\scantailor.exe\\\"")
   set(CPACK_NSIS_DELETE_ICONS_EXTRA
-      "Delete \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\""
-  )
+      "Delete \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\"")
 endif()
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${APPLICATION_NAME}-${VERSION}")
-set(
-  CPACK_SOURCE_IGNORE_FILES
-  "/\\\\.svn/"
-  "/\\\\.git/"
-  "~$"
-  "\\\\.pcs$"
-  "TODO.txt"
-  "CMakeLists.txt.user"
-  "/doxygen/"
-  "${CMAKE_BINARY_DIR}"
-)
+set(CPACK_SOURCE_IGNORE_FILES
+    "/\\\\.svn/"
+    "/\\\\.git/"
+    "~$"
+    "\\\\.pcs$"
+    "TODO.txt"
+    "CMakeLists.txt.user"
+    "/doxygen/"
+    "${CMAKE_BINARY_DIR}")
 include(CPack)
 
 # uninstall target

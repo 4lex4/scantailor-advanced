@@ -8,8 +8,7 @@ set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
 source_group("UI Files" FILES ${ui_files})
 source_group("Generated" FILES ${ui_sources})
 
-set(
-    sources
+set(sources
     ImageView.cpp ImageView.h
     Thumbnail.cpp Thumbnail.h
     Filter.cpp Filter.h
@@ -19,8 +18,8 @@ set(
     CacheDrivenTask.cpp CacheDrivenTask.h
     Dependencies.cpp Dependencies.h
     Params.cpp Params.h
-    ApplyDialog.cpp ApplyDialog.h
-)
+    ApplyDialog.cpp ApplyDialog.h)
+
 source_group("Sources" FILES ${sources})
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)

@@ -72,8 +72,7 @@ macro (finalize_translation_set _set) #, _ts_files
 
   file(
       WRITE "${CMAKE_BINARY_DIR}/update_translations_${_set}.pro"
-      "SOURCES = ${_sources_str}\nTRANSLATIONS = ${_translations_str}\nINCLUDEPATH = ${_inc_dirs_str}"
-  )
+      "SOURCES = ${_sources_str}\nTRANSLATIONS = ${_translations_str}\nINCLUDEPATH = ${_inc_dirs_str}")
 
   # Note that we can't create a custom target with *.ts files as output, because:
   # 1. CMake would pollute our source tree with *.rule fules.
@@ -91,8 +90,7 @@ macro (update_translations_target _target) #, _sets
   foreach (_set ${ARGN})
     list(
         APPEND _commands COMMAND Qt5::lupdate -locations absolute
-        -pro "${CMAKE_BINARY_DIR}/update_translations_${_set}.pro"
-    )
+        -pro "${CMAKE_BINARY_DIR}/update_translations_${_set}.pro")
   endforeach()
 
   add_custom_target(${_target} ${_commands} VERBATIM)

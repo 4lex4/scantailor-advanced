@@ -1,7 +1,6 @@
 project("Dewarping library")
 
-set(
-    sources
+set(sources
     Curve.cpp Curve.h
     DistortionModel.cpp DistortionModel.h
     DistortionModelBuilder.cpp DistortionModelBuilder.h
@@ -12,8 +11,8 @@ set(
     TopBottomEdgeTracer.cpp TopBottomEdgeTracer.h
     CylindricalSurfaceDewarper.cpp CylindricalSurfaceDewarper.h
     DewarpingPointMapper.cpp DewarpingPointMapper.h
-    RasterDewarper.cpp RasterDewarper.h
-)
+    RasterDewarper.cpp RasterDewarper.h)
+
 source_group("Sources" FILES ${sources})
 
 add_library(dewarping STATIC ${sources})

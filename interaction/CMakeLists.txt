@@ -2,8 +2,7 @@ project(interaction)
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-set(
-    sources
+set(sources
     DraggableObject.h
     DraggablePoint.cpp DraggablePoint.h
     DraggableLineSegment.cpp DraggableLineSegment.h

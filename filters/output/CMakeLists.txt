@@ -8,8 +8,7 @@ set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
 source_group("UI Files" FILES ${ui_files})
 source_group("Generated" FILES ${ui_sources})
 
-set(
-    sources
+set(sources
     ApplyColorsDialog.cpp ApplyColorsDialog.h
     ChangeDpiDialog.cpp ChangeDpiDialog.h
     ImageView.cpp ImageView.h

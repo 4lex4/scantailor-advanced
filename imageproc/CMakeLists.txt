@@ -1,7 +1,6 @@
 project(imageproc)
 
-set(
-    sources
+set(sources
     Constants.h Constants.cpp
     BinaryImage.cpp BinaryImage.h
     BinaryThreshold.cpp BinaryThreshold.h

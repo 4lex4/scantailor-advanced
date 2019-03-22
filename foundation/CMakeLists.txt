@@ -2,8 +2,7 @@ project("Foundation library")
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-set(
-    sources
+set(sources
     NonCopyable.h intrusive_ptr.h ref_countable.h
     AlignedArray.h
     FastQueue.h

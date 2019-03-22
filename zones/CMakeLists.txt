@@ -2,8 +2,7 @@ project(zones)
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-set(
-    sources
+set(sources
     SplineVertex.cpp SplineVertex.h
     SplineSegment.cpp SplineSegment.h
     EditableSpline.cpp EditableSpline.h

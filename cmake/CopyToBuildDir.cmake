@@ -1,9 +1,7 @@
 # Reset variables.
 foreach (conf_ Debug Release MinSizeRel RelWithDebInfo)
-  set(
-      "COPY_TO_BUILD_DIR_${conf_}" "" CACHE INTERNAL
-      "Files to copy to ${conf_} build directory" FORCE
-  )
+  set("COPY_TO_BUILD_DIR_${conf_}" "" CACHE INTERNAL
+      "Files to copy to ${conf_} build directory" FORCE)
 endforeach()
 
 # Usage:
@@ -41,10 +39,8 @@ macro (copy_to_build_dir)
     endforeach()
 
     # Force the new value to be written to the cache.
-    set(
-        "COPY_TO_BUILD_DIR_${conf_}" ${COPY_TO_BUILD_DIR_${conf_}}
-        CACHE INTERNAL "Files to copy to ${conf_} build directory" FORCE
-    )
+    set("COPY_TO_BUILD_DIR_${conf_}" ${COPY_TO_BUILD_DIR_${conf_}}
+        CACHE INTERNAL "Files to copy to ${conf_} build directory" FORCE)
   endforeach()
 endmacro()
 
@@ -53,11 +49,9 @@ macro (generate_copy_to_build_dir_target target_name_)
   set(script_ "${CMAKE_BINARY_DIR}/copy_to_build_dir.cmake")
   configure_file("cmake/copy_to_build_dir.cmake.in" "${script_}" @ONLY)
 
-  set(
-      src_files_
+  set(src_files_
       ${COPY_TO_BUILD_DIR_Debug} ${COPY_TO_BUILD_DIR_Release}
-      ${COPY_TO_BUILD_DIR_MinSizeRel} ${COPY_TO_BUILD_DIR_RelWithDebInfo}
-  )
+      ${COPY_TO_BUILD_DIR_MinSizeRel} ${COPY_TO_BUILD_DIR_RelWithDebInfo})
   set(deps_ "")
   foreach (src_file_ ${src_files_})
     string(REGEX REPLACE "(.*)=>.*" "\\1" src_file_ "${src_file_}")
@@ -69,6 +63,5 @@ macro (generate_copy_to_build_dir_target target_name_)
       "${target_name_}" ALL
       COMMAND "${CMAKE_COMMAND}" "-DTARGET_DIR=$<TARGET_FILE_DIR:scantailor>"
       "-DCFG=$<CONFIG>" -P "${script_}"
-      DEPENDS "${script_}" ${deps_}
-  )
+      DEPENDS "${script_}" ${deps_})
 endmacro()

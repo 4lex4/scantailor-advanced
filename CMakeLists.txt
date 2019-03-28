@@ -265,8 +265,10 @@ if (WIN32)
   set(Qt5Network_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5Network")
   set(Qt5OpenGL_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5OpenGL")
   set(Qt5LinguistTools_DIR "${qt_dirs}/qttools/lib/cmake/Qt5LinguistTools")
+  set(Qt5Svg_DIR "${qt_dirs}/qtsvg/lib/cmake/Qt5Svg")
   if (WIN_XP)
     set(Qt5LinguistTools_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5LinguistTools")
+    set(Qt5Svg_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5Svg")
   endif()
 endif()
 
@@ -278,6 +280,7 @@ find_package(Qt5Xml ${qt_min_version} REQUIRED)
 find_package(Qt5Network ${qt_min_version} REQUIRED)
 find_package(Qt5LinguistTools ${qt_min_version} REQUIRED)
 find_package(Qt5OpenGL ${qt_min_version} REQUIRED)
+find_package(Qt5Svg ${qt_min_version} REQUIRED)
 
 include_directories(${Qt5Core_INCLUDE_DIRS})
 link_directories(${Qt5Core_LIBRARIES})
@@ -294,6 +297,8 @@ include_directories(${Qt5OpenGL_INCLUDE_DIRS})
 link_directories(${Qt5OpenGL_LIBRARIES})
 include_directories(${Qt5LinguistTools_INCLUDE_DIRS})
 link_directories(${Qt5LinguistTools_LIBRARIES})
+include_directories(${Qt5Svg_INCLUDE_DIRS})
+link_directories(${Qt5Svg_LIBRARIES})
 
 #=================================== Main ===================================#
 
@@ -553,7 +558,7 @@ target_link_libraries(
     fix_orientation page_split deskew select_content page_layout output stcore
     dewarping zones interaction imageproc math foundation
     ${Qt5Core_LIBRARIES} ${Qt5GUI_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
-    ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${EXTRA_LIBS})
+    ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${Qt5Svg_LIBRARIES} ${EXTRA_LIBS})
 
 if (WIN32)
   install(TARGETS scantailor RUNTIME DESTINATION .)
@@ -608,9 +613,9 @@ if (WIN32)
 
   # Copy Qt's DLLs to the staging dir.
   set(qt5_libs
-      ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES}
-      ${Qt5Core_LIBRARIES} ${Qt5Xml_LIBRARIES}
-      ${Qt5Network_LIBRARIES} ${Qt5OpenGL_LIBRARIES})
+      ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Core_LIBRARIES} 
+      ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5OpenGL_LIBRARIES} 
+      ${Qt5Svg_LIBRARIES})
 
   foreach (target ${qt5_libs})
     get_target_property(release_loc "${target}" LOCATION_RELEASE)
@@ -635,11 +640,17 @@ if (WIN32)
     endif()
   endmacro()
 
-  set(PLUGINS_DIR "${qt_dirs}/qtbase/plugins")
-  install_qt_plugin("${PLUGINS_DIR}" "platforms" "qwindows.dll" "qwindowsd.dll")
-  install_qt_plugin("${PLUGINS_DIR}" "styles" "qwindowsvistastyle.dll" "qwindowsvistastyled.dll")
-  install_qt_plugin("${PLUGINS_DIR}" "imageformats" "qjpeg.dll" "qjpegd.dll")
-  install_qt_plugin("${PLUGINS_DIR}" "accessible" "qtaccessiblewidgets.dll" "qtaccessiblewidgetsd.dll")
+  set(qt_base_plugins_dir "${qt_dirs}/qtbase/plugins")
+  install_qt_plugin("${qt_base_plugins_dir}" "platforms" "qwindows.dll" "qwindowsd.dll")
+  install_qt_plugin("${qt_base_plugins_dir}" "styles" "qwindowsvistastyle.dll" "qwindowsvistastyled.dll")
+  install_qt_plugin("${qt_base_plugins_dir}" "imageformats" "qjpeg.dll" "qjpegd.dll")
+  install_qt_plugin("${qt_base_plugins_dir}" "accessible" "qtaccessiblewidgets.dll" "qtaccessiblewidgetsd.dll")
+  set(qt_svg_plugins_dir "${qt_dirs}/qtsvg/plugins")
+  if (WIN_XP)
+    set(qt_svg_plugins_dir "${qt_base_plugins_dir}")
+  endif()
+  install_qt_plugin("${qt_svg_plugins_dir}" "iconengines" "qsvgicon.dll" "qsvgicond.dll")
+  install_qt_plugin("${qt_svg_plugins_dir}" "imageformats" "qsvg.dll" "qsvgd.dll")
 
   # Copy the image runtime libs
   macro (find_runtime_lib Name ReleaseLibNames HintsRelease DebugLibNames HintsDebug)

@@ -89,150 +89,70 @@ if (WIN32)
         HINTS "${libs_dirs}"
         DOC "Libs directory")
   if (NOT LIBS_BUILD_DIR)
-    message(WARNING "Libs-build directory could not be found! "
+    message(STATUS "Libs-build directory could not be found! "
         "You can specify it manually in LIBS_BUILD_DIR variable. Make sure you build the dependencies first!")
   else()
     set(LIB_DIR "${LIBS_BUILD_DIR}/..")
     file(GLOB jpeg_dirs "${LIB_DIR}/jpeg-[0-9]*")
     file(GLOB zlib_dirs "${LIB_DIR}/zlib-[0-9]*.[0-9]*.[0-9]*")
-    file(GLOB png_dirs1 "${LIB_DIR}/libpng-[0-9]*.[0-9]*.[0-9]*")
-    file(GLOB png_dirs2 "${LIB_DIR}/lpng[0-9]*")
+    file(GLOB png_dirs "${LIB_DIR}/libpng-[0-9]*.[0-9]*.[0-9]*")
     file(GLOB tiff_dirs "${LIB_DIR}/tiff-[0-9]*.[0-9]*.[0-9]*")
-    file(GLOB qt_dirs "${LIB_DIR}/qt-*-*-[0-9]*.[0-9]*")
-    file(GLOB boost_dirs "${LIB_DIR}/boost_[0-9]*_[0-9]*_[0-9]*")
+    file(TO_CMAKE_PATH "${LIB_DIR}/Qt" qt_dirs)
+    file(TO_CMAKE_PATH "${LIB_DIR}/Boost" boost_dirs)
   endif()
 endif()
 
+#=================================== Dependencies ===================================#
+
+macro (find_image_library Name IncludeNames LibNames LibNamesDebug Hints DocName)
+  find_path(
+      ${Name}_INCLUDE_DIR ${IncludeNames}
+      PATHS /usr/local/include /usr/include
+      HINTS ${Hints}
+      DOC "Path to ${DocName} headers.")
+  if (NOT ${Name}_INCLUDE_DIR)
+    message(FATAL_ERROR "Could not find ${DocName} headers.\n")
+  endif()
+  
+  include_directories("${${Name}_INCLUDE_DIR}")
+  
+  set (lib_hints "${Hints}")
+  list(TRANSFORM lib_hints APPEND "/stage/lib")
+  find_library(
+      ${Name}_LIBRARY_REL NAMES ${LibNames}
+      PATHS /usr/local/lib /usr/lib
+      HINTS ${lib_hints}
+      DOC "Path to ${DocName} library.")
+  find_library(
+      ${Name}_LIBRARY_DEB NAMES ${LibNamesDebug}
+      PATHS /usr/local/lib /usr/lib
+      HINTS ${lib_hints}
+      DOC "Path to ${DocName} library.")
+  
+  if (${Name}_LIBRARY_REL AND NOT ${Name}_LIBRARY_DEB)
+    set(${Name}_LIBRARY_DEB ${${Name}_LIBRARY_REL})
+  elseif (NOT ${Name}_LIBRARY_REL)
+    message(FATAL_ERROR "Could not find ${DocName} library.\n")
+  endif()
+
+  set(${Name}_LIBRARY optimized "${${Name}_LIBRARY_REL}" debug "${${Name}_LIBRARY_DEB}")
+endmacro()
+
 #=================================== JPEG ===================================#
 
-find_path(
-    JPEG_INCLUDE_DIR jpeglib.h
-    PATHS /usr/local/include /usr/include
-    HINTS ${jpeg_dirs}
-    DOC "Path to libjpeg headers.")
-if (NOT JPEG_INCLUDE_DIR)
-  message(FATAL_ERROR "Could not find jpeg headers.\n")
-endif()
-
-include_directories("${JPEG_INCLUDE_DIR}")
-
-find_library(
-    JPEG_LIBRARY_REL NAMES jpeg libjpeg.lib
-    PATHS /usr/local/lib /usr/lib
-    HINTS "${jpeg_dirs}/stage/lib"
-    DOC "Path to jpeg library.")
-find_library(
-    JPEG_LIBRARY_DEB NAMES jpegd libjpegd.lib
-    PATHS /usr/local/lib /usr/lib
-    HINTS "${jpeg_dirs}/stage/lib"
-    DOC "Path to jpeg library.")
-
-if (JPEG_LIBRARY_REL AND NOT JPEG_LIBRARY_DEB)
-  set(JPEG_LIBRARY_DEB ${JPEG_LIBRARY_REL})
-elseif (NOT JPEG_LIBRARY_REL)
-  message(FATAL_ERROR "Could not find jpeg library.\n")
-endif()
-
-set(JPEG_LIBRARY optimized "${JPEG_LIBRARY_REL}" debug "${JPEG_LIBRARY_DEB}")
+find_image_library(JPEG "jpeglib.h" "jpeg;libjpeg.lib" "jpegd;libjpegd.lib" "${jpeg_dirs}" "jpeg")
 
 #=================================== ZLIB ===================================#
 
-find_path(
-    ZLIB_INCLUDE_DIR zlib.h
-    PATHS /usr/local/include /usr/include
-    HINTS ${zlib_dirs}
-    DOC "Path to zlib headers.")
-if (NOT ZLIB_INCLUDE_DIR)
-  message(FATAL_ERROR "Could not find zlib headers.\n")
-endif()
-
-include_directories("${ZLIB_INCLUDE_DIR}")
-
-find_library(
-    ZLIB_LIBRARY_REL NAMES z zdll.lib
-    PATHS /usr/local/lib /usr/lib
-    HINTS "${zlib_dirs}/stage/lib"
-    DOC "Path to zlib library.")
-find_library(
-    ZLIB_LIBRARY_DEB NAMES zd zdlld.lib
-    PATHS /usr/local/lib /usr/lib
-    HINTS "${zlib_dirs}/stage/lib"
-    DOC "Path to zlib library.")
-
-if (ZLIB_LIBRARY_REL AND NOT ZLIB_LIBRARY_DEB)
-  set(ZLIB_LIBRARY_DEB ${ZLIB_LIBRARY_REL})
-elseif (NOT ZLIB_LIBRARY_REL)
-  message(FATAL_ERROR "Could not find zlib library.\n")
-endif()
-
-set(ZLIB_LIBRARY optimized "${ZLIB_LIBRARY_REL}" debug "${ZLIB_LIBRARY_DEB}")
+find_image_library(ZLIB "zlib.h" "z;zdll.lib" "zd;zdlld.lib" "${zlib_dirs}" "zlib")
 
 #================================== PNG ==================================#
 
-find_path(
-    PNG_INCLUDE_DIR png.h
-    PATHS /usr/local/include /usr/include
-    HINTS ${png_dirs1} ${png_dirs2}
-    DOC "Path to libpng headers.")
-if (NOT PNG_INCLUDE_DIR)
-  message(FATAL_ERROR "Could not find libpng headers.\n")
-endif()
-
-include_directories("${PNG_INCLUDE_DIR}")
-
-find_library(
-    PNG_LIBRARY_REL NAMES png libpng.lib
-    PATHS /usr/local/lib /usr/lib
-    HINTS "${png_dirs1}/stage/lib" "${png_dirs2}/stage/lib"
-    DOC "Path to png library.")
-find_library(
-    PNG_LIBRARY_DEB NAMES pngd libpngd.lib
-    PATHS /usr/local/lib /usr/lib
-    HINTS "${png_dirs1}/stage/lib" "${png_dirs2}/stage/lib"
-    DOC "Path to png library.")
-
-if (PNG_LIBRARY_REL AND NOT PNG_LIBRARY_DEB)
-  set(PNG_LIBRARY_DEB ${PNG_LIBRARY_REL})
-elseif (NOT PNG_LIBRARY_REL)
-  message(FATAL_ERROR "Could not find png library.\n")
-endif()
-
-set(PNG_LIBRARY optimized "${PNG_LIBRARY_REL}" debug "${PNG_LIBRARY_DEB}")
+find_image_library(PNG "png.h" "png;libpng.lib" "pngd;libpngd.lib" "${png_dirs}" "png")
 
 #=================================== TIFF ===================================#
 
-find_path(
-    TIFF_INCLUDE_DIR tiff.h
-    PATHS /usr/local/include /usr/include
-    HINTS ${tiff_dirs}/libtiff
-    PATH_SUFFIXES libtiff
-    DOC "Path to libtiff headers.")
-if (NOT TIFF_INCLUDE_DIR)
-  message(FATAL_ERROR "Could not find libtiff headers.\n")
-endif()
-
-include_directories("${TIFF_INCLUDE_DIR}")
-
-find_library(
-    TIFF_LIBRARY_REL tiff libtiff.lib
-    PATHS /usr/local/lib /usr/lib
-    HINTS "${tiff_dirs}/stage/lib"
-    PATH_SUFFIXES libtiff
-    DOC "Path to tiff library.")
-find_library(
-    TIFF_LIBRARY_DEB tiffd libtiffd.lib
-    PATHS /usr/local/lib /usr/lib
-    HINTS "${tiff_dirs}/stage/lib"
-    PATH_SUFFIXES libtiff
-    DOC "Path to tiff library.")
-
-if (TIFF_LIBRARY_REL AND NOT TIFF_LIBRARY_DEB)
-  set(TIFF_LIBRARY_DEB ${TIFF_LIBRARY_REL})
-elseif (NOT TIFF_LIBRARY_REL)
-  message(FATAL_ERROR "Could not find libtiff library.\n")
-endif()
-
-set(TIFF_LIBRARY optimized "${TIFF_LIBRARY_REL}" debug "${TIFF_LIBRARY_DEB}")
+find_image_library(TIFF "tiff.h" "tiff;libtiff.lib" "tiffd;libtiffd.lib" "${tiff_dirs};${tiff_dirs}/libtiff" "tiff")
 
 if (WIN32)
   add_definitions(-DUSE_LIBTIFF_DLL)
@@ -241,8 +161,16 @@ endif()
 #================================= Boost ================================#
 
 if (WIN32)
+  if (MINGW)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(Boost_ARCHITECTURE "-x64")
+    else()
+      set(Boost_ARCHITECTURE "-x32")
+    endif()
+  endif()
+
   find_path(
-      BOOST_ROOT boost-build.jam PATHS ${boost_dirs}
+      BOOST_ROOT boost PATHS ${boost_dirs}
       DOC "Path to top-level Boost source directory.")
   set(Boost_USE_STATIC_LIBS ON)
 else()
@@ -253,52 +181,27 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.60 REQUIRED COMPONENTS unit_test_framework prg_exec_monitor)
 
 include_directories(${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARY_DIRS})
 
 #=================================== Qt ===================================#
 
 if (WIN32)
-  set(Qt5Core_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5Core")
-  set(Qt5Gui_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5Gui")
-  set(Qt5Widgets_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5Widgets")
-  set(Qt5Xml_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5Xml")
-  set(Qt5Network_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5Network")
-  set(Qt5OpenGL_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5OpenGL")
-  set(Qt5LinguistTools_DIR "${qt_dirs}/qttools/lib/cmake/Qt5LinguistTools")
-  set(Qt5Svg_DIR "${qt_dirs}/qtsvg/lib/cmake/Qt5Svg")
-  if (WIN_XP)
-    set(Qt5LinguistTools_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5LinguistTools")
-    set(Qt5Svg_DIR "${qt_dirs}/qtbase/lib/cmake/Qt5Svg")
-  endif()
+  set(Qt5_DIR "${qt_dirs}/lib/cmake/Qt5")
 endif()
 
 set(qt_min_version 5.6)
-find_package(Qt5Core ${qt_min_version} REQUIRED)
-find_package(Qt5Gui ${qt_min_version} REQUIRED)
-find_package(Qt5Widgets ${qt_min_version} REQUIRED)
-find_package(Qt5Xml ${qt_min_version} REQUIRED)
-find_package(Qt5Network ${qt_min_version} REQUIRED)
-find_package(Qt5LinguistTools ${qt_min_version} REQUIRED)
-find_package(Qt5OpenGL ${qt_min_version} REQUIRED)
-find_package(Qt5Svg ${qt_min_version} REQUIRED)
+find_package(
+    Qt5 ${qt_min_version} REQUIRED
+    Core Gui Widgets Xml Network LinguistTools OpenGL Svg)
 
 include_directories(${Qt5Core_INCLUDE_DIRS})
-link_directories(${Qt5Core_LIBRARIES})
 include_directories(${Qt5GUI_INCLUDE_DIRS})
-link_directories(${Qt5GUI_LIBRARIES})
 include_directories(${Qt5Widgets_INCLUDE_DIRS})
 add_definitions(${Qt5Widgets_DEFINITIONS})
-link_directories(${Qt5Widgets_LIBRARIES})
 include_directories(${Qt5Xml_INCLUDE_DIRS})
-link_directories(${Qt5Xml_LIBRARIES})
 include_directories(${Qt5Network_INCLUDE_DIRS})
-link_directories(${Qt5Network_LIBRARIES})
 include_directories(${Qt5OpenGL_INCLUDE_DIRS})
-link_directories(${Qt5OpenGL_LIBRARIES})
 include_directories(${Qt5LinguistTools_INCLUDE_DIRS})
-link_directories(${Qt5LinguistTools_LIBRARIES})
 include_directories(${Qt5Svg_INCLUDE_DIRS})
-link_directories(${Qt5Svg_LIBRARIES})
 
 #=================================== Main ===================================#
 
@@ -557,8 +460,8 @@ target_link_libraries(
     scantailor
     fix_orientation page_split deskew select_content page_layout output stcore
     dewarping zones interaction imageproc math foundation
-    ${Qt5Core_LIBRARIES} ${Qt5GUI_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES}
-    ${Qt5OpenGL_LIBRARIES} ${Qt5LinguistTools_LIBRARIES} ${Qt5Svg_LIBRARIES} ${EXTRA_LIBS})
+    Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml Qt5::Network Qt5::OpenGL Qt5::Svg
+    ${EXTRA_LIBS})
 
 if (WIN32)
   install(TARGETS scantailor RUNTIME DESTINATION .)
@@ -613,44 +516,35 @@ if (WIN32)
 
   # Copy Qt's DLLs to the staging dir.
   set(qt5_libs
-      ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Core_LIBRARIES} 
-      ${Qt5Xml_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5OpenGL_LIBRARIES} 
-      ${Qt5Svg_LIBRARIES})
+      Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml 
+      Qt5::Network Qt5::OpenGL Qt5::Svg)
 
   foreach (target ${qt5_libs})
-    get_target_property(release_loc "${target}" LOCATION_RELEASE)
-    get_target_property(debug_loc "${target}" LOCATION_DEBUG)
+    get_target_property(release_loc ${target} LOCATION_RELEASE)
+    get_target_property(debug_loc ${target} LOCATION_DEBUG)
     add_runtime_libs_to_install(RELEASE "${release_loc}")
     add_runtime_libs_to_install(DEBUG "${debug_loc}")
   endforeach()
 
   # Copy and install Qt's plugins.
-  macro (install_qt_plugin PluginDir SubDir ReleaseLibName DebugLibName)
-    set(release_lib "${PluginDir}/${SubDir}/${ReleaseLibName}")
-    if (EXISTS "${release_lib}")
-      copy_to_build_dir("${release_lib}" SUBDIR ${SubDir} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-      install(PROGRAMS "${release_lib}" CONFIGURATIONS Release DESTINATION ${SubDir})
+  macro (install_qt_plugin SubDir Target)
+    if (TARGET ${Target})
+      get_target_property(release_loc ${Target} LOCATION_RELEASE)
+      get_target_property(debug_loc ${Target} LOCATION_DEBUG)
 
-      set(debug_lib "${PluginDir}/${SubDir}/${DebugLibName}")
-      if (NOT EXISTS "${debug_lib}") 
-        set(debug_lib "${release_lib}")
-      endif()
-      copy_to_build_dir("${debug_lib}" SUBDIR ${SubDir} CONFIGURATIONS Debug)
-      install(PROGRAMS "${debug_lib}" CONFIGURATIONS Debug DESTINATION ${SubDir})
+      copy_to_build_dir("${release_loc}" SUBDIR ${SubDir} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+      install(PROGRAMS "${release_loc}" CONFIGURATIONS Release DESTINATION ${SubDir})
+      copy_to_build_dir("${debug_loc}" SUBDIR ${SubDir} CONFIGURATIONS Debug)
+      install(PROGRAMS "${debug_loc}" CONFIGURATIONS Debug DESTINATION ${SubDir})
     endif()
   endmacro()
 
-  set(qt_base_plugins_dir "${qt_dirs}/qtbase/plugins")
-  install_qt_plugin("${qt_base_plugins_dir}" "platforms" "qwindows.dll" "qwindowsd.dll")
-  install_qt_plugin("${qt_base_plugins_dir}" "styles" "qwindowsvistastyle.dll" "qwindowsvistastyled.dll")
-  install_qt_plugin("${qt_base_plugins_dir}" "imageformats" "qjpeg.dll" "qjpegd.dll")
-  install_qt_plugin("${qt_base_plugins_dir}" "accessible" "qtaccessiblewidgets.dll" "qtaccessiblewidgetsd.dll")
-  set(qt_svg_plugins_dir "${qt_dirs}/qtsvg/plugins")
-  if (WIN_XP)
-    set(qt_svg_plugins_dir "${qt_base_plugins_dir}")
-  endif()
-  install_qt_plugin("${qt_svg_plugins_dir}" "iconengines" "qsvgicon.dll" "qsvgicond.dll")
-  install_qt_plugin("${qt_svg_plugins_dir}" "imageformats" "qsvg.dll" "qsvgd.dll")
+  install_qt_plugin("platforms" Qt5::QWindowsIntegrationPlugin)
+  install_qt_plugin("styles" Qt5::QWindowsVistaStylePlugin)
+  install_qt_plugin("imageformats" Qt5::QJpegPlugin)
+  install_qt_plugin("accessible"  Qt5::QAccessiblePlugin)
+  install_qt_plugin("iconengines" Qt5::QSvgIconPlugin)
+  install_qt_plugin("imageformats" Qt5::QSvgPlugin)
 
   # Copy the image runtime libs
   macro (find_runtime_lib Name ReleaseLibNames HintsRelease DebugLibNames HintsDebug)
@@ -671,8 +565,7 @@ if (WIN32)
   
   find_runtime_lib(JPEG "libjpeg.dll" "${jpeg_dirs}/bin" "libjpegd.dll" "${jpeg_dirs}/bin")
   find_runtime_lib(ZLIB "libz.dll;zdll.dll" "${zlib_dirs}/bin" "libzd.dll;zdlld.dll" "${zlib_dirs}/bin")
-  find_runtime_lib(
-      PNG "libpng.dll" "${png_dirs1}/bin;${png_dirs2}/bin" "libpngd.dll" "${png_dirs1}/bin;${png_dirs2}/bin")
+  find_runtime_lib(PNG "libpng.dll" "${png_dirs}/bin" "libpngd.dll" "${png_dirs}/bin")
   find_runtime_lib(TIFF "libtiff.dll" "${tiff_dirs}/bin" "libtiffd.dll" "${tiff_dirs}/bin")
   
   # Copy MinGW runtime components

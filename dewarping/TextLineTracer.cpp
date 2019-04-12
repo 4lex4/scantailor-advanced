@@ -34,19 +34,19 @@
 #include "TextLineRefiner.h"
 #include "ToLineProjector.h"
 #include "TowardsLineTracer.h"
-#include "imageproc/Binarize.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/Constants.h"
-#include "imageproc/GaussBlur.h"
-#include "imageproc/Grayscale.h"
-#include "imageproc/LocalMinMaxGeneric.h"
-#include "imageproc/Morphology.h"
-#include "imageproc/RasterOp.h"
-#include "imageproc/RasterOpGeneric.h"
-#include "imageproc/SEDM.h"
-#include "imageproc/Scale.h"
-#include "imageproc/SeedFill.h"
-#include "imageproc/Sobel.h"
+#include <Binarize.h>
+#include <BinaryImage.h>
+#include <Constants.h>
+#include <GaussBlur.h>
+#include <Grayscale.h>
+#include <LocalMinMaxGeneric.h>
+#include <Morphology.h>
+#include <RasterOp.h>
+#include <RasterOpGeneric.h>
+#include <SEDM.h>
+#include <Scale.h>
+#include <SeedFill.h>
+#include <Sobel.h>
 
 using namespace imageproc;
 

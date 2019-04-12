@@ -5,6 +5,8 @@
 #include <utility>
 #include "../../Utils.h"
 
+using namespace core;
+
 namespace output {
 
 OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)

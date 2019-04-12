@@ -16,16 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DebugImages.h"
+#include "DebugImagesImpl.h"
+#include <BinaryImage.h>
 #include <QDir>
 #include <QImage>
 #include <QImageWriter>
 #include <QTemporaryFile>
-#include "imageproc/BinaryImage.h"
 
-void DebugImages::add(const QImage& image,
-                      const QString& label,
-                      const boost::function<QWidget*(const QImage&)>& image_view_factory) {
+void DebugImagesImpl::add(const QImage& image,
+                          const QString& label,
+                          const boost::function<QWidget*(const QImage&)>& image_view_factory) {
   QTemporaryFile file(QDir::tempPath() + "/scantailor-dbg-XXXXXX.png");
   if (!file.open()) {
     return;
@@ -43,14 +43,14 @@ void DebugImages::add(const QImage& image,
   m_sequence.push_back(make_intrusive<Item>(arem_file, label, image_view_factory));
 }
 
-void DebugImages::add(const imageproc::BinaryImage& image,
-                      const QString& label,
-                      const boost::function<QWidget*(const QImage&)>& image_view_factory) {
+void DebugImagesImpl::add(const imageproc::BinaryImage& image,
+                          const QString& label,
+                          const boost::function<QWidget*(const QImage&)>& image_view_factory) {
   add(image.toQImage(), label, image_view_factory);
 }
 
-AutoRemovingFile DebugImages::retrieveNext(QString* label,
-                                           boost::function<QWidget*(const QImage&)>* image_view_factory) {
+AutoRemovingFile DebugImagesImpl::retrieveNext(QString* label,
+                                               boost::function<QWidget*(const QImage&)>* image_view_factory) {
   if (m_sequence.empty()) {
     return AutoRemovingFile();
   }

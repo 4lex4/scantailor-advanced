@@ -24,7 +24,7 @@
 #include <QWheelEvent>
 #include <boost/bind.hpp>
 #include "ImagePresentation.h"
-#include "imageproc/Constants.h"
+#include <Constants.h>
 
 namespace deskew {
 const double ImageView::m_maxRotationDeg = 45.0;

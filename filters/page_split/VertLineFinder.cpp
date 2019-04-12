@@ -22,14 +22,14 @@
 #include <cmath>
 #include "DebugImages.h"
 #include "ImageTransformation.h"
-#include "imageproc/Constants.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/GrayRasterOp.h"
-#include "imageproc/Grayscale.h"
-#include "imageproc/HoughLineDetector.h"
-#include "imageproc/MorphGradientDetect.h"
-#include "imageproc/Morphology.h"
-#include "imageproc/Transform.h"
+#include <Constants.h>
+#include <GrayImage.h>
+#include <GrayRasterOp.h>
+#include <Grayscale.h>
+#include <HoughLineDetector.h>
+#include <MorphGradientDetect.h>
+#include <Morphology.h>
+#include <Transform.h>
 
 namespace page_split {
 using namespace imageproc;

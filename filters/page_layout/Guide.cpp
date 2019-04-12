@@ -1,6 +1,8 @@
 
 #include "Guide.h"
-#include "../../Utils.h"
+#include <foundation/Utils.h>
+
+using namespace foundation;
 
 namespace page_layout {
 Guide::Guide(const Qt::Orientation orientation, const double position)

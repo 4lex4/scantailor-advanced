@@ -26,7 +26,7 @@ Dependencies::Dependencies() : m_layoutType(AUTO_LAYOUT_TYPE) {}
 
 Dependencies::Dependencies(const QDomElement& el)
     : m_imageSize(XmlUnmarshaller::size(el.namedItem("size").toElement())),
-      m_rotation(XmlUnmarshaller::rotation(el.namedItem("rotation").toElement())),
+      m_rotation(el.namedItem("rotation").toElement()),
       m_layoutType(layoutTypeFromString(XmlUnmarshaller::string(el.namedItem("layoutType").toElement()))) {}
 
 Dependencies::Dependencies(const QSize& image_size, const OrthogonalRotation rotation, const LayoutType layout_type)
@@ -67,7 +67,7 @@ QDomElement Dependencies::toXml(QDomDocument& doc, const QString& tag_name) cons
   XmlMarshaller marshaller(doc);
 
   QDomElement el(doc.createElement(tag_name));
-  el.appendChild(marshaller.rotation(m_rotation, "rotation"));
+  el.appendChild(m_rotation.toXml(doc, "rotation"));
   el.appendChild(marshaller.size(m_imageSize, "size"));
   el.appendChild(marshaller.string(layoutTypeToString(m_layoutType), "layoutType"));
 

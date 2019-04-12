@@ -17,7 +17,9 @@
  */
 
 #include "DepthPerception.h"
-#include "../../Utils.h"
+#include <foundation/Utils.h>
+
+using namespace foundation;
 
 namespace output {
 DepthPerception::DepthPerception() : m_value(defaultValue()) {}

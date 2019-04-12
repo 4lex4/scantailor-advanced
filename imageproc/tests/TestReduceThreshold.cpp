@@ -18,8 +18,8 @@
 
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
-#include "BinaryImage.h"
-#include "ReduceThreshold.h"
+#include <BinaryImage.h>
+#include <ReduceThreshold.h>
 #include "Utils.h"
 
 namespace imageproc {

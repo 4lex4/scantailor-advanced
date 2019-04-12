@@ -22,8 +22,8 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <cmath>
 #include <cstdlib>
-#include "SqDistApproximant.h"
-#include "ToLineProjector.h"
+#include <spfit/SqDistApproximant.h>
+#include <ToLineProjector.h>
 
 namespace spfit {
 namespace tests {

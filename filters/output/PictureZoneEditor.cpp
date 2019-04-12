@@ -30,9 +30,10 @@
 #include "Settings.h"
 #include "Zone.h"
 #include "ZoneSet.h"
-#include "imageproc/Constants.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/Transform.h"
+#include "PictureLayerProperty.h"
+#include <Constants.h>
+#include <GrayImage.h>
+#include <Transform.h>
 
 namespace output {
 static const QRgb mask_color = 0xff587ff4;

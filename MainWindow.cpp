@@ -30,7 +30,6 @@
 #include "Application.h"
 #include "AutoRemovingFile.h"
 #include "BasicImageView.h"
-#include "CommandLine.h"
 #include "ContentBoxPropagator.h"
 #include "DebugImageView.h"
 #include "DebugImages.h"
@@ -85,6 +84,8 @@
 #include "ui_BatchProcessingLowerPanel.h"
 #include "ui_RemovePagesDialog.h"
 #include "version.h"
+
+using namespace core;
 
 class MainWindow::PageSelectionProviderImpl : public PageSelectionProvider {
  public:
@@ -1611,12 +1612,9 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
 
 void MainWindow::updateWindowTitle() {
   QString project_name;
-  CommandLine cli = CommandLine::get();
 
   if (m_projectFile.isEmpty()) {
     project_name = tr("Unnamed");
-  } else if (cli.hasWindowTitle()) {
-    project_name = cli.getWindowTitle();
   } else {
     project_name = QFileInfo(m_projectFile).completeBaseName();
   }

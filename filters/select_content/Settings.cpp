@@ -20,7 +20,9 @@
 #include <iostream>
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
-#include "Utils.h"
+#include "../../Utils.h"
+
+using namespace core;
 
 namespace select_content {
 Settings::Settings() : m_pageDetectionBox(0.0, 0.0), m_pageDetectionTolerance(0.1) {

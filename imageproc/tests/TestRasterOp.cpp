@@ -22,8 +22,8 @@
 #include <cstddef>
 #include <cstdlib>
 #include <vector>
-#include "BinaryImage.h"
-#include "RasterOp.h"
+#include <BinaryImage.h>
+#include <RasterOp.h>
 #include "Utils.h"
 
 namespace imageproc {

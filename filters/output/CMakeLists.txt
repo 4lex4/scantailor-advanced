@@ -1,7 +1,3 @@
-project("Output Filter")
-
-include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
-
 file(GLOB ui_files "ui/*.ui")
 qt5_wrap_ui(ui_sources ${ui_files})
 set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
@@ -60,10 +56,13 @@ set(sources
     OutputProcessingParams.cpp OutputProcessingParams.h)
 
 source_group("Sources" FILES ${sources})
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
 
 add_library(output STATIC ${sources} ${ui_sources})
 add_dependencies(output toplevel_ui_sources)
+target_link_libraries(output PUBLIC stcore interaction PRIVATE dewarping zones)
+target_include_directories(
+    output 
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
+    "$<TARGET_PROPERTY:TIFF::TIFF,INTERFACE_INCLUDE_DIRECTORIES>")
 
 translation_sources(scantailor ${sources} ${ui_files})

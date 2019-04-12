@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.9.0)
 
+# Set cmake policies.
+if (POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
 project("ScanTailor Advanced")
 
-# setting compiler flags
+# Set compiler flags.
 set(CMAKE_CXX_STANDARD 17)
 
 if (MSVC)
@@ -21,6 +26,9 @@ if (MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DDEBUG_CLI")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DDEBUG_CLI")
   endif()
+elseif (WIN_XP)
+  unset(WIN_XP CACHE)
+  message(WARNING "Only MSVC toolchain is suppoted to build for Windows XP.")
 endif()
 
 if (UNIX)
@@ -69,93 +77,105 @@ if ("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
   message(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
 endif()
 
-# This has to go quite early on, as otherwise we risk picking
-# up an identically named header from a system include path.
-include_directories(. foundation math interaction zones)
-
-# For config.h
-include_directories("${CMAKE_CURRENT_BINARY_DIR}")
-
 include(cmake/SetDefaultBuildType.cmake)
 include(cmake/UpdateTranslations.cmake)
-include(cmake/CopyToBuildDir.cmake)
-include(cmake/LibToDLL.cmake)
+if (WIN32)
+  include(cmake/CopyToBuildDir.cmake)
+  include(cmake/AddDynamicLibraryLocations.cmake)
+endif()
 
 st_set_default_build_type(Release)
 
-if (WIN32)
-  file(GLOB libs_dirs "${PROJECT_SOURCE_DIR}/../libs/*libs-build*")
-  find_path(LIBS_BUILD_DIR CMakeLists.txt
-        HINTS "${libs_dirs}"
-        DOC "Libs directory")
-  if (NOT LIBS_BUILD_DIR)
-    message(STATUS "Libs-build directory could not be found! "
-        "You can specify it manually in LIBS_BUILD_DIR variable. Make sure you build the dependencies first!")
+if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+endif()
+if (NOT CMAKE_INSTALL_BINDIR)
+  if (WIN32)
+    set(CMAKE_INSTALL_BINDIR ".")
   else()
-    set(LIB_DIR "${LIBS_BUILD_DIR}/..")
-    file(GLOB jpeg_dirs "${LIB_DIR}/jpeg-[0-9]*")
-    file(GLOB zlib_dirs "${LIB_DIR}/zlib-[0-9]*.[0-9]*.[0-9]*")
-    file(GLOB png_dirs "${LIB_DIR}/libpng-[0-9]*.[0-9]*.[0-9]*")
-    file(GLOB tiff_dirs "${LIB_DIR}/tiff-[0-9]*.[0-9]*.[0-9]*")
-    file(TO_CMAKE_PATH "${LIB_DIR}/Qt" qt_dirs)
-    file(TO_CMAKE_PATH "${LIB_DIR}/Boost" boost_dirs)
+    set(CMAKE_INSTALL_BINDIR "bin")
   endif()
 endif()
 
 #=================================== Dependencies ===================================#
 
-macro (find_image_library Name IncludeNames LibNames LibNamesDebug Hints DocName)
-  find_path(
-      ${Name}_INCLUDE_DIR ${IncludeNames}
-      PATHS /usr/local/include /usr/include
-      HINTS ${Hints}
-      DOC "Path to ${DocName} headers.")
-  if (NOT ${Name}_INCLUDE_DIR)
-    message(FATAL_ERROR "Could not find ${DocName} headers.\n")
-  endif()
-  
-  include_directories("${${Name}_INCLUDE_DIR}")
-  
-  set (lib_hints "${Hints}")
-  list(TRANSFORM lib_hints APPEND "/stage/lib")
-  find_library(
-      ${Name}_LIBRARY_REL NAMES ${LibNames}
-      PATHS /usr/local/lib /usr/lib
-      HINTS ${lib_hints}
-      DOC "Path to ${DocName} library.")
-  find_library(
-      ${Name}_LIBRARY_DEB NAMES ${LibNamesDebug}
-      PATHS /usr/local/lib /usr/lib
-      HINTS ${lib_hints}
-      DOC "Path to ${DocName} library.")
-  
-  if (${Name}_LIBRARY_REL AND NOT ${Name}_LIBRARY_DEB)
-    set(${Name}_LIBRARY_DEB ${${Name}_LIBRARY_REL})
-  elseif (NOT ${Name}_LIBRARY_REL)
-    message(FATAL_ERROR "Could not find ${DocName} library.\n")
-  endif()
+if (WIN32)
+  macro(real_path_find_glob Var Glob)
+    file(GLOB ${Var} "${Glob}")
+    if (${Var})
+      list(GET ${Var} -1 ${Var})
+      get_filename_component("${Var}" "${${Var}}" REALPATH)
+    endif()
+  endmacro()
 
-  set(${Name}_LIBRARY optimized "${${Name}_LIBRARY_REL}" debug "${${Name}_LIBRARY_DEB}")
-endmacro()
+  get_filename_component(lib_dir "${PROJECT_SOURCE_DIR}/../libs" REALPATH)
+  set(DEPENDENCIES_ROOT "${lib_dir}" CACHE PATH
+      "The assumed directory where all the required libraries are installed.")
+  if (EXISTS "${DEPENDENCIES_ROOT}")
+    real_path_find_glob(jpeg_dir_assumed "${DEPENDENCIES_ROOT}/jpeg-[0-9]*")
+    real_path_find_glob(zlib_dir_assumed "${DEPENDENCIES_ROOT}/zlib-[0-9]*.[0-9]*.[0-9]*")
+    real_path_find_glob(png_dir_assumed "${DEPENDENCIES_ROOT}/libpng-[0-9]*.[0-9]*.[0-9]*")
+    real_path_find_glob(tiff_dir_assumed "${DEPENDENCIES_ROOT}/tiff-[0-9]*.[0-9]*.[0-9]*")
+    get_filename_component(qt_dir_assumed "${DEPENDENCIES_ROOT}/Qt" REALPATH)
+    get_filename_component(boost_dir_assumed "${DEPENDENCIES_ROOT}/Boost" REALPATH)
+  endif()
+  set(JPEG_INSTALL_PREFIX "${jpeg_dir_assumed}" CACHE PATH "Prefix where jpeg is installed")
+  set(ZLIB_INSTALL_PREFIX "${zlib_dir_assumed}" CACHE PATH "Prefix where zlib is installed")
+  set(PNG_INSTALL_PREFIX "${png_dir_assumed}" CACHE PATH "Prefix where png is installed")
+  set(TIFF_INSTALL_PREFIX "${tiff_dir_assumed}" CACHE PATH "Prefix where tiff is installed")
+  set(QT_INSTALL_PREFIX "${qt_dir_assumed}" CACHE PATH "Prefix where Qt5 is installed")
+  set(BOOST_ROOT "${boost_dir_assumed}" CACHE PATH "Prefix where Boost is installed")
+
+  macro(list_append_existing_path Var Path)
+    get_filename_component(_real_path "${Path}" REALPATH)
+    if (EXISTS "${_real_path}")
+      list(APPEND "${Var}" "${_real_path}")
+    endif()
+  endmacro()
+
+  foreach(_prefix
+      "${JPEG_INSTALL_PREFIX}" "${ZLIB_INSTALL_PREFIX}" "${PNG_INSTALL_PREFIX}"
+      "${TIFF_INSTALL_PREFIX}" "${QT_INSTALL_PREFIX}" "${BOOST_ROOT}")
+    list_append_existing_path(CMAKE_PREFIX_PATH "${_prefix}")
+    list_append_existing_path(CMAKE_INCLUDE_PATH "${_prefix}")
+    list_append_existing_path(CMAKE_LIBRARY_PATH "${_prefix}/stage/lib")
+  endforeach()
+  list_append_existing_path(CMAKE_INCLUDE_PATH "${TIFF_INSTALL_PREFIX}/libtiff")
+endif()
 
 #=================================== JPEG ===================================#
 
-find_image_library(JPEG "jpeglib.h" "jpeg;libjpeg.lib" "jpegd;libjpegd.lib" "${jpeg_dirs}" "jpeg")
+find_package(JPEG REQUIRED)
+
+if (WIN32)
+  add_dynamic_library_locations(JPEG::JPEG)
+endif()
 
 #=================================== ZLIB ===================================#
 
-find_image_library(ZLIB "zlib.h" "z;zdll.lib" "zd;zdlld.lib" "${zlib_dirs}" "zlib")
+find_package(ZLIB REQUIRED)
+
+if (WIN32)
+  add_dynamic_library_locations(ZLIB::ZLIB)
+endif()
 
 #================================== PNG ==================================#
 
-find_image_library(PNG "png.h" "png;libpng.lib" "pngd;libpngd.lib" "${png_dirs}" "png")
+find_package(PNG REQUIRED)
+
+if (WIN32)
+  add_dynamic_library_locations(PNG::PNG)
+endif()
 
 #=================================== TIFF ===================================#
 
-find_image_library(TIFF "tiff.h" "tiff;libtiff.lib" "tiffd;libtiffd.lib" "${tiff_dirs};${tiff_dirs}/libtiff" "tiff")
+find_package(TIFF REQUIRED)
 
 if (WIN32)
-  add_definitions(-DUSE_LIBTIFF_DLL)
+  add_dynamic_library_locations(TIFF::TIFF)
+  set_target_properties(
+      TIFF::TIFF PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS USE_LIBTIFF_DLL)
 endif()
 
 #================================= Boost ================================#
@@ -169,59 +189,56 @@ if (WIN32)
     endif()
   endif()
 
+  real_path_find_glob(boost_include_dir_hints "${BOOST_ROOT}/include/boost-[_0-9]*/boost")
+  list(APPEND boost_include_dir_hints "${BOOST_ROOT}/include/boost" "${BOOST_ROOT}/boost")
   find_path(
-      BOOST_ROOT boost PATHS ${boost_dirs}
-      DOC "Path to top-level Boost source directory.")
+      BOOST_INCLUDEDIR config.hpp
+      HINTS ${boost_include_dir_hints}
+      DOC "Boost include directory.")
+
   set(Boost_USE_STATIC_LIBS ON)
-else()
-  add_definitions(-DBOOST_TEST_DYN_LINK)
 endif()
 set(Boost_USE_MULTITHREADED ON)
 
-find_package(Boost 1.60 REQUIRED COMPONENTS unit_test_framework prg_exec_monitor)
+find_package(Boost 1.60 COMPONENTS unit_test_framework prg_exec_monitor REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
+add_compile_definitions(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+if (NOT Boost_USE_STATIC_LIBS)
+  if (WIN32)
+    add_dynamic_library_locations(Boost::unit_test_framework Boost::prg_exec_monitor)
+  endif()
+  add_compile_definitions(BOOST_TEST_DYN_LINK)
+endif()
 
 #=================================== Qt ===================================#
 
-if (WIN32)
-  set(Qt5_DIR "${qt_dirs}/lib/cmake/Qt5")
-endif()
-
 set(qt_min_version 5.6)
 find_package(
-    Qt5 ${qt_min_version} REQUIRED
-    Core Gui Widgets Xml Network LinguistTools OpenGL Svg)
+    Qt5 ${qt_min_version}
+    COMPONENTS Core Gui Widgets Xml Network LinguistTools OpenGL Svg
+    CONFIG REQUIRED)
 
-include_directories(${Qt5Core_INCLUDE_DIRS})
-include_directories(${Qt5GUI_INCLUDE_DIRS})
-include_directories(${Qt5Widgets_INCLUDE_DIRS})
-add_definitions(${Qt5Widgets_DEFINITIONS})
-include_directories(${Qt5Xml_INCLUDE_DIRS})
-include_directories(${Qt5Network_INCLUDE_DIRS})
-include_directories(${Qt5OpenGL_INCLUDE_DIRS})
-include_directories(${Qt5LinguistTools_INCLUDE_DIRS})
-include_directories(${Qt5Svg_INCLUDE_DIRS})
-
-#=================================== Main ===================================#
-
-set(EXTRA_LIBS "")
+#=================================== Threads ===================================#
 
 if (UNIX)
   set(THREADS_PREFER_PTHREAD_FLAG ON)
   find_package(Threads REQUIRED)
   link_libraries(Threads::Threads)
-elseif (WIN32 AND MSVC)
-  add_definitions(-DNOMINMAX)
 endif()
 
-add_definitions(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+#=================================== Main ===================================#
 
+set(CMAKE_AUTOMOC ON)
+
+if (WIN32 AND MSVC)
+  add_compile_definitions(NOMINMAX)
+endif()
+
+set(EXTRA_LIBS "")
 if (WIN32)
   list(APPEND EXTRA_LIBS winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool)
 endif()
-
-list(APPEND EXTRA_LIBS ${TIFF_LIBRARY} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
 
 # Prepare config.h
 option(PORTABLE_VERSION "Whether to build the portable version or not." ON)
@@ -236,13 +253,13 @@ else()
   set(TRANSLATION_DIRS ".:translations:../share/${APPLICATION_NAME}/translations")
   set(PLUGIN_DIRS ".:../lib/${APPLICATION_NAME}")
 endif()
-
 configure_file(config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
+include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
 
-add_subdirectory(dewarping)
 add_subdirectory(foundation)
 add_subdirectory(math)
 add_subdirectory(imageproc)
+add_subdirectory(dewarping)
 add_subdirectory(interaction)
 add_subdirectory(zones)
 add_subdirectory(tests)
@@ -258,7 +275,6 @@ qt5_wrap_ui(common_ui_sources ${common_ui_files})
 qt5_wrap_ui(gui_only_ui_sources ${gui_only_ui_files})
 set_source_files_properties(${common_ui_sources} ${gui_only_ui_files} PROPERTIES GENERATED TRUE)
 add_subdirectory(ui)
-include_directories("${CMAKE_CURRENT_BINARY_DIR}") # for ui files
 
 add_custom_target(toplevel_ui_sources DEPENDS ${common_ui_sources} ${gui_only_ui_sources})
 
@@ -269,7 +285,7 @@ add_subdirectory(filters/select_content)
 add_subdirectory(filters/page_layout)
 add_subdirectory(filters/output)
 
-set(resource_files "resources/resources.qrc" "resources/DarkScheme.qrc" "resources/LightScheme.qrc")
+set(resource_files "resources/resources.qrc" "resources/dark_scheme.qrc" "resources/light_scheme.qrc")
 set(resource_sources)
 foreach (resource_file ${resource_files})
   qt5_add_resources(resource_sources ${resource_file})
@@ -287,7 +303,6 @@ set(common_sources
     BubbleAnimation.cpp BubbleAnimation.h
     ProcessingIndicationWidget.cpp ProcessingIndicationWidget.h
     NonOwningWidget.cpp NonOwningWidget.h
-    Dpi.cpp Dpi.h Dpm.cpp Dpm.h
     SmartFilenameOrdering.cpp SmartFilenameOrdering.h
     AbstractRelinker.h
     RelinkablePath.cpp RelinkablePath.h
@@ -296,7 +311,6 @@ set(common_sources
     ImageMetadata.cpp ImageMetadata.h
     RecentProjects.cpp RecentProjects.h
     OutOfMemoryHandler.cpp OutOfMemoryHandler.h
-    CommandLine.cpp CommandLine.h
     PageSelectionAccessor.cpp PageSelectionAccessor.h
     PageSelectionProvider.h
     ContentSpanFinder.cpp ContentSpanFinder.h
@@ -314,7 +328,7 @@ set(common_sources
     IncompleteThumbnail.cpp IncompleteThumbnail.h
     ContentBoxPropagator.cpp ContentBoxPropagator.h
     PageOrientationPropagator.cpp PageOrientationPropagator.h
-    DebugImages.cpp DebugImages.h
+    DebugImagesImpl.cpp DebugImagesImpl.h
     ImageId.cpp ImageId.h
     PageId.cpp PageId.h
     PageInfo.cpp PageInfo.h
@@ -336,11 +350,9 @@ set(common_sources
     WorkerThreadPool.cpp WorkerThreadPool.h
     LoadFileTask.cpp LoadFileTask.h
     FilterOptionsWidget.cpp FilterOptionsWidget.h
-    TaskStatus.h FilterUiInterface.h
+    FilterUiInterface.h
     ProjectReader.cpp ProjectReader.h
     ProjectWriter.cpp ProjectWriter.h
-    XmlMarshaller.cpp XmlMarshaller.h
-    XmlUnmarshaller.cpp XmlUnmarshaller.h
     AtomicFileOverwriter.cpp AtomicFileOverwriter.h
     EstimateBackground.cpp EstimateBackground.h
     Despeckle.cpp Despeckle.h
@@ -348,6 +360,7 @@ set(common_sources
     FileNameDisambiguator.cpp FileNameDisambiguator.h
     OpenGLSupport.cpp OpenGLSupport.h
     OutputFileNameGenerator.cpp OutputFileNameGenerator.h
+    Margins.cpp Margins.h
     ColorScheme.h
     DarkScheme.cpp DarkScheme.h
     LightScheme.cpp LightScheme.h
@@ -363,7 +376,6 @@ set(common_sources
     BeforeOrAfter.h
     FilterResult.h
     CompositeCacheDrivenTask.h
-    Margins.h
     ChangedStateItemDelegate.h
     PageOrderProvider.h
     PageOrderOption.h
@@ -415,17 +427,7 @@ set(gui_only_sources
     DefaultParamsDialog.cpp DefaultParamsDialog.h
     CollapsibleGroupBox.cpp CollapsibleGroupBox.h)
 
-set(cli_only_sources
-    ConsoleBatch.cpp ConsoleBatch.h
-    main-cli.cpp)
-
-source_group("Sources" FILES ${common_sources} ${gui_only_sources} ${cli_only_sources})
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-
-if (POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
+source_group("Sources" FILES ${common_sources} ${gui_only_sources})
 
 source_group("Special Headers" FILES version.h config.h.in)
 
@@ -451,28 +453,28 @@ if (WIN32)
 endif()
 
 add_library(stcore STATIC ${common_sources} ${common_ui_sources})
+target_link_libraries(
+    stcore
+    PRIVATE TIFF::TIFF PNG::PNG ZLIB::ZLIB JPEG::JPEG
+    PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml Qt5::Network Qt5::OpenGL Qt5::Svg
+    imageproc
+    fix_orientation page_split deskew select_content page_layout output)
+target_include_directories(stcore PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_executable(
     scantailor WIN32 ${gui_only_sources} ${common_ui_sources} ${gui_only_ui_sources}
     ${resource_sources} ${win32_resource_file} resources/icons/COPYING)
-
 target_link_libraries(
     scantailor
-    fix_orientation page_split deskew select_content page_layout output stcore
-    dewarping zones interaction imageproc math foundation
-    Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml Qt5::Network Qt5::OpenGL Qt5::Svg
+    PRIVATE stcore
     ${EXTRA_LIBS})
-
-if (WIN32)
-  install(TARGETS scantailor RUNTIME DESTINATION .)
-else()
-  install(TARGETS scantailor RUNTIME DESTINATION bin)
-endif()
+target_include_directories(scantailor PRIVATE "$<TARGET_PROPERTY:TIFF::TIFF,INTERFACE_INCLUDE_DIRECTORIES>")
+install(TARGETS scantailor RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 # Translations
 translation_sources(
     scantailor
-    ${common_sources} ${gui_only_sources} ${cli_only_sources})
+    ${common_sources} ${gui_only_sources})
 file(GLOB TRANSLATION_FILES translations/scantailor_*.ts)
 
 finalize_translation_set(scantailor ${TRANSLATION_FILES})
@@ -494,7 +496,7 @@ qt5_add_translation(QM_FILES ${FILTERED_TRANSLATION_FILES})
 add_custom_target(compile_translations ALL DEPENDS ${QM_FILES})
 
 if (WIN32)
-  install(FILES ${QM_FILES} DESTINATION translations)
+  install(FILES ${QM_FILES} DESTINATION "${CMAKE_INSTALL_BINDIR}/translations")
 else()
   install(FILES ${QM_FILES} DESTINATION "share/${APPLICATION_NAME}/translations")
 endif()
@@ -514,28 +516,45 @@ if (WIN32)
     endforeach()
   endmacro()
 
-  # Copy Qt's DLLs to the staging dir.
-  set(qt5_libs
+  # Install the DLLs of the dependencies.
+  set(dep_libs
+      JPEG::JPEG PNG::PNG ZLIB::ZLIB TIFF::TIFF
       Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml 
       Qt5::Network Qt5::OpenGL Qt5::Svg)
 
-  foreach (target ${qt5_libs})
-    get_target_property(release_loc ${target} LOCATION_RELEASE)
-    get_target_property(debug_loc ${target} LOCATION_DEBUG)
+  foreach (_target ${dep_libs})
+    get_target_property(target_type ${_target} TYPE)
+    if (target_type STREQUAL "SHARED_LIBRARY")
+      set(dynlib_location_property LOCATION)
+    elseif (target_type STREQUAL "UNKNOWN_LIBRARY")
+      set(dynlib_location_property IMPORTED_DYNLIB)
+    else()
+      continue()
+    endif()
+
+    get_target_property(release_loc ${_target} ${dynlib_location_property}_RELEASE)
+    get_target_property(debug_loc ${_target} ${dynlib_location_property}_DEBUG)
     add_runtime_libs_to_install(RELEASE "${release_loc}")
     add_runtime_libs_to_install(DEBUG "${debug_loc}")
   endforeach()
 
-  # Copy and install Qt's plugins.
+  # Install Qt's plugins.
   macro (install_qt_plugin SubDir Target)
     if (TARGET ${Target})
-      get_target_property(release_loc ${Target} LOCATION_RELEASE)
-      get_target_property(debug_loc ${Target} LOCATION_DEBUG)
+      get_target_property(target_type ${Target} TYPE)
+      if (target_type STREQUAL "MODULE_LIBRARY")
+        get_target_property(release_loc ${Target} LOCATION_RELEASE)
+        get_target_property(debug_loc ${Target} LOCATION_DEBUG)
 
-      copy_to_build_dir("${release_loc}" SUBDIR ${SubDir} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-      install(PROGRAMS "${release_loc}" CONFIGURATIONS Release DESTINATION ${SubDir})
-      copy_to_build_dir("${debug_loc}" SUBDIR ${SubDir} CONFIGURATIONS Debug)
-      install(PROGRAMS "${debug_loc}" CONFIGURATIONS Debug DESTINATION ${SubDir})
+        copy_to_build_dir("${release_loc}" SUBDIR ${SubDir} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+        install(PROGRAMS "${release_loc}" 
+            CONFIGURATIONS Release MinSizeRel RelWithDebInfo 
+            DESTINATION "${CMAKE_INSTALL_BINDIR}/${SubDir}")
+        copy_to_build_dir("${debug_loc}" SUBDIR ${SubDir} CONFIGURATIONS Debug)
+        install(PROGRAMS "${debug_loc}" 
+            CONFIGURATIONS Debug 
+            DESTINATION "${CMAKE_INSTALL_BINDIR}/${SubDir}")
+      endif()
     endif()
   endmacro()
 
@@ -545,30 +564,8 @@ if (WIN32)
   install_qt_plugin("accessible"  Qt5::QAccessiblePlugin)
   install_qt_plugin("iconengines" Qt5::QSvgIconPlugin)
   install_qt_plugin("imageformats" Qt5::QSvgPlugin)
-
-  # Copy the image runtime libs
-  macro (find_runtime_lib Name ReleaseLibNames HintsRelease DebugLibNames HintsDebug)
-    set(release_lib_name "${Name}_RT_LIB_REL")
-    set(debug_lib_name "${Name}_RT_LIB_DEB")
-    find_file(${release_lib_name} NAMES ${ReleaseLibNames} HINTS ${HintsRelease})
-    set(release_loc "${${release_lib_name}}")
-    if (EXISTS "${release_loc}")
-      find_file(${debug_lib_name} NAMES ${DebugLibNames} HINTS ${HintsDebug})
-      set(debug_loc "${${debug_lib_name}}")
-      if (NOT ${debug_lib_name})
-        set(debug_loc "${release_loc}")
-      endif()
-      add_runtime_libs_to_install(RELEASE "${release_loc}")
-      add_runtime_libs_to_install(DEBUG "${debug_loc}")
-    endif()
-  endmacro()
   
-  find_runtime_lib(JPEG "libjpeg.dll" "${jpeg_dirs}/bin" "libjpegd.dll" "${jpeg_dirs}/bin")
-  find_runtime_lib(ZLIB "libz.dll;zdll.dll" "${zlib_dirs}/bin" "libzd.dll;zdlld.dll" "${zlib_dirs}/bin")
-  find_runtime_lib(PNG "libpng.dll" "${png_dirs}/bin" "libpngd.dll" "${png_dirs}/bin")
-  find_runtime_lib(TIFF "libtiff.dll" "${tiff_dirs}/bin" "libtiffd.dll" "${tiff_dirs}/bin")
-  
-  # Copy MinGW runtime components
+  # Install MinGW runtime components.
   if (MINGW)
     get_filename_component(_mingw_path ${CMAKE_CXX_COMPILER} PATH)
     file(GLOB libgcc_s "${_mingw_path}/libgcc_s_*.dll")
@@ -583,8 +580,8 @@ if (WIN32)
   # Generate the target that will actually do the copying.
   generate_copy_to_build_dir_target(copy_to_build_dir)
 
-  install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_RELEASE} CONFIGURATIONS Release DESTINATION .)
-  install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_DEBUG} CONFIGURATIONS Debug DESTINATION .)
+  install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_RELEASE} TYPE BIN CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+  install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_DEBUG} TYPE BIN CONFIGURATIONS Debug)
 endif()
 
 if (UNIX)
@@ -595,15 +592,15 @@ if (UNIX)
   install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/mime/scantailor-project.xml" DESTINATION "share/mime/packages")
 endif()
 
-# Packaging
 if (WIN32)
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
+  set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${CMAKE_INSTALL_BINDIR}")
   if (MSVC)
     set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
   endif()
 endif()
 include(InstallRequiredSystemLibraries)
 
+# Packaging
 set(CPACK_PACKAGE_NAME "${APPLICATION_NAME}")
 string(REGEX REPLACE "(.*)\\..*\\..*" "\\1" CPACK_PACKAGE_VERSION_MAJOR "${VERSION}")
 string(REGEX REPLACE ".*\\.(.*)\\..*" "\\1" CPACK_PACKAGE_VERSION_MINOR "${VERSION}")
@@ -619,7 +616,7 @@ if (WIN32)
   set(CPACK_NSIS_PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
   set(CPACK_NSIS_DISPLAY_NAME "${CMAKE_PROJECT_NAME} ${VERSION}")
   set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
-  set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+  set(CPACK_NSIS_EXECUTABLES_DIRECTORY "${CMAKE_BINARY_DIR}")
   set(CPACK_PACKAGE_INSTALL_DIRECTORY "${CMAKE_PROJECT_NAME}")
   set(CPACK_NSIS_CREATE_ICONS_EXTRA
       "CreateShortCut \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\scantailor.exe\\\"")
@@ -644,5 +641,7 @@ if (NOT TARGET uninstall)
       "${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
       "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake"
       @ONLY)
-  add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake_uninstall.cmake)
+  add_custom_target(
+      uninstall
+      COMMAND "${CMAKE_COMMAND}" -P "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake")
 endif()

@@ -23,6 +23,8 @@
 #include "RecentProjects.h"
 #include "Utils.h"
 
+using namespace core;
+
 NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent) : QWidget(parent) {
   setupUi(this);
 

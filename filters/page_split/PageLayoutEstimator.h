@@ -23,7 +23,7 @@
 #include <deque>
 #include <memory>
 #include "LayoutType.h"
-#include "foundation/VirtualFunction.h"
+#include <VirtualFunction.h>
 
 class QRect;
 class QPoint;

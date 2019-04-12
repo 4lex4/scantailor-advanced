@@ -24,19 +24,19 @@
 #include "DebugImages.h"
 #include "ImageTransformation.h"
 #include "TaskStatus.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/BitOps.h"
-#include "imageproc/Connectivity.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/GrayRasterOp.h"
-#include "imageproc/Morphology.h"
-#include "imageproc/PolygonRasterizer.h"
-#include "imageproc/PolynomialLine.h"
-#include "imageproc/PolynomialSurface.h"
-#include "imageproc/RasterOpGeneric.h"
-#include "imageproc/Scale.h"
-#include "imageproc/SeedFill.h"
-#include "imageproc/Transform.h"
+#include <BinaryImage.h>
+#include <BitOps.h>
+#include <Connectivity.h>
+#include <GrayImage.h>
+#include <GrayRasterOp.h>
+#include <Morphology.h>
+#include <PolygonRasterizer.h>
+#include <PolynomialLine.h>
+#include <PolynomialSurface.h>
+#include <RasterOpGeneric.h>
+#include <Scale.h>
+#include <SeedFill.h>
+#include <Transform.h>
 
 using namespace imageproc;
 

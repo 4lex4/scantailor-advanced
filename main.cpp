@@ -16,9 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QStringList>
 #include "Application.h"
 #include "ColorSchemeManager.h"
-#include "CommandLine.h"
 #include "DarkScheme.h"
 #include "JpegMetadataLoader.h"
 #include "LightScheme.h"
@@ -28,8 +28,8 @@
 #include "config.h"
 #include "NativeScheme.h"
 
-int main(int argc, char** argv) {
-  // rescaling for high DPI displays
+int main(int argc, char* argv[]) {
+  // Rescaling for high DPI displays.
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
   Application app(argc, argv);
@@ -39,9 +39,7 @@ int main(int argc, char** argv) {
   Application::setLibraryPaths(QStringList(Application::applicationDirPath()));
 #endif
 
-  // Initialize command line in gui mode.
-  CommandLine cli(Application::arguments());
-  CommandLine::set(cli);
+  QStringList args = Application::arguments();
 
   // This information is used by QSettings.
   Application::setApplicationName(APPLICATION_NAME);
@@ -83,8 +81,8 @@ int main(int argc, char** argv) {
     QTimer::singleShot(0, main_wnd, &QMainWindow::showMaximized);
   }
 
-  if (!cli.projectFile().isEmpty()) {
-    main_wnd->openProject(cli.projectFile());
+  if (args.size() > 1) {
+    main_wnd->openProject(args.at(1));
   }
 
   return Application::exec();

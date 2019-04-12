@@ -27,8 +27,8 @@
 #include <boost/lambda/lambda.hpp>
 #include <utility>
 #include "CacheDrivenTask.h"
-#include "CommandLine.h"
 #include "FilterUiInterface.h"
+#include "Guide.h"
 #include "OptionsWidget.h"
 #include "OrderByHeightProvider.h"
 #include "OrderByWidthProvider.h"
@@ -43,9 +43,7 @@
 namespace page_layout {
 Filter::Filter(intrusive_ptr<ProjectPages> pages, const PageSelectionAccessor& page_selection_accessor)
     : m_pages(std::move(pages)), m_settings(new Settings), m_selectedPageOrder(0) {
-  if (CommandLine::get().isGui()) {
-    m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
-  }
+  m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
 
   const PageOrderOption::ProviderPtr default_order;
   const auto order_by_width = make_intrusive<OrderByWidthProvider>(m_settings);

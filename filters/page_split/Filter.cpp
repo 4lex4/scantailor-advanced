@@ -25,7 +25,6 @@
 #include <boost/lambda/lambda.hpp>
 #include <utility>
 #include "CacheDrivenTask.h"
-#include "CommandLine.h"
 #include "FilterUiInterface.h"
 #include "OptionsWidget.h"
 #include "OrderBySplitTypeProvider.h"
@@ -38,9 +37,7 @@
 namespace page_split {
 Filter::Filter(intrusive_ptr<ProjectPages> page_sequence, const PageSelectionAccessor& page_selection_accessor)
     : m_pages(std::move(page_sequence)), m_settings(new Settings), m_selectedPageOrder(0) {
-  if (CommandLine::get().isGui()) {
-    m_optionsWidget.reset(new OptionsWidget(m_settings, m_pages, page_selection_accessor));
-  }
+  m_optionsWidget.reset(new OptionsWidget(m_settings, m_pages, page_selection_accessor));
 
   const PageOrderOption::ProviderPtr default_order;
   const auto order_by_split_type = make_intrusive<OrderBySplitTypeProvider>(m_settings);

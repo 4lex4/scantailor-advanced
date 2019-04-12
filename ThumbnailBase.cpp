@@ -25,7 +25,7 @@
 #include <cmath>
 #include <utility>
 #include "PixmapRenderer.h"
-#include "imageproc/PolygonUtils.h"
+#include <PolygonUtils.h>
 
 using namespace imageproc;
 

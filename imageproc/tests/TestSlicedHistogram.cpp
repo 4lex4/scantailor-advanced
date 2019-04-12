@@ -20,8 +20,8 @@
 #include <boost/test/auto_unit_test.hpp>
 #include <cstddef>
 #include <stdexcept>
-#include "BinaryImage.h"
-#include "SlicedHistogram.h"
+#include <BinaryImage.h>
+#include <SlicedHistogram.h>
 #include "Utils.h"
 
 namespace imageproc {

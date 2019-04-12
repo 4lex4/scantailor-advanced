@@ -17,7 +17,6 @@
  */
 
 #include "DraggablePoint.h"
-#include "ImageViewBase.h"
 
 DraggablePoint::DraggablePoint() : m_hitAreaRadius(), m_proximityPriority(1) {}
 

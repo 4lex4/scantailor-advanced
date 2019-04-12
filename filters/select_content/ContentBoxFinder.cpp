@@ -25,22 +25,22 @@
 #include "Despeckle.h"
 #include "FilterData.h"
 #include "TaskStatus.h"
-#include "imageproc/Binarize.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/ConnComp.h"
-#include "imageproc/ConnCompEraserExt.h"
-#include "imageproc/Connectivity.h"
-#include "imageproc/ConnectivityMap.h"
-#include "imageproc/GrayRasterOp.h"
-#include "imageproc/InfluenceMap.h"
-#include "imageproc/MaxWhitespaceFinder.h"
-#include "imageproc/Morphology.h"
-#include "imageproc/PolygonRasterizer.h"
-#include "imageproc/RasterOp.h"
-#include "imageproc/SEDM.h"
-#include "imageproc/SeedFill.h"
-#include "imageproc/SlicedHistogram.h"
-#include "imageproc/Transform.h"
+#include <Binarize.h>
+#include <BinaryImage.h>
+#include <ConnComp.h>
+#include <ConnCompEraserExt.h>
+#include <Connectivity.h>
+#include <ConnectivityMap.h>
+#include <GrayRasterOp.h>
+#include <InfluenceMap.h>
+#include <MaxWhitespaceFinder.h>
+#include <Morphology.h>
+#include <PolygonRasterizer.h>
+#include <RasterOp.h>
+#include <SEDM.h>
+#include <SeedFill.h>
+#include <SlicedHistogram.h>
+#include <Transform.h>
 
 namespace select_content {
 using namespace imageproc;

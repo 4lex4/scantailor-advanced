@@ -19,7 +19,7 @@
 #ifndef SELECT_CONTENT_CONTENTBOXFINDER_H_
 #define SELECT_CONTENT_CONTENTBOXFINDER_H_
 
-#include "imageproc/BinaryThreshold.h"
+#include <BinaryThreshold.h>
 
 class TaskStatus;
 class DebugImages;

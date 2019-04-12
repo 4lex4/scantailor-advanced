@@ -22,6 +22,8 @@
 #include "../../Utils.h"
 #include "DespeckleView.h"
 
+using namespace core;
+
 namespace output {
 TabbedImageView::TabbedImageView(QWidget* parent) : QTabWidget(parent), m_prevImageViewTabIndex(0) {
   connect(this, SIGNAL(currentChanged(int)), SLOT(tabChangedSlot(int)));

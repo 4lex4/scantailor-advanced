@@ -192,7 +192,7 @@ font-weight:bold;</string>
              <item>
               <widget class="QLabel" name="label_15">
                <property name="text">
-                <string>Petr Kovář - Command line interface, ver. Enhanced</string>
+                <string>Petr Kovář - ver. Enhanced</string>
                </property>
               </widget>
              </item>

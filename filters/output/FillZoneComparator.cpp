@@ -19,7 +19,7 @@
 #include "FillZoneComparator.h"
 #include "FillColorProperty.h"
 #include "ZoneSet.h"
-#include "imageproc/PolygonUtils.h"
+#include <PolygonUtils.h>
 
 using namespace imageproc;
 

@@ -21,6 +21,9 @@
 #include "AbstractRelinker.h"
 #include "FillColorProperty.h"
 #include "RelinkablePath.h"
+#include "PictureLayerProperty.h"
+
+using namespace core;
 
 namespace output {
 Settings::Settings()
@@ -286,6 +289,7 @@ void Settings::setDefaultFillZoneProperties(const PropertySet& props) {
   m_defaultFillZoneProps = props;
 }
 
+// TODO: rework this
 PropertySet Settings::initialPictureZoneProps() {
   PropertySet props;
   props.locateOrCreate<PictureLayerProperty>()->setLayer(PictureLayerProperty::PAINTER2);

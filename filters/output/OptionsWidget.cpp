@@ -29,6 +29,8 @@
 #include "SauvolaBinarizationOptionsWidget.h"
 #include "WolfBinarizationOptionsWidget.h"
 
+using namespace core;
+
 namespace output {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
     : m_settings(std::move(settings)),

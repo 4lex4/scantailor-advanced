@@ -25,8 +25,8 @@
 #include <cmath>
 #include "DebugImages.h"
 #include "NumericTraits.h"
-#include "imageproc/GaussBlur.h"
-#include "imageproc/Sobel.h"
+#include <GaussBlur.h>
+#include <Sobel.h>
 
 using namespace imageproc;
 

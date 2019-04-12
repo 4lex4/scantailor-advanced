@@ -21,7 +21,7 @@
 #define SELECT_CONTENT_PAGEFINDER_H_
 
 #include "Margins.h"
-#include "imageproc/BinaryThreshold.h"
+#include <BinaryThreshold.h>
 
 #include <Qt>
 

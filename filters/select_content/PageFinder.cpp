@@ -22,10 +22,10 @@
 #include "DebugImages.h"
 #include "FilterData.h"
 #include "TaskStatus.h"
-#include "imageproc/Binarize.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/GrayRasterOp.h"
-#include "imageproc/Transform.h"
+#include <Binarize.h>
+#include <BinaryImage.h>
+#include <GrayRasterOp.h>
+#include <Transform.h>
 
 #include <QDebug>
 

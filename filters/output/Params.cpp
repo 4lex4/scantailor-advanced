@@ -17,9 +17,11 @@
  */
 
 #include "Params.h"
-#include "../../Utils.h"
-#include "XmlMarshaller.h"
-#include "XmlUnmarshaller.h"
+#include <foundation/Utils.h>
+#include <XmlMarshaller.h>
+#include <XmlUnmarshaller.h>
+
+using namespace foundation;
 
 namespace output {
 Params::Params() : m_dpi(600, 600), m_despeckleLevel(1.0) {}
@@ -43,7 +45,7 @@ Params::Params(const Dpi& dpi,
       m_blackOnWhite(true) {}
 
 Params::Params(const QDomElement& el)
-    : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
+    : m_dpi(el.namedItem("dpi").toElement()),
       m_colorParams(el.namedItem("color-params").toElement()),
       m_distortionModel(el.namedItem("distortion-model").toElement()),
       m_depthPerception(el.attribute("depthPerception")),
@@ -62,7 +64,7 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   el.setAttribute("depthPerception", m_depthPerception.toString());
   el.appendChild(m_dewarpingOptions.toXml(doc, "dewarping-options"));
   el.setAttribute("despeckleLevel", Utils::doubleToString(m_despeckleLevel));
-  el.appendChild(marshaller.dpi(m_dpi, "dpi"));
+  el.appendChild(m_dpi.toXml(doc, "dpi"));
   el.appendChild(m_colorParams.toXml(doc, "color-params"));
   el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
   el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");

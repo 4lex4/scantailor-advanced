@@ -34,7 +34,7 @@
 #include "PageId.h"
 #include "Settings.h"
 #include "ZoomHandler.h"
-#include "dewarping/DistortionModel.h"
+#include "DistortionModel.h"
 
 namespace output {
 class DewarpingView : public ImageViewBase, protected InteractionHandler {

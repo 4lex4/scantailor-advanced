@@ -17,10 +17,14 @@
  */
 
 #include "XmlMarshaller.h"
-#include "Dpi.h"
-#include "Margins.h"
-#include "OrthogonalRotation.h"
+#include <QLineF>
+#include <QPointF>
+#include <QPolygonF>
+#include <QRect>
+#include <QString>
 #include "Utils.h"
+
+using namespace foundation;
 
 QDomElement XmlMarshaller::string(const QString& str, const QString& name) {
   QDomElement el(m_doc.createElement(name));
@@ -49,25 +53,6 @@ QDomElement XmlMarshaller::sizeF(const QSizeF& size, const QString& name) {
   QDomElement el(m_doc.createElement(name));
   el.setAttribute("width", Utils::doubleToString(size.width()));
   el.setAttribute("height", Utils::doubleToString(size.height()));
-
-  return el;
-}
-
-QDomElement XmlMarshaller::dpi(const Dpi& dpi, const QString& name) {
-  if (dpi.isNull()) {
-    return QDomElement();
-  }
-
-  QDomElement el(m_doc.createElement(name));
-  el.setAttribute("horizontal", dpi.horizontal());
-  el.setAttribute("vertical", dpi.vertical());
-
-  return el;
-}
-
-QDomElement XmlMarshaller::rotation(const OrthogonalRotation& rotation, const QString& name) {
-  QDomElement el(m_doc.createElement(name));
-  el.setAttribute("degrees", rotation.toDegrees());
 
   return el;
 }
@@ -116,16 +101,6 @@ QDomElement XmlMarshaller::polygonF(const QPolygonF& poly, const QString& name) 
   for (; it != end; ++it) {
     el.appendChild(pointF(*it, "point"));
   }
-
-  return el;
-}
-
-QDomElement XmlMarshaller::margins(const Margins& margins, const QString& name) {
-  QDomElement el(m_doc.createElement(name));
-  el.setAttribute("left", Utils::doubleToString(margins.left()));
-  el.setAttribute("right", Utils::doubleToString(margins.right()));
-  el.setAttribute("top", Utils::doubleToString(margins.top()));
-  el.setAttribute("bottom", Utils::doubleToString(margins.bottom()));
 
   return el;
 }

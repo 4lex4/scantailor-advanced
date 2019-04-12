@@ -29,7 +29,7 @@
 #include "Dpi.h"
 #include "OutputProcessingParams.h"
 #include "Params.h"
-#include "dewarping/DistortionModel.h"
+#include <DistortionModel.h>
 
 class ImageTransformation;
 class QDomDocument;

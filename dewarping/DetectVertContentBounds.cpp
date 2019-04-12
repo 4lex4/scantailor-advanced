@@ -24,8 +24,8 @@
 #include <boost/lambda/lambda.hpp>
 #include "DebugImages.h"
 #include "VecNT.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/Constants.h"
+#include <BinaryImage.h>
+#include <Constants.h>
 
 using namespace imageproc;
 

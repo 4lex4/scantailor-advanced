@@ -1,7 +1,3 @@
-project("Page Split Filter")
-
-include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
-
 file(GLOB ui_files "ui/*.ui")
 qt5_wrap_ui(ui_sources ${ui_files})
 set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
@@ -29,9 +25,9 @@ set(sources
     PageLayoutAdapter.cpp PageLayoutAdapter.h)
     
 source_group("Sources" FILES ${sources})
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
 
 add_library(page_split STATIC ${sources} ${ui_sources})
+target_link_libraries(page_split PUBLIC stcore)
+target_include_directories(page_split PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 translation_sources(scantailor ${sources} ${ui_files})

@@ -20,8 +20,8 @@
 #include <QPainter>
 #include "Dpi.h"
 #include "ImageViewBase.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/SEDM.h"
+#include <BinaryImage.h>
+#include <SEDM.h>
 
 using namespace imageproc;
 

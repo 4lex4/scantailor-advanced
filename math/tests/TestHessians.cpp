@@ -20,7 +20,7 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <cmath>
 #include <cstdlib>
-#include "Function.h"
+#include <adiff/Function.h>
 
 namespace adiff {
 namespace tests {

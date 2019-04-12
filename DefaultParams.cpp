@@ -1,9 +1,10 @@
 
 #include "DefaultParams.h"
-#include "Utils.h"
+#include <foundation/Utils.h>
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
+using namespace foundation;
 using namespace page_split;
 using namespace output;
 
@@ -113,11 +114,11 @@ DefaultParams::FixOrientationParams::FixOrientationParams(const OrthogonalRotati
     : m_imageRotation(imageRotation) {}
 
 DefaultParams::FixOrientationParams::FixOrientationParams(const QDomElement& el)
-    : m_imageRotation(XmlUnmarshaller::rotation(el.namedItem("imageRotation").toElement())) {}
+    : m_imageRotation(el.namedItem("imageRotation").toElement()) {}
 
 QDomElement DefaultParams::FixOrientationParams::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
-  el.appendChild(XmlMarshaller(doc).rotation(m_imageRotation, "imageRotation"));
+  el.appendChild(m_imageRotation.toXml(doc, "imageRotation"));
 
   return el;
 }
@@ -272,13 +273,13 @@ void DefaultParams::PageLayoutParams::setAutoMargins(bool autoMargins) {
 }
 
 DefaultParams::PageLayoutParams::PageLayoutParams(const QDomElement& el)
-    : m_hardMargins(XmlUnmarshaller::margins(el.namedItem("hardMargins").toElement())),
+    : m_hardMargins(el.namedItem("hardMargins").toElement()),
       m_alignment(el.namedItem("alignment").toElement()),
       m_autoMargins(el.attribute("autoMargins") == "1") {}
 
 QDomElement DefaultParams::PageLayoutParams::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
-  el.appendChild(XmlMarshaller(doc).margins(m_hardMargins, "hardMargins"));
+  el.appendChild(m_hardMargins.toXml(doc, "hardMargins"));
   el.appendChild(m_alignment.toXml(doc, "alignment"));
   el.setAttribute("autoMargins", m_autoMargins ? "1" : "0");
 
@@ -359,7 +360,7 @@ void DefaultParams::OutputParams::setDespeckleLevel(double despeckleLevel) {
 }
 
 DefaultParams::OutputParams::OutputParams(const QDomElement& el)
-    : m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
+    : m_dpi(el.namedItem("dpi").toElement()),
       m_colorParams(el.namedItem("colorParams").toElement()),
       m_splittingOptions(el.namedItem("splittingOptions").toElement()),
       m_pictureShapeOptions(el.namedItem("pictureShapeOptions").toElement()),
@@ -369,7 +370,7 @@ DefaultParams::OutputParams::OutputParams(const QDomElement& el)
 
 QDomElement DefaultParams::OutputParams::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
-  el.appendChild(XmlMarshaller(doc).dpi(m_dpi, "dpi"));
+  el.appendChild(m_dpi.toXml(doc, "dpi"));
   el.appendChild(m_colorParams.toXml(doc, "colorParams"));
   el.appendChild(m_splittingOptions.toXml(doc, "splittingOptions"));
   el.appendChild(m_pictureShapeOptions.toXml(doc, "pictureShapeOptions"));

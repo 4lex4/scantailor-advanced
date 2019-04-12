@@ -18,6 +18,7 @@
 
 #include "PictureZoneComparator.h"
 #include "ZoneSet.h"
+#include "PictureLayerProperty.h"
 
 namespace output {
 bool PictureZoneComparator::equal(const ZoneSet& lhs, const ZoneSet& rhs) {

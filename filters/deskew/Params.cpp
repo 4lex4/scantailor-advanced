@@ -18,7 +18,9 @@
 
 #include "Params.h"
 #include <QDomDocument>
-#include "../../Utils.h"
+#include <foundation/Utils.h>
+
+using namespace foundation;
 
 namespace deskew {
 Params::Params(const double deskew_angle_deg, const Dependencies& deps, const AutoManualMode mode)

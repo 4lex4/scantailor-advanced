@@ -24,8 +24,9 @@
 #include "ApplyDialog.h"
 #include "ScopedIncDec.h"
 #include "Settings.h"
-#include "imageproc/Constants.h"
+#include <Constants.h>
 
+using namespace core;
 using namespace imageproc::constants;
 
 namespace page_layout {

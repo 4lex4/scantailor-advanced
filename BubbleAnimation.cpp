@@ -21,8 +21,8 @@
 #include <QPainter>
 #include <cassert>
 #include <cmath>
-#include "imageproc/ColorInterpolation.h"
-#include "imageproc/Constants.h"
+#include <ColorInterpolation.h>
+#include <Constants.h>
 
 using namespace imageproc;
 

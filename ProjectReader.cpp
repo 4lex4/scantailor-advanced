@@ -216,7 +216,7 @@ ImageMetadata ProjectReader::processImageMetadata(const QDomElement& image_el) {
   }
   const QDomElement dpi_el(image_el.namedItem("dpi").toElement());
   if (!dpi_el.isNull()) {
-    dpi = XmlUnmarshaller::dpi(dpi_el);
+    dpi = Dpi(dpi_el);
   }
 
   return ImageMetadata(size, dpi);

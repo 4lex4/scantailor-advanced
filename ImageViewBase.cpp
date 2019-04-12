@@ -35,9 +35,10 @@
 #include "ScopedIncDec.h"
 #include "UnitsProvider.h"
 #include "Utils.h"
-#include "imageproc/PolygonUtils.h"
-#include "imageproc/Transform.h"
+#include <PolygonUtils.h>
+#include <Transform.h>
 
+using namespace core;
 using namespace imageproc;
 
 class ImageViewBase::HqTransformTask : public AbstractCommand<intrusive_ptr<AbstractCommand<void>>>, public QObject {

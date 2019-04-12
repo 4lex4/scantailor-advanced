@@ -23,8 +23,8 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
-#include "BinaryImage.h"
-#include "Grayscale.h"
+#include <BinaryImage.h>
+#include <Grayscale.h>
 
 namespace imageproc {
 namespace tests {

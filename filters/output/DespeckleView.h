@@ -25,7 +25,7 @@
 #include "DespeckleLevel.h"
 #include "DespeckleState.h"
 #include "Dpi.h"
-#include "imageproc/BinaryImage.h"
+#include <BinaryImage.h>
 #include "intrusive_ptr.h"
 
 class DebugImages;

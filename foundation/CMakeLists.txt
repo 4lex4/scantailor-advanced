@@ -1,7 +1,3 @@
-project("Foundation library")
-
-include_directories("${CMAKE_CURRENT_BINARY_DIR}")
-
 set(sources
     NonCopyable.h intrusive_ptr.h ref_countable.h
     AlignedArray.h
@@ -17,9 +13,13 @@ set(sources
     PerformanceTimer.cpp PerformanceTimer.h
     QtSignalForwarder.cpp QtSignalForwarder.h
     GridLineTraverser.cpp GridLineTraverser.h
+    LineIntersectionScalar.cpp LineIntersectionScalar.h
+    XmlMarshaller.cpp XmlMarshaller.h
+    XmlUnmarshaller.cpp XmlUnmarshaller.h
     StaticPool.h
     DynamicPool.h
     NumericTraits.h
+    TaskStatus.h
     VecNT.h
     VecT.h
     MatMNT.h
@@ -27,9 +27,13 @@ set(sources
     PriorityQueue.h
     Grid.h
     ValueConv.h
-    Hashes.h)
+    Hashes.h
+    Utils.cpp Utils.h)
 source_group("Sources" FILES ${sources})
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
 
 add_library(foundation STATIC ${sources})
+target_link_libraries(foundation PUBLIC Qt5::Core Qt5::Xml Qt5::Gui)
+target_include_directories(
+    foundation
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")

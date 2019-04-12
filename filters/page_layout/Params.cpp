@@ -35,7 +35,7 @@ Params::Params(const Margins& hard_margins_mm,
       m_autoMargins(auto_margins) {}
 
 Params::Params(const QDomElement& el)
-    : m_hardMarginsMM(XmlUnmarshaller::margins(el.namedItem("hardMarginsMM").toElement())),
+    : m_hardMarginsMM(el.namedItem("hardMarginsMM").toElement()),
       m_pageRect(XmlUnmarshaller::rectF(el.namedItem("pageRect").toElement())),
       m_contentRect(XmlUnmarshaller::rectF(el.namedItem("contentRect").toElement())),
       m_contentSizeMM(XmlUnmarshaller::sizeF(el.namedItem("contentSizeMM").toElement())),
@@ -46,7 +46,7 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   XmlMarshaller marshaller(doc);
 
   QDomElement el(doc.createElement(name));
-  el.appendChild(marshaller.margins(m_hardMarginsMM, "hardMarginsMM"));
+  el.appendChild(m_hardMarginsMM.toXml(doc, "hardMarginsMM"));
   el.appendChild(marshaller.rectF(m_pageRect, "pageRect"));
   el.appendChild(marshaller.rectF(m_contentRect, "contentRect"));
   el.appendChild(marshaller.sizeF(m_contentSizeMM, "contentSizeMM"));

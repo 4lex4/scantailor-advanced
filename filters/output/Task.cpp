@@ -21,8 +21,7 @@
 #include <QDir>
 #include <boost/bind.hpp>
 #include <utility>
-#include "CommandLine.h"
-#include "DebugImages.h"
+#include "DebugImagesImpl.h"
 #include "DespeckleState.h"
 #include "DespeckleView.h"
 #include "DespeckleVisualization.h"
@@ -46,8 +45,8 @@
 #include "TaskStatus.h"
 #include "ThumbnailPixmapCache.h"
 #include "Utils.h"
-#include "dewarping/DewarpingPointMapper.h"
-#include "imageproc/PolygonUtils.h"
+#include <DewarpingPointMapper.h>
+#include <PolygonUtils.h>
 
 using namespace imageproc;
 using namespace dewarping;
@@ -114,7 +113,7 @@ Task::Task(intrusive_ptr<Filter> filter,
       m_batchProcessing(batch),
       m_debug(debug) {
   if (debug) {
-    m_dbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImagesImpl>();
   }
 }
 
@@ -447,14 +446,10 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     despeckle_visualization = despeckle_state.visualize();
   }
 
-  if (CommandLine::get().isGui()) {
-    return make_intrusive<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, new_xform,
-                                     generator.getPostTransform(), generator.outputContentRect(), m_pageId,
-                                     data.origImage(), out_img, automask_img, despeckle_state, despeckle_visualization,
-                                     m_batchProcessing, m_debug);
-  } else {
-    return nullptr;
-  }
+  return make_intrusive<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, new_xform,
+                                   generator.getPostTransform(), generator.outputContentRect(), m_pageId,
+                                   data.origImage(), out_img, automask_img, despeckle_state, despeckle_visualization,
+                                   m_batchProcessing, m_debug);
 }  // Task::process
 
 /**

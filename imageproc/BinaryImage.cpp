@@ -20,8 +20,8 @@
 #include <QAtomicInt>
 #include <QImage>
 #include <QRect>
+#include <QtEndian>
 #include <algorithm>
-#include <boost/foreach.hpp>
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
@@ -734,7 +734,7 @@ QImage BinaryImage::toQImage() const {
 
   for (int i = m_height; i > 0; --i) {
     for (int j = 0; j < src_wpl; ++j) {
-      dst_line[j] = htonl(src_line[j]);
+      dst_line[j] = qToBigEndian(src_line[j]);
     }
     src_line += src_wpl;
     dst_line += dst_wpl;
@@ -855,7 +855,7 @@ BinaryImage BinaryImage::fromMono(const QImage& image) {
 
   for (int i = height; i > 0; --i) {
     for (int j = 0; j < dst_wpl; ++j) {
-      dst_line[j] = ntohl(src_line[j]) ^ modifier;
+      dst_line[j] = qFromBigEndian(src_line[j]) ^ modifier;
     }
     src_line += src_wpl;
     dst_line += dst_wpl;
@@ -895,7 +895,7 @@ BinaryImage BinaryImage::fromMono(const QImage& image, const QRect& rect) {
     // does not actually clear the word.
     for (int i = height; i > 0; --i) {
       for (int j = 0; j < dst_wpl; ++j) {
-        dst_line[j] = ntohl(src_line[j]) ^ modifier;
+        dst_line[j] = qFromBigEndian(src_line[j]) ^ modifier;
       }
       src_line += src_wpl;
       dst_line += dst_wpl;
@@ -904,10 +904,10 @@ BinaryImage BinaryImage::fromMono(const QImage& image, const QRect& rect) {
     const int last_word_idx = (width - 1) >> 5;
     for (int i = height; i > 0; --i) {
       int j = 0;
-      uint32_t next_word = ntohl(src_line[j]);
+      uint32_t next_word = qFromBigEndian(src_line[j]);
       for (; j < last_word_idx; ++j) {
         const uint32_t this_word = next_word;
-        next_word = ntohl(src_line[j + 1]);
+        next_word = qFromBigEndian(src_line[j + 1]);
         const uint32_t dst_word = (this_word << word1_unused_bits) | (next_word >> word2_unused_bits);
         dst_line[j] = dst_word ^ modifier;
       }
@@ -915,7 +915,7 @@ BinaryImage BinaryImage::fromMono(const QImage& image, const QRect& rect) {
       // might be outside of the image buffer.
       uint32_t last_word = next_word << word1_unused_bits;
       if (dst_last_word_unused_bits < word1_unused_bits) {
-        last_word |= ntohl(src_line[j + 1]) >> word2_unused_bits;
+        last_word |= qFromBigEndian(src_line[j + 1]) >> word2_unused_bits;
       }
       dst_line[j] = last_word ^ modifier;
 

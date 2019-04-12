@@ -25,7 +25,7 @@
 #include "DewarpingOptions.h"
 #include "Dpi.h"
 #include "PictureShapeOptions.h"
-#include "dewarping/DistortionModel.h"
+#include <DistortionModel.h>
 
 class QDomDocument;
 class QDomElement;

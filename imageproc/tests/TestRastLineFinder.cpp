@@ -23,7 +23,7 @@
 #include <boost/test/auto_unit_test.hpp>
 #include <set>
 #include <vector>
-#include "RastLineFinder.h"
+#include <RastLineFinder.h>
 
 namespace imageproc {
 namespace tests {

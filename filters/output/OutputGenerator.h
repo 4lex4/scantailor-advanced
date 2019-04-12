@@ -45,8 +45,8 @@
 #include "Settings.h"
 #include "SplitImage.h"
 #include "TiffWriter.h"
-#include "imageproc/Connectivity.h"
-#include "imageproc/SkewFinder.h"
+#include <Connectivity.h>
+#include <SkewFinder.h>
 #include "intrusive_ptr.h"
 
 class TaskStatus;

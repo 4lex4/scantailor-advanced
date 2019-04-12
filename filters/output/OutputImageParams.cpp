@@ -18,9 +18,11 @@
 
 #include "OutputImageParams.h"
 #include <cmath>
-#include "../../Utils.h"
+#include <foundation/Utils.h>
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
+
+using namespace foundation;
 
 namespace output {
 OutputImageParams::OutputImageParams(const QSize& out_image_size,
@@ -59,7 +61,7 @@ OutputImageParams::OutputImageParams(const QDomElement& el)
       m_contentRect(XmlUnmarshaller::rect(el.namedItem("content-rect").toElement())),
       m_cropArea(XmlUnmarshaller::polygonF(el.namedItem("crop-area").toElement())),
       m_partialXform(el.namedItem("partial-xform").toElement()),
-      m_dpi(XmlUnmarshaller::dpi(el.namedItem("dpi").toElement())),
+      m_dpi(el.namedItem("dpi").toElement()),
       m_colorParams(el.namedItem("color-params").toElement()),
       m_splittingOptions(el.namedItem("splitting").toElement()),
       m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
@@ -78,7 +80,7 @@ QDomElement OutputImageParams::toXml(QDomDocument& doc, const QString& name) con
   el.appendChild(marshaller.rect(m_contentRect, "content-rect"));
   el.appendChild(marshaller.polygonF(m_cropArea, "crop-area"));
   el.appendChild(m_partialXform.toXml(doc, "partial-xform"));
-  el.appendChild(marshaller.dpi(m_dpi, "dpi"));
+  el.appendChild(m_dpi.toXml(doc, "dpi"));
   el.appendChild(m_colorParams.toXml(doc, "color-params"));
   el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
   el.appendChild(m_pictureShapeOptions.toXml(doc, "picture-shape-options"));

@@ -33,8 +33,8 @@
 #include "ImageLoader.h"
 #include "OutOfMemoryHandler.h"
 #include "RelinkablePath.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/Scale.h"
+#include <GrayImage.h>
+#include <Scale.h>
 
 using namespace ::boost;
 using namespace ::boost::multi_index;

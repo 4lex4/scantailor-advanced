@@ -23,8 +23,6 @@
 #include <boost/function.hpp>
 #include <deque>
 #include "AutoRemovingFile.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class QImage;
 class QWidget;
@@ -38,17 +36,19 @@ class BinaryImage;
  */
 class DebugImages {
  public:
-  void add(const QImage& image,
-           const QString& label,
-           const boost::function<QWidget*(const QImage&)>& image_view_factory
-           = boost::function<QWidget*(const QImage&)>());
+  virtual ~DebugImages() = default;
 
-  void add(const imageproc::BinaryImage& image,
-           const QString& label,
-           const boost::function<QWidget*(const QImage&)>& image_view_factory
-           = boost::function<QWidget*(const QImage&)>());
+  virtual void add(const QImage& image,
+                   const QString& label,
+                   const boost::function<QWidget*(const QImage&)>& image_view_factory
+                   = boost::function<QWidget*(const QImage&)>()) = 0;
 
-  bool empty() const { return m_sequence.empty(); }
+  virtual void add(const imageproc::BinaryImage& image,
+                   const QString& label,
+                   const boost::function<QWidget*(const QImage&)>& image_view_factory
+                   = boost::function<QWidget*(const QImage&)>()) = 0;
+
+  virtual bool empty() const = 0;
 
   /**
    * \brief Removes and returns the first item in the sequence.
@@ -57,20 +57,8 @@ class DebugImages {
    * are returned by taking pointers to them as arguments.
    * Returns a null AutoRemovingFile if image sequence is empty.
    */
-  AutoRemovingFile retrieveNext(QString* label = nullptr,
-                                boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr);
-
- private:
-  struct Item : public ref_countable {
-    AutoRemovingFile file;
-    QString label;
-    boost::function<QWidget*(const QImage&)> imageViewFactory;
-
-    Item(AutoRemovingFile f, const QString& l, const boost::function<QWidget*(const QImage&)>& imf)
-        : file(f), label(l), imageViewFactory(imf) {}
-  };
-
-  std::deque<intrusive_ptr<Item>> m_sequence;
+  virtual AutoRemovingFile retrieveNext(QString* label = nullptr,
+                                        boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr) = 0;
 };
 
 

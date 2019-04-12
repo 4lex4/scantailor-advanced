@@ -27,11 +27,11 @@
 #include <Qt>
 #include <boost/test/auto_unit_test.hpp>
 #include <cmath>
-#include "BWColor.h"
-#include "BinaryImage.h"
-#include "BinaryThreshold.h"
-#include "PolygonRasterizer.h"
-#include "RasterOp.h"
+#include <BWColor.h>
+#include <BinaryImage.h>
+#include <BinaryThreshold.h>
+#include <PolygonRasterizer.h>
+#include <RasterOp.h>
 #include "Utils.h"
 
 namespace imageproc {

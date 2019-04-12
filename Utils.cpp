@@ -27,6 +27,7 @@
 #include <stdio.h>
 #endif
 
+namespace core {
 bool Utils::overwritingRename(const QString& from, const QString& to) {
 #ifdef Q_OS_WIN
   return MoveFileExW((WCHAR*) from.utf16(), (WCHAR*) to.utf16(), MOVEFILE_REPLACE_EXISTING) != 0;
@@ -63,3 +64,4 @@ intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& o
 
   return make_intrusive<ThumbnailPixmapCache>(thumbs_cache_path, max_pixmap_size, 40, 5);
 }
+}  // namespace core

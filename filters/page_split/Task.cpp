@@ -19,7 +19,7 @@
 #include <UnitsProvider.h>
 
 #include <utility>
-#include "DebugImages.h"
+#include "DebugImagesImpl.h"
 #include "Dpm.h"
 #include "Filter.h"
 #include "FilterData.h"
@@ -93,7 +93,7 @@ Task::Task(intrusive_ptr<Filter> filter,
       m_pageInfo(page_info),
       m_batchProcessing(batch_processing) {
   if (debug) {
-    m_dbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImagesImpl>();
   }
 }
 

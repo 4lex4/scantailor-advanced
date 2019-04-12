@@ -23,7 +23,7 @@
 #include <QImage>
 #include "DespeckleLevel.h"
 #include "Dpi.h"
-#include "imageproc/BinaryImage.h"
+#include <BinaryImage.h>
 
 class TaskStatus;
 class DebugImages;

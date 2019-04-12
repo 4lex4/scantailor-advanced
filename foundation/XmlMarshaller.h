@@ -16,46 +16,44 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef XMLUNMARSHALLER_H_
-#define XMLUNMARSHALLER_H_
+#ifndef XMLMARSHALLER_H_
+#define XMLMARSHALLER_H_
 
-class QString;
-class QDomElement;
+#include <QDomDocument>
+#include <QDomElement>
+#include <QString>
+
 class QSize;
 class QSizeF;
-class Dpi;
-class OrthogonalRotation;
-class Margins;
 class QPointF;
 class QLineF;
+class QPolygonF;
 class QRect;
 class QRectF;
-class QPolygonF;
 
-class XmlUnmarshaller {
+class XmlMarshaller {
  public:
-  static QString string(const QDomElement& el);
+  explicit XmlMarshaller(const QDomDocument& doc) : m_doc(doc) {}
 
-  static QSize size(const QDomElement& el);
+  QDomElement string(const QString& str, const QString& name);
 
-  static QSizeF sizeF(const QDomElement& el);
+  QDomElement size(const QSize& size, const QString& name);
 
-  static Dpi dpi(const QDomElement& el);
+  QDomElement sizeF(const QSizeF& size, const QString& name);
 
-  static OrthogonalRotation rotation(const QDomElement& el);
+  QDomElement pointF(const QPointF& p, const QString& name);
 
-  static Margins margins(const QDomElement& el);
+  QDomElement lineF(const QLineF& line, const QString& name);
 
-  static QPointF pointF(const QDomElement& el);
+  QDomElement rect(const QRect& rect, const QString& name);
 
-  static QLineF lineF(const QDomElement& el);
+  QDomElement rectF(const QRectF& rect, const QString& name);
 
-  static QRect rect(const QDomElement& el);
+  QDomElement polygonF(const QPolygonF& poly, const QString& name);
 
-  static QRectF rectF(const QDomElement& el);
-
-  static QPolygonF polygonF(const QDomElement& el);
+ private:
+  QDomDocument m_doc;
 };
 
 
-#endif  // ifndef XMLUNMARSHALLER_H_
+#endif  // ifndef XMLMARSHALLER_H_

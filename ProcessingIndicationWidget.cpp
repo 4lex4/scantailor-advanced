@@ -21,7 +21,7 @@
 #include <QPainter>
 #include <QTimerEvent>
 #include "ColorSchemeManager.h"
-#include "imageproc/ColorInterpolation.h"
+#include <ColorInterpolation.h>
 
 using namespace imageproc;
 

@@ -33,7 +33,7 @@
 #include "PageId.h"
 #include "ZoneInteractionContext.h"
 #include "ZoomHandler.h"
-#include "imageproc/BinaryImage.h"
+#include <BinaryImage.h>
 #include "intrusive_ptr.h"
 #include "ref_countable.h"
 

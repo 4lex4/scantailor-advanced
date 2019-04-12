@@ -25,7 +25,6 @@
 #include <boost/lambda/lambda.hpp>
 #include <utility>
 #include "CacheDrivenTask.h"
-#include "CommandLine.h"
 #include "FilterUiInterface.h"
 #include "OptionsWidget.h"
 #include "ProjectReader.h"
@@ -37,9 +36,7 @@
 namespace output {
 Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
     : m_settings(new Settings), m_selectedPageOrder(0) {
-  if (CommandLine::get().isGui()) {
-    m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
-  }
+  m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
 
   const PageOrderOption::ProviderPtr default_order;
   const auto order_by_completeness = make_intrusive<OrderByCompletenessProvider>();

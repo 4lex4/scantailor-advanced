@@ -29,6 +29,7 @@
 #include <boost/multi_index_container.hpp>
 #include <utility>
 #include "AbstractRelinker.h"
+#include "Guide.h"
 #include "PageId.h"
 #include "PageSequence.h"
 #include "Params.h"

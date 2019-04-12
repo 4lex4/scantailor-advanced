@@ -19,11 +19,9 @@
 #ifndef ZONE_H_
 #define ZONE_H_
 
-#include "PropertySet.h"
 #include "SerializableSpline.h"
-#include "filters/output/PictureLayerProperty.h"
-#include "filters/output/ZoneCategoryProperty.h"
-#include "intrusive_ptr.h"
+#include <PropertySet.h>
+#include <intrusive_ptr.h>
 
 class PropertyFactory;
 class QDomDocument;

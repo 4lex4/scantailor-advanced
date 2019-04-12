@@ -19,7 +19,9 @@
 #include "BlackWhiteOptions.h"
 #include <QDomDocument>
 #include <cmath>
-#include "../../Utils.h"
+#include <foundation/Utils.h>
+
+using namespace foundation;
 
 namespace output {
 BlackWhiteOptions::BlackWhiteOptions()

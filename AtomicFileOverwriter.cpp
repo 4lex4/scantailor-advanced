@@ -21,6 +21,8 @@
 #include <QTemporaryFile>
 #include "Utils.h"
 
+using namespace core;
+
 AtomicFileOverwriter::AtomicFileOverwriter() = default;
 
 AtomicFileOverwriter::~AtomicFileOverwriter() {

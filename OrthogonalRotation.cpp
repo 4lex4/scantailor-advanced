@@ -17,10 +17,21 @@
  */
 
 #include "OrthogonalRotation.h"
+#include <QString>
+#include <QDomElement>
+#include <QDomDocument>
 #include <QPointF>
 #include <QSize>
 #include <QTransform>
 #include <cassert>
+
+OrthogonalRotation::OrthogonalRotation() : m_degrees(0) {}
+
+OrthogonalRotation::OrthogonalRotation(const QDomElement& el) : m_degrees(el.attribute("degrees").toInt()) {}
+
+int OrthogonalRotation::toDegrees() const {
+  return m_degrees;
+}
 
 void OrthogonalRotation::nextClockwiseDirection() {
   m_degrees += 90;
@@ -134,4 +145,18 @@ QTransform OrthogonalRotation::transform(const QSizeF& dimensions) const {
   t.rotate(m_degrees);
 
   return t;
+}
+
+QDomElement OrthogonalRotation::toXml(QDomDocument& doc, const QString& name) const {
+  QDomElement el(doc.createElement(name));
+  el.setAttribute("degrees", m_degrees);
+  return el;
+}
+
+bool OrthogonalRotation::operator==(const OrthogonalRotation& other) const {
+  return m_degrees == other.m_degrees;
+}
+
+bool OrthogonalRotation::operator!=(const OrthogonalRotation& other) const {
+  return !(*this == other);
 }

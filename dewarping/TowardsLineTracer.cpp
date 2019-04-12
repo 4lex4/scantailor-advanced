@@ -23,7 +23,7 @@
 #include <cassert>
 #include "NumericTraits.h"
 #include "SidesOfLine.h"
-#include "imageproc/SEDM.h"
+#include <SEDM.h>
 
 using namespace imageproc;
 

@@ -19,7 +19,9 @@
 #include "Settings.h"
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
-#include "Utils.h"
+#include "../../Utils.h"
+
+using namespace core;
 
 namespace deskew {
 Settings::Settings() {

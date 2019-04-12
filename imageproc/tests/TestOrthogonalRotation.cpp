@@ -19,8 +19,8 @@
 #include <QImage>
 #include <QRect>
 #include <boost/test/auto_unit_test.hpp>
-#include "BinaryImage.h"
-#include "OrthogonalRotation.h"
+#include <BinaryImage.h>
+#include <OrthogonalRotation.h>
 #include "Utils.h"
 
 namespace imageproc {

@@ -17,7 +17,7 @@
  */
 
 #include "ImageMetadata.h"
-#include "imageproc/Constants.h"
+#include <Constants.h>
 
 using namespace imageproc::constants;
 

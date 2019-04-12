@@ -22,8 +22,8 @@
 #include <QImage>
 #include "ImageSettings.h"
 #include "ImageTransformation.h"
-#include "imageproc/BinaryThreshold.h"
-#include "imageproc/GrayImage.h"
+#include <BinaryThreshold.h>
+#include <GrayImage.h>
 
 class FilterData {
   // Member-wise copying is OK.

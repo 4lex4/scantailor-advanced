@@ -23,7 +23,7 @@
 #include "ToLineProjector.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include "imageproc/PolygonUtils.h"
+#include <PolygonUtils.h>
 
 using namespace imageproc;
 

@@ -24,8 +24,8 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <utility>
+#include <QCoreApplication>
 #include "CacheDrivenTask.h"
-#include "CommandLine.h"
 #include "FilterUiInterface.h"
 #include "ImageSettings.h"
 #include "OptionsWidget.h"
@@ -39,9 +39,7 @@
 namespace fix_orientation {
 Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
     : m_settings(new Settings), m_imageSettings(new ImageSettings) {
-  if (CommandLine::get().isGui()) {
-    m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
-  }
+  m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
 }
 
 Filter::~Filter() = default;
@@ -104,7 +102,7 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
       continue;
     }
 
-    const OrthogonalRotation rotation(XmlUnmarshaller::rotation(el.namedItem("rotation").toElement()));
+    const OrthogonalRotation rotation(el.namedItem("rotation").toElement());
 
     m_settings->applyRotation(image_id, rotation);
   }
@@ -133,7 +131,7 @@ void Filter::writeParams(QDomDocument& doc, QDomElement& filter_el, const ImageI
 
   QDomElement image_el(doc.createElement("image"));
   image_el.setAttribute("id", numeric_id);
-  image_el.appendChild(marshaller.rotation(rotation, "rotation"));
+  image_el.appendChild(rotation.toXml(doc, "rotation"));
   filter_el.appendChild(image_el);
 }
 

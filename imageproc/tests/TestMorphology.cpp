@@ -20,10 +20,10 @@
 #include <QPoint>
 #include <QSize>
 #include <boost/test/auto_unit_test.hpp>
-#include "BWColor.h"
-#include "BinaryImage.h"
-#include "GrayImage.h"
-#include "Morphology.h"
+#include <BWColor.h>
+#include <BinaryImage.h>
+#include <GrayImage.h>
+#include <Morphology.h>
 #include "Utils.h"
 
 namespace imageproc {

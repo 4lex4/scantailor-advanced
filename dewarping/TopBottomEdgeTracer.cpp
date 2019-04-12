@@ -32,10 +32,10 @@
 #include "PriorityQueue.h"
 #include "TaskStatus.h"
 #include "ToLineProjector.h"
-#include "imageproc/Constants.h"
-#include "imageproc/GaussBlur.h"
-#include "imageproc/GrayImage.h"
-#include "imageproc/Scale.h"
+#include <Constants.h>
+#include <GaussBlur.h>
+#include <GrayImage.h>
+#include <Scale.h>
 
 using namespace imageproc;
 

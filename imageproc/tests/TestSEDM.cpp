@@ -20,9 +20,9 @@
 #include <boost/test/auto_unit_test.hpp>
 #include <cmath>
 #include <iostream>
-#include "BWColor.h"
-#include "BinaryImage.h"
-#include "SEDM.h"
+#include <BWColor.h>
+#include <BinaryImage.h>
+#include <SEDM.h>
 #include "Utils.h"
 
 namespace imageproc {

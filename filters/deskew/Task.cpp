@@ -21,9 +21,10 @@
 #include <BlackOnWhiteEstimator.h>
 #include <imageproc/Grayscale.h>
 #include <imageproc/PolygonRasterizer.h>
+#include <imageproc/OrthogonalRotation.h>
 #include <QSettings>
 #include <utility>
-#include "DebugImages.h"
+#include "DebugImagesImpl.h"
 #include "Dpm.h"
 #include "Filter.h"
 #include "FilterData.h"
@@ -33,14 +34,14 @@
 #include "Task.h"
 #include "TaskStatus.h"
 #include "filters/select_content/Task.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/Morphology.h"
-#include "imageproc/OrthogonalRotation.h"
-#include "imageproc/RasterOp.h"
-#include "imageproc/ReduceThreshold.h"
-#include "imageproc/SeedFill.h"
-#include "imageproc/SkewFinder.h"
-#include "imageproc/UpscaleIntegerTimes.h"
+#include <BinaryImage.h>
+#include <Morphology.h>
+#include <OrthogonalRotation.h>
+#include <RasterOp.h>
+#include <ReduceThreshold.h>
+#include <SeedFill.h>
+#include <SkewFinder.h>
+#include <UpscaleIntegerTimes.h>
 
 namespace deskew {
 using namespace imageproc;
@@ -85,7 +86,7 @@ Task::Task(intrusive_ptr<Filter> filter,
       m_pageId(page_id),
       m_batchProcessing(batch_processing) {
   if (debug) {
-    m_dbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImagesImpl>();
   }
 }
 

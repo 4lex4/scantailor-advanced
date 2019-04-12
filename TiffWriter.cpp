@@ -24,8 +24,8 @@
 #include <cassert>
 #include <cmath>
 #include "Dpm.h"
-#include "imageproc/Constants.h"
-#include "imageproc/Grayscale.h"
+#include <Constants.h>
+#include <Grayscale.h>
 
 /**
  * m_reverseBitsLUT[byte] gives the same byte, but with bit order reversed.

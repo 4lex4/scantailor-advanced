@@ -24,7 +24,7 @@
 #include "BackgroundExecutor.h"
 #include "BackgroundTask.h"
 #include "BasicImageView.h"
-#include "DebugImages.h"
+#include "DebugImagesImpl.h"
 #include "Despeckle.h"
 #include "DespeckleVisualization.h"
 #include "ImageViewBase.h"
@@ -222,7 +222,7 @@ DespeckleView::DespeckleTask::DespeckleTask(DespeckleView* owner,
       m_cancelHandle(std::move(cancel_handle)),
       m_despeckleLevel(level) {
   if (debug) {
-    m_dbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImagesImpl>();
   }
 }
 

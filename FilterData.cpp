@@ -18,7 +18,7 @@
 
 #include "FilterData.h"
 #include "Dpm.h"
-#include "imageproc/Grayscale.h"
+#include <Grayscale.h>
 
 using namespace imageproc;
 

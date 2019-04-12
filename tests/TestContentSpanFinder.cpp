@@ -18,9 +18,9 @@
 
 #include <boost/test/auto_unit_test.hpp>
 #include <vector>
-#include "ContentSpanFinder.h"
-#include "Span.h"
-#include "imageproc/SlicedHistogram.h"
+#include <ContentSpanFinder.h>
+#include <Span.h>
+#include <SlicedHistogram.h>
 
 namespace Tests {
 using namespace imageproc;

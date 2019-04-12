@@ -18,7 +18,7 @@
 
 #include "Task.h"
 #include "ContentBoxFinder.h"
-#include "DebugImages.h"
+#include "DebugImagesImpl.h"
 #include "Filter.h"
 #include "FilterData.h"
 #include "FilterUiInterface.h"
@@ -76,7 +76,7 @@ Task::Task(intrusive_ptr<Filter> filter,
       m_pageId(page_id),
       m_batchProcessing(batch) {
   if (debug) {
-    m_dbg = std::make_unique<DebugImages>();
+    m_dbg = std::make_unique<DebugImagesImpl>();
   }
 }
 

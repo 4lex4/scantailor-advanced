@@ -33,7 +33,7 @@
 #include "Params.h"
 #include "PropertySet.h"
 #include "ZoneSet.h"
-#include "dewarping/DistortionModel.h"
+#include <DistortionModel.h>
 #include "ref_countable.h"
 
 class AbstractRelinker;

@@ -27,7 +27,7 @@
 #include "Dpi.h"
 #include "Grid.h"
 #include "VecNT.h"
-#include "imageproc/GrayImage.h"
+#include <GrayImage.h>
 
 class Dpi;
 class DebugImages;

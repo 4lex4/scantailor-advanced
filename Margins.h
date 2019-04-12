@@ -19,28 +19,35 @@
 #ifndef MARGINS_H_
 #define MARGINS_H_
 
+class QString;
+class QDomElement;
+class QDomDocument;
+
 class Margins {
  public:
-  Margins() : m_top(), m_bottom(), m_left(), m_right() {}
+  Margins();
 
-  Margins(double left, double top, double right, double bottom)
-      : m_top(top), m_bottom(bottom), m_left(left), m_right(right) {}
+  Margins(double left, double top, double right, double bottom);
 
-  double top() const { return m_top; }
+  explicit Margins(const QDomElement& el);
 
-  void setTop(double val) { m_top = val; }
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-  double bottom() const { return m_bottom; }
+  double top() const;
 
-  void setBottom(double val) { m_bottom = val; }
+  void setTop(double val);
 
-  double left() const { return m_left; }
+  double bottom() const;
 
-  void setLeft(double val) { m_left = val; }
+  void setBottom(double val);
 
-  double right() const { return m_right; }
+  double left() const;
 
-  void setRight(double val) { m_right = val; }
+  void setLeft(double val);
+
+  double right() const;
+
+  void setRight(double val);
 
  private:
   double m_top;

@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include "ThumbnailPixmapCache.h"
 
+namespace core {
 class Utils {
  public:
   template <typename K, typename V, typename Comp, typename Alloc>
@@ -56,14 +57,6 @@ class Utils {
   static bool overwritingRename(const QString& from, const QString& to);
 
   /**
-   * \brief A high precision, locale independent number to string conversion.
-   *
-   * This function is intended to be used instead of
-   * QDomElement::setAttribute(double), which is locale dependent.
-   */
-  static QString doubleToString(double val) { return QString::number(val, 'g', 16); }
-
-  /**
    * \brief Generate rich text, complete with headers and stuff,
    *        for a clickable link.
    *
@@ -74,6 +67,8 @@ class Utils {
    * \return The resulting reach text.
    */
   static QString richTextForLink(const QString& label, const QString& target = QString(QChar('#')));
+
+  Utils() = delete;
 };
 
 
@@ -86,7 +81,6 @@ typename std::map<K, V, Comp, Alloc>::iterator Utils::mapSetValue(std::map<K, V,
     return map.insert(it, typename std::map<K, V, Comp, Alloc>::value_type(key, val));
   } else {
     it->second = val;
-
     return it;
   }
 }
@@ -99,14 +93,13 @@ Utils::mapSetValue(std::unordered_map<K, V, Hash, Pred, Alloc>& map, const K& ke
     return map.insert(it, typename std::unordered_map<K, V, Hash, Pred, Alloc>::value_type(key, val));
   } else {
     it->second = val;
-
     return it;
   }
 }
 
 template <typename T>
 T Utils::castOrFindChild(QObject* object) {
-  if (object == nullptr) {
+  if (!object) {
     return nullptr;
   }
 
@@ -114,7 +107,7 @@ T Utils::castOrFindChild(QObject* object) {
     return result;
   } else {
     for (QObject* child : object->children()) {
-      if (result = castOrFindChild<T>(child)) {
+      if ((result = castOrFindChild<T>(child))) {
         return result;
       }
     }
@@ -122,5 +115,6 @@ T Utils::castOrFindChild(QObject* object) {
 
   return nullptr;
 }
+}  // namespace core
 
 #endif  // ifndef UTILS_H_

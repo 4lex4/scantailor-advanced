@@ -1,7 +1,3 @@
-project(interaction)
-
-include_directories("${CMAKE_CURRENT_BINARY_DIR}")
-
 set(sources
     DraggableObject.h
     DraggablePoint.cpp DraggablePoint.h
@@ -16,9 +12,12 @@ set(sources
     DraggablePolygon.cpp DraggablePolygon.h)
 
 source_group(Sources FILES ${sources})
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
 
 add_library(interaction STATIC ${sources})
+target_link_libraries(interaction PUBLIC stcore)
+target_include_directories(
+    interaction
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
+    PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 
 translation_sources(scantailor ${sources})

@@ -17,7 +17,6 @@
  */
 
 #include "Filter.h"
-#include <CommandLine.h>
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
@@ -37,9 +36,7 @@
 namespace deskew {
 Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
     : m_settings(new Settings), m_imageSettings(new ImageSettings), m_selectedPageOrder(0) {
-  if (CommandLine::get().isGui()) {
-    m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
-  }
+  m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
 
   const PageOrderOption::ProviderPtr default_order;
   const auto order_by_deviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());

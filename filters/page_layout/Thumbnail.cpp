@@ -20,7 +20,7 @@
 #include <QPainter>
 #include <utility>
 #include "Utils.h"
-#include "imageproc/PolygonUtils.h"
+#include <PolygonUtils.h>
 
 using namespace imageproc;
 

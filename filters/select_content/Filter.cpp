@@ -21,7 +21,7 @@
 #include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
 #include <UnitsConverter.h>
-#include <Utils.h>
+#include <foundation/Utils.h>
 #include <XmlMarshaller.h>
 #include <XmlUnmarshaller.h>
 #include <filters/page_layout/CacheDrivenTask.h>
@@ -30,7 +30,6 @@
 #include <boost/lambda/lambda.hpp>
 #include <utility>
 #include "CacheDrivenTask.h"
-#include "CommandLine.h"
 #include "FilterUiInterface.h"
 #include "OptionsWidget.h"
 #include "OrderByHeightProvider.h"
@@ -39,12 +38,12 @@
 #include "ProjectWriter.h"
 #include "Task.h"
 
+using namespace foundation;
+
 namespace select_content {
 Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
     : m_settings(new Settings), m_selectedPageOrder(0) {
-  if (CommandLine::get().isGui()) {
-    m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
-  }
+  m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
 
   const PageOrderOption::ProviderPtr default_order;
   const auto order_by_width = make_intrusive<OrderByWidthProvider>(m_settings);

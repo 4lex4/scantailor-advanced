@@ -20,11 +20,11 @@
 #include <algorithm>
 #include <boost/test/auto_unit_test.hpp>
 #include <list>
-#include "BWColor.h"
-#include "BinaryImage.h"
-#include "ConnComp.h"
-#include "ConnCompEraserExt.h"
-#include "RasterOp.h"
+#include <BWColor.h>
+#include <BinaryImage.h>
+#include <ConnComp.h>
+#include <ConnCompEraserExt.h>
+#include <RasterOp.h>
 #include "Utils.h"
 
 namespace imageproc {

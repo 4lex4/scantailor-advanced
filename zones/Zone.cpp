@@ -19,14 +19,18 @@
 #include "Zone.h"
 #include <QDomDocument>
 
+// TODO: This is to be removed.
+#include "../filters/output/PictureLayerProperty.h"
+#include "../filters/output/ZoneCategoryProperty.h"
+
 Zone::Zone(const SerializableSpline& spline, const PropertySet& props) : m_spline(spline), m_props(props) {}
 
 Zone::Zone(const QDomElement& el, const PropertyFactory& prop_factory)
     : m_spline(el.namedItem("spline").toElement()), m_props(el.namedItem("properties").toElement(), prop_factory) {}
 
+// TODO: Rework this.
 Zone::Zone(const QPolygonF& polygon) : m_spline(polygon) {
   m_props.locateOrCreate<output::PictureLayerProperty>()->setLayer(output::PictureLayerProperty::PAINTER2);
-
   m_props.locateOrCreate<output::ZoneCategoryProperty>()->setZoneCategory(
       output::ZoneCategoryProperty::RECTANGULAR_OUTLINE);
 }

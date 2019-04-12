@@ -20,8 +20,8 @@
 #include <QDebug>
 #include <cmath>
 #include "CylindricalSurfaceDewarper.h"
-#include "imageproc/ColorMixer.h"
-#include "imageproc/GrayImage.h"
+#include <ColorMixer.h>
+#include <GrayImage.h>
 
 #define INTERP_NONE 0
 #define INTERP_BILLINEAR 1

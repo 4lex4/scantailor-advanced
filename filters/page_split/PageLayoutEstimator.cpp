@@ -30,25 +30,25 @@
 #include "PageLayout.h"
 #include "ProjectPages.h"
 #include "VertLineFinder.h"
-#include "imageproc/Binarize.h"
-#include "imageproc/BinaryThreshold.h"
-#include "imageproc/ConnComp.h"
-#include "imageproc/ConnCompEraserExt.h"
-#include "imageproc/Connectivity.h"
-#include "imageproc/Constants.h"
-#include "imageproc/GrayRasterOp.h"
-#include "imageproc/Grayscale.h"
-#include "imageproc/Morphology.h"
-#include "imageproc/OrthogonalRotation.h"
-#include "imageproc/PolygonRasterizer.h"
-#include "imageproc/RasterOp.h"
-#include "imageproc/ReduceThreshold.h"
-#include "imageproc/Scale.h"
-#include "imageproc/SeedFill.h"
-#include "imageproc/Shear.h"
-#include "imageproc/SkewFinder.h"
-#include "imageproc/SlicedHistogram.h"
-#include "imageproc/Transform.h"
+#include <Binarize.h>
+#include <BinaryThreshold.h>
+#include <ConnComp.h>
+#include <ConnCompEraserExt.h>
+#include <Connectivity.h>
+#include <Constants.h>
+#include <GrayRasterOp.h>
+#include <Grayscale.h>
+#include <Morphology.h>
+#include <imageproc/OrthogonalRotation.h>
+#include <PolygonRasterizer.h>
+#include <RasterOp.h>
+#include <ReduceThreshold.h>
+#include <Scale.h>
+#include <SeedFill.h>
+#include <Shear.h>
+#include <SkewFinder.h>
+#include <SlicedHistogram.h>
+#include <Transform.h>
 
 namespace page_split {
 using namespace imageproc;

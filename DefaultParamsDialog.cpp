@@ -15,6 +15,7 @@
 #include "UnitsProvider.h"
 #include "Utils.h"
 
+using namespace core;
 using namespace page_split;
 using namespace output;
 using namespace page_layout;

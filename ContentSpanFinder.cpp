@@ -17,7 +17,7 @@
  */
 
 #include "ContentSpanFinder.h"
-#include "imageproc/SlicedHistogram.h"
+#include <SlicedHistogram.h>
 
 using namespace imageproc;
 

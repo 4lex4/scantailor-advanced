@@ -20,9 +20,9 @@
 #include <algorithm>
 #include <boost/test/auto_unit_test.hpp>
 #include <list>
-#include "BinaryImage.h"
-#include "ConnComp.h"
-#include "ConnCompEraser.h"
+#include <BinaryImage.h>
+#include <ConnComp.h>
+#include <ConnCompEraser.h>
 #include "Utils.h"
 
 namespace imageproc {

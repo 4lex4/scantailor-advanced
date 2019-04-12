@@ -71,7 +71,7 @@ class ThumbnailSequence::GraphicsScene : public QGraphicsScene {
   void setContextMenuEventCallback(ContextMenuEventCallback callback) { m_contextMenuEventCallback = callback; }
 
  protected:
-  virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) {
+  void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override {
     QGraphicsScene::contextMenuEvent(event);
 
     if (!event->isAccepted() && m_contextMenuEventCallback) {
@@ -95,7 +95,7 @@ class ThumbnailSequence::Impl {
   void attachView(QGraphicsView* view);
 
   void reset(const PageSequence& pages,
-             const SelectionAction selection_action,
+             SelectionAction selection_action,
              intrusive_ptr<const PageOrderProvider> provider);
 
   intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
@@ -114,9 +114,9 @@ class ThumbnailSequence::Impl {
 
   PageInfo selectionLeader() const;
 
-  PageInfo prevPage(const PageId& page_id) const;
+  PageInfo prevPage(const PageId& reference_page) const;
 
-  PageInfo nextPage(const PageId& page_id) const;
+  PageInfo nextPage(const PageId& reference_page) const;
 
   PageInfo prevSelectedPage(const PageId& reference_page) const;
 
@@ -128,7 +128,7 @@ class ThumbnailSequence::Impl {
 
   void insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image);
 
-  void removePages(const std::set<PageId>& pages);
+  void removePages(const std::set<PageId>& pages_to_remove);
 
   QRectF selectionLeaderSceneRect() const;
 
@@ -138,7 +138,7 @@ class ThumbnailSequence::Impl {
 
   void contextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
 
-  void itemSelectedByUser(CompositeItem* item, Qt::KeyboardModifiers modifiers);
+  void itemSelectedByUser(CompositeItem* composite_item, Qt::KeyboardModifiers modifiers);
 
   const QSizeF& getMaxLogicalThumbSize() const;
 
@@ -846,7 +846,7 @@ PageInfo ThumbnailSequence::Impl::lastPage() const {
   return m_itemsInOrder.back().pageInfo;
 }
 
-void ThumbnailSequence::Impl::insert(const PageInfo& page_info, BeforeOrAfter before_or_after, const ImageId& image) {
+void ThumbnailSequence::Impl::insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image) {
   ItemsInOrder::iterator ord_it;
 
   if ((before_or_after == BEFORE) && image.isNull()) {
@@ -876,7 +876,7 @@ void ThumbnailSequence::Impl::insert(const PageInfo& page_info, BeforeOrAfter be
   }
 
   // If m_orderProvider is not set, ord_it won't change.
-  ord_it = itemInsertPosition(m_itemsInOrder.begin(), m_itemsInOrder.end(), page_info.id(),
+  ord_it = itemInsertPosition(m_itemsInOrder.begin(), m_itemsInOrder.end(), new_page.id(),
                               /*page_incomplete=*/true, ord_it);
 
   double offset = 0.0;
@@ -889,13 +889,13 @@ void ThumbnailSequence::Impl::insert(const PageInfo& page_info, BeforeOrAfter be
       offset = it->composite->y() + it->composite->boundingRect().height() + SPACING;
     }
   }
-  std::unique_ptr<CompositeItem> composite(getCompositeItem(0, page_info));
+  std::unique_ptr<CompositeItem> composite(getCompositeItem(0, new_page));
   composite->setPos(0.0, offset);
   composite->updateSceneRect(m_sceneRect);
 
   const QPointF pos_delta(0.0, composite->boundingRect().height() + SPACING);
 
-  const Item item(page_info, composite.get());
+  const Item item(new_page, composite.get());
   const std::pair<ItemsInOrder::iterator, bool> ins(m_itemsInOrder.insert(ord_it, item));
   composite->setItem(&*ins.first);
   m_graphicsScene.addItem(composite.release());
@@ -909,16 +909,16 @@ void ThumbnailSequence::Impl::insert(const PageInfo& page_info, BeforeOrAfter be
   commitSceneRect();
 }  // ThumbnailSequence::Impl::insert
 
-void ThumbnailSequence::Impl::removePages(const std::set<PageId>& to_remove) {
+void ThumbnailSequence::Impl::removePages(const std::set<PageId>& pages_to_remove) {
   m_sceneRect = QRectF(0, 0, 0, 0);
 
-  const std::set<PageId>::const_iterator to_remove_end(to_remove.end());
+  const std::set<PageId>::const_iterator to_remove_end(pages_to_remove.end());
   QPointF pos_delta(0, 0);
 
   ItemsInOrder::iterator ord_it(m_itemsInOrder.begin());
   const ItemsInOrder::iterator ord_end(m_itemsInOrder.end());
   while (ord_it != ord_end) {
-    if (to_remove.find(ord_it->pageInfo.id()) == to_remove_end) {
+    if (pages_to_remove.find(ord_it->pageInfo.id()) == to_remove_end) {
       // Keeping this page.
       if (pos_delta != QPointF(0, 0)) {
         ord_it->composite->setPos(ord_it->composite->pos() + pos_delta);
@@ -992,7 +992,7 @@ std::vector<PageRange> ThumbnailSequence::Impl::selectedRanges() const {
       break;
     }
 
-    ranges.push_back(PageRange());
+    ranges.emplace_back();
     PageRange& range = ranges.back();
     for (; it != end && it->isSelected(); ++it) {
       range.pages.push_back(it->pageInfo.id());
@@ -1018,8 +1018,8 @@ void ThumbnailSequence::Impl::sceneContextMenuEvent(QGraphicsSceneContextMenuEve
   emit m_owner.pastLastPageContextMenuRequested(evt->screenPos());
 }
 
-void ThumbnailSequence::Impl::itemSelectedByUser(CompositeItem* composite, const Qt::KeyboardModifiers modifiers) {
-  const ItemsById::iterator id_it(m_itemsById.iterator_to(*composite->item()));
+void ThumbnailSequence::Impl::itemSelectedByUser(CompositeItem* composite_item, const Qt::KeyboardModifiers modifiers) {
+  const ItemsById::iterator id_it(m_itemsById.iterator_to(*composite_item->item()));
 
   if (modifiers & Qt::ControlModifier) {
     selectItemWithControl(id_it);

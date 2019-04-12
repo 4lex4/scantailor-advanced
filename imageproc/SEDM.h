@@ -22,7 +22,7 @@
 #include <QSize>
 #include <cstdint>
 #include <vector>
-#include "foundation/FlagOps.h"
+#include <FlagOps.h>
 
 namespace imageproc {
 class BinaryImage;

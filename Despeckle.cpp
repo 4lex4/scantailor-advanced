@@ -25,8 +25,8 @@
 #include "Dpi.h"
 #include "FastQueue.h"
 #include "TaskStatus.h"
-#include "imageproc/BinaryImage.h"
-#include "imageproc/ConnectivityMap.h"
+#include <BinaryImage.h>
+#include <ConnectivityMap.h>
 
 /**
  * \file

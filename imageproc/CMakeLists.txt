@@ -1,5 +1,3 @@
-project(imageproc)
-
 set(sources
     Constants.h Constants.cpp
     BinaryImage.cpp BinaryImage.h
@@ -51,10 +49,15 @@ set(sources
     BadAllocIfNull.cpp BadAllocIfNull.h
     ColorSegmenter.cpp ColorSegmenter.h
     ColorTable.cpp ColorTable.h
-    ImageCombination.h ImageCombination.cpp)
+    ImageCombination.h ImageCombination.cpp
+    Dpi.cpp Dpi.h
+    Dpm.cpp Dpm.h
+    DebugImages.h)
 
 source_group(Sources FILES ${sources})
 
 add_library(imageproc STATIC ${sources})
+target_link_libraries(imageproc PUBLIC foundation math)
+target_include_directories(imageproc PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_subdirectory(tests)

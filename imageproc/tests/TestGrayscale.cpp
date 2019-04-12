@@ -19,7 +19,7 @@
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
 #include <cstdlib>
-#include "Grayscale.h"
+#include <Grayscale.h>
 #include "Utils.h"
 
 namespace imageproc {

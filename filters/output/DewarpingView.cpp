@@ -23,8 +23,8 @@
 #include <boost/foreach.hpp>
 #include "ImagePresentation.h"
 #include "ToLineProjector.h"
-#include "dewarping/CylindricalSurfaceDewarper.h"
-#include "imageproc/Constants.h"
+#include <CylindricalSurfaceDewarper.h>
+#include <Constants.h>
 #include "spfit/ConstraintSet.h"
 #include "spfit/LinearForceBalancer.h"
 #include "spfit/PolylineModelShape.h"

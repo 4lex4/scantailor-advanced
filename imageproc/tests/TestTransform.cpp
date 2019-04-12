@@ -22,8 +22,8 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
-#include "Grayscale.h"
-#include "Transform.h"
+#include <Grayscale.h>
+#include <Transform.h>
 #include "Utils.h"
 
 namespace imageproc {

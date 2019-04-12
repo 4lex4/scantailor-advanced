@@ -19,7 +19,7 @@
 #include "Dependencies.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include "imageproc/PolygonUtils.h"
+#include <PolygonUtils.h>
 
 using namespace imageproc;
 
@@ -31,7 +31,7 @@ Dependencies::Dependencies(const QPolygonF& page_outline, const OrthogonalRotati
 
 Dependencies::Dependencies(const QDomElement& deps_el)
     : m_pageOutline(XmlUnmarshaller::polygonF(deps_el.namedItem("page-outline").toElement())),
-      m_rotation(XmlUnmarshaller::rotation(deps_el.namedItem("rotation").toElement())) {}
+      m_rotation(deps_el.namedItem("rotation").toElement()) {}
 
 Dependencies::~Dependencies() = default;
 
@@ -47,7 +47,7 @@ QDomElement Dependencies::toXml(QDomDocument& doc, const QString& name) const {
   XmlMarshaller marshaller(doc);
 
   QDomElement el(doc.createElement(name));
-  el.appendChild(marshaller.rotation(m_rotation, "rotation"));
+  el.appendChild(m_rotation.toXml(doc, "rotation"));
   el.appendChild(marshaller.polygonF(m_pageOutline, "page-outline"));
 
   return el;

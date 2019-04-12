@@ -34,7 +34,7 @@
 #include "Params.h"
 #include "Settings.h"
 #include "Utils.h"
-#include "imageproc/PolygonUtils.h"
+#include <PolygonUtils.h>
 
 using namespace imageproc;
 

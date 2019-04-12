@@ -19,8 +19,8 @@
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
 #include <cstdlib>
-#include "BWColor.h"
-#include "BinaryImage.h"
+#include <BWColor.h>
+#include <BinaryImage.h>
 #include "Utils.h"
 
 namespace imageproc {

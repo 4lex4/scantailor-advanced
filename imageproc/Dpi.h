@@ -16,32 +16,48 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Dpm.h"
-#include <QImage>
-#include "Dpi.h"
-#include "imageproc/Constants.h"
+#ifndef DPI_H_
+#define DPI_H_
 
-using namespace imageproc;
+#include <QSize>
 
-Dpm::Dpm(const QSize size) : m_xDpm(size.width()), m_yDpm(size.height()) {}
+class Dpm;
+class QDomElement;
+class QDomDocument;
 
-Dpm::Dpm(const Dpi dpi)
-    : m_xDpm(qRound(dpi.horizontal() * constants::DPI2DPM)), m_yDpm(qRound(dpi.vertical() * constants::DPI2DPM)) {}
+/**
+ * \brief Dots per inch (horizontal and vertical).
+ */
+class Dpi {
+ public:
+  Dpi();
 
-Dpm::Dpm(const QImage& image) : m_xDpm(image.dotsPerMeterX()), m_yDpm(image.dotsPerMeterY()) {}
+  Dpi(int horizontal, int vertical);
 
-bool Dpm::isNull() const {
-  return Dpi(*this).isNull();
-}
+  explicit Dpi(const QDomElement& el);
 
-QSize Dpm::toSize() const {
-  if (isNull()) {
-    return QSize();
-  } else {
-    return QSize(m_xDpm, m_yDpm);
-  }
-}
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-bool Dpm::operator==(const Dpm& other) const {
-  return m_xDpm == other.m_xDpm && m_yDpm == other.m_yDpm;
-}
+  Dpi(Dpm dpm);
+
+  explicit Dpi(QSize size);
+
+  int horizontal() const;
+
+  int vertical() const;
+
+  QSize toSize() const;
+
+  bool isNull() const;
+
+  bool operator==(const Dpi& other) const;
+
+  bool operator!=(const Dpi& other) const;
+
+ private:
+  int m_xDpi;
+  int m_yDpi;
+};
+
+
+#endif  // ifndef DPI_H_

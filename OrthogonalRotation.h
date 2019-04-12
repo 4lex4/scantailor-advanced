@@ -19,16 +19,27 @@
 #ifndef ORTHOGONALROTATION_H_
 #define ORTHOGONALROTATION_H_
 
+class QString;
 class QSize;
 class QSizeF;
 class QPointF;
 class QTransform;
+class QDomElement;
+class QDomDocument;
 
 class OrthogonalRotation {
  public:
-  OrthogonalRotation() : m_degrees(0) {}
+  OrthogonalRotation();
 
-  int toDegrees() const { return m_degrees; }
+  explicit OrthogonalRotation(const QDomElement& el);
+
+  QDomElement toXml(QDomDocument& doc, const QString& name) const;
+
+  bool operator==(const OrthogonalRotation& other) const;
+
+  bool operator!=(const OrthogonalRotation& other) const;
+
+  int toDegrees() const;
 
   void nextClockwiseDirection();
 
@@ -51,14 +62,5 @@ class OrthogonalRotation {
  private:
   int m_degrees;
 };
-
-
-inline bool operator==(const OrthogonalRotation& lhs, const OrthogonalRotation& rhs) {
-  return lhs.toDegrees() == rhs.toDegrees();
-}
-
-inline bool operator!=(const OrthogonalRotation& lhs, const OrthogonalRotation& rhs) {
-  return lhs.toDegrees() != rhs.toDegrees();
-}
 
 #endif  // ifndef ORTHOGONALROTATION_H_

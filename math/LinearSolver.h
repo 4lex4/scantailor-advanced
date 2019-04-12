@@ -24,9 +24,9 @@
 #include <cmath>
 #include <cstddef>
 #include <limits>
+#include <NonCopyable.h>
 #include <stdexcept>
 #include <string>
-#include "NonCopyable.h"
 #include "StaticPool.h"
 
 /**

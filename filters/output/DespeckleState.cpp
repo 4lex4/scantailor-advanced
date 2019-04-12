@@ -21,7 +21,7 @@
 #include "Despeckle.h"
 #include "DespeckleVisualization.h"
 #include "TaskStatus.h"
-#include "imageproc/RasterOp.h"
+#include <RasterOp.h>
 
 using namespace imageproc;
 

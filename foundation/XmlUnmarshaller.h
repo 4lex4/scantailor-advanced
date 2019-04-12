@@ -1,6 +1,6 @@
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
-    Copyright (C) 2007-2008  Joseph Artsimovich <joseph_a@mail.ru>
+    Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,42 +16,37 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DPI_H_
-#define DPI_H_
+#ifndef XMLUNMARSHALLER_H_
+#define XMLUNMARSHALLER_H_
 
-#include <QSize>
+class QString;
+class QDomElement;
+class QSize;
+class QSizeF;
+class QPointF;
+class QLineF;
+class QRect;
+class QRectF;
+class QPolygonF;
 
-class Dpm;
-
-/**
- * \brief Dots per inch (horizontal and vertical).
- */
-class Dpi {
+class XmlUnmarshaller {
  public:
-  Dpi() : m_xDpi(0), m_yDpi(0) {}
+  static QString string(const QDomElement& el);
 
-  Dpi(int horizontal, int vertical) : m_xDpi(horizontal), m_yDpi(vertical) {}
+  static QSize size(const QDomElement& el);
 
-  Dpi(Dpm dpm);
+  static QSizeF sizeF(const QDomElement& el);
 
-  explicit Dpi(QSize size);
+  static QPointF pointF(const QDomElement& el);
 
-  int horizontal() const { return m_xDpi; }
+  static QLineF lineF(const QDomElement& el);
 
-  int vertical() const { return m_yDpi; }
+  static QRect rect(const QDomElement& el);
 
-  QSize toSize() const;
+  static QRectF rectF(const QDomElement& el);
 
-  bool isNull() const { return m_xDpi <= 1 || m_yDpi <= 1; }
-
-  bool operator==(const Dpi& other) const;
-
-  bool operator!=(const Dpi& other) const { return !(*this == other); }
-
- private:
-  int m_xDpi;
-  int m_yDpi;
+  static QPolygonF polygonF(const QDomElement& el);
 };
 
 
-#endif  // ifndef DPI_H_
+#endif  // ifndef XMLUNMARSHALLER_H_

@@ -25,8 +25,8 @@
 #include <boost/test/auto_unit_test.hpp>
 #include <cmath>
 #include <cstdlib>
-#include "BinaryImage.h"
-#include "SkewFinder.h"
+#include <BinaryImage.h>
+#include <SkewFinder.h>
 
 namespace imageproc {
 namespace tests {

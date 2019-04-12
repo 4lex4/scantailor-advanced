@@ -23,9 +23,6 @@
 #include <QPolygonF>
 #include <QRect>
 #include <QString>
-#include "Dpi.h"
-#include "Margins.h"
-#include "OrthogonalRotation.h"
 
 QString XmlUnmarshaller::string(const QDomElement& el) {
   return el.text();  // FIXME: this needs unescaping, but Qt doesn't provide such functionality
@@ -43,36 +40,6 @@ QSizeF XmlUnmarshaller::sizeF(const QDomElement& el) {
   const double height = el.attribute("height").toDouble();
 
   return QSizeF(width, height);
-}
-
-Dpi XmlUnmarshaller::dpi(const QDomElement& el) {
-  const int hor = el.attribute("horizontal").toInt();
-  const int ver = el.attribute("vertical").toInt();
-
-  return Dpi(hor, ver);
-}
-
-OrthogonalRotation XmlUnmarshaller::rotation(const QDomElement& el) {
-  const int degrees = el.attribute("degrees").toInt();
-  OrthogonalRotation rotation;
-  for (int i = 0; i < 4; ++i) {
-    if (rotation.toDegrees() == degrees) {
-      break;
-    }
-    rotation.nextClockwiseDirection();
-  }
-
-  return rotation;
-}
-
-Margins XmlUnmarshaller::margins(const QDomElement& el) {
-  Margins margins;
-  margins.setLeft(el.attribute("left").toDouble());
-  margins.setRight(el.attribute("right").toDouble());
-  margins.setTop(el.attribute("top").toDouble());
-  margins.setBottom(el.attribute("bottom").toDouble());
-
-  return margins;
 }
 
 QPointF XmlUnmarshaller::pointF(const QDomElement& el) {

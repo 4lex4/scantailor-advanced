@@ -18,7 +18,6 @@
 
 #include "DraggableLineSegment.h"
 #include <QPainter>
-#include "ImageViewBase.h"
 
 DraggableLineSegment::DraggableLineSegment() : m_proximityPriority(0) {}
 

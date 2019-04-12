@@ -4,6 +4,7 @@
 #include "RelinkablePath.h"
 #include "Utils.h"
 
+using namespace core;
 using namespace imageproc;
 
 void ImageSettings::clear() {

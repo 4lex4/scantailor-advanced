@@ -16,25 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Dpi.h"
-#include "Dpm.h"
-#include "imageproc/Constants.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-using namespace imageproc;
+#define BOOST_AUTO_TEST_MAIN
 
-Dpi::Dpi(const QSize size) : m_xDpi(size.width()), m_yDpi(size.height()) {}
-
-Dpi::Dpi(const Dpm dpm)
-    : m_xDpi(qRound(dpm.horizontal() * constants::DPM2DPI)), m_yDpi(qRound(dpm.vertical() * constants::DPM2DPI)) {}
-
-QSize Dpi::toSize() const {
-  if (isNull()) {
-    return QSize();
-  } else {
-    return QSize(m_xDpi, m_yDpi);
-  }
-}
-
-bool Dpi::operator==(const Dpi& other) const {
-  return m_xDpi == other.m_xDpi && m_yDpi == other.m_yDpi;
-}
+#include <boost/test/auto_unit_test.hpp>

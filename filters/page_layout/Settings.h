@@ -21,7 +21,6 @@
 
 #include <DeviationProvider.h>
 #include <memory>
-#include "Guide.h"
 #include "Margins.h"
 #include "NonCopyable.h"
 #include "ref_countable.h"
@@ -36,6 +35,7 @@ class QRectF;
 namespace page_layout {
 class Params;
 class Alignment;
+class Guide;
 
 class Settings : public ref_countable {
   DECLARE_NON_COPYABLE(Settings)

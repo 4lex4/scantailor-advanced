@@ -11,8 +11,6 @@ set(sources
     InteractiveXSpline.cpp InteractiveXSpline.h
     DraggablePolygon.cpp DraggablePolygon.h)
 
-source_group(Sources FILES ${sources})
-
 add_library(interaction STATIC ${sources})
 target_link_libraries(interaction PUBLIC stcore)
 target_include_directories(

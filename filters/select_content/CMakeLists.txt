@@ -1,8 +1,6 @@
 file(GLOB ui_files "ui/*.ui")
 qt5_wrap_ui(ui_sources ${ui_files})
 set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
-source_group("UI Files" FILES ${ui_files})
-source_group("Generated" FILES ${ui_sources})
 
 set(sources
     ImageView.cpp ImageView.h
@@ -20,8 +18,6 @@ set(sources
     PhysSizeCalc.cpp PhysSizeCalc.h
     OrderByWidthProvider.cpp OrderByWidthProvider.h
     OrderByHeightProvider.cpp OrderByHeightProvider.h)
-
-source_group("Sources" FILES ${sources})
 
 add_library(select_content STATIC ${sources} ${ui_sources})
 target_link_libraries(select_content PUBLIC stcore)

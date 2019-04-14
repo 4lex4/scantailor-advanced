@@ -1,8 +1,6 @@
 file(GLOB ui_files "ui/*.ui")
 qt5_wrap_ui(ui_sources ${ui_files})
 set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
-source_group("UI Files" FILES ${ui_files})
-source_group("Generated" FILES ${ui_sources})
 
 set(sources
     SplitLineObject.h
@@ -23,8 +21,6 @@ set(sources
     UnremoveButton.cpp UnremoveButton.h
     OrderBySplitTypeProvider.cpp OrderBySplitTypeProvider.h
     PageLayoutAdapter.cpp PageLayoutAdapter.h)
-    
-source_group("Sources" FILES ${sources})
 
 add_library(page_split STATIC ${sources} ${ui_sources})
 target_link_libraries(page_split PUBLIC stcore)

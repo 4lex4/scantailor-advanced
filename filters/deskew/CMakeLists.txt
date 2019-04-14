@@ -1,8 +1,6 @@
 file(GLOB ui_files "ui/*.ui")
 qt5_wrap_ui(ui_sources ${ui_files})
 set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
-source_group("UI Files" FILES ${ui_files})
-source_group("Generated" FILES ${ui_sources})
 
 set(sources
     ImageView.cpp ImageView.h
@@ -15,8 +13,6 @@ set(sources
     Dependencies.cpp Dependencies.h
     Params.cpp Params.h
     ApplyDialog.cpp ApplyDialog.h)
-
-source_group("Sources" FILES ${sources})
 
 add_library(deskew STATIC ${sources} ${ui_sources})
 target_link_libraries(deskew PUBLIC stcore)

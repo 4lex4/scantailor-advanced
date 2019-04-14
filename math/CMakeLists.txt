@@ -10,7 +10,6 @@ set(generic_sources
     LinearFunction.cpp LinearFunction.h
     QuadraticFunction.cpp QuadraticFunction.h
     XSpline.cpp XSpline.h)
-source_group("Sources" FILES ${generic_sources})
 
 set(spfit_sources
     spfit/references.txt
@@ -24,13 +23,11 @@ set(spfit_sources
     spfit/OptimizationResult.cpp spfit/OptimizationResult.h
     spfit/Optimizer.cpp spfit/Optimizer.h
     spfit/SplineFitter.cpp spfit/SplineFitter.h)
-source_group("Sources\\Spline Fitting Framework" FILES ${spfit_sources})
 
 set(adiff_sources
     adiff/references.txt
     adiff/SparseMap.cpp adiff/SparseMap.h
     adiff/Function.cpp adiff/Function.h)
-source_group("Sources\\Differentiation Framework" FILES ${adiff_sources})
 
 add_library(math STATIC ${generic_sources} ${spfit_sources} ${adiff_sources})
 target_link_libraries(math PUBLIC foundation)

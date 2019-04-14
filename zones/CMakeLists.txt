@@ -15,8 +15,6 @@ set(sources
     ZoneContextMenuItem.h
     ZoneDragInteraction.cpp ZoneDragInteraction.h)
 
-source_group(Sources FILES ${sources})
-
 add_library(zones STATIC ${sources})
 target_link_libraries(zones PUBLIC stcore)
 target_include_directories(

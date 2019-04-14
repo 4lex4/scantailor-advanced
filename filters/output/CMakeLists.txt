@@ -1,8 +1,6 @@
 file(GLOB ui_files "ui/*.ui")
 qt5_wrap_ui(ui_sources ${ui_files})
 set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
-source_group("UI Files" FILES ${ui_files})
-source_group("Generated" FILES ${ui_sources})
 
 set(sources
     ApplyColorsDialog.cpp ApplyColorsDialog.h
@@ -54,8 +52,6 @@ set(sources
     BinarizationOptionsWidget.h 
     PictureShapeOptions.cpp PictureShapeOptions.h 
     OutputProcessingParams.cpp OutputProcessingParams.h)
-
-source_group("Sources" FILES ${sources})
 
 add_library(output STATIC ${sources} ${ui_sources})
 add_dependencies(output toplevel_ui_sources)

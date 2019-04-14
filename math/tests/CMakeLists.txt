@@ -4,8 +4,6 @@ set(sources
     TestSqDistApproximant.cpp
     TestMatrixCalc.cpp)
 
-source_group("Sources" FILES ${sources})
-
 add_executable(math_tests ${sources})
 target_link_libraries(
     math_tests 

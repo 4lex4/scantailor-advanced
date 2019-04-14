@@ -270,11 +270,9 @@ foreach (ui_file ${common_ui_files})
   list(REMOVE_ITEM gui_only_ui_files "${ui_file}")
 endforeach()
 
-source_group("UI Files" FILES ${common_ui_files} ${gui_only_ui_files})
 qt5_wrap_ui(common_ui_sources ${common_ui_files})
 qt5_wrap_ui(gui_only_ui_sources ${gui_only_ui_files})
 set_source_files_properties(${common_ui_sources} ${gui_only_ui_files} PROPERTIES GENERATED TRUE)
-add_subdirectory(ui)
 
 add_custom_target(toplevel_ui_sources DEPENDS ${common_ui_sources} ${gui_only_ui_sources})
 
@@ -291,11 +289,6 @@ foreach (resource_file ${resource_files})
   qt5_add_resources(resource_sources ${resource_file})
 endforeach()
 set_source_files_properties(${resource_sources} PROPERTIES GENERATED TRUE)
-source_group("Generated" FILES ${common_ui_sources} ${gui_only_ui_sources} ${resource_sources})
-source_group("Resources" FILES ${resource_files})
-if (WIN32)
-  source_group("Resources" FILES resources/win32/resources.rc)
-endif()
 
 set(common_sources
     BackgroundExecutor.cpp BackgroundExecutor.h
@@ -426,10 +419,6 @@ set(gui_only_sources
     StatusBarPanel.cpp StatusBarPanel.h
     DefaultParamsDialog.cpp DefaultParamsDialog.h
     CollapsibleGroupBox.cpp CollapsibleGroupBox.h)
-
-source_group("Sources" FILES ${common_sources} ${gui_only_sources})
-
-source_group("Special Headers" FILES version.h config.h.in)
 
 set(win32_resource_file)
 if (WIN32)

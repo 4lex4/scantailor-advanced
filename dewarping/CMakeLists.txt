@@ -11,8 +11,6 @@ set(sources
     DewarpingPointMapper.cpp DewarpingPointMapper.h
     RasterDewarper.cpp RasterDewarper.h)
 
-source_group("Sources" FILES ${sources})
-
 add_library(dewarping STATIC ${sources})
 target_link_libraries(dewarping PUBLIC imageproc)
 target_include_directories(dewarping PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")

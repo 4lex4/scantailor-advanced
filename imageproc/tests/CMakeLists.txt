@@ -16,7 +16,6 @@ set(sources
     TestSEDM.cpp
     TestRastLineFinder.cpp
     Utils.cpp Utils.h)
-source_group("Sources" FILES ${sources})
 
 remove_definitions(-DBUILDING_IMAGEPROC)
 add_executable(imageproc_tests ${sources})

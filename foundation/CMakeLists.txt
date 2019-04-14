@@ -29,7 +29,6 @@ set(sources
     ValueConv.h
     Hashes.h
     Utils.cpp Utils.h)
-source_group("Sources" FILES ${sources})
 
 add_library(foundation STATIC ${sources})
 target_link_libraries(foundation PUBLIC Qt5::Core Qt5::Xml Qt5::Gui)

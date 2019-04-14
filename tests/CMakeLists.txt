@@ -3,8 +3,6 @@ set(sources
     TestContentSpanFinder.cpp
     TestSmartFilenameOrdering.cpp)
 
-source_group("Sources" FILES ${sources})
-
 add_executable(core_tests ${sources})
 target_link_libraries(
     core_tests

@@ -54,8 +54,6 @@ set(sources
     Dpm.cpp Dpm.h
     DebugImages.h)
 
-source_group(Sources FILES ${sources})
-
 add_library(imageproc STATIC ${sources})
 target_link_libraries(imageproc PUBLIC foundation math)
 target_include_directories(imageproc PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")

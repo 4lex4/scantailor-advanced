@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>OrientationApplyDialog</class>
- <widget class="QDialog" name="OrientationApplyDialog">
+ <class>select_content::ApplyDialog</class>
+ <widget class="QDialog" name="select_content::ApplyDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -9,14 +9,43 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>294</height>
+    <width>362</width>
+    <height>358</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Fix Orientation</string>
+   <string>Select Content</string>
   </property>
-  <layout class="QVBoxLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_7">
+   <item>
+    <widget class="QGroupBox" name="optionsBox">
+     <property name="title">
+      <string>Options</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_6">
+      <item>
+       <widget class="QCheckBox" name="applyContentBoxOption">
+        <property name="text">
+         <string>Apply content box</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="applyPageBoxOption">
+        <property name="text">
+         <string>Apply page box</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
@@ -172,7 +201,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>OrientationApplyDialog</receiver>
+   <receiver>ApplyDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

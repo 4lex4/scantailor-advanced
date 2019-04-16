@@ -26,13 +26,13 @@
 #include "PageId.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include "ui_OutputChangeDpiDialog.h"
+#include "ui_ChangeDpiDialog.h"
 
 class PageSelectionAccessor;
 class Dpi;
 
 namespace output {
-class ChangeDpiDialog : public QDialog, private Ui::OutputChangeDpiDialog {
+class ChangeDpiDialog : public QDialog, private Ui::ChangeDpiDialog {
   Q_OBJECT
  public:
   ChangeDpiDialog(QWidget* parent,

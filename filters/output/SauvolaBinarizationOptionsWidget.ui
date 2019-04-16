@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SauvolaBinarizationOptionsWidget</class>
- <widget class="QWidget" name="SauvolaBinarizationOptionsWidget">
+ <class>output::SauvolaBinarizationOptionsWidget</class>
+ <widget class="QWidget" name="output::SauvolaBinarizationOptionsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

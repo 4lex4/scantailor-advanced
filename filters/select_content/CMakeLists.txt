@@ -1,6 +1,8 @@
-file(GLOB ui_files "ui/*.ui")
-qt5_wrap_ui(ui_sources ${ui_files})
-set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
+set(CMAKE_AUTOUIC ON)
+
+set(ui_files
+    ApplyDialog.ui
+    OptionsWidget.ui)
 
 set(sources
     ImageView.cpp ImageView.h
@@ -19,7 +21,7 @@ set(sources
     OrderByWidthProvider.cpp OrderByWidthProvider.h
     OrderByHeightProvider.cpp OrderByHeightProvider.h)
 
-add_library(select_content STATIC ${sources} ${ui_sources})
+add_library(select_content STATIC ${sources} ${ui_files})
 target_link_libraries(select_content PUBLIC stcore)
 target_include_directories(select_content PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 

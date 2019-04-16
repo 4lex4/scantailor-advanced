@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SelectContentOptionsWidget</class>
- <widget class="QWidget" name="SelectContentOptionsWidget">
+ <class>select_content::OptionsWidget</class>
+ <widget class="QWidget" name="select_content::OptionsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -308,7 +308,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../resources/resources.qrc"/>
+  <include location="../../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

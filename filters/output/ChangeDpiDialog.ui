@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>OutputChangeDpiDialog</class>
- <widget class="QDialog" name="OutputChangeDpiDialog">
+ <class>output::ChangeDpiDialog</class>
+ <widget class="QDialog" name="output::ChangeDpiDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -188,7 +188,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>OutputChangeDpiDialog</receiver>
+   <receiver>ChangeDpiDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -27,12 +27,12 @@
 #include "PageRange.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include "ui_OrientationApplyDialog.h"
+#include "ui_ApplyDialog.h"
 
 class PageSelectionAccessor;
 
 namespace fix_orientation {
-class ApplyDialog : public QDialog, private Ui::OrientationApplyDialog {
+class ApplyDialog : public QDialog, private Ui::ApplyDialog {
   Q_OBJECT
  public:
   ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);

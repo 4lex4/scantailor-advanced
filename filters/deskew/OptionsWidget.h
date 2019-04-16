@@ -27,12 +27,12 @@
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
 #include "intrusive_ptr.h"
-#include "ui_DeskewOptionsWidget.h"
+#include "ui_OptionsWidget.h"
 
 namespace deskew {
 class Settings;
 
-class OptionsWidget : public FilterOptionsWidget, private Ui::DeskewOptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   Q_OBJECT
  public:
   class UiData {

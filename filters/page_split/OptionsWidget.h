@@ -30,14 +30,14 @@
 #include "PageLayout.h"
 #include "PageSelectionAccessor.h"
 #include "intrusive_ptr.h"
-#include "ui_PageSplitOptionsWidget.h"
+#include "ui_OptionsWidget.h"
 
 class ProjectPages;
 
 namespace page_split {
 class Settings;
 
-class OptionsWidget : public FilterOptionsWidget, private Ui::PageSplitOptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   Q_OBJECT
  public:
   class UiData {

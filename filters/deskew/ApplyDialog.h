@@ -24,12 +24,12 @@
 #include "PageId.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include "ui_DeskewApplyDialog.h"
+#include "ui_ApplyDialog.h"
 
 class PageSelectionAccessor;
 
 namespace deskew {
-class ApplyDialog : public QDialog, private Ui::DeskewApplyDialog {
+class ApplyDialog : public QDialog, private Ui::ApplyDialog {
   Q_OBJECT
  public:
   ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);

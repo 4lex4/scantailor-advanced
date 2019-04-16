@@ -25,12 +25,12 @@
 #include "PageId.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include "ui_OutputApplyColorsDialog.h"
+#include "ui_ApplyColorsDialog.h"
 
 class PageSelectionAccessor;
 
 namespace output {
-class ApplyColorsDialog : public QDialog, private Ui::OutputApplyColorsDialog {
+class ApplyColorsDialog : public QDialog, private Ui::ApplyColorsDialog {
   Q_OBJECT
  public:
   ApplyColorsDialog(QWidget* parent, const PageId& page_id, const PageSelectionAccessor& page_selection_accessor);

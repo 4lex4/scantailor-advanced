@@ -26,12 +26,12 @@
 #include "PageRange.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include "ui_PageLayoutApplyDialog.h"
+#include "ui_ApplyDialog.h"
 
 class PageSelectionAccessor;
 
 namespace page_layout {
-class ApplyDialog : public QDialog, private Ui::PageLayoutApplyDialog {
+class ApplyDialog : public QDialog, private Ui::ApplyDialog {
   Q_OBJECT
  public:
   ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);

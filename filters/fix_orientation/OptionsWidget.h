@@ -25,12 +25,12 @@
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
 #include "intrusive_ptr.h"
-#include "ui_OrientationOptionsWidget.h"
+#include "ui_OptionsWidget.h"
 
 namespace fix_orientation {
 class Settings;
 
-class OptionsWidget : public FilterOptionsWidget, private Ui::OrientationOptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   Q_OBJECT
  public:
   OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);

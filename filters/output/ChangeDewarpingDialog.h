@@ -27,7 +27,7 @@
 #include "PageId.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include "ui_OutputChangeDewarpingDialog.h"
+#include "ui_ChangeDewarpingDialog.h"
 
 class PageSelectionAccessor;
 
@@ -51,7 +51,7 @@ class ChangeDewarpingDialog : public QDialog {
   void onSubmit();
 
  private:
-  Ui::OutputChangeDewarpingDialog ui;
+  Ui::ChangeDewarpingDialog ui;
   PageSequence m_pages;
   std::set<PageId> m_selectedPages;
   PageId m_curPage;

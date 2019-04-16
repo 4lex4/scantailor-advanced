@@ -100,7 +100,7 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="../resources/resources.qrc">
+        <iconset resource="resources/resources.qrc">
          <normaloff>:/icons/undo-22.png</normaloff>:/icons/undo-22.png</iconset>
        </property>
       </widget>
@@ -146,7 +146,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../resources/resources.qrc"/>
+  <include location="resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>

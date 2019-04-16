@@ -227,7 +227,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../resources/resources.qrc">
+                   <iconset resource="resources/resources.qrc">
                     <normaloff>:/icons/object-rotate-left.png</normaloff>:/icons/object-rotate-left.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -244,7 +244,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="../resources/resources.qrc">
+                   <iconset resource="resources/resources.qrc">
                     <normaloff>:/icons/object-rotate-right.png</normaloff>:/icons/object-rotate-right.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -291,7 +291,7 @@
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap resource="../resources/resources.qrc">:/icons/big-up-arrow.png</pixmap>
+                   <pixmap resource="resources/resources.qrc">:/icons/big-up-arrow.png</pixmap>
                   </property>
                  </widget>
                 </item>
@@ -469,7 +469,7 @@
                 <item>
                  <widget class="QToolButton" name="singlePageUncutBtn">
                   <property name="icon">
-                   <iconset resource="../resources/resources.qrc">
+                   <iconset resource="resources/resources.qrc">
                     <normaloff>:/icons/single_page_uncut.png</normaloff>
                     <normalon>:/icons/single_page_uncut_selected.png</normalon>:/icons/single_page_uncut.png</iconset>
                   </property>
@@ -493,7 +493,7 @@
                 <item>
                  <widget class="QToolButton" name="pagePlusOffcutBtn">
                   <property name="icon">
-                   <iconset resource="../resources/resources.qrc">
+                   <iconset resource="resources/resources.qrc">
                     <normaloff>:/icons/right_page_plus_offcut.png</normaloff>
                     <normalon>:/icons/right_page_plus_offcut_selected.png</normalon>:/icons/right_page_plus_offcut.png</iconset>
                   </property>
@@ -517,7 +517,7 @@
                 <item>
                  <widget class="QToolButton" name="twoPagesBtn">
                   <property name="icon">
-                   <iconset resource="../resources/resources.qrc">
+                   <iconset resource="resources/resources.qrc">
                     <normaloff>:/icons/two_pages.png</normaloff>
                     <normalon>:/icons/two_pages_selected.png</normalon>:/icons/two_pages.png</iconset>
                   </property>
@@ -1213,7 +1213,7 @@
                         <string>...</string>
                        </property>
                        <property name="icon">
-                        <iconset resource="../resources/resources.qrc">
+                        <iconset resource="resources/resources.qrc">
                          <normaloff>:/icons/stock-vchain-broken-24.png</normaloff>
                          <normalon>:/icons/stock-vchain-24.png</normalon>:/icons/stock-vchain-broken-24.png</iconset>
                        </property>
@@ -1261,7 +1261,7 @@
                         <string>...</string>
                        </property>
                        <property name="icon">
-                        <iconset resource="../resources/resources.qrc">
+                        <iconset resource="resources/resources.qrc">
                          <normaloff>:/icons/stock-vchain-broken-24.png</normaloff>
                          <normalon>:/icons/stock-vchain-24.png</normalon>:/icons/stock-vchain-broken-24.png</iconset>
                        </property>
@@ -1636,7 +1636,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-north-west-24.png</normaloff>:/icons/stock-gravity-north-west-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1659,7 +1659,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-north-24.png</normaloff>:/icons/stock-gravity-north-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1682,7 +1682,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-north-east-24.png</normaloff>:/icons/stock-gravity-north-east-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1705,7 +1705,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-west-24.png</normaloff>:/icons/stock-gravity-west-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1728,7 +1728,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-center-24.png</normaloff>:/icons/stock-center-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1754,7 +1754,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-east-24.png</normaloff>:/icons/stock-gravity-east-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1777,7 +1777,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-south-west-24.png</normaloff>:/icons/stock-gravity-south-west-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1800,7 +1800,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-south-24.png</normaloff>:/icons/stock-gravity-south-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -1823,7 +1823,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset resource="../resources/resources.qrc">
+                     <iconset resource="resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-south-east-24.png</normaloff>:/icons/stock-gravity-south-east-24.png</iconset>
                     </property>
                     <property name="iconSize">
@@ -3766,8 +3766,8 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources/resources.qrc"/>
-  <include location="../resources/resources.qrc"/>
+  <include location="resources/resources.qrc"/>
+  <include location="resources/resources.qrc"/>
  </resources>
  <connections>
   <connection>

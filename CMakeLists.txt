@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9.0)
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
 # Set cmake policies.
 if (POLICY CMP0071)
@@ -227,17 +227,19 @@ if (UNIX)
   link_libraries(Threads::Threads)
 endif()
 
+#=================================== System ===================================#
+
+set(EXTRA_LIBS "")
+if (WIN32)
+  list(APPEND EXTRA_LIBS winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool)
+endif()
+
 #=================================== Main ===================================#
 
 set(CMAKE_AUTOMOC ON)
 
 if (WIN32 AND MSVC)
   add_compile_definitions(NOMINMAX)
-endif()
-
-set(EXTRA_LIBS "")
-if (WIN32)
-  list(APPEND EXTRA_LIBS winmm imm32 ws2_32 ole32 oleaut32 uuid gdi32 comdlg32 winspool)
 endif()
 
 # Prepare config.h
@@ -263,19 +265,6 @@ add_subdirectory(dewarping)
 add_subdirectory(interaction)
 add_subdirectory(zones)
 add_subdirectory(tests)
-
-file(GLOB common_ui_files ui/ErrorWidget.ui)
-file(GLOB gui_only_ui_files "ui/*.ui")
-foreach (ui_file ${common_ui_files})
-  list(REMOVE_ITEM gui_only_ui_files "${ui_file}")
-endforeach()
-
-qt5_wrap_ui(common_ui_sources ${common_ui_files})
-qt5_wrap_ui(gui_only_ui_sources ${gui_only_ui_files})
-set_source_files_properties(${common_ui_sources} ${gui_only_ui_files} PROPERTIES GENERATED TRUE)
-
-add_custom_target(toplevel_ui_sources DEPENDS ${common_ui_sources} ${gui_only_ui_sources})
-
 add_subdirectory(filters/fix_orientation)
 add_subdirectory(filters/page_split)
 add_subdirectory(filters/deskew)
@@ -283,12 +272,8 @@ add_subdirectory(filters/select_content)
 add_subdirectory(filters/page_layout)
 add_subdirectory(filters/output)
 
-set(resource_files "resources/resources.qrc" "resources/dark_scheme.qrc" "resources/light_scheme.qrc")
-set(resource_sources)
-foreach (resource_file ${resource_files})
-  qt5_add_resources(resource_sources ${resource_file})
-endforeach()
-set_source_files_properties(${resource_sources} PROPERTIES GENERATED TRUE)
+set(common_ui_files
+    ErrorWidget.ui)
 
 set(common_sources
     BackgroundExecutor.cpp BackgroundExecutor.h
@@ -396,6 +381,23 @@ set(common_sources
     config.h.in
     ${common_ui_files})
 
+add_library(stcore STATIC ${common_sources} ${common_ui_files})
+target_link_libraries(
+    stcore
+    PRIVATE TIFF::TIFF PNG::PNG ZLIB::ZLIB JPEG::JPEG
+    PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml Qt5::Network Qt5::OpenGL Qt5::Svg
+    imageproc
+    fix_orientation page_split deskew select_content page_layout output)
+target_include_directories(stcore PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+set_target_properties(stcore PROPERTIES AUTOUIC ON)
+
+translation_sources(scantailor ${common_sources} ${common_ui_files})
+
+set(resource_files 
+    resources/resources.qrc 
+    resources/dark_scheme.qrc 
+    resources/light_scheme.qrc)
+
 set(gui_only_sources
     Application.cpp Application.h
     SkinnedButton.cpp SkinnedButton.h
@@ -420,7 +422,23 @@ set(gui_only_sources
     DefaultParamsDialog.cpp DefaultParamsDialog.h
     CollapsibleGroupBox.cpp CollapsibleGroupBox.h)
 
-set(win32_resource_file)
+set(gui_only_ui_files
+    AboutDialog.ui
+    BatchProcessingLowerPanel.ui
+    DefaultParamsDialog.ui
+    FixDpiDialog.ui
+    LoadFilesStatusDialog.ui
+    MainWindow.ui
+    NewOpenProjectPanel.ui
+    OutOfMemoryDialog.ui
+    ProjectFilesDialog.ui
+    RelinkingDialog.ui
+    RemovePagesDialog.ui
+    SettingsDialog.ui
+    StatusBarPanel.ui
+    SystemLoadWidget.ui)
+
+set(win32_resource_file "")
 if (WIN32)
   set(rc_file "${CMAKE_SOURCE_DIR}/resources/win32/resources.rc")
   file(GLOB win32_resources resources/win32/*.ico)
@@ -441,55 +459,37 @@ if (WIN32)
   endif()
 endif()
 
-add_library(stcore STATIC ${common_sources} ${common_ui_sources})
-target_link_libraries(
-    stcore
-    PRIVATE TIFF::TIFF PNG::PNG ZLIB::ZLIB JPEG::JPEG
-    PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml Qt5::Network Qt5::OpenGL Qt5::Svg
-    imageproc
-    fix_orientation page_split deskew select_content page_layout output)
-target_include_directories(stcore PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-
 add_executable(
-    scantailor WIN32 ${gui_only_sources} ${common_ui_sources} ${gui_only_ui_sources}
-    ${resource_sources} ${win32_resource_file} resources/icons/COPYING)
+    scantailor WIN32 ${gui_only_sources} ${gui_only_ui_files}
+    ${resource_files} ${win32_resource_file})
 target_link_libraries(
     scantailor
-    PRIVATE stcore
-    ${EXTRA_LIBS})
+    PRIVATE stcore ${EXTRA_LIBS})
 target_include_directories(scantailor PRIVATE "$<TARGET_PROPERTY:TIFF::TIFF,INTERFACE_INCLUDE_DIRECTORIES>")
+set_target_properties(
+    scantailor PROPERTIES
+    AUTOUIC ON
+    AUTORCC ON)
 install(TARGETS scantailor RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-# Translations
-translation_sources(
-    scantailor
-    ${common_sources} ${gui_only_sources})
-file(GLOB TRANSLATION_FILES translations/scantailor_*.ts)
+translation_sources(scantailor ${gui_only_sources} ${gui_only_ui_files})
 
-finalize_translation_set(scantailor ${TRANSLATION_FILES})
+# Translations
+file(GLOB translation_files translations/scantailor_*.ts)
+
+finalize_translation_set(scantailor ${translation_files})
 update_translations_target(update_translations scantailor)
 
-set(ts_files ${TRANSLATION_FILES})
-
-# Don't build *.qm files from *untranslated.ts
-set(FILTERED_TRANSLATION_FILES)
-foreach (ts_file ${ts_files})
-  if ("${ts_file}" MATCHES ".*untranslated.ts")
-    # Just skip it.
-  else()
-    list(APPEND FILTERED_TRANSLATION_FILES "${ts_file}")
-  endif()
-endforeach()
-
-qt5_add_translation(QM_FILES ${FILTERED_TRANSLATION_FILES})
-add_custom_target(compile_translations ALL DEPENDS ${QM_FILES})
-
+list(FILTER translation_files EXCLUDE REGEX ".*untranslated.ts")
+qt5_add_translation(qm_files ${translation_files})
+add_custom_target(compile_translations ALL DEPENDS ${qm_files})
 if (WIN32)
-  install(FILES ${QM_FILES} DESTINATION "${CMAKE_INSTALL_BINDIR}/translations")
+  install(FILES ${qm_files} DESTINATION "${CMAKE_INSTALL_BINDIR}/translations")
 else()
-  install(FILES ${QM_FILES} DESTINATION "share/${APPLICATION_NAME}/translations")
+  install(FILES ${qm_files} DESTINATION "share/${APPLICATION_NAME}/translations")
 endif()
 
+# Install extra files.
 if (WIN32)
   macro (add_runtime_libs_to_install Configuration Libs)
     set(configurations "${Configuration}")
@@ -581,12 +581,10 @@ if (UNIX)
   install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/mime/scantailor-project.xml" DESTINATION "share/mime/packages")
 endif()
 
-if (WIN32)
-  set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${CMAKE_INSTALL_BINDIR}")
-  if (MSVC)
-    set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
-  endif()
+if (WIN32 AND MSVC)
+  set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
 endif()
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 include(InstallRequiredSystemLibraries)
 
 # Packaging

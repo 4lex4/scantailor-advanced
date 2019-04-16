@@ -39,7 +39,7 @@
 #include "PageSelectionAccessor.h"
 #include "Params.h"
 #include "intrusive_ptr.h"
-#include "ui_OutputOptionsWidget.h"
+#include "ui_OptionsWidget.h"
 
 namespace dewarping {
 class DistortionModel;
@@ -48,7 +48,7 @@ class DistortionModel;
 namespace output {
 class Settings;
 
-class OptionsWidget : public FilterOptionsWidget, private Ui::OutputOptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   Q_OBJECT
  public:
   OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);

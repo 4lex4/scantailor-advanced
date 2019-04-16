@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SelectContentApplyDialog</class>
- <widget class="QDialog" name="SelectContentApplyDialog">
+ <class>page_split::SplitModeDialog</class>
+ <widget class="QDialog" name="page_split::SplitModeDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -9,53 +9,123 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>362</width>
-    <height>358</height>
+    <width>330</width>
+    <height>383</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Select Content</string>
+   <string>Split Pages</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_7">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
-    <widget class="QGroupBox" name="optionsBox">
-     <property name="title">
-      <string>Options</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_6">
-      <item>
-       <widget class="QCheckBox" name="applyContentBoxOption">
-        <property name="text">
-         <string>Apply content box</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="applyPageBoxOption">
-        <property name="text">
-         <string>Apply page box</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>1</width>
+         <height>1</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="layoutTypeLabel">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="pixmap">
+        <pixmap>:/icons/layout_type_auto.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>1</width>
+         <height>1</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Mode</string>
+       </property>
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QRadioButton" name="modeAuto">
+          <property name="text">
+           <string>Auto</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="modeManual">
+          <property name="text">
+           <string>Manual</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="optionsBox">
+       <property name="title">
+        <string>Options</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="applyCutOption">
+          <property name="text">
+           <string>Apply cut</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>1</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Apply to</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QRadioButton" name="thisPageOnlyRB">
+       <widget class="QRadioButton" name="thisPageRB">
         <property name="text">
-         <string>This page only (already applied)</string>
+         <string>This page only</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -79,14 +149,14 @@
       <item>
        <widget class="QRadioButton" name="thisEveryOtherRB">
         <property name="text">
-         <string extracomment="All odd or even pages, depending on the current page being odd or even.">This page and the following every other page</string>
+         <string>This page and the following every other page</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="everyOtherRB">
         <property name="text">
-         <string extracomment="All odd or even pages, depending on the current page being odd or even.">Every other page</string>
+         <string>Every other page</string>
         </property>
        </widget>
       </item>
@@ -98,9 +168,12 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item>
-         <spacer name="horizontalSpacer_6">
+         <spacer name="horizontalSpacer_5">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -110,7 +183,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>30</width>
-            <height>0</height>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -137,9 +210,9 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <spacer name="horizontalSpacer_5">
+         <spacer name="horizontalSpacer_6">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -149,7 +222,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>30</width>
-            <height>0</height>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -178,8 +251,8 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>17</width>
-       <height>0</height>
+       <width>1</width>
+       <height>1</height>
       </size>
      </property>
     </spacer>
@@ -201,16 +274,16 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>SelectContentApplyDialog</receiver>
+   <receiver>SplitModeDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>319</x>
-     <y>252</y>
+     <x>316</x>
+     <y>260</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
-     <y>256</y>
+     <y>274</y>
     </hint>
    </hints>
   </connection>

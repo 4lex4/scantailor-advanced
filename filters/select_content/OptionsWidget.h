@@ -32,12 +32,12 @@
 #include "Params.h"
 #include "PhysSizeCalc.h"
 #include "intrusive_ptr.h"
-#include "ui_SelectContentOptionsWidget.h"
+#include "ui_OptionsWidget.h"
 
 namespace select_content {
 class Settings;
 
-class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::SelectContentOptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::OptionsWidget {
   Q_OBJECT
  public:
   class UiData {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PageSplitOptionsWidget</class>
- <widget class="QWidget" name="PageSplitOptionsWidget">
+ <class>page_split::OptionsWidget</class>
+ <widget class="QWidget" name="page_split::OptionsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -50,7 +50,7 @@
         <item>
          <widget class="QToolButton" name="singlePageUncutBtn">
           <property name="icon">
-           <iconset resource="../../../resources/resources.qrc">
+           <iconset resource="../../resources/resources.qrc">
             <normaloff>:/icons/single_page_uncut.png</normaloff>
             <normalon>:/icons/single_page_uncut_selected.png</normalon>:/icons/single_page_uncut.png</iconset>
           </property>
@@ -74,7 +74,7 @@
         <item>
          <widget class="QToolButton" name="pagePlusOffcutBtn">
           <property name="icon">
-           <iconset resource="../../../resources/resources.qrc">
+           <iconset resource="../../resources/resources.qrc">
             <normaloff>:/icons/right_page_plus_offcut.png</normaloff>
             <normalon>:/icons/right_page_plus_offcut_selected.png</normalon>:/icons/right_page_plus_offcut.png</iconset>
           </property>
@@ -98,7 +98,7 @@
         <item>
          <widget class="QToolButton" name="twoPagesBtn">
           <property name="icon">
-           <iconset resource="../../../resources/resources.qrc">
+           <iconset resource="../../resources/resources.qrc">
             <normaloff>:/icons/two_pages.png</normaloff>
             <normalon>:/icons/two_pages_selected.png</normalon>:/icons/two_pages.png</iconset>
           </property>
@@ -259,7 +259,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../resources/resources.qrc"/>
+  <include location="../../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

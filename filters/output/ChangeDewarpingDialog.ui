@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>OutputChangeDewarpingDialog</class>
- <widget class="QDialog" name="OutputChangeDewarpingDialog">
+ <class>output::ChangeDewarpingDialog</class>
+ <widget class="QDialog" name="output::ChangeDewarpingDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -205,7 +205,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>OutputChangeDewarpingDialog</receiver>
+   <receiver>ChangeDewarpingDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

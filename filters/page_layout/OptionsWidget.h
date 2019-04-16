@@ -31,7 +31,7 @@
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
 #include "intrusive_ptr.h"
-#include "ui_PageLayoutOptionsWidget.h"
+#include "ui_OptionsWidget.h"
 
 class QToolButton;
 class ProjectPages;
@@ -39,7 +39,7 @@ class ProjectPages;
 namespace page_layout {
 class Settings;
 
-class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::PageLayoutOptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::OptionsWidget {
   Q_OBJECT
  public:
   OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);

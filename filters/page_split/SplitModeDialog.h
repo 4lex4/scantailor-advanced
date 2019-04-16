@@ -27,13 +27,13 @@
 #include "PageLayout.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"
-#include "ui_PageSplitModeDialog.h"
+#include "ui_SplitModeDialog.h"
 
 class ProjectPages;
 class PageSelectionAccessor;
 
 namespace page_split {
-class SplitModeDialog : public QDialog, private Ui::PageSplitModeDialog {
+class SplitModeDialog : public QDialog, private Ui::SplitModeDialog {
   Q_OBJECT
  public:
   SplitModeDialog(QWidget* parent,

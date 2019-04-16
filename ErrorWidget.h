@@ -21,14 +21,19 @@
 
 #include <QWidget>
 #include <Qt>
-#include "ui_ErrorWidget.h"
+#include <memory>
 
 class QString;
+namespace Ui {
+class ErrorWidget;
+}
 
-class ErrorWidget : public QWidget, private Ui::ErrorWidget {
+class ErrorWidget : public QWidget {
   Q_OBJECT
  public:
   explicit ErrorWidget(const QString& text, Qt::TextFormat fmt = Qt::AutoText);
+
+  virtual ~ErrorWidget();
 
  private slots:
 
@@ -36,6 +41,9 @@ class ErrorWidget : public QWidget, private Ui::ErrorWidget {
    * \see QLabel::linkActivated()
    */
   virtual void linkActivated(const QString& link) {}
+
+ private:
+  std::unique_ptr<Ui::ErrorWidget> ui;
 };
 
 

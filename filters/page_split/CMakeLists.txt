@@ -1,6 +1,8 @@
-file(GLOB ui_files "ui/*.ui")
-qt5_wrap_ui(ui_sources ${ui_files})
-set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
+set(CMAKE_AUTOUIC ON)
+
+set(ui_files
+    SplitModeDialog.ui
+    OptionsWidget.ui)
 
 set(sources
     SplitLineObject.h
@@ -22,7 +24,7 @@ set(sources
     OrderBySplitTypeProvider.cpp OrderBySplitTypeProvider.h
     PageLayoutAdapter.cpp PageLayoutAdapter.h)
 
-add_library(page_split STATIC ${sources} ${ui_sources})
+add_library(page_split STATIC ${sources} ${ui_files})
 target_link_libraries(page_split PUBLIC stcore)
 target_include_directories(page_split PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
 

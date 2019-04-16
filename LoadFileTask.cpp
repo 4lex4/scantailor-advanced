@@ -20,6 +20,7 @@
 #include <QDir>
 #include <QFile>
 #include <QTextDocument>
+#include <QCoreApplication>
 #include "AbstractFilter.h"
 #include "Dpm.h"
 #include "ErrorWidget.h"

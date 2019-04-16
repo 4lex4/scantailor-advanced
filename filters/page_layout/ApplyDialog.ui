@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PageSplitModeDialog</class>
- <widget class="QDialog" name="PageSplitModeDialog">
+ <class>page_layout::ApplyDialog</class>
+ <widget class="QDialog" name="page_layout::ApplyDialog">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -9,123 +9,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
-    <height>383</height>
+    <width>361</width>
+    <height>290</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Split Pages</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>1</width>
-         <height>1</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="layoutTypeLabel">
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="pixmap">
-        <pixmap>:/icons/layout_type_auto.png</pixmap>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>1</width>
-         <height>1</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Mode</string>
-       </property>
-       <layout class="QVBoxLayout">
-        <item>
-         <widget class="QRadioButton" name="modeAuto">
-          <property name="text">
-           <string>Auto</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="modeManual">
-          <property name="text">
-           <string>Manual</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="optionsBox">
-       <property name="title">
-        <string>Options</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QCheckBox" name="applyCutOption">
-          <property name="text">
-           <string>Apply cut</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>1</width>
-            <height>1</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </item>
+  <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
       <string>Apply to</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QRadioButton" name="thisPageRB">
         <property name="text">
-         <string>This page only</string>
+         <string>This page only (already applied)</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -149,14 +47,14 @@
       <item>
        <widget class="QRadioButton" name="thisEveryOtherRB">
         <property name="text">
-         <string>This page and the following every other page</string>
+         <string extracomment="All odd or even pages, depending on the current page being odd or even.">This page and the following every other page</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="everyOtherRB">
         <property name="text">
-         <string>Every other page</string>
+         <string extracomment="All odd or even pages, depending on the current page being odd or even.">Every other page</string>
         </property>
        </widget>
       </item>
@@ -170,7 +68,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="spacing">
-         <number>0</number>
+         <number>6</number>
         </property>
         <item>
          <spacer name="horizontalSpacer_5">
@@ -183,7 +81,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>30</width>
-            <height>1</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -210,7 +108,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
          <spacer name="horizontalSpacer_6">
           <property name="orientation">
@@ -222,7 +120,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>30</width>
-            <height>1</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -245,14 +143,14 @@
     </widget>
    </item>
    <item>
-    <spacer>
+    <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>1</width>
-       <height>1</height>
+       <width>20</width>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -274,7 +172,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>PageSplitModeDialog</receiver>
+   <receiver>ApplyDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

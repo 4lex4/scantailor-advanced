@@ -1,6 +1,14 @@
-file(GLOB ui_files "ui/*.ui")
-qt5_wrap_ui(ui_sources ${ui_files})
-set_source_files_properties(${ui_sources} PROPERTIES GENERATED TRUE)
+set(CMAKE_AUTOUIC ON)
+
+set(ui_files
+    OtsuBinarizationOptionsWidget.ui
+    ApplyColorsDialog.ui
+    ChangeDewarpingDialog.ui
+    ChangeDpiDialog.ui
+    OptionsWidget.ui
+    PictureZonePropDialog.ui
+    SauvolaBinarizationOptionsWidget.ui
+    WolfBinarizationOptionsWidget.ui)
 
 set(sources
     ApplyColorsDialog.cpp ApplyColorsDialog.h
@@ -53,11 +61,10 @@ set(sources
     PictureShapeOptions.cpp PictureShapeOptions.h 
     OutputProcessingParams.cpp OutputProcessingParams.h)
 
-add_library(output STATIC ${sources} ${ui_sources})
-add_dependencies(output toplevel_ui_sources)
+add_library(output STATIC ${sources} ${ui_files})
 target_link_libraries(output PUBLIC stcore interaction PRIVATE dewarping zones)
 target_include_directories(
-    output 
+    output
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
     "$<TARGET_PROPERTY:TIFF::TIFF,INTERFACE_INCLUDE_DIRECTORIES>")
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.github.scantailor-advanced</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>ScanTailor Advanced</name>
+  <summary>An interactive post-processing tool for scanned pages.</summary>
+  <description>
+    <p>
+      ScanTailor Advanced is an interactive post-processing tool for scanned pages.
+      It performs operations such as page splitting, deskewing, adding/removing borders, and others.
+      You give it raw scans, and you get pages ready to be printed or assembled into a PDF or DJVU file.
+      Scanning, optical character recognition, and assembling multi-page documents are out of scope of this project.
+    </p>
+    <p>
+      ScanTailor Advanced is Free Software (which is more than just freeware).
+      It’s written in C++ with Qt and released under the General Public License version 3.
+    </p>
+    <p>
+      ScanTailor Advanced is being used not just by enthusiasts, but also by libraries and other institutions.
+    </p>
+  </description>
+  <launchable type="desktop-id">scantailor.desktop</launchable>
+  <url type="bugtracker">https://github.com/4lex4/scantailor-advanced/issues</url>
+  <url type="homepage">https://github.com/4lex4/scantailor-advanced</url>
+  <content_rating type="oars-1.1" />
+</component>

@@ -1,7 +1,6 @@
 <RCC>
   <qresource prefix="/">
     <file>dark_scheme/qss/stylesheet.qss</file>
-    <file>dark_scheme/qss/stylesheet_win.qss</file>
     <file>dark_scheme/icons/icon_close.png</file>
     <file>dark_scheme/icons/icon_undock.png</file>
     <file>dark_scheme/icons/icon_branch_closed.png</file>

@@ -68,6 +68,8 @@ class Utils {
    */
   static QString richTextForLink(const QString& label, const QString& target = QString(QChar('#')));
 
+  static QString qssConvertPxToEm(const QString& stylesheet, double base, int precise);
+
   Utils() = delete;
 };
 

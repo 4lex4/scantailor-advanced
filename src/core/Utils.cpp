@@ -18,8 +18,10 @@
 
 #include "Utils.h"
 #include <QDir>
+#include <QRegExp>
 #include <QSettings>
 #include <QTextDocument>
+#include <cmath>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -63,5 +65,26 @@ intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& o
   const QString thumbs_cache_path(outputDirToThumbDir(output_dir));
 
   return make_intrusive<ThumbnailPixmapCache>(thumbs_cache_path, max_pixmap_size, 40, 5);
+}
+
+QString Utils::qssConvertPxToEm(const QString& stylesheet, const double base, const int precision) {
+  QString result = "";
+  const QRegExp px_to_em(R"((\d+(\.\d+)?)px)");
+
+  int prev_index = 0;
+  int index = 0;
+  while ((index = px_to_em.indexIn(stylesheet, index)) != -1) {
+    result.append(stylesheet.mid(prev_index, index - prev_index));
+
+    double value = px_to_em.cap(1).toDouble();
+    value /= base;
+    result.append(QString::number(value, 'f', precision)).append("em");
+
+    index += px_to_em.matchedLength();
+    prev_index = index;
+  }
+  result.append(stylesheet.mid(prev_index));
+
+  return result;
 }
 }  // namespace core

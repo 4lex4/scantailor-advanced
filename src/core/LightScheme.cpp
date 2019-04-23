@@ -3,6 +3,9 @@
 #include <QStyleFactory>
 #include <memory>
 #include <unordered_map>
+#include "Utils.h"
+
+using namespace core;
 
 QPalette LightScheme::getPalette() const {
   QPalette lightPalette;
@@ -44,16 +47,17 @@ QPalette LightScheme::getPalette() const {
 std::unique_ptr<QString> LightScheme::getStyleSheet() const {
   std::unique_ptr<QString> styleSheet = nullptr;
 
-#ifdef _WIN32
-  QFile styleSheetFile(QString(":/light_scheme/qss/stylesheet_win.qss"));
-#else
   QFile styleSheetFile(QString(":/light_scheme/qss/stylesheet.qss"));
-#endif
   if (styleSheetFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
     styleSheet = std::make_unique<QString>(styleSheetFile.readAll());
-
     styleSheetFile.close();
   }
+
+#ifdef _WIN32
+  *styleSheet = Utils::qssConvertPxToEm(*styleSheet, 13, 4);
+#else
+  *styleSheet = Utils::qssConvertPxToEm(*styleSheet, 16, 4);
+#endif
 
   return styleSheet;
 }

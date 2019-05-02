@@ -290,6 +290,12 @@ if (WIN32)
     endforeach()
   endmacro()
 
+  macro (set_if_undefined Var Value)
+    if (NOT ${Var})
+      set(${Var} "${Value}")
+    endif()
+  endmacro()
+
   # Install the DLLs of the dependencies.
   set(dep_libs
       JPEG::JPEG PNG::PNG ZLIB::ZLIB TIFF::TIFF
@@ -308,6 +314,7 @@ if (WIN32)
 
     get_target_property(release_loc ${_target} ${dynlib_location_property}_RELEASE)
     get_target_property(debug_loc ${_target} ${dynlib_location_property}_DEBUG)
+    set_if_undefined(debug_loc "${release_loc}")
     add_runtime_libs_to_install(RELEASE "${release_loc}")
     add_runtime_libs_to_install(DEBUG "${debug_loc}")
   endforeach()
@@ -319,6 +326,7 @@ if (WIN32)
       if (target_type STREQUAL "MODULE_LIBRARY")
         get_target_property(release_loc ${Target} LOCATION_RELEASE)
         get_target_property(debug_loc ${Target} LOCATION_DEBUG)
+        set_if_undefined(debug_loc "${release_loc}")
 
         copy_to_build_dir("${release_loc}" SUBDIR ${SubDir} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
         install(PROGRAMS "${release_loc}" 

@@ -20,7 +20,7 @@ function(add_dynamic_library_locations Targets)
       continue()
     endif()
 
-    set(imported_location_props IMPORTED_LOCATION)
+    set(imported_location_props)
     get_target_property(configurations ${_target} IMPORTED_CONFIGURATIONS)
     foreach(_config ${configurations})
       list(APPEND imported_location_props IMPORTED_LOCATION_${_config})

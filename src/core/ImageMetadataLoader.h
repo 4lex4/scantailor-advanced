@@ -75,7 +75,13 @@ class ImageMetadataLoader : public ref_countable {
   static Status loadImpl(const QString& file_path, const VirtualFunction<void, const ImageMetadata&>& out);
 
   typedef std::vector<intrusive_ptr<ImageMetadataLoader>> LoaderList;
+
   static LoaderList m_sLoaders;
+
+  static class StaticInit {
+   public:
+    StaticInit();
+  } m_staticInit;
 };
 
 

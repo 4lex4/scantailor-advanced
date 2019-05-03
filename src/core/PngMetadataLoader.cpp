@@ -71,14 +71,6 @@ static void readFn(png_structp png_ptr, png_bytep data, png_size_t length) {
   }
 }
 
-void PngMetadataLoader::registerMyself() {
-  static bool registered = false;
-  if (!registered) {
-    ImageMetadataLoader::registerLoader(make_intrusive<PngMetadataLoader>());
-    registered = true;
-  }
-}
-
 ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& io_device,
                                                             const VirtualFunction<void, const ImageMetadata&>& out) {
   if (!io_device.isReadable()) {

@@ -19,14 +19,6 @@
 #include "TiffMetadataLoader.h"
 #include "TiffReader.h"
 
-void TiffMetadataLoader::registerMyself() {
-  static bool registered = false;
-  if (!registered) {
-    ImageMetadataLoader::registerLoader(make_intrusive<TiffMetadataLoader>());
-    registered = true;
-  }
-}
-
 ImageMetadataLoader::Status TiffMetadataLoader::loadMetadata(QIODevice& io_device,
                                                              const VirtualFunction<void, const ImageMetadata&>& out) {
   return TiffReader::readMetadata(io_device, out);

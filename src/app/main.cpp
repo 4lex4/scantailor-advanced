@@ -20,11 +20,8 @@
 #include "Application.h"
 #include "ColorSchemeManager.h"
 #include "DarkScheme.h"
-#include "JpegMetadataLoader.h"
 #include "LightScheme.h"
 #include "MainWindow.h"
-#include "PngMetadataLoader.h"
-#include "TiffMetadataLoader.h"
 #include "config.h"
 #include "NativeScheme.h"
 
@@ -44,10 +41,6 @@ int main(int argc, char* argv[]) {
   // This information is used by QSettings.
   Application::setApplicationName(APPLICATION_NAME);
   Application::setOrganizationName(ORGANIZATION_NAME);
-
-  PngMetadataLoader::registerMyself();
-  TiffMetadataLoader::registerMyself();
-  JpegMetadataLoader::registerMyself();
 
   QSettings::setDefaultFormat(QSettings::IniFormat);
   if (app.isPortableVersion()) {

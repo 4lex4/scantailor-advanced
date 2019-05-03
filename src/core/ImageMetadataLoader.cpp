@@ -21,12 +21,23 @@
 #include <QIODevice>
 #include <QString>
 #include "ImageMetadata.h"
+#include "JpegMetadataLoader.h"
+#include "PngMetadataLoader.h"
+#include "TiffMetadataLoader.h"
 
 ImageMetadataLoader::LoaderList ImageMetadataLoader::m_sLoaders;
 
 void ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader> loader) {
   m_sLoaders.push_back(std::move(loader));
 }
+
+ImageMetadataLoader::StaticInit::StaticInit() {
+  registerLoader(make_intrusive<JpegMetadataLoader>());
+  registerLoader(make_intrusive<PngMetadataLoader>());
+  registerLoader(make_intrusive<TiffMetadataLoader>());
+}
+
+ImageMetadataLoader::StaticInit ImageMetadataLoader::m_staticInit;
 
 ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
                                                           const VirtualFunction<void, const ImageMetadata&>& out) {

@@ -180,14 +180,6 @@ JpegErrorManager* JpegErrorManager::object(j_common_ptr cinfo) {
 
 /*============================= JpegMetadataLoader ==========================*/
 
-void JpegMetadataLoader::registerMyself() {
-  static bool registered = false;
-  if (!registered) {
-    ImageMetadataLoader::registerLoader(make_intrusive<JpegMetadataLoader>());
-    registered = true;
-  }
-}
-
 ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_device,
                                                              const VirtualFunction<void, const ImageMetadata&>& out) {
   if (!io_device.isReadable()) {

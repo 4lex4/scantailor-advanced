@@ -72,9 +72,9 @@ void StatusBarPanel::mousePosChanged() {
   if (!m_mousePos.isNull() && !m_dpi.isNull()) {
     double x = m_mousePos.x();
     double y = m_mousePos.y();
-    UnitsProvider::getInstance()->convertFrom(x, y, PIXELS, m_dpi);
+    UnitsProvider::getInstance().convertFrom(x, y, PIXELS, m_dpi);
 
-    switch (UnitsProvider::getInstance()->getUnits()) {
+    switch (UnitsProvider::getInstance().getUnits()) {
       case PIXELS:
       case MILLIMETRES:
         x = std::ceil(x);
@@ -98,9 +98,9 @@ void StatusBarPanel::physSizeChanged() {
   if (!m_physSize.isNull() && !m_dpi.isNull()) {
     double width = m_physSize.width();
     double height = m_physSize.height();
-    UnitsProvider::getInstance()->convertFrom(width, height, PIXELS, m_dpi);
+    UnitsProvider::getInstance().convertFrom(width, height, PIXELS, m_dpi);
 
-    const Units units = UnitsProvider::getInstance()->getUnits();
+    const Units units = UnitsProvider::getInstance().getUnits();
     switch (units) {
       case PIXELS:
         width = std::round(width);

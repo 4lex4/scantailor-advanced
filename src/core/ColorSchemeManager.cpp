@@ -3,14 +3,9 @@
 #include <QtGui/QFont>
 #include <QtWidgets/QApplication>
 
-std::unique_ptr<ColorSchemeManager> ColorSchemeManager::m_instance = nullptr;
-
-ColorSchemeManager* ColorSchemeManager::instance() {
-  if (m_instance == nullptr) {
-    m_instance.reset(new ColorSchemeManager());
-  }
-
-  return m_instance.get();
+ColorSchemeManager& ColorSchemeManager::instance() {
+  static ColorSchemeManager instance;
+  return instance;
 }
 
 void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {

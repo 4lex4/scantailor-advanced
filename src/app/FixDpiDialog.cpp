@@ -207,7 +207,7 @@ FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* par
   m_normalPalette = xDpi->palette();
   m_errorPalette = m_normalPalette;
   const QColor error_text_color
-      = ColorSchemeManager::instance()->getColorParam(ColorScheme::FixDpiDialogErrorText, QColor(Qt::red));
+      = ColorSchemeManager::instance().getColorParam(ColorScheme::FixDpiDialogErrorText, QColor(Qt::red));
   m_errorPalette.setColor(QPalette::Text, error_text_color);
 
   dpiCombo->addItem("300 x 300", QSize(300, 300));

@@ -13,7 +13,7 @@ class ColorSchemeManager {
   ColorSchemeManager() = default;
 
  public:
-  static ColorSchemeManager* instance();
+  static ColorSchemeManager& instance();
 
   void setColorScheme(const ColorScheme& colorScheme);
 
@@ -22,8 +22,6 @@ class ColorSchemeManager {
   QColor getColorParam(ColorScheme::ColorParam colorParam, const QColor& defaultColor) const;
 
  private:
-  static std::unique_ptr<ColorSchemeManager> m_instance;
-
   ColorScheme::ColorParams m_colorParams;
 };
 

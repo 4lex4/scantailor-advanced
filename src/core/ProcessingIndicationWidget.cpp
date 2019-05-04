@@ -30,9 +30,9 @@ static const double distinction_decrease = -1.0 / 3.0;
 
 ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
     : QWidget(parent), m_animation(10), m_distinction(1.0), m_distinctionDelta(distinction_increase), m_timerId(0) {
-  m_headColor = ColorSchemeManager::instance()->getColorParam(ColorScheme::ProcessingIndicationHeadColor,
+  m_headColor = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationHeadColor,
                                                               palette().color(QPalette::Window).darker(200));
-  m_tailColor = ColorSchemeManager::instance()->getColorParam(ColorScheme::ProcessingIndicationTail,
+  m_tailColor = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationTail,
                                                               palette().color(QPalette::Window).darker(130));
 }
 
@@ -66,7 +66,7 @@ void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
 
   QPainter painter(this);
 
-  QColor fade_color = ColorSchemeManager::instance()->getColorParam(ColorScheme::ProcessingIndicationFade,
+  QColor fade_color = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationFade,
                                                                     palette().background().color());
   fade_color.setAlpha(127);
   painter.fillRect(rect(), fade_color);

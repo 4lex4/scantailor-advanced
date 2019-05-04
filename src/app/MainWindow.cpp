@@ -176,25 +176,25 @@ MainWindow::MainWindow()
   }
   connect(actionPixels, &QAction::toggled, [this](bool checked) {
     if (checked) {
-      UnitsProvider::getInstance()->setUnits(PIXELS);
+      UnitsProvider::getInstance().setUnits(PIXELS);
       QSettings().setValue("settings/units", unitsToString(PIXELS));
     }
   });
   connect(actionMilimeters, &QAction::toggled, [this](bool checked) {
     if (checked) {
-      UnitsProvider::getInstance()->setUnits(MILLIMETRES);
+      UnitsProvider::getInstance().setUnits(MILLIMETRES);
       QSettings().setValue("settings/units", unitsToString(MILLIMETRES));
     }
   });
   connect(actionCentimetres, &QAction::toggled, [this](bool checked) {
     if (checked) {
-      UnitsProvider::getInstance()->setUnits(CENTIMETRES);
+      UnitsProvider::getInstance().setUnits(CENTIMETRES);
       QSettings().setValue("settings/units", unitsToString(CENTIMETRES));
     }
   });
   connect(actionInches, &QAction::toggled, [this](bool checked) {
     if (checked) {
-      UnitsProvider::getInstance()->setUnits(INCHES);
+      UnitsProvider::getInstance().setUnits(INCHES);
       QSettings().setValue("settings/units", unitsToString(INCHES));
     }
   });

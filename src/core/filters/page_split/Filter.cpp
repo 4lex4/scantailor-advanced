@@ -184,7 +184,7 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
   if (!m_settings->getPageRecord(page_info.id().imageId()).isNull()) {
     return;
   }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
   const DefaultParams::PageSplitParams& pageSplitParams = defaultParams.getPageSplitParams();
 
   Settings::UpdateAction update;

@@ -16,14 +16,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
+#include <core/Application.h>
+#include <core/ColorSchemeFactory.h>
+#include <core/ColorSchemeManager.h>
+#include <QSettings>
 #include <QStringList>
-#include "Application.h"
-#include "ColorSchemeManager.h"
-#include "DarkScheme.h"
-#include "LightScheme.h"
 #include "MainWindow.h"
-#include "config.h"
-#include "NativeScheme.h"
 
 int main(int argc, char* argv[]) {
   // Rescaling for high DPI displays.
@@ -46,22 +45,13 @@ int main(int argc, char* argv[]) {
   if (app.isPortableVersion()) {
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, app.getPortableConfigPath());
   }
-
   QSettings settings;
 
   app.installLanguage(settings.value("settings/language", QLocale::system().name()).toString());
 
   {
-    QString val = settings.value("settings/color_scheme", "dark").toString();
-    std::unique_ptr<ColorScheme> scheme;
-    if (val == "native") {
-      scheme = std::make_unique<NativeScheme>();
-    } else if (val == "light") {
-      scheme = std::make_unique<LightScheme>();
-    } else {
-      scheme = std::make_unique<DarkScheme>();
-    }
-
+    QString scheme_name = settings.value("settings/color_scheme", "dark").toString();
+    std::unique_ptr<ColorScheme> scheme = ColorSchemeFactory().create(scheme_name);
     ColorSchemeManager::instance()->setColorScheme(*scheme);
   }
 

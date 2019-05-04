@@ -15,7 +15,7 @@ class UnitsProvider {
   UnitsProvider();
 
  public:
-  static UnitsProvider* getInstance();
+  static UnitsProvider& getInstance();
 
   Units getUnits() const;
 
@@ -33,8 +33,6 @@ class UnitsProvider {
   void unitsChanged();
 
  private:
-  static std::unique_ptr<UnitsProvider> m_instance;
-
   std::list<UnitsObserver*> m_observers;
   Units m_units;
 };

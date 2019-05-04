@@ -156,7 +156,7 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
   if (!m_settings->isParamsNull(page_info.id())) {
     return;
   }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
   const DefaultParams::DeskewParams& deskewParams = defaultParams.getDeskewParams();
 
   m_settings->setPageParams(page_info.id(),

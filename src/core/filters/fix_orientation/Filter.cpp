@@ -139,7 +139,7 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
   if (!m_settings->isRotationNull(page_info.id().imageId())) {
     return;
   }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
   const DefaultParams::FixOrientationParams& fixOrientationParams = defaultParams.getFixOrientationParams();
 
   m_settings->applyRotation(page_info.id().imageId(), fixOrientationParams.getImageRotation());

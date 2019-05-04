@@ -112,7 +112,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
   despeckleSlider->setMinimum(qRound(1.0 * 10));
   despeckleSlider->setMaximum(qRound(3.0 * 10));
 
-  const int index = profileCB->findData(DefaultParamsProvider::getInstance()->getProfileName());
+  const int index = profileCB->findData(DefaultParamsProvider::getInstance().getProfileName());
   if (index != -1) {
     profileCB->setCurrentIndex(index);
   }
@@ -893,10 +893,10 @@ void DefaultParamsDialog::profileChanged(const int index) {
     profileDeleteButton->setEnabled(false);
     setTabWidgetsEnabled(true);
 
-    if (DefaultParamsProvider::getInstance()->getProfileName() == "Custom") {
-      loadParams(DefaultParamsProvider::getInstance()->getParams());
+    if (DefaultParamsProvider::getInstance().getProfileName() == "Custom") {
+      loadParams(DefaultParamsProvider::getInstance().getParams());
     } else {
-      updateUnits(UnitsProvider::getInstance()->getUnits());
+      updateUnits(UnitsProvider::getInstance().getUnits());
     }
   } else if (profileCB->currentData().toString() == "Default") {
     profileSaveButton->setEnabled(false);
@@ -1002,7 +1002,7 @@ void DefaultParamsDialog::commitChanges() {
   } else {
     params = buildParams();
   }
-  DefaultParamsProvider::getInstance()->setParams(std::move(params), profile);
+  DefaultParamsProvider::getInstance().setParams(std::move(params), profile);
   QSettings().setValue("settings/current_profile", profile);
 }
 

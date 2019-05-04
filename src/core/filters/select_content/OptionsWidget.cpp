@@ -49,7 +49,7 @@ void OptionsWidget::preUpdateUI(const PageInfo& page_info) {
   fineTuneBtn->setVisible(false);
   dimensionsWidget->setVisible(false);
 
-  updateUnits(UnitsProvider::getInstance()->getUnits());
+  updateUnits(UnitsProvider::getInstance().getUnits());
 
   setupUiConnections();
 }
@@ -98,7 +98,7 @@ void OptionsWidget::updatePageRectSize(const QSizeF& size) {
 
   double width = size.width();
   double height = size.height();
-  UnitsProvider::getInstance()->convertFrom(width, height, PIXELS, m_dpi);
+  UnitsProvider::getInstance().convertFrom(width, height, PIXELS, m_dpi);
 
   widthSpinBox->setValue(width);
   heightSpinBox->setValue(height);
@@ -178,7 +178,7 @@ void OptionsWidget::dimensionsChangedLocally(double) {
 
   double widthSpinBoxValue = widthSpinBox->value();
   double heightSpinBoxValue = heightSpinBox->value();
-  UnitsProvider::getInstance()->convertTo(widthSpinBoxValue, heightSpinBoxValue, PIXELS, m_dpi);
+  UnitsProvider::getInstance().convertTo(widthSpinBoxValue, heightSpinBoxValue, PIXELS, m_dpi);
 
   QRectF newPageRect = m_uiData.pageRect();
   newPageRect.setSize(QSizeF(widthSpinBoxValue, heightSpinBoxValue));

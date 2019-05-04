@@ -167,7 +167,7 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
   if (!m_settings->isParamsNull(page_info.id())) {
     return;
   }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance()->getParams();
+  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
   const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
 
   const UnitsConverter unitsConverter(page_info.metadata().dpi());

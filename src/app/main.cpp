@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
   {
     QString scheme_name = settings.value("settings/color_scheme", "dark").toString();
     std::unique_ptr<ColorScheme> scheme = ColorSchemeFactory().create(scheme_name);
-    ColorSchemeManager::instance()->setColorScheme(*scheme);
+    ColorSchemeManager::instance().setColorScheme(*scheme);
   }
 
   auto* main_wnd = new MainWindow();

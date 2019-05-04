@@ -97,7 +97,7 @@ void OptionsWidget::preUpdateUI(const PageInfo& page_info, const Margins& margin
     }
   }
 
-  updateUnits(UnitsProvider::getInstance()->getUnits());
+  updateUnits(UnitsProvider::getInstance().getUnits());
 
   alignWithOthersCB->blockSignals(true);
   alignWithOthersCB->setChecked(!alignment.isNull());
@@ -204,8 +204,8 @@ void OptionsWidget::horMarginsChanged(const double val) {
   double dummy;
   double leftMarginSpinBoxValue = leftMarginSpinBox->value();
   double rightMarginSpinBoxValue = rightMarginSpinBox->value();
-  UnitsProvider::getInstance()->convertTo(leftMarginSpinBoxValue, dummy, MILLIMETRES, m_dpi);
-  UnitsProvider::getInstance()->convertTo(rightMarginSpinBoxValue, dummy, MILLIMETRES, m_dpi);
+  UnitsProvider::getInstance().convertTo(leftMarginSpinBoxValue, dummy, MILLIMETRES, m_dpi);
+  UnitsProvider::getInstance().convertTo(rightMarginSpinBoxValue, dummy, MILLIMETRES, m_dpi);
 
   m_marginsMM.setLeft(leftMarginSpinBoxValue);
   m_marginsMM.setRight(rightMarginSpinBoxValue);
@@ -227,8 +227,8 @@ void OptionsWidget::vertMarginsChanged(const double val) {
   double dummy;
   double topMarginSpinBoxValue = topMarginSpinBox->value();
   double bottomMarginSpinBoxValue = bottomMarginSpinBox->value();
-  UnitsProvider::getInstance()->convertTo(dummy, topMarginSpinBoxValue, MILLIMETRES, m_dpi);
-  UnitsProvider::getInstance()->convertTo(dummy, bottomMarginSpinBoxValue, MILLIMETRES, m_dpi);
+  UnitsProvider::getInstance().convertTo(dummy, topMarginSpinBoxValue, MILLIMETRES, m_dpi);
+  UnitsProvider::getInstance().convertTo(dummy, bottomMarginSpinBoxValue, MILLIMETRES, m_dpi);
 
   m_marginsMM.setTop(topMarginSpinBoxValue);
   m_marginsMM.setBottom(bottomMarginSpinBoxValue);
@@ -386,8 +386,8 @@ void OptionsWidget::updateMarginsDisplay() {
   double bottomMarginValue = m_marginsMM.bottom();
   double leftMarginValue = m_marginsMM.left();
   double rightMarginValue = m_marginsMM.right();
-  UnitsProvider::getInstance()->convertFrom(leftMarginValue, topMarginValue, MILLIMETRES, m_dpi);
-  UnitsProvider::getInstance()->convertFrom(rightMarginValue, bottomMarginValue, MILLIMETRES, m_dpi);
+  UnitsProvider::getInstance().convertFrom(leftMarginValue, topMarginValue, MILLIMETRES, m_dpi);
+  UnitsProvider::getInstance().convertFrom(rightMarginValue, bottomMarginValue, MILLIMETRES, m_dpi);
 
   topMarginSpinBox->setValue(topMarginValue);
   bottomMarginSpinBox->setValue(bottomMarginValue);

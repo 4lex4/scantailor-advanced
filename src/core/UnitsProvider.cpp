@@ -5,16 +5,11 @@
 #include "Dpm.h"
 #include "UnitsConverter.h"
 
-std::unique_ptr<UnitsProvider> UnitsProvider::m_instance = nullptr;
-
 UnitsProvider::UnitsProvider() : m_units(unitsFromString(QSettings().value("settings/units", "mm").toString())) {}
 
-UnitsProvider* UnitsProvider::getInstance() {
-  if (m_instance == nullptr) {
-    m_instance.reset(new UnitsProvider());
-  }
-
-  return m_instance.get();
+UnitsProvider& UnitsProvider::getInstance() {
+  static UnitsProvider instance;
+  return instance;
 }
 
 Units UnitsProvider::getUnits() const {

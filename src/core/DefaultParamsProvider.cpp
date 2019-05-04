@@ -5,8 +5,6 @@
 #include "DefaultParams.h"
 #include "DefaultParamsProfileManager.h"
 
-std::unique_ptr<DefaultParamsProvider> DefaultParamsProvider::m_instance = nullptr;
-
 DefaultParamsProvider::DefaultParamsProvider() {
   QSettings settings;
   DefaultParamsProfileManager defaultParamsProfileManager;
@@ -31,12 +29,9 @@ DefaultParamsProvider::DefaultParamsProvider() {
   }
 }
 
-DefaultParamsProvider* DefaultParamsProvider::getInstance() {
-  if (m_instance == nullptr) {
-    m_instance.reset(new DefaultParamsProvider());
-  }
-
-  return m_instance.get();
+DefaultParamsProvider& DefaultParamsProvider::getInstance() {
+  static DefaultParamsProvider instance;
+  return instance;
 }
 
 const QString& DefaultParamsProvider::getProfileName() const {

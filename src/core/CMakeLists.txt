@@ -105,7 +105,8 @@ set(common_sources
     EmptyTaskStatus.h
     OrderByCompletenessProvider.cpp OrderByCompletenessProvider.h
     SkinnedButton.cpp SkinnedButton.h
-    CollapsibleGroupBox.cpp CollapsibleGroupBox.h)
+    CollapsibleGroupBox.cpp CollapsibleGroupBox.h
+    ColorSchemeFactory.cpp ColorSchemeFactory.h)
 
 add_library(core STATIC ${common_sources} ${common_ui_files})
 target_link_libraries(

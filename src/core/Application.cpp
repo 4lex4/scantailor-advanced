@@ -47,12 +47,12 @@ void Application::installLanguage(const QString& locale) {
   if (m_translationsMap.find(locale) != m_translationsMap.end()) {
     bool loaded = m_translator.load(m_translationsMap[locale]);
 
-    this->removeTranslator(&m_translator);
-    this->installTranslator(&m_translator);
+    QCoreApplication::removeTranslator(&m_translator);
+    QCoreApplication::installTranslator(&m_translator);
 
     m_currentLocale = (loaded) ? locale : "en";
   } else {
-    this->removeTranslator(&m_translator);
+    QCoreApplication::removeTranslator(&m_translator);
 
     m_currentLocale = "en";
   }

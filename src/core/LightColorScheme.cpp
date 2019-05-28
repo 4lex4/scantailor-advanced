@@ -30,32 +30,32 @@ QStyle* LightColorScheme::getStyle() const {
 }
 
 void LightColorScheme::loadPalette() {
-  m_palette.setColor(QPalette::Window, QColor(0xF0, 0xF0, 0xF0));
-  m_palette.setColor(QPalette::WindowText, QColor(0x30, 0x30, 0x30));
-  m_palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(0x90, 0x90, 0x90));
-  m_palette.setColor(QPalette::Base, QColor(0xFC, 0xFC, 0xFC));
-  m_palette.setColor(QPalette::Disabled, QPalette::Base, QColor(0xFA, 0xFA, 0xFA));
+  m_palette.setColor(QPalette::Window, "#F0F0F0");
+  m_palette.setColor(QPalette::WindowText, "#303030");
+  m_palette.setColor(QPalette::Disabled, QPalette::WindowText, "#909090");
+  m_palette.setColor(QPalette::Base, "#FCFCFC");
+  m_palette.setColor(QPalette::Disabled, QPalette::Base, "#FAFAFA");
   m_palette.setColor(QPalette::AlternateBase, m_palette.color(QPalette::Window));
   m_palette.setColor(QPalette::Disabled, QPalette::AlternateBase,
                      m_palette.color(QPalette::Disabled, QPalette::Window));
-  m_palette.setColor(QPalette::ToolTipBase, QColor(0xFF, 0xFF, 0xCD));
+  m_palette.setColor(QPalette::ToolTipBase, "#FFFFCD");
   m_palette.setColor(QPalette::ToolTipText, Qt::black);
   m_palette.setColor(QPalette::Text, m_palette.color(QPalette::WindowText));
   m_palette.setColor(QPalette::Disabled, QPalette::Text, m_palette.color(QPalette::Disabled, QPalette::WindowText));
   m_palette.setColor(QPalette::Light, Qt::white);
-  m_palette.setColor(QPalette::Midlight, QColor(0xF0, 0xF0, 0xF0));
-  m_palette.setColor(QPalette::Dark, QColor(0xDA, 0xDA, 0xDA));
-  m_palette.setColor(QPalette::Mid, QColor(0xCC, 0xCC, 0xCC));
-  m_palette.setColor(QPalette::Shadow, QColor(0xBE, 0xBE, 0xBE));
+  m_palette.setColor(QPalette::Midlight, "#F0F0F0");
+  m_palette.setColor(QPalette::Dark, "#DADADA");
+  m_palette.setColor(QPalette::Mid, "#CCCCCC");
+  m_palette.setColor(QPalette::Shadow, "#BEBEBE");
   m_palette.setColor(QPalette::Button, m_palette.color(QPalette::Base));
   m_palette.setColor(QPalette::Disabled, QPalette::Button, m_palette.color(QPalette::Disabled, QPalette::Base));
   m_palette.setColor(QPalette::ButtonText, m_palette.color(QPalette::WindowText));
   m_palette.setColor(QPalette::Disabled, QPalette::ButtonText,
                      m_palette.color(QPalette::Disabled, QPalette::WindowText));
-  m_palette.setColor(QPalette::BrightText, QColor(0xF4, 0x00, 0x00));
-  m_palette.setColor(QPalette::Link, QColor(0x00, 0x00, 0xFF));
-  m_palette.setColor(QPalette::Highlight, QColor(0xB5, 0xB5, 0xB5));
-  m_palette.setColor(QPalette::Disabled, QPalette::Highlight, QColor(0xDF, 0xDF, 0xDF));
+  m_palette.setColor(QPalette::BrightText, "#F40000");
+  m_palette.setColor(QPalette::Link, "#0000FF");
+  m_palette.setColor(QPalette::Highlight, "#B5B5B5");
+  m_palette.setColor(QPalette::Disabled, QPalette::Highlight, "#DFDFDF");
   m_palette.setColor(QPalette::HighlightedText, m_palette.color(QPalette::WindowText));
   m_palette.setColor(QPalette::Disabled, QPalette::HighlightedText,
                      m_palette.color(QPalette::Disabled, QPalette::WindowText));
@@ -76,15 +76,15 @@ void LightColorScheme::loadStyleSheet() {
 }
 
 void LightColorScheme::loadColorParams() {
-  m_customColors[ThumbnailSequenceSelectedItemBackground] = QColor(0x72, 0x72, 0x72);
+  m_customColors[ThumbnailSequenceSelectedItemBackground] = "#727272";
   m_customColors[ThumbnailSequenceSelectedItemText] = Qt::white;
   m_customColors[ThumbnailSequenceItemText] = Qt::black;
-  m_customColors[ThumbnailSequenceSelectionLeaderBackground] = QColor(0x5E, 0x5E, 0x5E);
-  m_customColors[OpenNewProjectBorder] = QColor(0xCC, 0xCC, 0xCC);
-  m_customColors[ProcessingIndicationFade] = QColor(0x93, 0x93, 0x93);
+  m_customColors[ThumbnailSequenceSelectionLeaderBackground] = "#5E5E5E";
+  m_customColors[OpenNewProjectBorder] = "#CCCCCC";
+  m_customColors[ProcessingIndicationFade] = "#939393";
   m_customColors[ProcessingIndicationHeadColor] = m_palette.color(QPalette::WindowText);
   m_customColors[ProcessingIndicationTail] = m_palette.color(QPalette::Highlight);
   m_customColors[StageListHead] = m_customColors.at(ProcessingIndicationHeadColor);
   m_customColors[StageListTail] = m_customColors.at(ProcessingIndicationTail);
-  m_customColors[FixDpiDialogErrorText] = QColor(0xFB, 0x00, 0x00);
+  m_customColors[FixDpiDialogErrorText] = "#FB0000";
 }

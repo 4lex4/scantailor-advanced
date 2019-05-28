@@ -20,7 +20,7 @@
 #include <QGraphicsItem>
 #include <utility>
 #include "CompositeCacheDrivenTask.h"
-#include "filter_dc/ThumbnailCollector.h"
+#include "ThumbnailCollector.h"
 
 class ThumbnailFactory::Collector : public ThumbnailCollector {
  public:

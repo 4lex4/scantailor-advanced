@@ -23,9 +23,9 @@
 #include "PageInfo.h"
 #include "Settings.h"
 #include "ThumbnailBase.h"
-#include "filter_dc/AbstractFilterDataCollector.h"
-#include "filter_dc/PageOrientationCollector.h"
-#include "filter_dc/ThumbnailCollector.h"
+#include "core/AbstractFilterDataCollector.h"
+#include "core/PageOrientationCollector.h"
+#include "core/ThumbnailCollector.h"
 #include "filters/page_split/CacheDrivenTask.h"
 
 namespace fix_orientation {

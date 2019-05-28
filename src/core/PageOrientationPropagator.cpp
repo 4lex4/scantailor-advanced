@@ -23,7 +23,7 @@
 #include "OrthogonalRotation.h"
 #include "PageSequence.h"
 #include "ProjectPages.h"
-#include "filter_dc/PageOrientationCollector.h"
+#include "PageOrientationCollector.h"
 #include "filters/page_split/Filter.h"
 
 class PageOrientationPropagator::Collector : public PageOrientationCollector {

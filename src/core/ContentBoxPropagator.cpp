@@ -17,13 +17,12 @@
  */
 
 #include "ContentBoxPropagator.h"
-
 #include <utility>
 #include "CompositeCacheDrivenTask.h"
+#include "ContentBoxCollector.h"
 #include "ImageTransformation.h"
 #include "PageSequence.h"
 #include "ProjectPages.h"
-#include "filter_dc/ContentBoxCollector.h"
 #include "filters/page_layout/Filter.h"
 
 class ContentBoxPropagator::Collector : public ContentBoxCollector {

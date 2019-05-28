@@ -28,8 +28,8 @@
 #include "RenderParams.h"
 #include "Thumbnail.h"
 #include "Utils.h"
-#include "filter_dc/AbstractFilterDataCollector.h"
-#include "filter_dc/ThumbnailCollector.h"
+#include "core/AbstractFilterDataCollector.h"
+#include "core/ThumbnailCollector.h"
 
 namespace output {
 CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings, const OutputFileNameGenerator& out_file_name_gen)

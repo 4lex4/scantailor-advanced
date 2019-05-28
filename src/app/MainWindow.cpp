@@ -1419,9 +1419,7 @@ void MainWindow::onSettingsChanged() {
 
   m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
 
-  if (auto* app = dynamic_cast<Application*>(qApp)) {
-    app->installLanguage(settings.value("settings/language").toString());
-  }
+  static_cast<Application*>(qApp)->installLanguage(settings.value("settings/language").toString());
 
   if (m_thumbnailCache) {
     const QSize max_thumb_size = settings.value("settings/thumbnail_quality").toSize();

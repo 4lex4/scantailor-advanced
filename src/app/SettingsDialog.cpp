@@ -69,16 +69,13 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
   ui.tiffCompressionColorBox->setCurrentIndex(
       ui.tiffCompressionColorBox->findData(settings.value("settings/color_compression", COMPRESSION_LZW).toInt()));
 
-  if (auto* app = dynamic_cast<Application*>(qApp)) {
-    for (const QString& locale : app->getLanguagesList()) {
-      QString languageName = QLocale::languageToString(QLocale(locale).language());
-      ui.languageBox->addItem(languageName, locale);
-    }
-
-    ui.languageBox->setCurrentIndex(ui.languageBox->findData(app->getCurrentLocale()));
-
-    ui.languageBox->setEnabled(ui.languageBox->count() > 1);
+  auto* app = static_cast<Application*>(qApp);
+  for (const QString& locale : app->getLanguagesList()) {
+    QString languageName = QLocale::languageToString(QLocale(locale).language());
+    ui.languageBox->addItem(languageName, locale);
   }
+  ui.languageBox->setCurrentIndex(ui.languageBox->findData(app->getCurrentLocale()));
+  ui.languageBox->setEnabled(ui.languageBox->count() > 1);
 
   ui.blackOnWhiteDetectionCB->setChecked(settings.value("settings/blackOnWhiteDetection", true).toBool());
   ui.blackOnWhiteDetectionAtOutputCB->setEnabled(ui.blackOnWhiteDetectionCB->isChecked());

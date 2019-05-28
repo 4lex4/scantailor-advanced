@@ -1,7 +1,6 @@
 
 #include "ColorSchemeManager.h"
-#include <QtGui/QFont>
-#include <QtWidgets/QApplication>
+#include <QApplication>
 
 ColorSchemeManager& ColorSchemeManager::instance() {
   static ColorSchemeManager instance;
@@ -12,25 +11,37 @@ void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {
   if (QStyle* style = colorScheme.getStyle()) {
     qApp->setStyle(style);
   }
-  qApp->setPalette(colorScheme.getPalette());
-  if (std::unique_ptr<QString> styleSheet = colorScheme.getStyleSheet()) {
+  if (const QPalette* palette = colorScheme.getPalette()) {
+    qApp->setPalette(*palette);
+  }
+  if (const QString* styleSheet = colorScheme.getStyleSheet()) {
     qApp->setStyleSheet(*styleSheet);
   }
-  m_colorParams = colorScheme.getColorParams();
+  if (const ColorScheme::ColorParams* colorParams = colorScheme.getColorParams()) {
+    m_colorParams = std::make_unique<ColorScheme::ColorParams>(*colorParams);
+  }
 }
 
 QBrush ColorSchemeManager::getColorParam(const ColorScheme::ColorParam colorParam, const QBrush& defaultBrush) const {
-  const auto it = m_colorParams.find(colorParam);
-  if (it != m_colorParams.end()) {
+  if (!m_colorParams) {
+    return defaultBrush;
+  }
+
+  const auto it = m_colorParams->find(colorParam);
+  if (it != m_colorParams->end()) {
     return QBrush(it->second, defaultBrush.style());
   } else {
     return defaultBrush;
   }
 }
 
-QColor ColorSchemeManager::getColorParam(ColorScheme::ColorParam colorParam, const QColor& defaultColor) const {
-  const auto it = m_colorParams.find(colorParam);
-  if (it != m_colorParams.end()) {
+QColor ColorSchemeManager::getColorParam(const ColorScheme::ColorParam colorParam, const QColor& defaultColor) const {
+  if (!m_colorParams) {
+    return defaultColor;
+  }
+
+  const auto it = m_colorParams->find(colorParam);
+  if (it != m_colorParams->end()) {
     return it->second;
   } else {
     return defaultColor;

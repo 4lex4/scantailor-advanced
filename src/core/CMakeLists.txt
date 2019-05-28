@@ -67,9 +67,9 @@ set(common_sources
     OutputFileNameGenerator.cpp OutputFileNameGenerator.h
     Margins.cpp Margins.h
     ColorScheme.h
-    DarkScheme.cpp DarkScheme.h
-    LightScheme.cpp LightScheme.h
-    NativeScheme.cpp NativeScheme.h
+    DarkColorScheme.cpp DarkColorScheme.h
+    LightColorScheme.cpp LightColorScheme.h
+    NativeColorScheme.cpp NativeColorScheme.h
     ColorSchemeManager.cpp ColorSchemeManager.h
     PageRange.cpp PageRange.h
     SelectedPage.cpp SelectedPage.h

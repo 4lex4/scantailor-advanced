@@ -1,17 +1,16 @@
 #include "ColorSchemeFactory.h"
 #include "ColorScheme.h"
-#include "NativeScheme.h"
-#include "LightScheme.h"
-#include "DarkScheme.h"
+#include "DarkColorScheme.h"
+#include "LightColorScheme.h"
+#include "NativeColorScheme.h"
 
 ColorSchemeFactory::ColorSchemeFactory() {
-  registerColorScheme("native", []() { return std::make_unique<NativeScheme>(); });
-  registerColorScheme("light", []() { return std::make_unique<LightScheme>(); });
-  registerColorScheme("dark", []() { return std::make_unique<DarkScheme>(); });
+  registerColorScheme("native", []() { return std::make_unique<NativeColorScheme>(); });
+  registerColorScheme("light", []() { return std::make_unique<LightColorScheme>(); });
+  registerColorScheme("dark", []() { return std::make_unique<DarkColorScheme>(); });
 }
 
-void ColorSchemeFactory::registerColorScheme(const QString& scheme,
-                                             const ColorSchemeConstructor& constructor) {
+void ColorSchemeFactory::registerColorScheme(const QString& scheme, const ColorSchemeConstructor& constructor) {
   m_registry[scheme] = constructor;
 }
 

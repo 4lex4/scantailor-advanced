@@ -2,10 +2,12 @@
 #ifndef SCANTAILOR_COLORSCHEME_H
 #define SCANTAILOR_COLORSCHEME_H
 
-#include <QStyle>
-#include <QtGui/QPalette>
-#include <memory>
+#include <QColor>
 #include <unordered_map>
+
+class QStyle;
+class QPalette;
+class QString;
 
 class ColorScheme {
  public:
@@ -13,9 +15,9 @@ class ColorScheme {
 
   virtual QStyle* getStyle() const = 0;
 
-  virtual QPalette getPalette() const = 0;
+  virtual const QPalette* getPalette() const = 0;
 
-  virtual std::unique_ptr<QString> getStyleSheet() const = 0;
+  virtual const QString* getStyleSheet() const = 0;
 
   enum ColorParam {
     ThumbnailSequenceItemText,
@@ -40,7 +42,7 @@ class ColorScheme {
    *
    * @return the list of colors to override the default values by the color scheme
    */
-  virtual ColorParams getColorParams() const = 0;
+  virtual const ColorParams* getColorParams() const = 0;
 };
 
 #endif  // SCANTAILOR_COLORSCHEME_H

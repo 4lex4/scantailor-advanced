@@ -2,8 +2,9 @@
 #ifndef SCANTAILOR_COLORSCHEMEMANAGER_H
 #define SCANTAILOR_COLORSCHEMEMANAGER_H
 
-
 #include <foundation/NonCopyable.h>
+#include <QBrush>
+#include <QColor>
 #include <memory>
 #include "ColorScheme.h"
 
@@ -22,7 +23,7 @@ class ColorSchemeManager {
   QColor getColorParam(ColorScheme::ColorParam colorParam, const QColor& defaultColor) const;
 
  private:
-  ColorScheme::ColorParams m_colorParams;
+  std::unique_ptr<ColorScheme::ColorParams> m_colorParams;
 };
 
 

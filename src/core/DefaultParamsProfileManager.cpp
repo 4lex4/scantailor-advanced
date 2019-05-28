@@ -12,7 +12,7 @@ using namespace output;
 using namespace page_layout;
 
 DefaultParamsProfileManager::DefaultParamsProfileManager() {
-  auto* app = dynamic_cast<Application*>(qApp);
+  auto* app = static_cast<Application*>(qApp);
   if (app->isPortableVersion()) {
     m_path = app->getPortableConfigPath() + "/profiles";
   } else {

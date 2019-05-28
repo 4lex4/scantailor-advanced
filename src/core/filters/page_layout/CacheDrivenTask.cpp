@@ -26,8 +26,8 @@
 #include "Settings.h"
 #include "Thumbnail.h"
 #include "Utils.h"
-#include "filter_dc/AbstractFilterDataCollector.h"
-#include "filter_dc/ThumbnailCollector.h"
+#include "core/AbstractFilterDataCollector.h"
+#include "core/ThumbnailCollector.h"
 #include "filters/output/CacheDrivenTask.h"
 
 namespace page_layout {

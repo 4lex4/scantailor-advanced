@@ -24,8 +24,8 @@
 #include "PageInfo.h"
 #include "Settings.h"
 #include "Thumbnail.h"
-#include "filter_dc/AbstractFilterDataCollector.h"
-#include "filter_dc/ThumbnailCollector.h"
+#include "AbstractFilterDataCollector.h"
+#include "ThumbnailCollector.h"
 #include "filters/select_content/CacheDrivenTask.h"
 
 namespace deskew {

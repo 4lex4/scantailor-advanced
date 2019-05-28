@@ -85,10 +85,10 @@ set(common_sources
     PageOrderProvider.h
     PageOrderOption.h
     PayloadEvent.h
-    filter_dc/AbstractFilterDataCollector.h
-    filter_dc/ThumbnailCollector.h
-    filter_dc/ContentBoxCollector.h
-    filter_dc/PageOrientationCollector.h
+    AbstractFilterDataCollector.h
+    ThumbnailCollector.h
+    ContentBoxCollector.h
+    PageOrientationCollector.h
     ImageViewInfoProvider.cpp ImageViewInfoProvider.h
     ImageViewInfoObserver.h
     UnitsProvider.cpp UnitsProvider.h

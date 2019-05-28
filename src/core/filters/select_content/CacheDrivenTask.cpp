@@ -21,9 +21,9 @@
 #include "PageInfo.h"
 #include "Settings.h"
 #include "Thumbnail.h"
-#include "filter_dc/AbstractFilterDataCollector.h"
-#include "filter_dc/ContentBoxCollector.h"
-#include "filter_dc/ThumbnailCollector.h"
+#include "core/AbstractFilterDataCollector.h"
+#include "core/ContentBoxCollector.h"
+#include "core/ThumbnailCollector.h"
 #include "filters/page_layout/CacheDrivenTask.h"
 
 #include <QtCore/QSettings>

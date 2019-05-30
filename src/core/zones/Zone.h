@@ -21,7 +21,6 @@
 
 #include "SerializableSpline.h"
 #include <PropertySet.h>
-#include <intrusive_ptr.h>
 
 class PropertyFactory;
 class QDomDocument;
@@ -34,8 +33,6 @@ class Zone {
   explicit Zone(const SerializableSpline& spline, const PropertySet& props = PropertySet());
 
   Zone(const QDomElement& el, const PropertyFactory& prop_factory);
-
-  explicit Zone(const QPolygonF& polygon);
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const;
 

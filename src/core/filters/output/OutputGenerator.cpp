@@ -17,12 +17,37 @@
  */
 
 #include "OutputGenerator.h"
+#include <AdjustBrightness.h>
+#include <Binarize.h>
 #include <BlackOnWhiteEstimator.h>
+#include <ConnCompEraser.h>
+#include <ConnectivityMap.h>
+#include <Constants.h>
+#include <CylindricalSurfaceDewarper.h>
 #include <Despeckle.h>
+#include <DewarpingPointMapper.h>
+#include <DistortionModelBuilder.h>
+#include <DrawOver.h>
+#include <GrayRasterOp.h>
+#include <Grayscale.h>
+#include <InfluenceMap.h>
+#include <Morphology.h>
+#include <OrthogonalRotation.h>
+#include <PolygonRasterizer.h>
+#include <PolynomialSurface.h>
+#include <RasterDewarper.h>
+#include <RasterOp.h>
+#include <SavGolFilter.h>
+#include <Scale.h>
+#include <SeedFill.h>
+#include <TextLineTracer.h>
+#include <TopBottomEdgeTracer.h>
+#include <Transform.h>
 #include <imageproc/BackgroundColorCalculator.h>
 #include <imageproc/ColorSegmenter.h>
 #include <imageproc/ColorTable.h>
 #include <imageproc/ImageCombination.h>
+#include <imageproc/OrthogonalRotation.h>
 #include <QDebug>
 #include <QPainter>
 #include <QtCore/QSettings>
@@ -32,36 +57,11 @@
 #include "EstimateBackground.h"
 #include "FillColorProperty.h"
 #include "FilterData.h"
+#include "PictureLayerProperty.h"
 #include "RenderParams.h"
 #include "TaskStatus.h"
 #include "Utils.h"
 #include "ZoneCategoryProperty.h"
-#include "PictureLayerProperty.h"
-#include <CylindricalSurfaceDewarper.h>
-#include <DewarpingPointMapper.h>
-#include <DistortionModelBuilder.h>
-#include <RasterDewarper.h>
-#include <TextLineTracer.h>
-#include <TopBottomEdgeTracer.h>
-#include <AdjustBrightness.h>
-#include <Binarize.h>
-#include <ConnCompEraser.h>
-#include <ConnectivityMap.h>
-#include <Constants.h>
-#include <DrawOver.h>
-#include <GrayRasterOp.h>
-#include <Grayscale.h>
-#include <InfluenceMap.h>
-#include <Morphology.h>
-#include <OrthogonalRotation.h>
-#include <PolygonRasterizer.h>
-#include <PolynomialSurface.h>
-#include <RasterOp.h>
-#include <SavGolFilter.h>
-#include <Scale.h>
-#include <SeedFill.h>
-#include <Transform.h>
-#include <imageproc/OrthogonalRotation.h>
 
 using namespace imageproc;
 using namespace dewarping;
@@ -148,7 +148,6 @@ void reserveBlackAndWhite(QImage& img) {
       break;
     default:
       throw std::invalid_argument("reserveBlackAndWhite: wrong image format.");
-      ;
   }
 }
 
@@ -185,7 +184,6 @@ void reserveBlackAndWhite(QImage& img, const BinaryImage& mask) {
       break;
     default:
       throw std::invalid_argument("reserveBlackAndWhite: wrong image format.");
-      ;
   }
 }
 
@@ -272,6 +270,14 @@ BackgroundColorCalculator getBackgroundColorCalculator(const PageId& pageId, con
   } else {
     return BackgroundColorCalculator(false);
   }
+}
+
+Zone createPictureZoneFromPoly(const QPolygonF& polygon) {
+  PropertySet propertySet;
+  propertySet.locateOrCreate<output::PictureLayerProperty>()->setLayer(output::PictureLayerProperty::PAINTER2);
+  propertySet.locateOrCreate<output::ZoneCategoryProperty>()->setZoneCategory(
+      output::ZoneCategoryProperty::RECTANGULAR_OUTLINE);
+  return Zone(SerializableSpline(polygon), propertySet);
 }
 }  // namespace
 
@@ -741,9 +747,7 @@ QImage OutputGenerator::processWithoutDewarping(const TaskStatus& status,
         QPolygonF area1(area0);
         QPolygonF area(inv_xform.map(area1));
 
-        Zone zone1(area);
-
-        picture_zones.add(zone1);
+        picture_zones.add(createPictureZoneFromPoly(area));
       }
       settings->setPictureZones(pageId, picture_zones);
       m_outputProcessingParams.setAutoZonesFound(true);
@@ -1182,9 +1186,7 @@ QImage OutputGenerator::processWithDewarping(const TaskStatus& status,
         QPolygonF area1(area0);
         QPolygonF area(inv_xform.map(area1));
 
-        Zone zone1(area);
-
-        picture_zones.add(zone1);
+        picture_zones.add(createPictureZoneFromPoly(area));
       }
       settings->setPictureZones(pageId, picture_zones);
       m_outputProcessingParams.setAutoZonesFound(true);

@@ -39,6 +39,8 @@ class Utils {
   static QString originalBackgroundDir(const QString& out_dir);
 
   static QTransform scaleFromToDpi(const Dpi& from, const Dpi& to);
+
+  Utils() = delete;
 };
 }  // namespace output
 #endif

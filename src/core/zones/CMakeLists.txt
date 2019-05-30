@@ -16,7 +16,7 @@ set(sources
     ZoneDragInteraction.cpp ZoneDragInteraction.h)
 
 add_library(zones STATIC ${sources})
-target_link_libraries(zones PUBLIC core)
+target_link_libraries(zones PUBLIC interaction)
 target_include_directories(zones PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 
 translation_sources(scantailor ${sources})

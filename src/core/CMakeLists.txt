@@ -102,7 +102,7 @@ set(common_sources
     OrderByDeviationProvider.cpp OrderByDeviationProvider.h
     BlackOnWhiteEstimator.cpp BlackOnWhiteEstimator.h
     ImageSettings.cpp ImageSettings.h
-    EmptyTaskStatus.h
+    NullTaskStatus.h
     OrderByCompletenessProvider.cpp OrderByCompletenessProvider.h
     SkinnedButton.cpp SkinnedButton.h
     CollapsibleGroupBox.cpp CollapsibleGroupBox.h

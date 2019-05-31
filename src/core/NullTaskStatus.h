@@ -3,7 +3,7 @@
 
 #include "TaskStatus.h"
 
-class EmptyTaskStatus : public TaskStatus {
+class NullTaskStatus : public TaskStatus {
   void cancel() override {}
 
   bool isCancelled() const override { return false; }

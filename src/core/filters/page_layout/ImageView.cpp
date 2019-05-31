@@ -18,7 +18,7 @@
 
 #include "ImageView.h"
 #include <Despeckle.h>
-#include <EmptyTaskStatus.h>
+#include <NullTaskStatus.h>
 #include <ImageViewInfoProvider.h>
 #include <UnitsConverter.h>
 #include <imageproc/Binarize.h>
@@ -976,7 +976,7 @@ void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransf
 
   PolygonRasterizer::fillExcept(m_contentImage, WHITE, xform_150dpi.resultingPreCropArea(), Qt::WindingFill);
 
-  Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, EmptyTaskStatus());
+  Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, NullTaskStatus());
 
   m_originalToContentImage = xform_150dpi.transform();
   m_contentImageToOriginal = m_originalToContentImage.inverted();

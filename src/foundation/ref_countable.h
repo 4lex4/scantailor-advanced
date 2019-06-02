@@ -16,30 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ref_countable_H_
-#define ref_countable_H_
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#ifndef SCANTAILOR_REF_COUNTABLE_H
+#define SCANTAILOR_REF_COUNTABLE_H
 
 #include <QAtomicInt>
 
 class ref_countable {
  public:
-  ref_countable() : m_counter(0) {}
+  ref_countable() = default;
 
-  ref_countable(const ref_countable& other) {
-    // don't copy the reference counter!
-  }
+  ref_countable(const ref_countable& other) {}
 
-  ref_countable& operator=(const ref_countable& other) {
-    // don't copy the reference counter!
-
-    return *this;
-  }
-
-  virtual ~ref_countable() = default;
+  ref_countable& operator=(const ref_countable& other) { return *this; }
 
   void ref() const { m_counter.fetchAndAddRelaxed(1); }
 
@@ -49,9 +37,12 @@ class ref_countable {
     }
   }
 
+ protected:
+  virtual ~ref_countable() = default;
+
  private:
-  mutable QAtomicInt m_counter;
+  mutable QAtomicInt m_counter = 0;
 };
 
 
-#endif  // ifndef ref_countable_H_
+#endif  // ifndef SCANTAILOR_REF_COUNTABLE_H

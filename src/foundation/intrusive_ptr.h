@@ -16,15 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef intrusive_ptr_H_
-#define intrusive_ptr_H_
+#ifndef SCANTAILOR_INTRUSIVE_PTR_H
+#define SCANTAILOR_INTRUSIVE_PTR_H
 
 #include <cstddef>
 #include <utility>
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 template <typename T>
 class intrusive_ptr {
@@ -290,4 +286,4 @@ inline void swap(intrusive_ptr<T>& lhs, intrusive_ptr<T>& rhs) {
   lhs.swap(rhs);
 }
 
-#endif  // ifndef intrusive_ptr_H_
+#endif  // ifndef SCANTAILOR_INTRUSIVE_PTR_H

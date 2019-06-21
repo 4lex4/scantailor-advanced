@@ -629,8 +629,10 @@ QTreeView QHeaderView::section, QTableView QHeaderView::section {
   border-style: none;
   border-right: 0.0625em solid #cccccc;
   border-bottom: 0.0625em solid #cccccc;
-  padding-left: 0.1875em;
-  padding-right: 0.1875em;
+  padding-left: 0.25em;
+  padding-top: 0.0625em;
+  min-height: 1.0625em;
+  min-width: 0.6875em;
 }
 
 QTreeView::item:selected:disabled, QTableView::item:selected:disabled {

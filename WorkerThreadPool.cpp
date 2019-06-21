@@ -58,9 +58,7 @@ void WorkerThreadPool::submitTask(const BackgroundTaskPtr& task) {
       setAutoDelete(true);
     }
 
-    void run()
-
-        override {
+    void run() override {
       if (m_task->isCancelled()) {
         return;
       }
@@ -92,19 +90,14 @@ void WorkerThreadPool::customEvent(QEvent* event) {
 }
 
 void WorkerThreadPool::updateNumberOfThreads() {
-  int max_threads;
+  int max_threads = QThread::idealThreadCount();
+  // Restricting num of processors for 32-bit due to
+  // address space constraints.
   if (sizeof(void*) <= 4) {
-    // Restricting num of processors for 32-bit due to
-    // address space constraints.
-    max_threads = QThread::idealThreadCount();
-    if (max_threads > 2) {
-      max_threads = 2;
-    }
-  } else {
-    max_threads = QThread::idealThreadCount();
+    max_threads = std::min(max_threads, 2);
   }
 
   int num_threads = m_settings.value("settings/batch_processing_threads", max_threads).toInt();
-  num_threads = std::min<int>(num_threads, max_threads);
+  num_threads = std::min(num_threads, max_threads);
   m_pool->setMaxThreadCount(num_threads);
 }

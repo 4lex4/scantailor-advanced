@@ -6,8 +6,7 @@ project("ScanTailor Advanced")
 set(CMAKE_CXX_STANDARD 17)
 
 if (MSVC)
-  set(WIN_XP FALSE CACHE BOOLEAN "Whether to build for Windows XP.")
-
+  option(WIN_XP "Whether to build for Windows XP." OFF)
   if (WIN_XP)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D_USING_V110_SDK71_")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_USING_V110_SDK71_")
@@ -339,7 +338,7 @@ endif()
 list(APPEND EXTRA_LIBS ${TIFF_LIBRARY} ${PNG_LIBRARY} ${ZLIB_LIBRARY} ${JPEG_LIBRARY})
 
 # Prepare config.h
-set(PORTABLE_VERSION TRUE CACHE BOOLEAN "Whether to build the portable version or not.")
+option(PORTABLE_VERSION "Whether to build the portable version or not." ON)
 if (PORTABLE_VERSION)
   set(PORTABLE_CONFIG_DIR "config")
 endif()
@@ -634,111 +633,81 @@ if (WIN32)
     endforeach()
   endmacro()
 
-  # Copy some DLLs to the staging dir.
-  set(
-      qt5_libs
+  # Copy Qt's DLLs to the staging dir.
+  set(qt5_libs
       ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES}
       ${Qt5Core_LIBRARIES} ${Qt5Xml_LIBRARIES}
-      ${Qt5Network_LIBRARIES} ${Qt5OpenGL_LIBRARIES}
-  )
+      ${Qt5Network_LIBRARIES} ${Qt5OpenGL_LIBRARIES})
 
   foreach (target ${qt5_libs})
-    get_target_property(debug_loc "${target}" LOCATION_DEBUG)
     get_target_property(release_loc "${target}" LOCATION_RELEASE)
-    copy_to_build_dir("${debug_loc}" CONFIGURATIONS Debug)
-    copy_to_build_dir("${release_loc}" CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-    add_runtime_libs_to_install(DEBUG "${debug_loc}")
+    get_target_property(debug_loc "${target}" LOCATION_DEBUG)
     add_runtime_libs_to_install(RELEASE "${release_loc}")
+    add_runtime_libs_to_install(DEBUG "${debug_loc}")
   endforeach()
 
-  # Qt's plugins.
-  macro (set_release_and_debug_libs VarName ReleaseLib DebugLib)
-    set(${VarName}_RELEASE "${ReleaseLib}")
-    if (EXISTS "${DebugLib}")
-      set(${VarName}_DEBUG "${DebugLib}")
-    else()
-      set(${VarName}_DEBUG "${ReleaseLib}")
+  # Copy and install Qt's plugins.
+  macro (install_qt_plugin PluginDir SubDir ReleaseLibName DebugLibName)
+    set(release_lib "${PluginDir}/${SubDir}/${ReleaseLibName}")
+    if (EXISTS "${release_lib}")
+      copy_to_build_dir("${release_lib}" SUBDIR ${SubDir} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+      install(PROGRAMS "${release_lib}" CONFIGURATIONS Release DESTINATION ${SubDir})
+
+      set(debug_lib "${PluginDir}/${SubDir}/${DebugLibName}")
+      if (NOT EXISTS "${debug_lib}") 
+        set(debug_lib "${release_lib}")
+      endif()
+      copy_to_build_dir("${debug_lib}" SUBDIR ${SubDir} CONFIGURATIONS Debug)
+      install(PROGRAMS "${debug_lib}" CONFIGURATIONS Debug DESTINATION ${SubDir})
     endif()
   endmacro()
 
   set(PLUGINS_DIR "${qt_dirs}/qtbase/plugins")
+  install_qt_plugin("${PLUGINS_DIR}" "platforms" "qwindows.dll" "qwindowsd.dll")
+  install_qt_plugin("${PLUGINS_DIR}" "styles" "qwindowsvistastyle.dll" "qwindowsvistastyled.dll")
+  install_qt_plugin("${PLUGINS_DIR}" "imageformats" "qjpeg.dll" "qjpegd.dll")
+  install_qt_plugin("${PLUGINS_DIR}" "accessible" "qtaccessiblewidgets.dll" "qtaccessiblewidgetsd.dll")
 
-  set_release_and_debug_libs(qwindows
-      "${PLUGINS_DIR}/platforms/qwindows.dll"
-      "${PLUGINS_DIR}/platforms/qwindowsd.dll")
-  copy_to_build_dir("${qwindows_RELEASE}" SUBDIR platforms CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-  copy_to_build_dir("${qwindows_DEBUG}" SUBDIR platforms CONFIGURATIONS Debug)
-  install(PROGRAMS "${qwindows_DEBUG}" CONFIGURATIONS Debug DESTINATION platforms)
-  install(PROGRAMS "${qwindows_RELEASE}" CONFIGURATIONS Release DESTINATION platforms)
-
-  set_release_and_debug_libs(qjpeg "${PLUGINS_DIR}/imageformats/qjpeg.dll" "${PLUGINS_DIR}/imageformats/qjpegd.dll")
-  copy_to_build_dir("${qjpeg_RELEASE}" SUBDIR imageformats CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-  copy_to_build_dir("${qjpeg_DEBUG}" SUBDIR imageformats CONFIGURATIONS Debug)
-  install(PROGRAMS "${qjpeg_DEBUG}" CONFIGURATIONS Debug DESTINATION imageformats)
-  install(PROGRAMS "${qjpeg_RELEASE}" CONFIGURATIONS Release DESTINATION imageformats)
-
-  set_release_and_debug_libs(qtaccessible
-      "${PLUGINS_DIR}/accessible/qtaccessiblewidgets.dll"
-      "${PLUGINS_DIR}/accessible/qtaccessiblewidgetsd.dll")
-  if (EXISTS "${qtaccessible_RELEASE}")
-    copy_to_build_dir("${qtaccessible_RELEASE}" SUBDIR accessible CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-    copy_to_build_dir("${qtaccessible_DEBUG}" SUBDIR accessible CONFIGURATIONS Debug)
-    install(PROGRAMS "${qtaccessible_DEBUG}" CONFIGURATIONS Debug DESTINATION accessible)
-    install(PROGRAMS "${qtaccessible_RELEASE}" CONFIGURATIONS Release DESTINATION accessible)
-  endif()
-
-  # Copy image libs
-  find_file(JPEG_LIBRARY_RT_REL NAMES libjpeg.dll HINTS "${jpeg_dirs}/bin")
-  find_file(JPEG_LIBRARY_RT_DEB NAMES libjpegd.dll HINTS "${jpeg_dirs}/bin")
-  if (NOT JPEG_LIBRARY_RT_DEB)
-    set(JPEG_LIBRARY_RT_DEB "${JPEG_LIBRARY_RT_REL}")
-  endif()
-
-  find_file(ZLIB_LIBRARY_RT_REL NAMES libz.dll zdll.dll HINTS "${zlib_dirs}/bin")
-  find_file(ZLIB_LIBRARY_RT_DEB NAMES libzd.dll zdlld.dll HINTS "${zlib_dirs}/bin")
-  if (NOT ZLIB_LIBRARY_RT_DEB)
-    set(ZLIB_LIBRARY_RT_DEB "${ZLIB_LIBRARY_RT_REL}")
-  endif()
-
-  find_file(PNG_LIBRARY_RT_REL NAMES libpng.dll HINTS "${png_dirs1}/bin" "${png_dirs2}/bin")
-  find_file(PNG_LIBRARY_RT_DEB NAMES libpngd.dll HINTS "${png_dirs1}/bin" "${png_dirs2}/bin")
-  if (NOT PNG_LIBRARY_RT_DEB)
-    set(PNG_LIBRARY_RT_DEB "${PNG_LIBRARY_RT_REL}")
-  endif()
-
-  find_file(TIFF_LIBRARY_RT_REL NAMES libtiff.dll HINTS "${tiff_dirs}/bin")
-  find_file(TIFF_LIBRARY_RT_DEB NAMES libtiffd.dll HINTS "${tiff_dirs}/bin")
-  if (NOT TIFF_LIBRARY_RT_DEB)
-    set(TIFF_LIBRARY_RT_DEB "${TIFF_LIBRARY_RT_REL}")
-  endif()
-
-  copy_to_build_dir(
-      "${JPEG_LIBRARY_RT_REL};${ZLIB_LIBRARY_RT_REL};${TIFF_LIBRARY_RT_REL};${PNG_LIBRARY_RT_REL}"
-      CONFIGURATIONS Release MinSizeRel RelWithDebInfo
-  )
-  copy_to_build_dir(
-      "${JPEG_LIBRARY_RT_DEB};${TIFF_LIBRARY_RT_DEB};${ZLIB_LIBRARY_RT_DEB};${PNG_LIBRARY_RT_DEB}"
-      CONFIGURATIONS Debug
-  )
-  add_runtime_libs_to_install(DEBUG
-      "${JPEG_LIBRARY_RT_DEB};${TIFF_LIBRARY_RT_DEB};${ZLIB_LIBRARY_RT_DEB};${PNG_LIBRARY_RT_DEB}")
-  add_runtime_libs_to_install(RELEASE
-      "${JPEG_LIBRARY_RT_REL};${ZLIB_LIBRARY_RT_REL};${TIFF_LIBRARY_RT_REL};${PNG_LIBRARY_RT_REL}")
-
+  # Copy the image runtime libs
+  macro (find_runtime_lib Name ReleaseLibNames HintsRelease DebugLibNames HintsDebug)
+    set(release_lib_name "${Name}_RT_LIB_REL")
+    set(debug_lib_name "${Name}_RT_LIB_DEB")
+    find_file(${release_lib_name} NAMES ${ReleaseLibNames} HINTS ${HintsRelease})
+    set(release_loc "${${release_lib_name}}")
+    if (EXISTS "${release_loc}")
+      find_file(${debug_lib_name} NAMES ${DebugLibNames} HINTS ${HintsDebug})
+      set(debug_loc "${${debug_lib_name}}")
+      if (NOT ${debug_lib_name})
+        set(debug_loc "${release_loc}")
+      endif()
+      add_runtime_libs_to_install(RELEASE "${release_loc}")
+      add_runtime_libs_to_install(DEBUG "${debug_loc}")
+    endif()
+  endmacro()
+  
+  find_runtime_lib(JPEG "libjpeg.dll" "${jpeg_dirs}/bin" "libjpegd.dll" "${jpeg_dirs}/bin")
+  find_runtime_lib(ZLIB "libz.dll;zdll.dll" "${zlib_dirs}/bin" "libzd.dll;zdlld.dll" "${zlib_dirs}/bin")
+  find_runtime_lib(
+      PNG "libpng.dll" "${png_dirs1}/bin;${png_dirs2}/bin" "libpngd.dll" "${png_dirs1}/bin;${png_dirs2}/bin")
+  find_runtime_lib(TIFF "libtiff.dll" "${tiff_dirs}/bin" "libtiffd.dll" "${tiff_dirs}/bin")
+  
+  # Copy MinGW runtime components
   if (MINGW)
     get_filename_component(_mingw_path ${CMAKE_CXX_COMPILER} PATH)
     file(GLOB libgcc_s "${_mingw_path}/libgcc_s_*.dll")
     file(GLOB libstdcpp "${_mingw_path}/libstdc++*.dll")
     file(GLOB libwinpthread "${_mingw_path}/libwinpthread*.dll")
-    copy_to_build_dir("${libgcc_s};${libstdcpp};${libwinpthread}")
     add_runtime_libs_to_install(ALL "${libgcc_s};${libstdcpp};${libwinpthread}")
   endif()
+
+  copy_to_build_dir(${ADDITIONAL_RUNTIME_LIBS_RELEASE} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
+  copy_to_build_dir(${ADDITIONAL_RUNTIME_LIBS_DEBUG} CONFIGURATIONS Debug)
 
   # Generate the target that will actually do the copying.
   generate_copy_to_build_dir_target(copy_to_build_dir)
 
-  install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_DEBUG} CONFIGURATIONS Debug DESTINATION .)
   install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_RELEASE} CONFIGURATIONS Release DESTINATION .)
+  install(PROGRAMS ${ADDITIONAL_RUNTIME_LIBS_DEBUG} CONFIGURATIONS Debug DESTINATION .)
 endif()
 
 if (UNIX)
@@ -802,7 +771,5 @@ if (NOT TARGET uninstall)
       "${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
       "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake"
       @ONLY)
-
-  add_custom_target(uninstall
-      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake_uninstall.cmake)
+  add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake_uninstall.cmake)
 endif()

@@ -19,6 +19,7 @@
 #include "Application.h"
 #include <config.h>
 #include <QDir>
+#include <QDirIterator>
 #include <QFontDatabase>
 #include <QTemporaryDir>
 #include "DebugImages.h"
@@ -38,8 +39,7 @@
 Application::Application(int& argc, char** argv) : QApplication(argc, argv), m_currentLocale("en") {
   initTranslations();
   initPortableVersion();
-
-  QFontDatabase::addApplicationFont(":/fonts/symbols.ttf");
+  loadFonts();
 }
 
 bool Application::notify(QObject* receiver, QEvent* e) {
@@ -47,7 +47,6 @@ bool Application::notify(QObject* receiver, QEvent* e) {
     return QApplication::notify(receiver, e);
   } catch (const std::bad_alloc&) {
     OutOfMemoryHandler::instance().handleOutOfMemorySituation();
-
     return false;
   }
 }
@@ -76,7 +75,7 @@ const QString& Application::getCurrentLocale() const {
 }
 
 std::list<QString> Application::getLanguagesList() const {
-  std::list<QString> list{"en"};
+  std::list<QString> list {"en"};
   std::transform(m_translationsMap.begin(), m_translationsMap.end(), std::back_inserter(list),
                  [](const std::pair<QString, QString>& val) { return val.first; });
 
@@ -112,6 +111,13 @@ void Application::initPortableVersion() {
   if ((portableConfigPath.exists() && QTemporaryDir(portableConfigPath.absolutePath()).isValid())
       || (!portableConfigPath.exists() && portableConfigPath.mkpath("."))) {
     m_portableConfigPath = portableConfigPath.absolutePath();
+  }
+}
+
+void Application::loadFonts() {
+  QDirIterator it(":/fonts");
+  while (it.hasNext()) {
+    QFontDatabase::addApplicationFont(it.next());
   }
 }
 

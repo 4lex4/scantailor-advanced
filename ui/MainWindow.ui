@@ -139,7 +139,7 @@
          <item>
           <widget class="QToolButton" name="focusButton">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -160,6 +160,17 @@
          </item>
          <item>
           <widget class="QToolButton" name="prevPageBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>sta_thumbnail_panel_icons</family>
+            </font>
+           </property>
            <property name="toolTip">
             <string>Previous page.</string>
            </property>
@@ -170,6 +181,17 @@
          </item>
          <item>
           <widget class="QToolButton" name="nextPageBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>sta_thumbnail_panel_icons</family>
+            </font>
+           </property>
            <property name="toolTip">
             <string>Next page.</string>
            </property>
@@ -180,6 +202,17 @@
          </item>
          <item>
           <widget class="QToolButton" name="filterSelectedBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>sta_thumbnail_panel_icons</family>
+            </font>
+           </property>
            <property name="toolTip">
             <string>Filter selected pages only.</string>
            </property>

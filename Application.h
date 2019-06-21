@@ -48,6 +48,7 @@ class Application : public QApplication {
 
   void initPortableVersion();
 
+  void loadFonts();
 
   QTranslator m_translator;
   QString m_currentLocale;

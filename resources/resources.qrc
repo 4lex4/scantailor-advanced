@@ -51,7 +51,8 @@
     <file>icons/single_page_uncut.png</file>
     <file>icons/left_page_plus_offcut.png</file>
     <file>icons/right_page_plus_offcut.png</file>
+    <file>fonts/sta_project_dialog_icons.ttf</file>
+    <file>fonts/sta_thumbnail_panel_icons.ttf</file>
     <file>GPLv3.html</file>
-    <file>fonts/symbols.ttf</file>
   </qresource>
 </RCC>

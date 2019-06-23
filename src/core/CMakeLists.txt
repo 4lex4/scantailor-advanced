@@ -90,9 +90,9 @@ set(common_sources
     ContentBoxCollector.h
     PageOrientationCollector.h
     ImageViewInfoProvider.cpp ImageViewInfoProvider.h
-    ImageViewInfoObserver.h
+    ImageViewInfoListener.h
     UnitsProvider.cpp UnitsProvider.h
-    UnitsObserver.h UnitsObserver.cpp
+    UnitsListener.h UnitsListener.cpp
     UnitsConverter.cpp UnitsConverter.h
     Units.cpp Units.h
     DefaultParams.cpp DefaultParams.h

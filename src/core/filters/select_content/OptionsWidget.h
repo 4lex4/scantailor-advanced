@@ -20,7 +20,7 @@
 #define SELECT_CONTENT_OPTIONSWIDGET_H_
 
 #include <AutoManualMode.h>
-#include <UnitsObserver.h>
+#include <UnitsListener.h>
 #include <QRectF>
 #include <QSizeF>
 #include <list>
@@ -37,7 +37,7 @@
 namespace select_content {
 class Settings;
 
-class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::OptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private Ui::OptionsWidget {
   Q_OBJECT
  public:
   class UiData {
@@ -94,7 +94,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
 
   void postUpdateUI(const UiData& ui_data);
 
-  void updateUnits(Units units) override;
+  void onUnitsChanged(Units units) override;
 
  public slots:
 

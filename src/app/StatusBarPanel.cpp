@@ -10,28 +10,23 @@ StatusBarPanel::StatusBarPanel() {
   ui.setupUi(this);
 }
 
-void StatusBarPanel::updateMousePos(const QPointF& mousePos) {
-  const QMutexLocker locker(&m_mutex);
-
+void StatusBarPanel::onMousePosChanged(const QPointF& mousePos) {
   StatusBarPanel::m_mousePos = mousePos;
   mousePosChanged();
 }
 
-void StatusBarPanel::updatePhysSize(const QSizeF& physSize) {
-  const QMutexLocker locker(&m_mutex);
-
+void StatusBarPanel::onPhysSizeChanged(const QSizeF& physSize) {
   StatusBarPanel::m_physSize = physSize;
   physSizeChanged();
 }
 
-void StatusBarPanel::updateDpi(const Dpi& dpi) {
+void StatusBarPanel::onDpiChanged(const Dpi& dpi) {
   StatusBarPanel::m_dpi = dpi;
 }
 
-void StatusBarPanel::clearImageViewInfo() {
-  m_infoProvider = nullptr;
-  updateMousePos(QPointF());
-  updatePhysSize(QRectF().size());
+void StatusBarPanel::onProviderStopped() {
+  onMousePosChanged(QPointF());
+  onPhysSizeChanged(QRectF().size());
   m_dpi = Dpi();
 }
 
@@ -61,9 +56,7 @@ void StatusBarPanel::clear() {
   ui.pageInfoLine->setVisible(false);
 }
 
-void StatusBarPanel::updateUnits(Units) {
-  const QMutexLocker locker(&m_mutex);
-
+void StatusBarPanel::onUnitsChanged(Units) {
   mousePosChanged();
   physSizeChanged();
 }
@@ -126,15 +119,4 @@ void StatusBarPanel::physSizeChanged() {
     ui.physSizeLabel->clear();
     ui.physSizeLine->setVisible(false);
   }
-}
-
-void StatusBarPanel::setInfoProvider(ImageViewInfoProvider* infoProvider) {
-  if (m_infoProvider) {
-    infoProvider->detachObserver(this);
-  }
-  if (infoProvider) {
-    infoProvider->attachObserver(this);
-  }
-
-  m_infoProvider = infoProvider;
 }

@@ -19,7 +19,7 @@
 #ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_
 #define PAGE_LAYOUT_OPTIONSWIDGET_H_
 
-#include <UnitsObserver.h>
+#include <UnitsListener.h>
 #include <QIcon>
 #include <list>
 #include <memory>
@@ -39,7 +39,7 @@ class ProjectPages;
 namespace page_layout {
 class Settings;
 
-class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private Ui::OptionsWidget {
+class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private Ui::OptionsWidget {
   Q_OBJECT
  public:
   OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
@@ -58,7 +58,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsObserver, private 
 
   const Alignment& alignment() const;
 
-  void updateUnits(Units units) override;
+  void onUnitsChanged(Units units) override;
 
  signals:
 

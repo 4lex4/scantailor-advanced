@@ -5,7 +5,7 @@
 #include <foundation/NonCopyable.h>
 #include <list>
 #include <memory>
-#include "UnitsObserver.h"
+#include "UnitsListener.h"
 
 class Dpi;
 
@@ -21,9 +21,9 @@ class UnitsProvider {
 
   void setUnits(Units units);
 
-  void attachObserver(UnitsObserver* observer);
+  void addListener(UnitsListener* listener);
 
-  void detachObserver(UnitsObserver* observer);
+  void removeListener(UnitsListener* listener);
 
   void convertFrom(double& horizontalValue, double& verticalValue, Units fromUnits, const Dpi& dpi) const;
 
@@ -33,7 +33,7 @@ class UnitsProvider {
   void unitsChanged();
 
  private:
-  std::list<UnitsObserver*> m_observers;
+  std::list<UnitsListener*> m_unitsListeners;
   Units m_units;
 };
 

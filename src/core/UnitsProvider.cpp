@@ -21,17 +21,17 @@ void UnitsProvider::setUnits(Units units) {
   unitsChanged();
 }
 
-void UnitsProvider::attachObserver(UnitsObserver* observer) {
-  m_observers.push_back(observer);
+void UnitsProvider::addListener(UnitsListener* listener) {
+  m_unitsListeners.push_back(listener);
 }
 
-void UnitsProvider::detachObserver(UnitsObserver* observer) {
-  m_observers.remove(observer);
+void UnitsProvider::removeListener(UnitsListener* listener) {
+  m_unitsListeners.remove(listener);
 }
 
 void UnitsProvider::unitsChanged() {
-  for (UnitsObserver* observer : m_observers) {
-    observer->updateUnits(m_units);
+  for (UnitsListener* listener : m_unitsListeners) {
+    listener->onUnitsChanged(m_units);
   }
 }
 

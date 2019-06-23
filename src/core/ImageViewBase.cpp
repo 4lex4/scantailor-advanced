@@ -578,8 +578,8 @@ void ImageViewBase::showEvent(QShowEvent* event) {
   QWidget::showEvent(event);
 
   if (auto* mainWindow = dynamic_cast<QMainWindow*>(window())) {
-    if (auto* infoObserver = Utils::castOrFindChild<ImageViewInfoObserver*>(mainWindow->statusBar())) {
-      infoObserver->setInfoProvider(&infoProvider());
+    if (auto* infoListener = Utils::castOrFindChild<ImageViewInfoListener*>(mainWindow->statusBar())) {
+      infoProvider().addListener(infoListener);
     }
   }
 }

@@ -49,7 +49,7 @@ void OptionsWidget::preUpdateUI(const PageInfo& page_info) {
   fineTuneBtn->setVisible(false);
   dimensionsWidget->setVisible(false);
 
-  updateUnits(UnitsProvider::getInstance().getUnits());
+  onUnitsChanged(UnitsProvider::getInstance().getUnits());
 
   setupUiConnections();
 }
@@ -281,7 +281,7 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages,
 }  // OptionsWidget::applySelection
 
 
-void OptionsWidget::updateUnits(Units units) {
+void OptionsWidget::onUnitsChanged(Units units) {
   removeUiConnections();
 
   int decimals;

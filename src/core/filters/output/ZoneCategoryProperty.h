@@ -31,9 +31,11 @@ class QString;
 namespace output {
 class ZoneCategoryProperty : public Property {
  public:
-  enum ZoneCategory { MANUAL, RECTANGULAR_OUTLINE };
+  enum ZoneCategory { MANUAL, AUTO };
 
-  explicit ZoneCategoryProperty(ZoneCategory zone_category = MANUAL) : m_zone_category(zone_category) {}
+  explicit ZoneCategoryProperty(ZoneCategory zone_category = MANUAL);
+
+  ZoneCategoryProperty(const ZoneCategoryProperty& other);
 
   explicit ZoneCategoryProperty(const QDomElement& el);
 
@@ -56,7 +58,7 @@ class ZoneCategoryProperty : public Property {
 
 
   static const char m_propertyName[];
-  ZoneCategory m_zone_category;
+  ZoneCategory m_zoneCategory;
 };
 }  // namespace output
 

@@ -36,11 +36,11 @@ class Zone {
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-  const SerializableSpline& spline() const { return m_spline; }
+  const SerializableSpline& spline() const;
 
-  PropertySet& properties() { return m_props; }
+  PropertySet& properties();
 
-  const PropertySet& properties() const { return m_props; }
+  const PropertySet& properties() const;
 
   bool isValid() const;
 

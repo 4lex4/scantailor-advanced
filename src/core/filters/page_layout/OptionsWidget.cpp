@@ -97,7 +97,7 @@ void OptionsWidget::preUpdateUI(const PageInfo& page_info, const Margins& margin
     }
   }
 
-  updateUnits(UnitsProvider::getInstance().getUnits());
+  onUnitsChanged(UnitsProvider::getInstance().getUnits());
 
   alignWithOthersCB->blockSignals(true);
   alignWithOthersCB->setChecked(!alignment.isNull());
@@ -159,7 +159,7 @@ void OptionsWidget::marginsSetExternally(const Margins& margins_mm) {
   updateMarginsDisplay();
 }
 
-void OptionsWidget::updateUnits(const Units units) {
+void OptionsWidget::onUnitsChanged(Units units) {
   removeUiConnections();
 
   int decimals;

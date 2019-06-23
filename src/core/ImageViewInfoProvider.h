@@ -8,7 +8,7 @@
 #include <list>
 #include <memory>
 #include "Dpi.h"
-#include "ImageViewInfoObserver.h"
+#include "ImageViewInfoListener.h"
 #include "NonCopyable.h"
 
 class ImageViewInfoProvider {
@@ -18,9 +18,9 @@ class ImageViewInfoProvider {
 
   ~ImageViewInfoProvider();
 
-  void attachObserver(ImageViewInfoObserver* observer);
+  void addListener(ImageViewInfoListener* listener);
 
-  void detachObserver(ImageViewInfoObserver* observer);
+  void removeListener(ImageViewInfoListener* listener);
 
   void setPhysSize(const QSizeF& physSize);
 
@@ -37,7 +37,7 @@ class ImageViewInfoProvider {
 
   void mousePosChanged(const QPointF& mousePos) const;
 
-  std::list<ImageViewInfoObserver*> m_observers;
+  std::list<ImageViewInfoListener*> m_infoListeners;
   Dpi m_dpi;
   QPointF m_mousePos;
   QSizeF m_physSize;

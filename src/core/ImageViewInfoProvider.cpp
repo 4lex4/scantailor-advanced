@@ -7,23 +7,21 @@
 ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi) : m_dpi(dpi){};
 
 ImageViewInfoProvider::~ImageViewInfoProvider() {
-  for (ImageViewInfoObserver* observer : m_observers) {
-    observer->clearImageViewInfo();
+  for (ImageViewInfoListener* listener : m_infoListeners) {
+    listener->onProviderStopped();
   }
 }
 
-void ImageViewInfoProvider::attachObserver(ImageViewInfoObserver* observer) {
-  observer->updateDpi(m_dpi);
-  observer->updatePhysSize(m_physSize);
-  observer->updateMousePos(m_mousePos);
+void ImageViewInfoProvider::addListener(ImageViewInfoListener* listener) {
+  listener->onDpiChanged(m_dpi);
+  listener->onPhysSizeChanged(m_physSize);
+  listener->onMousePosChanged(m_mousePos);
 
-  m_observers.push_back(observer);
+  m_infoListeners.push_back(listener);
 }
 
-void ImageViewInfoProvider::detachObserver(ImageViewInfoObserver* observer) {
-  observer->clearImageViewInfo();
-
-  m_observers.remove(observer);
+void ImageViewInfoProvider::removeListener(ImageViewInfoListener* listener) {
+  m_infoListeners.remove(listener);
 }
 
 void ImageViewInfoProvider::setPhysSize(const QSizeF& physSize) {
@@ -37,14 +35,14 @@ void ImageViewInfoProvider::setMousePos(const QPointF& mousePos) {
 }
 
 void ImageViewInfoProvider::physSizeChanged(const QSizeF& physSize) const {
-  for (ImageViewInfoObserver* observer : m_observers) {
-    observer->updatePhysSize(physSize);
+  for (ImageViewInfoListener* listener : m_infoListeners) {
+    listener->onPhysSizeChanged(physSize);
   }
 }
 
 void ImageViewInfoProvider::mousePosChanged(const QPointF& mousePos) const {
-  for (ImageViewInfoObserver* observer : m_observers) {
-    observer->updateMousePos(mousePos);
+  for (ImageViewInfoListener* listener : m_infoListeners) {
+    listener->onMousePosChanged(mousePos);
   }
 }
 

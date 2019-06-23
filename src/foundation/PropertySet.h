@@ -19,7 +19,9 @@
 #ifndef PROPERTY_SET_H_
 #define PROPERTY_SET_H_
 
-#include <vector>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
 #include "Property.h"
 #include "intrusive_ptr.h"
 #include "ref_countable.h"
@@ -49,24 +51,27 @@ class PropertySet : public ref_countable {
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
+  template <typename T>
+  using is_property = typename std::enable_if<std::is_base_of<Property, T>::value>::type;
+
   /**
    * Returns a property stored in this set, if one having a suitable
    * type is found, or returns a null smart pointer otherwise.
    */
-  template <typename T>
+  template <typename T, typename = is_property<T>>
   intrusive_ptr<T> locate();
 
-  template <typename T>
+  template <typename T, typename = is_property<T>>
   intrusive_ptr<const T> locate() const;
 
   /**
    * Returns a property stored in this set, if one having a suitable
    * type is found, or returns a default constructed object otherwise.
    */
-  template <typename T>
+  template <typename T, typename = is_property<T>>
   intrusive_ptr<T> locateOrDefault();
 
-  template <typename T>
+  template <typename T, typename = is_property<T>>
   intrusive_ptr<const T> locateOrDefault() const;
 
   /**
@@ -74,70 +79,52 @@ class PropertySet : public ref_countable {
    * type is found.  Otherwise, a default constructed object is put
    * to the set and then returned.
    */
-  template <typename T>
+  template <typename T, typename = is_property<T>>
   intrusive_ptr<T> locateOrCreate();
 
  private:
-  typedef std::vector<intrusive_ptr<Property>> PropList;
-  PropList m_props;
+  using PropertyMap = std::unordered_map<std::type_index, intrusive_ptr<Property>>;
+
+  PropertyMap m_props;
 };
 
-
-template <typename T>
+template <typename T, typename>
 intrusive_ptr<T> PropertySet::locate() {
-  auto it(m_props.begin());
-  const auto end(m_props.end());
-  for (; it != end; ++it) {
-    if (T* obj = dynamic_cast<T*>(it->get())) {
-      return intrusive_ptr<T>(obj);
-    }
+  auto it(m_props.find(typeid(T)));
+  if (it != m_props.end()) {
+    return static_pointer_cast<T>(it->second);
+  } else {
+    return nullptr;
   }
-
-  return nullptr;
 }
 
-template <typename T>
+template <typename T, typename>
 intrusive_ptr<const T> PropertySet::locate() const {
-  auto it(m_props.begin());
-  const auto end(m_props.end());
-  for (; it != end; ++it) {
-    if (const T* obj = dynamic_cast<const T*>(it->get())) {
-      return intrusive_ptr<const T>(obj);
-    }
-  }
-
-  return nullptr;
+  return const_cast<PropertySet*>(this)->locate<T>();
 }
 
-template <typename T>
+template <typename T, typename>
 intrusive_ptr<T> PropertySet::locateOrDefault() {
-  intrusive_ptr<T> obj(locate<T>());
-  if (!obj) {
-    obj.reset(new T);
+  intrusive_ptr<T> prop = locate<T>();
+  if (!prop) {
+    return make_intrusive<T>();
   }
-
-  return obj;
+  return prop;
 }
 
-template <typename T>
+template <typename T, typename>
 intrusive_ptr<const T> PropertySet::locateOrDefault() const {
-  intrusive_ptr<const T> obj(locate<T>());
-  if (!obj) {
-    obj.reset(new T);
-  }
-
-  return obj;
+  return const_cast<PropertySet*>(this)->locateOrDefault<T>();
 }
 
-template <typename T>
+template <typename T, typename>
 intrusive_ptr<T> PropertySet::locateOrCreate() {
-  intrusive_ptr<T> obj(locate<T>());
-  if (!obj) {
-    obj.reset(new T);
-    m_props.push_back(obj);
+  intrusive_ptr<T> prop = locate<T>();
+  if (!prop) {
+    prop = make_intrusive<T>();
+    m_props[typeid(T)] = prop;
   }
-
-  return obj;
+  return prop;
 }
 
 inline void swap(PropertySet& o1, PropertySet& o2) {

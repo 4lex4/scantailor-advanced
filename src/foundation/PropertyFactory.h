@@ -32,7 +32,7 @@ class PropertyFactory {
  public:
   virtual ~PropertyFactory() = default;
 
-  typedef intrusive_ptr<Property> (*PropertyConstructor)(const QDomElement& el);
+  using PropertyConstructor = intrusive_ptr<Property> (*)(const QDomElement& el);
 
   void registerProperty(const QString& property, PropertyConstructor constructor);
 

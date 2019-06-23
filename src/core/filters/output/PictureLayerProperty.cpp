@@ -58,7 +58,7 @@ PictureLayerProperty::Layer PictureLayerProperty::layerFromString(const QString&
 }
 
 QString PictureLayerProperty::layerToString(Layer layer) {
-  const char* str = nullptr;
+  QString str;
 
   switch (layer) {
     case ERASER1:

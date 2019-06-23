@@ -238,8 +238,7 @@ void fillExcept(BinaryImage& image, const BinaryImage& bw_mask, const BWColor co
 void removeAutoPictureZones(ZoneSet& picture_zones) {
   for (auto it = picture_zones.begin(); it != picture_zones.end();) {
     const Zone& zone = *it;
-    if (zone.properties().locateOrDefault<ZoneCategoryProperty>()->zone_category()
-        == ZoneCategoryProperty::RECTANGULAR_OUTLINE) {
+    if (zone.properties().locateOrDefault<ZoneCategoryProperty>()->zone_category() == ZoneCategoryProperty::AUTO) {
       it = picture_zones.erase(it);
     } else {
       ++it;
@@ -277,8 +276,7 @@ BackgroundColorCalculator getBackgroundColorCalculator(const PageId& pageId, con
 Zone createPictureZoneFromPoly(const QPolygonF& polygon) {
   PropertySet propertySet;
   propertySet.locateOrCreate<output::PictureLayerProperty>()->setLayer(output::PictureLayerProperty::PAINTER2);
-  propertySet.locateOrCreate<output::ZoneCategoryProperty>()->setZoneCategory(
-      output::ZoneCategoryProperty::RECTANGULAR_OUTLINE);
+  propertySet.locateOrCreate<output::ZoneCategoryProperty>()->setZoneCategory(ZoneCategoryProperty::AUTO);
   return Zone(SerializableSpline(polygon), propertySet);
 }
 

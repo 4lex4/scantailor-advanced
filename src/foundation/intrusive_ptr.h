@@ -286,4 +286,27 @@ inline void swap(intrusive_ptr<T>& lhs, intrusive_ptr<T>& rhs) {
   lhs.swap(rhs);
 }
 
+template <typename T, typename OT>
+inline intrusive_ptr<T> static_pointer_cast(const intrusive_ptr<OT>& r) noexcept {
+  return intrusive_ptr<T>(static_cast<typename intrusive_ptr<T>::pointer>(r.get()));
+}
+
+template <typename T, typename OT>
+inline intrusive_ptr<T> const_pointer_cast(const intrusive_ptr<OT>& r) noexcept {
+  return intrusive_ptr<T>(const_cast<typename intrusive_ptr<T>::pointer>(r.get()));
+}
+
+template <typename T, typename OT>
+inline intrusive_ptr<T> dynamic_pointer_cast(const intrusive_ptr<OT>& r) noexcept {
+  if (auto* p = dynamic_cast<typename intrusive_ptr<T>::pointer>(r.get())) {
+    return intrusive_ptr<T>(p);
+  }
+  return intrusive_ptr<T>();
+}
+
+template <typename T, typename OT>
+inline intrusive_ptr<T> reinterpret_pointer_cast(const intrusive_ptr<OT>& r) noexcept {
+  return intrusive_ptr<T>(reinterpret_cast<typename intrusive_ptr<T>::pointer>(r.get()));
+}
+
 #endif  // ifndef SCANTAILOR_INTRUSIVE_PTR_H

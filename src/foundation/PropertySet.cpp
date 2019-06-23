@@ -33,24 +33,22 @@ PropertySet::PropertySet(const QDomElement& el, const PropertyFactory& factory) 
     }
 
     QDomElement prop_el(node.toElement());
-    intrusive_ptr<Property> prop(factory.construct(prop_el));
+    intrusive_ptr<Property> prop = factory.construct(prop_el);
     if (prop) {
-      m_props.push_back(prop);
+      m_props[typeid(*prop)] = prop;
     }
   }
 }
 
 PropertySet::PropertySet(const PropertySet& other) {
   m_props.reserve(other.m_props.size());
-
-  for (const intrusive_ptr<Property>& prop : other.m_props) {
-    m_props.push_back(prop->clone());
+  for (const auto& [type, prop] : other.m_props) {
+    m_props[type] = prop->clone();
   }
 }
 
 PropertySet& PropertySet::operator=(const PropertySet& other) {
   PropertySet(other).swap(*this);
-
   return *this;
 }
 
@@ -62,7 +60,7 @@ QDomElement PropertySet::toXml(QDomDocument& doc, const QString& name) const {
   const QString property_str("property");
   QDomElement props_el(doc.createElement(name));
 
-  for (const intrusive_ptr<Property>& prop : m_props) {
+  for (const auto& [type, prop] : m_props) {
     props_el.appendChild(prop->toXml(doc, property_str));
   }
 

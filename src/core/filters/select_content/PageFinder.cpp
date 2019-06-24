@@ -94,7 +94,7 @@ QRectF PageFinder::findPageBox(const TaskStatus& status,
       fineTuneCorners(bwimg, content_rect, QSize(0, 0), 1.0);
     }
   } else {
-    for (int i = 0; i < bwimages.size(); ++i) {
+    for (uint32_t i = 0; i < bwimages.size(); ++i) {
       QImage bwimg(bwimages[i].toQImage());
       rects.push_back(QRect(detectBorders(bwimg)));
       if (fine_tune) {
@@ -160,7 +160,6 @@ int PageFinder::detectEdge(const QImage& img, int start, int end, int inc, int m
 
   while (i != end) {
     int black_pixels = 0;
-    int old_gap = gap;
 
     for (int j = ms; j != me; j++) {
       int x = i, y = j;

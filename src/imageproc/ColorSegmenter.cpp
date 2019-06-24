@@ -30,7 +30,7 @@ struct Component {
 
   Component() : size(0) {}
 
-  inline int square() const { return size; }
+  inline uint32_t square() const { return size; }
 };
 
 struct BoundingBox {
@@ -73,7 +73,7 @@ class ComponentCleaner {
    * Defines the minimum square in pixels.
    * If a component has lower that, it will be erased.
    */
-  int m_bigObjectThreshold;
+  uint32_t m_bigObjectThreshold;
 };
 
 ComponentCleaner::ComponentCleaner(const Dpi& dpi, const int noiseThreshold) {
@@ -344,7 +344,7 @@ GrayImage buildGrayImage(const ConnectivityMap& segmentsMap, const GrayImage& gr
       img_line += img_stride;
     }
 
-    for (int label = 1; label <= segmentsMap.maxLabel(); label++) {
+    for (uint32_t label = 1; label <= segmentsMap.maxLabel(); label++) {
       colorMap[label] = static_cast<uint8_t>(std::round(double(graySumMap[label]) / components[label].size));
     }
   }

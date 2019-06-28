@@ -98,8 +98,6 @@ void CacheDrivenTask::process(const PageInfo& page_info,
         break;
       }
 
-      const QFileInfo out_file_info(out_file_path);
-
       if (!render_params.splitOutput()) {
         if (!out_file_info.exists()) {
           need_reprocess = true;

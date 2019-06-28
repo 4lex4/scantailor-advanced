@@ -52,14 +52,20 @@ set(sources
     DewarpingOptions.cpp DewarpingOptions.h
     ChangeDewarpingDialog.cpp ChangeDewarpingDialog.h
     DepthPerception.cpp DepthPerception.h
-    SplitImage.cpp SplitImage.h
     SplittingOptions.cpp SplittingOptions.h
     OtsuBinarizationOptionsWidget.cpp OtsuBinarizationOptionsWidget.h
     SauvolaBinarizationOptionsWidget.cpp SauvolaBinarizationOptionsWidget.h 
     WolfBinarizationOptionsWidget.cpp WolfBinarizationOptionsWidget.h 
     BinarizationOptionsWidget.h 
     PictureShapeOptions.cpp PictureShapeOptions.h 
-    OutputProcessingParams.cpp OutputProcessingParams.h)
+    OutputProcessingParams.cpp OutputProcessingParams.h
+    OutputImage.h
+    OutputImageWithForeground.h
+    OutputImageWithOriginalBackground.h
+    OutputImagePlain.cpp OutputImagePlain.h
+    OutputImageWithForegroundMask.cpp OutputImageWithForegroundMask.h
+    OutputImageWithOriginalBackgroundMask.cpp OutputImageWithOriginalBackgroundMask.h
+    OutputImageBuilder.cpp OutputImageBuilder.h ForegroundType.h)
 
 add_library(output STATIC ${sources} ${ui_files})
 target_link_libraries(output PUBLIC core interaction PRIVATE dewarping zones)

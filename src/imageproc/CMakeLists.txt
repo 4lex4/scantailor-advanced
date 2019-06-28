@@ -48,7 +48,7 @@ set(sources
     BackgroundColorCalculator.cpp BackgroundColorCalculator.h
     BadAllocIfNull.cpp BadAllocIfNull.h
     ColorSegmenter.cpp ColorSegmenter.h
-    ColorTable.cpp ColorTable.h
+    Posterizer.cpp Posterizer.h
     ImageCombination.h ImageCombination.cpp
     Dpi.cpp Dpi.h
     Dpm.cpp Dpm.h

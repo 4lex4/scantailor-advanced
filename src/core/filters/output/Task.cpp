@@ -17,6 +17,8 @@
  */
 
 #include "Task.h"
+#include <DewarpingPointMapper.h>
+#include <PolygonUtils.h>
 #include <UnitsProvider.h>
 #include <QDir>
 #include <boost/bind.hpp>
@@ -37,6 +39,9 @@
 #include "ImageView.h"
 #include "OptionsWidget.h"
 #include "OutputGenerator.h"
+#include "OutputImageBuilder.h"
+#include "OutputImageWithForeground.h"
+#include "OutputImageWithOriginalBackground.h"
 #include "PictureZoneComparator.h"
 #include "PictureZoneEditor.h"
 #include "RenderParams.h"
@@ -45,8 +50,6 @@
 #include "TaskStatus.h"
 #include "ThumbnailPixmapCache.h"
 #include "Utils.h"
-#include <DewarpingPointMapper.h>
-#include <PolygonUtils.h>
 
 using namespace imageproc;
 using namespace dewarping;
@@ -271,31 +274,22 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
       out_img = ImageLoader::load(out_file, 0);
     }
     if (out_img.isNull() && render_params.splitOutput()) {
-      QImage foreground_image;
-      QImage background_image;
+      OutputImageBuilder imageBuilder;
       QFile foreground_file(foreground_file_path);
-      QFile background_file(background_file_path);
       if (foreground_file.open(QIODevice::ReadOnly)) {
-        foreground_image = ImageLoader::load(foreground_file, 0);
+        imageBuilder.setForegroundImage(ImageLoader::load(foreground_file, 0));
       }
+      QFile background_file(background_file_path);
       if (background_file.open(QIODevice::ReadOnly)) {
-        background_image = ImageLoader::load(background_file, 0);
+        imageBuilder.setBackgroundImage(ImageLoader::load(background_file, 0));
       }
-
-      SplitImage tmpSplitImage;
-      if (!render_params.originalBackground()) {
-        tmpSplitImage = SplitImage(foreground_image, background_image);
-      } else {
-        QImage original_background_image;
+      if (render_params.originalBackground()) {
         QFile original_background_file(original_background_file_path);
         if (original_background_file.open(QIODevice::ReadOnly)) {
-          original_background_image = ImageLoader::load(original_background_file, 0);
+          imageBuilder.setOriginalBackgroundImage(ImageLoader::load(original_background_file, 0));
         }
-        tmpSplitImage = SplitImage(foreground_image, background_image, original_background_image);
       }
-      if (!tmpSplitImage.isNull()) {
-        out_img = tmpSplitImage.toImage();
-      }
+      out_img = *imageBuilder.build();
     }
     need_reprocess = out_img.isNull();
 
@@ -335,53 +329,56 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
       distortion_model = params.distortionModel();
     }
 
-    SplitImage splitImage;
-
-    out_img
-        = generator.process(status, data, new_picture_zones, new_fill_zones, distortion_model, params.depthPerception(),
-                            write_automask ? &automask_img : nullptr, write_speckles_file ? &speckles_img : nullptr,
-                            m_dbg.get(), m_pageId, m_settings, &splitImage);
-
-    if (((params.dewarpingOptions().dewarpingMode() == AUTO) || (params.dewarpingOptions().dewarpingMode() == MARGINAL))
-        && distortion_model.isValid()) {
-      // A new distortion model was generated.
-      // We need to save it to be able to modify it manually.
-      params.setDistortionModel(distortion_model);
-      m_settings->setParams(m_pageId, params);
-      new_output_image_params.setDistortionModel(distortion_model);
-    }
-
-    // Saving refreshed params and output processing params.
-    new_output_image_params.setBlackOnWhite(m_settings->getParams(m_pageId).isBlackOnWhite());
-    new_output_image_params.setOutputProcessingParams(m_settings->getOutputProcessingParams(m_pageId));
-
     bool invalidate_params = false;
+    {
+      std::unique_ptr<OutputImage> outputImage
+          = generator.process(status, data, new_picture_zones, new_fill_zones, distortion_model,
+                              params.depthPerception(), write_automask ? &automask_img : nullptr,
+                              write_speckles_file ? &speckles_img : nullptr, m_dbg.get(), m_pageId, m_settings);
 
-    if (render_params.splitOutput()) {
-      QDir().mkdir(foreground_dir);
-      QDir().mkdir(background_dir);
-
-      if (!TiffWriter::writeImage(foreground_file_path, splitImage.getForegroundImage())
-          || !TiffWriter::writeImage(background_file_path, splitImage.getBackgroundImage())) {
-        invalidate_params = true;
+      if (((params.dewarpingOptions().dewarpingMode() == AUTO)
+           || (params.dewarpingOptions().dewarpingMode() == MARGINAL))
+          && distortion_model.isValid()) {
+        // A new distortion model was generated.
+        // We need to save it to be able to modify it manually.
+        params.setDistortionModel(distortion_model);
+        m_settings->setParams(m_pageId, params);
+        new_output_image_params.setDistortionModel(distortion_model);
       }
 
-      if (render_params.originalBackground()) {
-        QDir().mkdir(original_background_dir);
+      // Saving refreshed params and output processing params.
+      new_output_image_params.setBlackOnWhite(m_settings->getParams(m_pageId).isBlackOnWhite());
+      new_output_image_params.setOutputProcessingParams(m_settings->getOutputProcessingParams(m_pageId));
 
-        if (!TiffWriter::writeImage(original_background_file_path, splitImage.getOriginalBackgroundImage())) {
+      if (render_params.splitOutput()) {
+        auto* outputImageWithForeground = dynamic_cast<OutputImageWithForeground*>(outputImage.get());
+
+        QDir().mkdir(foreground_dir);
+        QDir().mkdir(background_dir);
+        if (!TiffWriter::writeImage(foreground_file_path, outputImageWithForeground->getForegroundImage())
+            || !TiffWriter::writeImage(background_file_path, outputImageWithForeground->getBackgroundImage())) {
           invalidate_params = true;
         }
+
+        if (render_params.originalBackground()) {
+          auto* outputImageWithOrigBg = dynamic_cast<OutputImageWithOriginalBackground*>(outputImage.get());
+
+          QDir().mkdir(original_background_dir);
+          if (!TiffWriter::writeImage(original_background_file_path,
+                                      outputImageWithOrigBg->getOriginalBackgroundImage())) {
+            invalidate_params = true;
+          }
+        }
+      } else {
+        // Remove the files if the mode was changed.
+        QFile(foreground_file_path).remove();
+        QFile(background_file_path).remove();
+        QFile(original_background_file_path).remove();
       }
 
-      out_img = splitImage.toImage();
-      splitImage = SplitImage();
-    } else {
-      // Remove layers if the mode was changed.
-      QFile(foreground_file_path).remove();
-      QFile(background_file_path).remove();
-      QFile(original_background_file_path).remove();
+      out_img = *outputImage;
     }
+
     if (!TiffWriter::writeImage(out_file_path, out_img)) {
       invalidate_params = true;
     } else {

@@ -3,11 +3,7 @@
 #define SCANTAILOR_COLORSEGMENTER_H
 
 #include <QImage>
-#include "BinaryThreshold.h"
-#include "ConnectivityMap.h"
-
-class Dpi;
-class QRect;
+#include "Dpi.h"
 
 namespace imageproc {
 class BinaryImage;
@@ -15,65 +11,24 @@ class GrayImage;
 
 class ColorSegmenter {
  public:
-  ColorSegmenter(const BinaryImage& image,
-                 const QImage& originalImage,
-                 const Dpi& dpi,
+  ColorSegmenter(const Dpi& dpi,
                  int noiseThreshold,
                  int redThresholdAdjustment,
                  int greenThresholdAdjustment,
                  int blueThresholdAdjustment);
 
-  ColorSegmenter(const BinaryImage& image, const GrayImage& originalImage, const Dpi& dpi, int noiseThreshold);
+  ColorSegmenter(const Dpi& dpi, int noiseThreshold);
 
-  QImage getImage() const;
+  QImage segment(const BinaryImage& image, const QImage& colorImage) const;
+
+  GrayImage segment(const BinaryImage& image, const GrayImage& grayImage) const;
 
  private:
-  struct Component;
-  struct BoundingBox;
-
-  enum RgbChannel { RED_CHANNEL, GREEN_CHANNEL, BLUE_CHANNEL };
-
-  class Settings {
-   public:
-    explicit Settings(const Dpi& dpi, int noiseThreshold);
-
-    bool eligibleForDelete(const Component& component, const BoundingBox& boundingBox) const;
-
-   private:
-    /**
-     * Defines the minimum average width threshold.
-     * When a component has lower that, it will be erased.
-     */
-    double m_minAverageWidthThreshold;
-
-    /**
-     * Defines the minimum square in pixels.
-     * If a component has lower that, it will be erased.
-     */
-    int m_bigObjectThreshold;
-  };
-
-  static GrayImage getRgbChannel(const QImage& image, RgbChannel channel);
-
-  void reduceNoise();
-
-  void fromRgb(const BinaryImage& image,
-               const QImage& originalImage,
-               int redThresholdAdjustment,
-               int greenThresholdAdjustment,
-               int blueThresholdAdjustment);
-
-  void fromGrayscale(const BinaryImage& image, const GrayImage& originalImage);
-
-  QImage buildRgbImage() const;
-
-  QImage buildGrayImage() const;
-
-  BinaryThreshold adjustThreshold(BinaryThreshold threshold, int adjustment);
-
-  Settings m_settings;
-  ConnectivityMap m_segmentsMap;
-  QImage m_originalImage;
+  Dpi m_dpi;
+  int m_noiseThreshold;
+  int m_redThresholdAdjustment;
+  int m_greenThresholdAdjustment;
+  int m_blueThresholdAdjustment;
 };
 }  // namespace imageproc
 

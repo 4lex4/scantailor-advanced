@@ -19,7 +19,10 @@
 #ifndef OUTPUT_OUTPUTGENERATOR_H_
 #define OUTPUT_OUTPUTGENERATOR_H_
 
+#include <Connectivity.h>
 #include <QtCore/qmath.h>
+#include <SkewFinder.h>
+#include <imageproc/BWColor.h>
 #include <QColor>
 #include <QFile>
 #include <QLineF>
@@ -31,6 +34,7 @@
 #include <QTransform>
 #include <boost/function.hpp>
 #include <cstdint>
+#include <memory>
 #include <utility>
 #include <vector>
 #include "ColorParams.h"
@@ -39,14 +43,12 @@
 #include "DewarpingOptions.h"
 #include "Dpi.h"
 #include "ImageTransformation.h"
+#include "OutputImage.h"
 #include "OutputProcessingParams.h"
 #include "PageId.h"
 #include "Params.h"
 #include "Settings.h"
-#include "SplitImage.h"
 #include "TiffWriter.h"
-#include <Connectivity.h>
-#include <SkewFinder.h>
 #include "intrusive_ptr.h"
 
 class TaskStatus;
@@ -107,18 +109,17 @@ class OutputGenerator {
    *        through the whole output generation process again.
    * \param dbg An optional sink for debugging images.
    */
-  QImage process(const TaskStatus& status,
-                 const FilterData& input,
-                 ZoneSet& picture_zones,
-                 const ZoneSet& fill_zones,
-                 dewarping::DistortionModel& distortion_model,
-                 const DepthPerception& depth_perception,
-                 imageproc::BinaryImage* auto_picture_mask,
-                 imageproc::BinaryImage* speckles_image,
-                 DebugImages* dbg,
-                 const PageId& pageId,
-                 const intrusive_ptr<Settings>& settings,
-                 SplitImage* splitImage);
+  std::unique_ptr<OutputImage> process(const TaskStatus& status,
+                                       const FilterData& input,
+                                       ZoneSet& picture_zones,
+                                       const ZoneSet& fill_zones,
+                                       dewarping::DistortionModel& distortion_model,
+                                       const DepthPerception& depth_perception,
+                                       imageproc::BinaryImage* auto_picture_mask,
+                                       imageproc::BinaryImage* speckles_image,
+                                       DebugImages* dbg,
+                                       const PageId& pageId,
+                                       const intrusive_ptr<Settings>& settings);
 
   QSize outputImageSize() const;
 
@@ -130,42 +131,39 @@ class OutputGenerator {
   const QTransform& getPostTransform() const;
 
  private:
-  QImage processImpl(const TaskStatus& status,
-                     const FilterData& input,
-                     ZoneSet& picture_zones,
-                     const ZoneSet& fill_zones,
-                     dewarping::DistortionModel& distortion_model,
-                     const DepthPerception& depth_perception,
-                     imageproc::BinaryImage* auto_picture_mask,
-                     imageproc::BinaryImage* speckles_image,
-                     DebugImages* dbg,
-                     const PageId& pageId,
-                     const intrusive_ptr<Settings>& settings,
-                     SplitImage* splitImage);
+  std::unique_ptr<OutputImage> processImpl(const TaskStatus& status,
+                                           const FilterData& input,
+                                           ZoneSet& picture_zones,
+                                           const ZoneSet& fill_zones,
+                                           dewarping::DistortionModel& distortion_model,
+                                           const DepthPerception& depth_perception,
+                                           imageproc::BinaryImage* auto_picture_mask,
+                                           imageproc::BinaryImage* speckles_image,
+                                           DebugImages* dbg,
+                                           const PageId& pageId,
+                                           const intrusive_ptr<Settings>& settings);
 
-  QImage processWithoutDewarping(const TaskStatus& status,
-                                 const FilterData& input,
-                                 ZoneSet& picture_zones,
-                                 const ZoneSet& fill_zones,
-                                 imageproc::BinaryImage* auto_picture_mask,
-                                 imageproc::BinaryImage* speckles_image,
-                                 DebugImages* dbg,
-                                 const PageId& pageId,
-                                 const intrusive_ptr<Settings>& settings,
-                                 SplitImage* splitImage);
+  std::unique_ptr<OutputImage> processWithoutDewarping(const TaskStatus& status,
+                                                       const FilterData& input,
+                                                       ZoneSet& picture_zones,
+                                                       const ZoneSet& fill_zones,
+                                                       imageproc::BinaryImage* auto_picture_mask,
+                                                       imageproc::BinaryImage* speckles_image,
+                                                       DebugImages* dbg,
+                                                       const PageId& pageId,
+                                                       const intrusive_ptr<Settings>& settings);
 
-  QImage processWithDewarping(const TaskStatus& status,
-                              const FilterData& input,
-                              ZoneSet& picture_zones,
-                              const ZoneSet& fill_zones,
-                              dewarping::DistortionModel& distortion_model,
-                              const DepthPerception& depth_perception,
-                              imageproc::BinaryImage* auto_picture_mask,
-                              imageproc::BinaryImage* speckles_image,
-                              DebugImages* dbg,
-                              const PageId& pageId,
-                              const intrusive_ptr<Settings>& settings,
-                              SplitImage* splitImage);
+  std::unique_ptr<OutputImage> processWithDewarping(const TaskStatus& status,
+                                                    const FilterData& input,
+                                                    ZoneSet& picture_zones,
+                                                    const ZoneSet& fill_zones,
+                                                    dewarping::DistortionModel& distortion_model,
+                                                    const DepthPerception& depth_perception,
+                                                    imageproc::BinaryImage* auto_picture_mask,
+                                                    imageproc::BinaryImage* speckles_image,
+                                                    DebugImages* dbg,
+                                                    const PageId& pageId,
+                                                    const intrusive_ptr<Settings>& settings);
 
   void movePointToTopMargin(BinaryImage& bw_image, XSpline& spline, int idx) const;
 
@@ -207,11 +205,11 @@ class OutputGenerator {
                                  const QColor& color,
                                  bool antialiasing = true);
 
-  static void fillMarginsInPlace(BinaryImage& image, const QPolygonF& content_poly, const BWColor& color);
+  static void fillMarginsInPlace(BinaryImage& image, const QPolygonF& content_poly, BWColor color);
 
   static void fillMarginsInPlace(QImage& image, const BinaryImage& content_mask, const QColor& color);
 
-  static void fillMarginsInPlace(BinaryImage& image, const BinaryImage& content_mask, const BWColor& color);
+  static void fillMarginsInPlace(BinaryImage& image, const BinaryImage& content_mask, BWColor color);
 
   static imageproc::GrayImage normalizeIlluminationGray(const TaskStatus& status,
                                                         const QImage& input,
@@ -268,49 +266,6 @@ class OutputGenerator {
                                           int pattern_height);
 
   static QSize calcLocalWindowSize(const Dpi& dpi);
-
-  void applyFillZonesInPlace(QImage& img,
-                             const ZoneSet& zones,
-                             const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                             const QTransform& postTransform,
-                             bool antialiasing = true) const;
-
-  void applyFillZonesInPlace(QImage& img,
-                             const ZoneSet& zones,
-                             const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                             bool antialiasing = true) const;
-
-  void applyFillZonesInPlace(QImage& img,
-                             const ZoneSet& zones,
-                             const QTransform& postTransform,
-                             bool antialiasing = true) const;
-
-  void applyFillZonesInPlace(QImage& img, const ZoneSet& zones, bool antialiasing = true) const;
-
-  void applyFillZonesInPlace(imageproc::BinaryImage& img,
-                             const ZoneSet& zones,
-                             const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                             const QTransform& postTransform) const;
-
-  void applyFillZonesInPlace(imageproc::BinaryImage& img,
-                             const ZoneSet& zones,
-                             const boost::function<QPointF(const QPointF&)>& orig_to_output) const;
-
-  void applyFillZonesInPlace(imageproc::BinaryImage& img, const ZoneSet& zones, const QTransform& postTransform) const;
-
-  void applyFillZonesInPlace(imageproc::BinaryImage& img, const ZoneSet& zones) const;
-
-  void applyFillZonesToMixedInPlace(QImage& img,
-                                    const ZoneSet& zones,
-                                    const imageproc::BinaryImage& picture_mask,
-                                    bool binary_mode) const;
-
-  void applyFillZonesToMixedInPlace(QImage& img,
-                                    const ZoneSet& zones,
-                                    const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                                    const QTransform& postTransform,
-                                    const imageproc::BinaryImage& picture_mask,
-                                    bool binary_mode) const;
 
   QImage segmentImage(const BinaryImage& image, const QImage& color_image) const;
 

@@ -3,21 +3,37 @@
 #include <QImage>
 #include <cmath>
 #include "BinaryImage.h"
-#include "Dpi.h"
+#include "BinaryThreshold.h"
+#include "ConnectivityMap.h"
 #include "GrayImage.h"
 #include "InfluenceMap.h"
 #include "RasterOp.h"
 
 namespace imageproc {
-struct ColorSegmenter::Component {
-  uint32_t pixelsCount;
+ColorSegmenter::ColorSegmenter(const Dpi& dpi,
+                               const int noiseThreshold,
+                               const int redThresholdAdjustment,
+                               const int greenThresholdAdjustment,
+                               const int blueThresholdAdjustment)
+    : m_dpi(dpi),
+      m_noiseThreshold(noiseThreshold),
+      m_redThresholdAdjustment(redThresholdAdjustment),
+      m_greenThresholdAdjustment(greenThresholdAdjustment),
+      m_blueThresholdAdjustment(blueThresholdAdjustment) {}
 
-  Component() : pixelsCount(0) {}
+ColorSegmenter::ColorSegmenter(const Dpi& dpi, const int noiseThreshold)
+    : ColorSegmenter(dpi, noiseThreshold, 0, 0, 0) {}
 
-  inline int square() const { return pixelsCount; }
+namespace {
+struct Component {
+  uint32_t size;
+
+  Component() : size(0) {}
+
+  inline int square() const { return size; }
 };
 
-struct ColorSegmenter::BoundingBox {
+struct BoundingBox {
   int top;
   int left;
   int bottom;
@@ -40,18 +56,27 @@ struct ColorSegmenter::BoundingBox {
   }
 };
 
-struct RgbColor {
-  uint32_t red;
-  uint32_t green;
-  uint32_t blue;
+class ComponentCleaner {
+ public:
+  explicit ComponentCleaner(const Dpi& dpi, int noiseThreshold);
 
-  RgbColor() : red(0), green(0), blue(0) {}
+  inline bool eligibleForDelete(const Component& component, const BoundingBox& boundingBox) const;
+
+ private:
+  /**
+   * Defines the minimum average width threshold.
+   * When a component has lower that, it will be erased.
+   */
+  double m_minAverageWidthThreshold;
+
+  /**
+   * Defines the minimum square in pixels.
+   * If a component has lower that, it will be erased.
+   */
+  int m_bigObjectThreshold;
 };
 
-
-/*=============================== ColorSegmenter::Settings ==================================*/
-
-ColorSegmenter::Settings::Settings(const Dpi& dpi, const int noiseThreshold) {
+ComponentCleaner::ComponentCleaner(const Dpi& dpi, const int noiseThreshold) {
   const int average_dpi = (dpi.horizontal() + dpi.vertical()) / 2;
   const double dpi_factor = average_dpi / 300.0;
 
@@ -59,9 +84,8 @@ ColorSegmenter::Settings::Settings(const Dpi& dpi, const int noiseThreshold) {
   m_bigObjectThreshold = qRound(std::pow(noiseThreshold, std::sqrt(2)) * dpi_factor);
 }
 
-inline bool ColorSegmenter::Settings::eligibleForDelete(const ColorSegmenter::Component& component,
-                                                        const ColorSegmenter::BoundingBox& boundingBox) const {
-  if (component.pixelsCount <= m_bigObjectThreshold) {
+bool ComponentCleaner::eligibleForDelete(const Component& component, const BoundingBox& boundingBox) const {
+  if (component.size <= m_bigObjectThreshold) {
     return true;
   }
 
@@ -71,54 +95,9 @@ inline bool ColorSegmenter::Settings::eligibleForDelete(const ColorSegmenter::Co
   return (averageWidth <= m_minAverageWidthThreshold);
 }
 
-/*=============================== ColorSegmenter ==================================*/
+enum RgbChannel { RED_CHANNEL, GREEN_CHANNEL, BLUE_CHANNEL };
 
-ColorSegmenter::ColorSegmenter(const BinaryImage& image,
-                               const QImage& originalImage,
-                               const Dpi& dpi,
-                               const int noiseThreshold,
-                               const int redThresholdAdjustment,
-                               const int greenThresholdAdjustment,
-                               const int blueThresholdAdjustment)
-    : m_settings(dpi, noiseThreshold) {
-  if (image.size() != originalImage.size()) {
-    throw std::invalid_argument("ColorSegmenter: images size doesn't match.");
-  }
-  if ((originalImage.format() != QImage::Format_Indexed8) && (originalImage.format() != QImage::Format_RGB32)
-      && (originalImage.format() != QImage::Format_ARGB32)) {
-    throw std::invalid_argument("Error: wrong image format.");
-  }
-  if (originalImage.format() == QImage::Format_Indexed8) {
-    if (originalImage.isGrayscale()) {
-      fromGrayscale(image, GrayImage(originalImage));
-      return;
-    } else {
-      throw std::invalid_argument("Error: wrong image format.");
-    }
-  }
-  fromRgb(image, originalImage, redThresholdAdjustment, greenThresholdAdjustment, blueThresholdAdjustment);
-}
-
-ColorSegmenter::ColorSegmenter(const BinaryImage& image,
-                               const GrayImage& originalImage,
-                               const Dpi& dpi,
-                               const int noiseThreshold)
-    : m_settings(dpi, noiseThreshold) {
-  if (image.size() != originalImage.size()) {
-    throw std::invalid_argument("ColorSegmenter: images size doesn't match.");
-  }
-  fromGrayscale(image, originalImage);
-}
-
-QImage ColorSegmenter::getImage() const {
-  if (m_originalImage.format() == QImage::Format_Indexed8) {
-    return buildGrayImage();
-  } else {
-    return buildRgbImage();
-  }
-}
-
-GrayImage ColorSegmenter::getRgbChannel(const QImage& image, const ColorSegmenter::RgbChannel channel) {
+GrayImage extractRgbChannel(const QImage& image, const RgbChannel channel) {
   if ((image.format() != QImage::Format_RGB32) && (image.format() != QImage::Format_ARGB32)) {
     throw std::invalid_argument("ColorSegmenter: wrong image format.");
   }
@@ -148,38 +127,67 @@ GrayImage ColorSegmenter::getRgbChannel(const QImage& image, const ColorSegmente
     img_line += img_stride;
     dst_line += dst_stride;
   }
-
   return dst;
 }
 
-void ColorSegmenter::fromRgb(const BinaryImage& image,
-                             const QImage& originalImage,
-                             const int redThresholdAdjustment,
-                             const int greenThresholdAdjustment,
-                             const int blueThresholdAdjustment) {
-  this->m_originalImage = originalImage;
+inline BinaryThreshold adjustThreshold(const BinaryThreshold threshold, const int adjustment) {
+  return qBound(1, int(threshold) + adjustment, 255);
+}
 
-  BinaryImage redComponent;
-  {
-    GrayImage redChannel = getRgbChannel(originalImage, RED_CHANNEL);
-    BinaryThreshold redThreshold = BinaryThreshold::otsuThreshold(redChannel);
-    redComponent = BinaryImage(redChannel, adjustThreshold(redThreshold, redThresholdAdjustment));
-    rasterOp<RopAnd<RopSrc, RopDst>>(redComponent, image);
+void reduceNoise(ConnectivityMap& segmentsMap, const Dpi& dpi, const int noiseThreshold) {
+  const ComponentCleaner componentCleaner(dpi, noiseThreshold);
+  std::vector<Component> components(segmentsMap.maxLabel() + 1);
+  std::vector<BoundingBox> boundingBoxes(segmentsMap.maxLabel() + 1);
+
+  const QSize size = segmentsMap.size();
+  const int width = size.width();
+  const int height = size.height();
+
+  // Count the number of pixels and the bounding rect of each component.
+  const uint32_t* map_line = segmentsMap.data();
+  const int map_stride = segmentsMap.stride();
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      const uint32_t label = map_line[x];
+      ++components[label].size;
+      boundingBoxes[label].extend(x, y);
+    }
+    map_line += map_stride;
   }
-  BinaryImage greenComponent;
-  {
-    GrayImage greenChannel = getRgbChannel(originalImage, GREEN_CHANNEL);
-    BinaryThreshold greenThreshold = BinaryThreshold::otsuThreshold(greenChannel);
-    greenComponent = BinaryImage(greenChannel, adjustThreshold(greenThreshold, greenThresholdAdjustment));
-    rasterOp<RopAnd<RopSrc, RopDst>>(greenComponent, image);
+
+  // creating set of labels determining components to be removed
+  std::unordered_set<uint32_t> labels;
+  for (uint32_t label = 1; label <= segmentsMap.maxLabel(); ++label) {
+    if (componentCleaner.eligibleForDelete(components[label], boundingBoxes[label])) {
+      labels.insert(label);
+    }
   }
-  BinaryImage blueComponent;
-  {
-    GrayImage blueChannel = getRgbChannel(originalImage, BLUE_CHANNEL);
-    BinaryThreshold blueThreshold = BinaryThreshold::otsuThreshold(blueChannel);
-    blueComponent = BinaryImage(blueChannel, adjustThreshold(blueThreshold, blueThresholdAdjustment));
-    rasterOp<RopAnd<RopSrc, RopDst>>(blueComponent, image);
-  }
+
+  segmentsMap.removeComponents(labels);
+}
+
+BinaryImage componentFromChannel(const BinaryImage& image,
+                                 const QImage& colorImage,
+                                 const RgbChannel channel,
+                                 const int adjustment) {
+  GrayImage channelImage = extractRgbChannel(colorImage, channel);
+  BinaryThreshold threshold = BinaryThreshold::otsuThreshold(channelImage);
+  BinaryImage component = BinaryImage(channelImage, adjustThreshold(threshold, adjustment));
+  rasterOp<RopAnd<RopSrc, RopDst>>(component, image);
+  return component;
+}
+
+ConnectivityMap buildMapFromRgb(const BinaryImage& image,
+                                const QImage& colorImage,
+                                const Dpi& dpi,
+                                const int noiseThreshold,
+                                const int redThresholdAdjustment,
+                                const int greenThresholdAdjustment,
+                                const int blueThresholdAdjustment) {
+  BinaryImage redComponent = componentFromChannel(image, colorImage, RED_CHANNEL, redThresholdAdjustment);
+  BinaryImage greenComponent = componentFromChannel(image, colorImage, GREEN_CHANNEL, greenThresholdAdjustment);
+  BinaryImage blueComponent = componentFromChannel(image, colorImage, BLUE_CHANNEL, blueThresholdAdjustment);
+
   BinaryImage yellowComponent(redComponent);
   rasterOp<RopAnd<RopSrc, RopDst>>(yellowComponent, greenComponent);
   BinaryImage magentaComponent(redComponent);
@@ -204,117 +212,93 @@ void ColorSegmenter::fromRgb(const BinaryImage& image,
   rasterOp<RopSubtract<RopDst, RopSrc>>(blueComponent, magentaComponent);
   rasterOp<RopSubtract<RopDst, RopSrc>>(blueComponent, cyanComponent);
 
-  m_segmentsMap = ConnectivityMap(blackComponent, CONN8);
-  m_segmentsMap.addComponents(yellowComponent, CONN8);
-  m_segmentsMap.addComponents(magentaComponent, CONN8);
-  m_segmentsMap.addComponents(cyanComponent, CONN8);
-  m_segmentsMap.addComponents(redComponent, CONN8);
-  m_segmentsMap.addComponents(greenComponent, CONN8);
-  m_segmentsMap.addComponents(blueComponent, CONN8);
+  ConnectivityMap segmentsMap = ConnectivityMap(blackComponent, CONN8);
+  segmentsMap.addComponents(yellowComponent, CONN8);
+  segmentsMap.addComponents(magentaComponent, CONN8);
+  segmentsMap.addComponents(cyanComponent, CONN8);
+  segmentsMap.addComponents(redComponent, CONN8);
+  segmentsMap.addComponents(greenComponent, CONN8);
+  segmentsMap.addComponents(blueComponent, CONN8);
 
-  reduceNoise();
+  reduceNoise(segmentsMap, dpi, noiseThreshold);
 
-  {
-    // extend the map and fill unlabeled components.
-    InfluenceMap influenceMap(m_segmentsMap, image);
-    m_segmentsMap = influenceMap;
-  }
+  // Extend the map to cover unlabeled components.
+  segmentsMap = InfluenceMap(segmentsMap, image);
 
   BinaryImage remainingComponents(image);
-  rasterOp<RopSubtract<RopDst, RopSrc>>(remainingComponents, m_segmentsMap.getBinaryMask());
-  m_segmentsMap.addComponents(remainingComponents, CONN8);
+  rasterOp<RopSubtract<RopDst, RopSrc>>(remainingComponents, segmentsMap.getBinaryMask());
+  segmentsMap.addComponents(remainingComponents, CONN8);
+
+  return segmentsMap;
 }
 
-void ColorSegmenter::fromGrayscale(const BinaryImage& image, const GrayImage& originalImage) {
-  this->m_originalImage = originalImage;
-  this->m_segmentsMap = ConnectivityMap(image, CONN8);
+ConnectivityMap buildMapFromGrayscale(const BinaryImage& image) {
+  return ConnectivityMap(image, CONN8);
 }
 
-void ColorSegmenter::reduceNoise() {
-  std::vector<Component> components(m_segmentsMap.maxLabel() + 1);
-  std::vector<BoundingBox> boundingBoxes(m_segmentsMap.maxLabel() + 1);
+class ComponentColor {
+ public:
+  inline void addPixelColor(uint32_t color) {
+    m_red += qRed(color);
+    m_green += qGreen(color);
+    m_blue += qBlue(color);
+    ++m_size;
+  }
 
-  const QSize size = m_segmentsMap.size();
-  const int width = size.width();
-  const int height = size.height();
+  inline uint32_t getColor() {
+    const auto sizeF = static_cast<long double>(m_size);
+    return qRgb(getAverage(m_red, m_size), getAverage(m_green, m_size), getAverage(m_blue, m_size));
+  }
 
-  // Count the number of pixels and the bounding rect of each component.
-  const uint32_t* map_line = m_segmentsMap.data();
-  const int map_stride = m_segmentsMap.stride();
-  for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x) {
-      const uint32_t label = map_line[x];
-      ++components[label].pixelsCount;
-      boundingBoxes[label].extend(x, y);
+ private:
+  static inline int getAverage(uint64_t sum, uint32_t size) {
+    int average = sum / size;
+    uint32_t reminder = sum % size;
+    if (reminder >= (size - reminder)) {
+      average++;
     }
-    map_line += map_stride;
+    return average;
   }
 
-  // creating set of labels determining components to be removed
-  std::unordered_set<uint32_t> labels;
-  for (uint32_t label = 1; label <= m_segmentsMap.maxLabel(); ++label) {
-    if (m_settings.eligibleForDelete(components[label], boundingBoxes[label])) {
-      labels.insert(label);
-    }
-  }
+  uint32_t m_size = 0;
+  uint64_t m_red = 0;
+  uint64_t m_green = 0;
+  uint64_t m_blue = 0;
+};
 
-  m_segmentsMap.removeComponents(labels);
-}
+QImage buildRgbImage(const ConnectivityMap& segmentsMap, const QImage& colorImage) {
+  const int width = colorImage.width();
+  const int height = colorImage.height();
 
-QImage ColorSegmenter::buildRgbImage() const {
-  if (m_originalImage.size().isEmpty()) {
-    return QImage();
-  }
-
-  const int width = m_originalImage.width();
-  const int height = m_originalImage.height();
-
-  std::vector<uint32_t> colorMap(m_segmentsMap.maxLabel() + 1, 0);
-
+  std::vector<ComponentColor> compColorMap(segmentsMap.maxLabel() + 1);
   {
-    const uint32_t* map_line = m_segmentsMap.data();
-    const int map_stride = m_segmentsMap.stride();
+    const uint32_t* map_line = segmentsMap.data();
+    const int map_stride = segmentsMap.stride();
 
-    const auto* img_line = reinterpret_cast<const uint32_t*>(m_originalImage.bits());
-    const int img_stride = m_originalImage.bytesPerLine() / sizeof(uint32_t);
+    const auto* img_line = reinterpret_cast<const uint32_t*>(colorImage.bits());
+    const int img_stride = colorImage.bytesPerLine() / sizeof(uint32_t);
 
-    std::vector<Component> components(m_segmentsMap.maxLabel() + 1);
-    std::vector<RgbColor> rgbSumMap(m_segmentsMap.maxLabel() + 1);
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
         const uint32_t label = map_line[x];
         if (label == 0) {
           continue;
         }
-
-        ++components[label].pixelsCount;
-        rgbSumMap[label].red += static_cast<uint8_t>((img_line[x] >> 16) & 0xff);
-        rgbSumMap[label].green += static_cast<uint8_t>((img_line[x] >> 8) & 0xff);
-        rgbSumMap[label].blue += static_cast<uint8_t>(img_line[x] & 0xff);
+        compColorMap[label].addPixelColor(img_line[x]);
       }
       map_line += map_stride;
       img_line += img_stride;
     }
-
-    for (int label = 1; label <= m_segmentsMap.maxLabel(); label++) {
-      const auto red = static_cast<uint32_t>(std::round(double(rgbSumMap[label].red) / components[label].pixelsCount));
-      const auto green
-          = static_cast<uint32_t>(std::round(double(rgbSumMap[label].green) / components[label].pixelsCount));
-      const auto blue
-          = static_cast<uint32_t>(std::round(double(rgbSumMap[label].blue) / components[label].pixelsCount));
-
-      colorMap[label] = (red << 16) | (green << 8) | (blue);
-    }
   }
 
-  QImage dst(m_originalImage.size(), QImage::Format_ARGB32_Premultiplied);
+  QImage dst(colorImage.size(), QImage::Format_RGB32);
   dst.fill(Qt::white);
 
   auto* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
   const int dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
 
-  const uint32_t* map_line = m_segmentsMap.data();
-  const int map_stride = m_segmentsMap.stride();
+  const uint32_t* map_line = segmentsMap.data();
+  const int map_stride = segmentsMap.stride();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -322,35 +306,30 @@ QImage ColorSegmenter::buildRgbImage() const {
       if (label == 0) {
         continue;
       }
-
-      dst_line[x] = colorMap[label];
+      dst_line[x] = compColorMap[label].getColor();
     }
     map_line += map_stride;
     dst_line += dst_stride;
   }
 
-  return dst.convertToFormat(QImage::Format_RGB32);
+  return dst;
 }
 
-QImage ColorSegmenter::buildGrayImage() const {
-  if (m_originalImage.size().isEmpty()) {
-    return QImage();
-  }
+GrayImage buildGrayImage(const ConnectivityMap& segmentsMap, const GrayImage& grayImage) {
+  const int width = grayImage.width();
+  const int height = grayImage.height();
 
-  const int width = m_originalImage.width();
-  const int height = m_originalImage.height();
-
-  std::vector<uint8_t> colorMap(m_segmentsMap.maxLabel() + 1, 0);
+  std::vector<uint8_t> colorMap(segmentsMap.maxLabel() + 1, 0);
 
   {
-    const uint32_t* map_line = m_segmentsMap.data();
-    const int map_stride = m_segmentsMap.stride();
+    const uint32_t* map_line = segmentsMap.data();
+    const int map_stride = segmentsMap.stride();
 
-    const auto* img_line = m_originalImage.bits();
-    const int img_stride = m_originalImage.bytesPerLine();
+    const auto* img_line = grayImage.data();
+    const int img_stride = grayImage.stride();
 
-    std::vector<Component> components(m_segmentsMap.maxLabel() + 1);
-    std::vector<uint32_t> graySumMap(m_segmentsMap.maxLabel() + 1, 0);
+    std::vector<Component> components(segmentsMap.maxLabel() + 1);
+    std::vector<uint32_t> graySumMap(segmentsMap.maxLabel() + 1, 0);
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
         const uint32_t label = map_line[x];
@@ -358,26 +337,26 @@ QImage ColorSegmenter::buildGrayImage() const {
           continue;
         }
 
-        ++components[label].pixelsCount;
+        ++components[label].size;
         graySumMap[label] += img_line[x];
       }
       map_line += map_stride;
       img_line += img_stride;
     }
 
-    for (int label = 1; label <= m_segmentsMap.maxLabel(); label++) {
-      colorMap[label] = static_cast<uint8_t>(std::round(double(graySumMap[label]) / components[label].pixelsCount));
+    for (int label = 1; label <= segmentsMap.maxLabel(); label++) {
+      colorMap[label] = static_cast<uint8_t>(std::round(double(graySumMap[label]) / components[label].size));
     }
   }
 
-  GrayImage dst(m_originalImage.size());
+  GrayImage dst(grayImage.size());
   dst.fill(0xff);
 
   uint8_t* dst_line = dst.data();
   const int dst_stride = dst.stride();
 
-  const uint32_t* map_line = m_segmentsMap.data();
-  const int map_stride = m_segmentsMap.stride();
+  const uint32_t* map_line = segmentsMap.data();
+  const int map_stride = segmentsMap.stride();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -394,9 +373,30 @@ QImage ColorSegmenter::buildGrayImage() const {
 
   return dst;
 }
+}  // namespace
 
-inline BinaryThreshold ColorSegmenter::adjustThreshold(const BinaryThreshold threshold, const int adjustment) {
-  return qBound(1, int(threshold) + adjustment, 255);
+QImage ColorSegmenter::segment(const BinaryImage& image, const QImage& colorImage) const {
+  if (image.size() != colorImage.size()) {
+    throw std::invalid_argument("ColorSegmenter: images size doesn't match.");
+  }
+  if ((colorImage.format() == QImage::Format_Indexed8) && colorImage.isGrayscale()) {
+    return segment(image, GrayImage(colorImage));
+  }
+  if ((colorImage.format() != QImage::Format_RGB32) && (colorImage.format() != QImage::Format_ARGB32)) {
+    throw std::invalid_argument("ColorSegmenter: wrong image format.");
+  }
+
+  ConnectivityMap segmentsMap = buildMapFromRgb(image, colorImage, m_dpi, m_noiseThreshold, m_redThresholdAdjustment,
+                                                m_greenThresholdAdjustment, m_blueThresholdAdjustment);
+  return buildRgbImage(segmentsMap, colorImage);
 }
 
+GrayImage ColorSegmenter::segment(const BinaryImage& image, const GrayImage& grayImage) const {
+  if (image.size() != grayImage.size()) {
+    throw std::invalid_argument("ColorSegmenter: images size doesn't match.");
+  }
+
+  ConnectivityMap segmentsMap = buildMapFromGrayscale(image);
+  return buildGrayImage(segmentsMap, grayImage);
+}
 }  // namespace imageproc

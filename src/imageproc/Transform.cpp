@@ -299,7 +299,7 @@ void fixDpiInPlace(QImage& image, const QTransform& xform) {
     QRect dpi_rect(QPoint(0, 0), QSize(image.dotsPerMeterX(), image.dotsPerMeterY()));
     xform.mapRect(dpi_rect);
     image.setDotsPerMeterX(dpi_rect.width());
-    image.setDotsPerMeterX(dpi_rect.width());
+    image.setDotsPerMeterY(dpi_rect.height());
   }
 }
 
@@ -308,7 +308,7 @@ void fixDpiInPlace(GrayImage& image, const QTransform& xform) {
     QRect dpi_rect(QPoint(0, 0), QSize(image.dotsPerMeterX(), image.dotsPerMeterY()));
     xform.mapRect(dpi_rect);
     image.setDotsPerMeterX(dpi_rect.width());
-    image.setDotsPerMeterX(dpi_rect.width());
+    image.setDotsPerMeterY(dpi_rect.height());
   }
 }
 }  // namespace

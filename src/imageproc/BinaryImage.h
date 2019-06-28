@@ -195,8 +195,6 @@ class BinaryImage {
    */
   QRect contentBoundingBox(BWColor content_color = BLACK) const;
 
-  void rectangularizeAreas(std::vector<QRect>& areas, BWColor content_color, int sensitivity);
-
   int width() const { return m_width; }
 
   int height() const { return m_height; }
@@ -247,7 +245,7 @@ class BinaryImage {
 
   void setPixel(int x, int y, BWColor color);
 
-  BWColor getPixel(int x, int y);
+  BWColor getPixel(int x, int y) const;
 
  private:
   class SharedData;

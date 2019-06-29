@@ -30,6 +30,8 @@ const double Skew::GOOD_CONFIDENCE = 2.0;
 
 const double SkewFinder::DEFAULT_MAX_ANGLE = 7.0;
 
+const double SkewFinder::DEFAULT_MIN_ANGLE = 0.1;
+
 const double SkewFinder::DEFAULT_ACCURACY = 0.1;
 
 const int SkewFinder::DEFAULT_COARSE_REDUCTION = 2;
@@ -40,6 +42,7 @@ const double SkewFinder::LOW_SCORE = 1000.0;
 
 SkewFinder::SkewFinder()
     : m_maxAngle(DEFAULT_MAX_ANGLE),
+      m_minAngle(DEFAULT_MIN_ANGLE),
       m_accuracy(DEFAULT_ACCURACY),
       m_resolutionRatio(1.0),
       m_coarseReduction(DEFAULT_COARSE_REDUCTION),
@@ -50,6 +53,13 @@ void SkewFinder::setMaxAngle(const double max_angle) {
     throw std::invalid_argument("SkewFinder: max skew angle is invalid");
   }
   m_maxAngle = max_angle;
+}
+
+void SkewFinder::setMinAngle(double min_angle) {
+  if ((min_angle < 0.0) || (min_angle > m_maxAngle)) {
+    throw std::invalid_argument("SkewFinder: min skew angle is invalid");
+  }
+  m_minAngle = min_angle;
 }
 
 void SkewFinder::setDesiredAccuracy(const double accuracy) {
@@ -157,11 +167,14 @@ Skew SkewFinder::findSkew(const BinaryImage& image) const {
     best_score = score_minus;
   }
 
+  if (std::abs(best_angle) < m_minAngle) {
+    return Skew(0.0, Skew::GOOD_CONFIDENCE);
+  }
   if (best_score <= LOW_SCORE) {
     return Skew(-best_angle, 0.0);  // Zero confidence.
   }
 
-  double confidence = 0.0;
+  double confidence;
   if (num_coarse_scores > 1) {
     confidence = best_score / sum_coarse_scores * num_coarse_scores;
   } else {

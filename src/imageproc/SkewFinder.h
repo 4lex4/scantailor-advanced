@@ -68,6 +68,8 @@ class SkewFinder {
  public:
   static const double DEFAULT_MAX_ANGLE;
 
+  static const double DEFAULT_MIN_ANGLE;
+
   static const double DEFAULT_ACCURACY;
 
   static const int DEFAULT_COARSE_REDUCTION;
@@ -84,6 +86,15 @@ class SkewFinder {
    * \note The angle can't exceed 45 degrees.
    */
   void setMaxAngle(double max_angle = DEFAULT_MAX_ANGLE);
+
+  /**
+   * \brief Set the minimum skew angle, in degrees.
+   *
+   * Any skew angle less than min_angle degrees will be rejected
+   * and zero angle returned.
+   * \note The minimum angle can't exceed the maximum skew angle.
+   */
+  void setMinAngle(double min_angle = DEFAULT_MIN_ANGLE);
 
   /**
    * \brief Set the desired accuracy.
@@ -144,6 +155,7 @@ class SkewFinder {
   static double calcScore(const BinaryImage& image);
 
   double m_maxAngle;
+  double m_minAngle;
   double m_accuracy;
   double m_resolutionRatio;
   int m_coarseReduction;

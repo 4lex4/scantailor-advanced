@@ -369,14 +369,17 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
             invalidate_params = true;
           }
         }
-      } else {
-        // Remove the files if the mode was changed.
-        QFile(foreground_file_path).remove();
-        QFile(background_file_path).remove();
-        QFile(original_background_file_path).remove();
       }
 
       out_img = *outputImage;
+    }
+
+    if (!render_params.originalBackground()) {
+      QFile(original_background_file_path).remove();
+    }
+    if (!render_params.splitOutput()) {
+      QFile(foreground_file_path).remove();
+      QFile(background_file_path).remove();
     }
 
     if (!TiffWriter::writeImage(out_file_path, out_img)) {

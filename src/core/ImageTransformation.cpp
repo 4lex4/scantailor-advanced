@@ -71,7 +71,7 @@ void ImageTransformation::preScaleToEqualizeDpi() {
   preScaleToDpi(Dpi(min_dpi, min_dpi));
 }
 
-void ImageTransformation::setPreRotation(const OrthogonalRotation rotation) {
+void ImageTransformation::setPreRotation(const OrthogonalRotation& rotation) {
   m_preRotation = rotation;
   m_preRotateXform = m_preRotation.transform(m_origRect.size());
   resetPreCropArea();

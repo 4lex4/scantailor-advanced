@@ -22,6 +22,7 @@
 class Dpi;
 class QString;
 class QTransform;
+class QRect;
 
 namespace output {
 class Utils {
@@ -39,6 +40,8 @@ class Utils {
   static QString originalBackgroundDir(const QString& out_dir);
 
   static QTransform scaleFromToDpi(const Dpi& from, const Dpi& to);
+
+  static QTransform rotate(double degrees, const QRect& image_rect);
 
   Utils() = delete;
 };

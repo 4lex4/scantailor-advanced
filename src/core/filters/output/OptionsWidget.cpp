@@ -89,7 +89,7 @@ OptionsWidget::~OptionsWidget() = default;
 void OptionsWidget::preUpdateUI(const PageId& page_id) {
   removeUiConnections();
 
-  const Params params(m_settings->getParams(page_id));
+  const Params params = m_settings->getParams(page_id);
   m_pageId = page_id;
   m_outputDpi = params.outputDpi();
   m_colorParams = params.colorParams();
@@ -111,6 +111,8 @@ void OptionsWidget::postUpdateUI() {
   removeUiConnections();
 
   updateProcessingDisplay();
+  m_dewarpingOptions = m_settings->getParams(m_pageId).dewarpingOptions();
+  updateDewarpingDisplay();
 
   setupUiConnections();
 }
@@ -692,9 +694,16 @@ void OptionsWidget::updateDewarpingDisplay() {
       dewarpingStatusLabel->setText(tr("Marginal"));
       break;
   }
-  if (!m_dewarpingOptions.needPostDeskew()
-      && ((m_dewarpingOptions.dewarpingMode() == MANUAL) || (m_dewarpingOptions.dewarpingMode() == MARGINAL))) {
-    dewarpingStatusLabel->setText(dewarpingStatusLabel->text().append(" (").append(tr("deskew disabled")).append(")"));
+
+  if ((m_dewarpingOptions.dewarpingMode() == MANUAL) || (m_dewarpingOptions.dewarpingMode() == MARGINAL)) {
+    QString dewarping_status = dewarpingStatusLabel->text();
+    if (m_dewarpingOptions.needPostDeskew()) {
+      const double deskew_angle = -std::round(m_dewarpingOptions.getPostDeskewAngle() * 100) / 100;
+      dewarping_status += " (" + tr("deskew") + ": " + QString::number(deskew_angle) + QChar(0x00B0) + ")";
+    } else {
+      dewarping_status += " (" + tr("deskew disabled") + ")";
+    }
+    dewarpingStatusLabel->setText(dewarping_status);
   }
 
   depthPerceptionSlider->blockSignals(true);

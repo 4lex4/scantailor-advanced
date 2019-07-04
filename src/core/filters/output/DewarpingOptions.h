@@ -45,6 +45,10 @@ class DewarpingOptions {
 
   void setPostDeskew(bool postDeskew);
 
+  double getPostDeskewAngle() const;
+
+  void setPostDeskewAngle(double postDeskewAngle);
+
   static DewarpingMode parseDewarpingMode(const QString& str);
 
   static QString formatDewarpingMode(DewarpingMode mode);
@@ -52,6 +56,7 @@ class DewarpingOptions {
  private:
   DewarpingMode m_mode;
   bool m_needPostDeskew;
+  double m_postDeskewAngle;
 };
 }  // namespace output
 #endif

@@ -360,7 +360,6 @@ Zone createPictureZoneFromPoly(const QPolygonF& polygon) {
 void applyFillZonesInPlace(QImage& img,
                            const ZoneSet& zones,
                            const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                           const QTransform& postTransform,
                            bool antialiasing = true) {
   if (zones.empty()) {
     return;
@@ -374,7 +373,7 @@ void applyFillZonesInPlace(QImage& img,
 
     for (const Zone& zone : zones) {
       const QColor color(zone.properties().locateOrDefault<FillColorProperty>()->color());
-      const QPolygonF poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
+      const QPolygonF poly(zone.spline().transformed(orig_to_output).toPolygon());
       painter.setBrush(color);
       painter.drawPolygon(poly, Qt::WindingFill);
     }
@@ -387,32 +386,16 @@ void applyFillZonesInPlace(QImage& img,
   }
 }
 
-void applyFillZonesInPlace(QImage& img,
-                           const ZoneSet& zones,
-                           const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                           bool antialiasing = true) {
-  applyFillZonesInPlace(img, zones, orig_to_output, QTransform(), antialiasing);
-}
-
 using MapPointFunc = QPointF (QTransform::*)(const QPointF&) const;
 
-void applyFillZonesInPlace(QImage& img,
-                           const ZoneSet& zones,
-                           const QTransform& transform,
-                           const QTransform& postTransform,
-                           bool antialiasing = true) {
-  applyFillZonesInPlace(img, zones, boost::bind((MapPointFunc) &QTransform::map, transform, _1), postTransform,
-                        antialiasing);
-}
-
 void applyFillZonesInPlace(QImage& img, const ZoneSet& zones, const QTransform& transform, bool antialiasing = true) {
-  applyFillZonesInPlace(img, zones, boost::bind((MapPointFunc) &QTransform::map, transform, _1), antialiasing);
+  applyFillZonesInPlace(img, zones, boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, _1),
+                        antialiasing);
 }
 
 void applyFillZonesInPlace(BinaryImage& img,
                            const ZoneSet& zones,
-                           const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                           const QTransform& postTransform) {
+                           const boost::function<QPointF(const QPointF&)>& orig_to_output) {
   if (zones.empty()) {
     return;
   }
@@ -420,26 +403,32 @@ void applyFillZonesInPlace(BinaryImage& img,
   for (const Zone& zone : zones) {
     const QColor color(zone.properties().locateOrDefault<FillColorProperty>()->color());
     const BWColor bw_color = qGray(color.rgb()) < 128 ? BLACK : WHITE;
-    const QPolygonF poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
+    const QPolygonF poly(zone.spline().transformed(orig_to_output).toPolygon());
     PolygonRasterizer::fill(img, bw_color, poly, Qt::WindingFill);
   }
 }
 
-void applyFillZonesInPlace(BinaryImage& img,
-                           const ZoneSet& zones,
-                           const boost::function<QPointF(const QPointF&)>& orig_to_output) {
-  applyFillZonesInPlace(img, zones, orig_to_output, QTransform());
-}
-
-void applyFillZonesInPlace(BinaryImage& img,
-                           const ZoneSet& zones,
-                           const QTransform& transform,
-                           const QTransform& postTransform) {
-  applyFillZonesInPlace(img, zones, boost::bind((MapPointFunc) &QTransform::map, transform, _1), postTransform);
-}
-
 void applyFillZonesInPlace(BinaryImage& img, const ZoneSet& zones, const QTransform& transform) {
-  applyFillZonesInPlace(img, zones, boost::bind((MapPointFunc) &QTransform::map, transform, _1));
+  applyFillZonesInPlace(img, zones, boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, _1));
+}
+
+void applyFillZonesToMixedInPlace(QImage& img,
+                                  const ZoneSet& zones,
+                                  const boost::function<QPointF(const QPointF&)>& orig_to_output,
+                                  const imageproc::BinaryImage& picture_mask,
+                                  bool binary_mode) {
+  if (binary_mode) {
+    BinaryImage bw_content(img, BinaryThreshold(1));
+    applyFillZonesInPlace(bw_content, zones, orig_to_output);
+    applyFillZonesInPlace(img, zones, orig_to_output);
+    combineImages(img, bw_content, picture_mask);
+  } else {
+    QImage content(img);
+    applyMask(content, picture_mask);
+    applyFillZonesInPlace(content, zones, orig_to_output, false);
+    applyFillZonesInPlace(img, zones, orig_to_output);
+    combineImages(img, content, picture_mask);
+  }
 }
 
 void applyFillZonesToMixedInPlace(QImage& img,
@@ -447,51 +436,20 @@ void applyFillZonesToMixedInPlace(QImage& img,
                                   const QTransform& transform,
                                   const imageproc::BinaryImage& picture_mask,
                                   bool binary_mode) {
-  if (binary_mode) {
-    BinaryImage bw_content(img, BinaryThreshold(1));
-    applyFillZonesInPlace(bw_content, zones, transform);
-    applyFillZonesInPlace(img, zones, transform);
-    combineImages(img, bw_content, picture_mask);
-  } else {
-    QImage content(img);
-    applyMask(content, picture_mask);
-    applyFillZonesInPlace(content, zones, transform, false);
-    applyFillZonesInPlace(img, zones, transform);
-    combineImages(img, content, picture_mask);
-  }
-}
-
-void applyFillZonesToMixedInPlace(QImage& img,
-                                  const ZoneSet& zones,
-                                  const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                                  const QTransform& postTransform,
-                                  const imageproc::BinaryImage& picture_mask,
-                                  bool binary_mode) {
-  if (binary_mode) {
-    BinaryImage bw_content(img, BinaryThreshold(1));
-    applyFillZonesInPlace(bw_content, zones, orig_to_output, postTransform);
-    applyFillZonesInPlace(img, zones, orig_to_output, postTransform);
-    combineImages(img, bw_content, picture_mask);
-  } else {
-    QImage content(img);
-    applyMask(content, picture_mask);
-    applyFillZonesInPlace(content, zones, orig_to_output, postTransform, false);
-    applyFillZonesInPlace(img, zones, orig_to_output, postTransform);
-    combineImages(img, content, picture_mask);
-  }
+  applyFillZonesToMixedInPlace(img, zones, boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, _1),
+                               picture_mask, binary_mode);
 }
 
 void applyFillZonesToMask(BinaryImage& mask,
                           const ZoneSet& zones,
                           const boost::function<QPointF(const QPointF&)>& orig_to_output,
-                          const QTransform& postTransform = QTransform(),
                           const BWColor fill_color = BLACK) {
   if (zones.empty()) {
     return;
   }
 
   for (const Zone& zone : zones) {
-    const QPolygonF poly(postTransform.map(zone.spline().transformed(orig_to_output).toPolygon()));
+    const QPolygonF poly(zone.spline().transformed(orig_to_output).toPolygon());
     PolygonRasterizer::fill(mask, fill_color, poly, Qt::WindingFill);
   }
 }
@@ -499,10 +457,8 @@ void applyFillZonesToMask(BinaryImage& mask,
 void applyFillZonesToMask(BinaryImage& mask,
                           const ZoneSet& zones,
                           const QTransform& transform,
-                          const QTransform& postTransform = QTransform(),
                           const BWColor fill_color = BLACK) {
-  applyFillZonesToMask(mask, zones, boost::bind((MapPointFunc) &QTransform::map, transform, _1), postTransform,
-                       fill_color);
+  applyFillZonesToMask(mask, zones, boost::bind((MapPointFunc) &QTransform::map, transform, _1), fill_color);
 }
 
 const int MultiplyDeBruijnBitPosition[32] = {0,  1,  28, 2,  29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4,  8,
@@ -710,6 +666,23 @@ std::vector<QRect> findRectAreas(const BinaryImage& mask, BWColor content_color,
   }
 
   return areas;
+}
+
+void applyAffineTransform(QImage& image, const QTransform& xform, const QColor& outside_color) {
+  if (xform.isIdentity()) {
+    return;
+  }
+  image = imageproc::transform(image, xform, image.rect(), OutsidePixels::assumeWeakColor(outside_color));
+}
+
+void applyAffineTransform(BinaryImage& image, const QTransform& xform, const BWColor outside_color) {
+  if (xform.isIdentity()) {
+    return;
+  }
+  const QColor color = (outside_color == BLACK) ? Qt::black : Qt::white;
+  QImage converted = image.toQImage();
+  applyAffineTransform(converted, xform, color);
+  image = BinaryImage(converted);
 }
 }  // namespace
 
@@ -1000,7 +973,7 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithoutDewarping(const Task
   const QImage inputOrigImage = [&input, &isBlackOnWhite]() {
     QImage result = input.origImage();
     if (!result.allGray() && (result.format() != QImage::Format_ARGB32) && (result.format() != QImage::Format_RGB32)) {
-      result = result.convertToFormat(QImage::Format_RGB32);
+      result = convertToRGBorRGBA(result);
     }
     if (!isBlackOnWhite) {
       result.invertPixels();
@@ -1161,44 +1134,13 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithoutDewarping(const Task
   BinaryImage bw_content_output;
   if (render_params.mixedOutput()) {
     BinaryImage bw_mask(workingBoundingRect.size(), BLACK);
-
-    if ((m_pictureShapeOptions.getPictureShape() != RECTANGULAR_SHAPE)
-        || !m_outputProcessingParams.isAutoZonesFound()) {
-      if (m_pictureShapeOptions.getPictureShape() != OFF_SHAPE) {
-        bw_mask = estimateBinarizationMask(status, GrayImage(maybe_normalized), workingBoundingRect,
-                                           workingBoundingRect, dbg);
-      }
-
-      removeAutoPictureZones(picture_zones);
-      settings->setPictureZones(pageId, picture_zones);
-      m_outputProcessingParams.setAutoZonesFound(false);
-      settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
-    }
-    if ((m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE)
-        && !m_outputProcessingParams.isAutoZonesFound()) {
-      std::vector<QRect> areas = findRectAreas(bw_mask, WHITE, m_pictureShapeOptions.getSensitivity());
-
-      QTransform xform1(m_xform.transform());
-      xform1 *= QTransform().translate(-workingBoundingRect.x(), -workingBoundingRect.y());
-      QTransform inv_xform(xform1.inverted());
-
-      for (const QRect& i : areas) {
-        QRectF area0(i);
-        QPolygonF area1(area0);
-        QPolygonF area(inv_xform.map(area1));
-
-        picture_zones.add(createPictureZoneFromPoly(area));
-      }
-      settings->setPictureZones(pageId, picture_zones);
-      m_outputProcessingParams.setAutoZonesFound(true);
-      settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
-
-      bw_mask.fill(BLACK);
-    }
+    processPictureZones(bw_mask, picture_zones, GrayImage(maybe_normalized), workingBoundingRect, settings, pageId,
+                        status, dbg);
 
     if (dbg) {
       dbg->add(bw_mask, "bw_mask");
     }
+    status.throwIfCancelled();
 
     if (auto_picture_mask) {
       if (auto_picture_mask->size() != target_size) {
@@ -1296,7 +1238,6 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithoutDewarping(const Task
           if (dbg) {
             dbg->add(segmented_image, "segmented");
           }
-
           status.throwIfCancelled();
 
           if (render_params.posterize()) {
@@ -1305,7 +1246,6 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithoutDewarping(const Task
             if (dbg) {
               dbg->add(segmented_image, "posterized");
             }
-
             status.throwIfCancelled();
           }
         }
@@ -1462,7 +1402,7 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
   const QImage inputOrigImage = [&input, &isBlackOnWhite]() {
     QImage result = input.origImage();
     if (!result.allGray() && (result.format() != QImage::Format_ARGB32) && (result.format() != QImage::Format_RGB32)) {
-      result = result.convertToFormat(QImage::Format_RGB32);
+      result = convertToRGBorRGBA(result);
     }
     if (!isBlackOnWhite) {
       result.invertPixels();
@@ -1496,17 +1436,11 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
   // warped_gray_output.  Only built for Mixed mode.
   BinaryImage warped_bw_mask;
 
-  BinaryThreshold bw_threshold(128);
-
   const QTransform norm_illum_to_original(QTransform().translate(workingBoundingRect.left(), workingBoundingRect.top())
                                           * m_xform.transformBack());
 
   if (!needNormalizeIllumination) {
-    if (color_original) {
-      normalized_original = convertToRGBorRGBA(inputOrigImage);
-    } else {
-      normalized_original = inputGrayImage;
-    }
+    normalized_original = (color_original) ? inputOrigImage : inputGrayImage;
     warped_gray_output = transformToGray(inputGrayImage, m_xform.transform(), workingBoundingRect,
                                          OutsidePixels::assumeWeakColor(outsideBackgroundColor));
   } else {
@@ -1548,50 +1482,14 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
 
   status.throwIfCancelled();
 
-  if (render_params.binaryOutput()) {
-    bw_threshold = calcBinarizationThreshold(warped_gray_output, contentAreaInWorkingCs);
-
-    status.throwIfCancelled();
-  } else if (render_params.mixedOutput()) {
+  if (render_params.mixedOutput()) {
     warped_bw_mask = BinaryImage(workingBoundingRect.size(), BLACK);
+    processPictureZones(warped_bw_mask, picture_zones, warped_gray_output, workingBoundingRect, settings, pageId,
+                        status, dbg);
 
-    if ((m_pictureShapeOptions.getPictureShape() != RECTANGULAR_SHAPE)
-        || !m_outputProcessingParams.isAutoZonesFound()) {
-      if (m_pictureShapeOptions.getPictureShape() != OFF_SHAPE) {
-        warped_bw_mask = estimateBinarizationMask(status, GrayImage(warped_gray_output), workingBoundingRect,
-                                                  workingBoundingRect, dbg);
-        if (dbg) {
-          dbg->add(warped_bw_mask, "warped_bw_mask");
-        }
-      }
-
-      removeAutoPictureZones(picture_zones);
-      settings->setPictureZones(pageId, picture_zones);
-      m_outputProcessingParams.setAutoZonesFound(false);
-      settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
+    if (dbg) {
+      dbg->add(warped_bw_mask, "warped_bw_mask");
     }
-    if ((m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE)
-        && !m_outputProcessingParams.isAutoZonesFound()) {
-      std::vector<QRect> areas = findRectAreas(warped_bw_mask, WHITE, m_pictureShapeOptions.getSensitivity());
-
-      QTransform xform1(m_xform.transform());
-      xform1 *= QTransform().translate(-workingBoundingRect.x(), -workingBoundingRect.y());
-      QTransform inv_xform(xform1.inverted());
-
-      for (auto i : areas) {
-        QRectF area0(i);
-        QPolygonF area1(area0);
-        QPolygonF area(inv_xform.map(area1));
-
-        picture_zones.add(createPictureZoneFromPoly(area));
-      }
-      settings->setPictureZones(pageId, picture_zones);
-      m_outputProcessingParams.setAutoZonesFound(true);
-      settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
-
-      warped_bw_mask.fill(BLACK);
-    }
-
     status.throwIfCancelled();
 
     if (auto_picture_mask) {
@@ -1609,12 +1507,6 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
     if (dbg) {
       dbg->add(warped_bw_mask, "warped_bw_mask with zones");
     }
-
-    status.throwIfCancelled();
-
-    // For Mixed output, we mask out pictures when calculating binarization threshold.
-    bw_threshold = calcBinarizationThreshold(warped_gray_output, contentAreaInWorkingCs, &warped_bw_mask);
-
     status.throwIfCancelled();
   }
 
@@ -1820,53 +1712,45 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
   }
   warped_gray_output = GrayImage();  // Save memory.
 
-  status.throwIfCancelled();
-
+  QTransform rotate_xform;
   QImage dewarped;
   try {
     dewarped = dewarp(QTransform(), normalized_original, m_xform.transform(), distortion_model, depth_perception,
                       outsideBackgroundColor);
+
+    const double deskew_angle = -findSkew(dewarped);
+    rotate_xform = Utils::rotate(deskew_angle, m_outRect);
+    m_dewarpingOptions.setPostDeskewAngle(deskew_angle);
   } catch (const std::runtime_error&) {
     // Probably an impossible distortion model.  Let's fall back to a trivial one.
     setupTrivialDistortionModel(distortion_model);
+    m_dewarpingOptions.setPostDeskewAngle(.0);
+
     dewarped = dewarp(QTransform(), normalized_original, m_xform.transform(), distortion_model, depth_perception,
                       outsideBackgroundColor);
   }
+  settings->setDewarpingOptions(pageId, m_dewarpingOptions);
+  applyAffineTransform(dewarped, rotate_xform, outsideBackgroundColor);
 
   normalized_original = QImage();  // Save memory.
   if (dbg) {
     dbg->add(dewarped, "dewarped");
   }
-
   status.throwIfCancelled();
 
-  std::shared_ptr<DewarpingPointMapper> mapper(
-      new DewarpingPointMapper(distortion_model, depth_perception.value(), m_xform.transform(), contentRect));
+  std::shared_ptr<DewarpingPointMapper> mapper(new DewarpingPointMapper(
+      distortion_model, depth_perception.value(), m_xform.transform(), contentRect, rotate_xform));
   const boost::function<QPointF(const QPointF&)> orig_to_output(
       boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1));
 
-  const double deskew_angle = maybe_deskew(&dewarped, outsideBackgroundColor);
-
-  {
-    QTransform post_rotate;
-
-    QPointF center(m_outRect.width() / 2.0, m_outRect.height() / 2.0);
-
-    post_rotate.translate(center.x(), center.y());
-    post_rotate.rotate(-deskew_angle);
-    post_rotate.translate(-center.x(), -center.y());
-
-    m_postTransform = post_rotate;
-  }
-
   BinaryImage dewarping_content_area_mask(inputGrayImage.size(), BLACK);
-  fillMarginsInPlace(dewarping_content_area_mask, contentAreaInOriginalCs, WHITE);
-  QImage dewarping_content_area_mask_dewarped(dewarp(QTransform(), dewarping_content_area_mask.toQImage(),
-                                                     m_xform.transform(), distortion_model, depth_perception,
-                                                     Qt::white));
-  deskew(&dewarping_content_area_mask_dewarped, deskew_angle, Qt::white);
-  dewarping_content_area_mask = BinaryImage(dewarping_content_area_mask_dewarped);
-  dewarping_content_area_mask_dewarped = QImage();
+  {
+    fillMarginsInPlace(dewarping_content_area_mask, contentAreaInOriginalCs, WHITE);
+    dewarping_content_area_mask
+        = BinaryImage(dewarp(QTransform(), dewarping_content_area_mask.toQImage(), m_xform.transform(),
+                             distortion_model, depth_perception, Qt::white));
+  }
+  applyAffineTransform(dewarping_content_area_mask, rotate_xform, WHITE);
 
   if (render_params.binaryOutput()) {
     QImage dewarped_and_maybe_smoothed;
@@ -1884,10 +1768,9 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
     if (!render_params.needColorSegmentation()) {
       dewarped = QImage();
     }
-
     status.throwIfCancelled();
 
-    BinaryImage dewarped_bw_content(binarize(dewarped_and_maybe_smoothed, dewarping_content_area_mask));
+    BinaryImage dewarped_bw_content = binarize(dewarped_and_maybe_smoothed, dewarping_content_area_mask);
 
     status.throwIfCancelled();
 
@@ -1916,9 +1799,7 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
       if (!isBlackOnWhite) {
         dewarped_bw_content.invert();
       }
-
-      applyFillZonesInPlace(dewarped_bw_content, fill_zones, orig_to_output, m_postTransform);
-
+      applyFillZonesInPlace(dewarped_bw_content, fill_zones, orig_to_output);
       imageBuilder.setImage(dewarped_bw_content.toQImage());
     } else {
       QImage segmented_image = segmentImage(dewarped_bw_content, dewarped);
@@ -1935,7 +1816,7 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
         segmented_image.invertPixels();
       }
 
-      applyFillZonesInPlace(segmented_image, fill_zones, orig_to_output, m_postTransform, false);
+      applyFillZonesInPlace(segmented_image, fill_zones, orig_to_output, false);
 
       if (dbg) {
         dbg->add(segmented_image, "segmented_with_fill_zones");
@@ -1962,19 +1843,14 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
   BinaryImage dewarped_bw_mask;
   BinaryImage dewarped_bw_content;
   if (render_params.mixedOutput()) {
-    const QTransform orig_to_working_cs(
-        m_xform.transform() * QTransform().translate(-workingBoundingRect.left(), -workingBoundingRect.top()));
+    const QTransform orig_to_working_cs
+        = m_xform.transform() * QTransform().translate(-workingBoundingRect.left(), -workingBoundingRect.top());
     QTransform working_to_output_cs;
     working_to_output_cs.translate(workingBoundingRect.left(), workingBoundingRect.top());
     dewarped_bw_mask = BinaryImage(dewarp(orig_to_working_cs, warped_bw_mask.toQImage(), working_to_output_cs,
                                           distortion_model, depth_perception, Qt::black));
     warped_bw_mask.release();
-
-    {
-      QImage dewarped_bw_mask_deskewed(dewarped_bw_mask.toQImage());
-      deskew(&dewarped_bw_mask_deskewed, deskew_angle, Qt::black);
-      dewarped_bw_mask = BinaryImage(dewarped_bw_mask_deskewed);
-    }
+    applyAffineTransform(dewarped_bw_mask, rotate_xform, BLACK);
 
     fillMarginsInPlace(dewarped_bw_mask, dewarping_content_area_mask, BLACK);
 
@@ -2051,17 +1927,10 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
 
         status.throwIfCancelled();
 
-        try {
-          dewarped = dewarp(QTransform(), orig_without_illumination, m_xform.transform(), distortion_model,
-                            depth_perception, outsideBackgroundColor);
-        } catch (const std::runtime_error&) {
-          setupTrivialDistortionModel(distortion_model);
-          dewarped = dewarp(QTransform(), orig_without_illumination, m_xform.transform(), distortion_model,
-                            depth_perception, outsideBackgroundColor);
-        }
+        dewarped = dewarp(QTransform(), orig_without_illumination, m_xform.transform(), distortion_model,
+                          depth_perception, outsideBackgroundColor);
         orig_without_illumination = QImage();
-
-        deskew(&dewarped, deskew_angle, outsideBackgroundColor);
+        applyAffineTransform(dewarped, rotate_xform, outsideBackgroundColor);
 
         status.throwIfCancelled();
       }
@@ -2130,13 +1999,13 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
   }
 
   if (render_params.mixedOutput() && render_params.needBinarization()) {
-    applyFillZonesToMixedInPlace(dewarped, fill_zones, orig_to_output, m_postTransform, dewarped_bw_mask,
+    applyFillZonesToMixedInPlace(dewarped, fill_zones, orig_to_output, dewarped_bw_mask,
                                  !render_params.needColorSegmentation());
   } else {
-    applyFillZonesInPlace(dewarped, fill_zones, orig_to_output, m_postTransform);
+    applyFillZonesInPlace(dewarped, fill_zones, orig_to_output);
   }
   if (render_params.originalBackground()) {
-    applyFillZonesToMask(dewarped_bw_content, fill_zones, orig_to_output, m_postTransform);
+    applyFillZonesToMask(dewarped_bw_content, fill_zones, orig_to_output);
     rasterOp<RopAnd<RopSrc, RopDst>>(dewarped_bw_content, dewarped_bw_mask);
   }
 
@@ -2787,40 +2656,16 @@ float OutputGenerator::vert_border_skew_angle(const QPointF& top, const QPointF&
   return static_cast<float>(qFabs(qAtan((bottom.x() - top.x()) / (bottom.y() - top.y())) * 180 / M_PI));
 }
 
-void OutputGenerator::deskew(QImage* image, const double angle, const QColor& outside_color) const {
-  if (angle == .0) {
-    return;
-  }
-
-  QPointF center(image->width() / 2.0, image->height() / 2.0);
-
-  QTransform rot;
-  rot.translate(center.x(), center.y());
-  rot.rotate(-angle);
-  rot.translate(-center.x(), -center.y());
-
-  *image = imageproc::transform(*image, rot, image->rect(), OutsidePixels::assumeWeakColor(outside_color));
-}
-
-double OutputGenerator::maybe_deskew(QImage* dewarped, const QColor& outside_color) const {
+double OutputGenerator::findSkew(const QImage& image) const {
   if (m_dewarpingOptions.needPostDeskew()
       && ((m_dewarpingOptions.dewarpingMode() == MARGINAL) || (m_dewarpingOptions.dewarpingMode() == MANUAL))) {
-    BinaryThreshold bw_threshold(128);
-    BinaryImage bw_image(*dewarped, bw_threshold);
-
-    SkewFinder skew_finder;
-    const Skew skew(skew_finder.findSkew(bw_image));
-    if ((skew.angle() != 0.0) && (skew.confidence() >= Skew::GOOD_CONFIDENCE)) {
-      const double angle_deg = skew.angle();
-      deskew(dewarped, angle_deg, outside_color);
-      return angle_deg;
+    const BinaryImage bw_image(image, BinaryThreshold::otsuThreshold(GrayscaleHistogram(image)));
+    const Skew skew = SkewFinder().findSkew(bw_image);
+    if ((skew.angle() != .0) && (skew.confidence() >= Skew::GOOD_CONFIDENCE)) {
+      return skew.angle();
     }
   }
   return .0;
-}
-
-const QTransform& OutputGenerator::getPostTransform() const {
-  return m_postTransform;
 }
 
 QImage OutputGenerator::segmentImage(const BinaryImage& image, const QImage& color_image) const {
@@ -2844,5 +2689,43 @@ QImage OutputGenerator::posterizeImage(const QImage& image, const QColor& backgr
                         posterizationOptions.isForceBlackAndWhite(), 0, qRound(background_color.lightnessF() * 255));
 
   return posterizer.posterize(image);
+}
+
+void OutputGenerator::processPictureZones(imageproc::BinaryImage& mask,
+                                          ZoneSet& picture_zones,
+                                          const GrayImage& image,
+                                          const QRect& workingRect,
+                                          const intrusive_ptr<Settings>& settings,
+                                          const PageId& pageId,
+                                          const TaskStatus& status,
+                                          DebugImages* dbg) {
+  if ((m_pictureShapeOptions.getPictureShape() != RECTANGULAR_SHAPE) || !m_outputProcessingParams.isAutoZonesFound()) {
+    if (m_pictureShapeOptions.getPictureShape() != OFF_SHAPE) {
+      mask = estimateBinarizationMask(status, image, workingRect, workingRect, dbg);
+    }
+
+    removeAutoPictureZones(picture_zones);
+    settings->setPictureZones(pageId, picture_zones);
+    m_outputProcessingParams.setAutoZonesFound(false);
+    settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
+  }
+  if ((m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE) && !m_outputProcessingParams.isAutoZonesFound()) {
+    std::vector<QRect> areas = findRectAreas(mask, WHITE, m_pictureShapeOptions.getSensitivity());
+
+    const QTransform from_working_cs = [this, &workingRect]() {
+      QTransform to_working_cs = m_xform.transform();
+      to_working_cs *= QTransform().translate(-workingRect.x(), -workingRect.y());
+      return to_working_cs.inverted();
+    }();
+
+    for (const QRect& area : areas) {
+      picture_zones.add(createPictureZoneFromPoly(from_working_cs.map(QRectF(area))));
+    }
+    settings->setPictureZones(pageId, picture_zones);
+    m_outputProcessingParams.setAutoZonesFound(true);
+    settings->setOutputProcessingParams(pageId, m_outputProcessingParams);
+
+    mask.fill(BLACK);
+  }
 }
 }  // namespace output

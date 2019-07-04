@@ -104,7 +104,7 @@ class ImageTransformation {
    *
    * \see \ref transformations Transformations.
    */
-  void setPreRotation(OrthogonalRotation rotation);
+  void setPreRotation(const OrthogonalRotation& rotation);
 
   /**
    * \brief Returns the 2nd step rotation.

@@ -128,8 +128,6 @@ class OutputGenerator {
    */
   QRect outputContentRect() const;
 
-  const QTransform& getPostTransform() const;
-
  private:
   std::unique_ptr<OutputImage> processImpl(const TaskStatus& status,
                                            const FilterData& input,
@@ -171,9 +169,7 @@ class OutputGenerator {
 
   void drawPoint(QImage& image, const QPointF& pt) const;
 
-  void deskew(QImage* image, double angle, const QColor& outside_color) const;
-
-  double maybe_deskew(QImage* dewarped, const QColor& outside_color) const;
+  double findSkew(const QImage& image) const;
 
   void movePointToTopMargin(BinaryImage& bw_image, std::vector<QPointF>& polyline, int idx) const;
 
@@ -256,9 +252,18 @@ class OutputGenerator {
 
   static QSize calcLocalWindowSize(const Dpi& dpi);
 
-  QImage segmentImage(const BinaryImage& image, const QImage& color_image) const;
+  QImage segmentImage(const imageproc::BinaryImage& image, const QImage& color_image) const;
 
   QImage posterizeImage(const QImage& image, const QColor& background_color = Qt::white) const;
+
+  void processPictureZones(imageproc::BinaryImage& mask,
+                           ZoneSet& picture_zones,
+                           const GrayImage& image,
+                           const QRect& workingRect,
+                           const intrusive_ptr<Settings>& settings,
+                           const PageId& pageId,
+                           const TaskStatus& status,
+                           DebugImages* dbg);
 
   Dpi m_dpi;
   ColorParams m_colorParams;
@@ -284,9 +289,6 @@ class OutputGenerator {
   QRect m_contentRect;
 
   double m_despeckleLevel;
-
-  /** Store additional transformations after processing such as post deskew after dewarping.*/
-  QTransform m_postTransform;
 };
 }  // namespace output
 #endif  // ifndef OUTPUT_OUTPUTGENERATOR_H_

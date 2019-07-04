@@ -63,7 +63,6 @@ class Task::UiUpdater : public FilterResult {
             std::unique_ptr<DebugImages> dbg_img,
             const Params& params,
             const ImageTransformation& xform,
-            const QTransform& postTransform,
             const QRect& virt_content_rect,
             const PageId& page_id,
             const QImage& orig_image,
@@ -84,7 +83,6 @@ class Task::UiUpdater : public FilterResult {
   std::unique_ptr<DebugImages> m_dbg;
   Params m_params;
   ImageTransformation m_xform;
-  QTransform m_outputPostTransform;
   QRect m_virtContentRect;
   PageId m_pageId;
   QImage m_origImage;
@@ -125,7 +123,7 @@ Task::~Task() = default;
 FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, const QPolygonF& content_rect_phys) {
   status.throwIfCancelled();
 
-  Params params(m_settings->getParams(m_pageId));
+  Params params = m_settings->getParams(m_pageId);
 
   RenderParams render_params(params.colorParams(), params.splittingOptions());
   const QString out_file_path(m_outFileNameGen.filePathFor(m_pageId));
@@ -336,6 +334,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
                               params.depthPerception(), write_automask ? &automask_img : nullptr,
                               write_speckles_file ? &speckles_img : nullptr, m_dbg.get(), m_pageId, m_settings);
 
+      params = m_settings->getParams(m_pageId);
+
       if (((params.dewarpingOptions().dewarpingMode() == AUTO)
            || (params.dewarpingOptions().dewarpingMode() == MARGINAL))
           && distortion_model.isValid()) {
@@ -375,11 +375,11 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     }
 
     if (!render_params.originalBackground()) {
-      QFile(original_background_file_path).remove();
+      QFile::remove(original_background_file_path);
     }
     if (!render_params.splitOutput()) {
-      QFile(foreground_file_path).remove();
-      QFile(background_file_path).remove();
+      QFile::remove(foreground_file_path);
+      QFile::remove(background_file_path);
     }
 
     if (!TiffWriter::writeImage(out_file_path, out_img)) {
@@ -447,9 +447,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
   }
 
   return make_intrusive<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, new_xform,
-                                   generator.getPostTransform(), generator.outputContentRect(), m_pageId,
-                                   data.origImage(), out_img, automask_img, despeckle_state, despeckle_visualization,
-                                   m_batchProcessing, m_debug);
+                                   generator.outputContentRect(), m_pageId, data.origImage(), out_img, automask_img,
+                                   despeckle_state, despeckle_visualization, m_batchProcessing, m_debug);
 }  // Task::process
 
 /**
@@ -475,7 +474,6 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            std::unique_ptr<DebugImages> dbg_img,
                            const Params& params,
                            const ImageTransformation& xform,
-                           const QTransform& postTransform,
                            const QRect& virt_content_rect,
                            const PageId& page_id,
                            const QImage& orig_image,
@@ -490,7 +488,6 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
       m_dbg(std::move(dbg_img)),
       m_params(params),
       m_xform(xform),
-      m_outputPostTransform(postTransform),
       m_virtContentRect(virt_content_rect),
       m_pageId(page_id),
       m_origImage(orig_image),
@@ -554,9 +551,11 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   boost::function<QPointF(const QPointF&)> orig_to_output;
   boost::function<QPointF(const QPointF&)> output_to_orig;
   if ((m_params.dewarpingOptions().dewarpingMode() != OFF) && m_params.distortionModel().isValid()) {
+    const QTransform rotate_xform
+        = Utils::rotate(m_params.dewarpingOptions().getPostDeskewAngle(), m_xform.resultingRect().toRect());
     std::shared_ptr<DewarpingPointMapper> mapper(
         new DewarpingPointMapper(m_params.distortionModel(), m_params.depthPerception().value(), m_xform.transform(),
-                                 m_virtContentRect, m_outputPostTransform));
+                                 m_virtContentRect, rotate_xform));
     orig_to_output = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
     output_to_orig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
   } else {

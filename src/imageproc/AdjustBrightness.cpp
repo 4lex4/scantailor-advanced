@@ -29,7 +29,7 @@ void adjustBrightness(QImage& rgb_image, const QImage& brightness, const double 
       throw std::invalid_argument("adjustBrightness: not (A)RGB32");
   }
 
-  if ((brightness.format() != QImage::Format_Indexed8) || !brightness.allGray()) {
+  if ((brightness.format() != QImage::Format_Indexed8) || !brightness.isGrayscale()) {
     throw std::invalid_argument("adjustBrightness: brightness not grayscale");
   }
 

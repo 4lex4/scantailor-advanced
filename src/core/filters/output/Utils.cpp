@@ -53,4 +53,18 @@ QString Utils::backgroundDir(const QString& out_dir) {
 QString Utils::originalBackgroundDir(const QString& out_dir) {
   return QDir(out_dir).absoluteFilePath("original_background");
 }
+
+QTransform Utils::rotate(double degrees, const QRect& image_rect) {
+  if (degrees == 0.0) {
+    return QTransform();
+  }
+
+  QTransform rotate_xform;
+  const QPointF origin = QRectF(image_rect).center();
+  rotate_xform.translate(-origin.x(), -origin.y());
+  rotate_xform *= QTransform().rotate(degrees);
+  rotate_xform *= QTransform().translate(origin.x(), origin.y());
+
+  return rotate_xform;
+}
 }  // namespace output

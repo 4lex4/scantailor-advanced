@@ -17,8 +17,8 @@
  */
 
 #include "FilterData.h"
-#include "Dpm.h"
 #include <Grayscale.h>
+#include "Dpm.h"
 
 using namespace imageproc;
 
@@ -55,4 +55,12 @@ bool FilterData::isBlackOnWhite() const {
 
 void FilterData::updateImageParams(const ImageSettings::PageParams& imageParams) {
   m_imageParams = imageParams;
+}
+
+imageproc::BinaryThreshold FilterData::bwThresholdBlackOnWhite() const {
+  return isBlackOnWhite() ? bwThreshold() : BinaryThreshold(256 - int(bwThreshold()));
+}
+
+imageproc::GrayImage FilterData::grayImageBlackOnWhite() const {
+  return isBlackOnWhite() ? m_grayImage : m_grayImage.inverted();
 }

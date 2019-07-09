@@ -17,14 +17,6 @@
  */
 
 #include "ContentBoxFinder.h"
-#include <QDebug>
-#include <QPainter>
-#include <cmath>
-#include <queue>
-#include "DebugImages.h"
-#include "Despeckle.h"
-#include "FilterData.h"
-#include "TaskStatus.h"
 #include <Binarize.h>
 #include <BinaryImage.h>
 #include <ConnComp.h>
@@ -41,6 +33,14 @@
 #include <SeedFill.h>
 #include <SlicedHistogram.h>
 #include <Transform.h>
+#include <QDebug>
+#include <QPainter>
+#include <cmath>
+#include <queue>
+#include "DebugImages.h"
+#include "Despeckle.h"
+#include "FilterData.h"
+#include "TaskStatus.h"
 
 namespace select_content {
 using namespace imageproc;
@@ -90,7 +90,7 @@ QRectF ContentBoxFinder::findContentBox(const TaskStatus& status,
     return QRectF();
   }
 
-  const GrayImage dataGrayImage = data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted();
+  const GrayImage dataGrayImage = data.grayImageBlackOnWhite();
   const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
   const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
 

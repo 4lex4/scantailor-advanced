@@ -19,11 +19,11 @@
 #ifndef FILTERDATA_H_
 #define FILTERDATA_H_
 
+#include <BinaryThreshold.h>
+#include <GrayImage.h>
 #include <QImage>
 #include "ImageSettings.h"
 #include "ImageTransformation.h"
-#include <BinaryThreshold.h>
-#include <GrayImage.h>
 
 class FilterData {
   // Member-wise copying is OK.
@@ -43,6 +43,10 @@ class FilterData {
   const imageproc::GrayImage& grayImage() const;
 
   bool isBlackOnWhite() const;
+
+  imageproc::BinaryThreshold bwThresholdBlackOnWhite() const;
+
+  imageproc::GrayImage grayImageBlackOnWhite() const;
 
   void updateImageParams(const ImageSettings::PageParams& imageParams);
 

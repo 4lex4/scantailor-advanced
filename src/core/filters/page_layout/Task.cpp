@@ -109,9 +109,8 @@ FilterResultPtr Task::process(const TaskStatus& status,
     return m_nextTask->process(status, FilterData(data, new_xform), content_rect_phys);
   } else {
     return make_intrusive<UiUpdater>(m_filter, m_settings, m_pageId, data.origImage(), data.xform(),
-                                     data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(),
-                                     adapted_content_rect, agg_hard_size_before != agg_hard_size_after,
-                                     m_batchProcessing);
+                                     data.grayImageBlackOnWhite(), adapted_content_rect,
+                                     agg_hard_size_before != agg_hard_size_after, m_batchProcessing);
   }
 }
 

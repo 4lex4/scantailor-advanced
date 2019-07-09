@@ -1165,11 +1165,6 @@ QImage smoothToGrayscale(const QImage& src, const Dpi& dpi) {
   return savGolFilter(src, QSize(window, window), degree, degree);
 }
 
-QImage convertToRGBorRGBA(const QImage& src) {
-  const QImage::Format fmt = src.hasAlphaChannel() ? QImage::Format_ARGB32 : QImage::Format_RGB32;
-  return src.convertToFormat(fmt);
-}
-
 QSize from300dpi(const QSize& size, const Dpi& target_dpi) {
   const double hscale = target_dpi.horizontal() / 300.0;
   const double vscale = target_dpi.vertical() / 300.0;
@@ -1223,10 +1218,6 @@ void OutputGenerator::Processor::initFilterData(const FilterData& input) {
 
   m_inputGrayImage = m_blackOnWhite ? input.grayImage() : input.grayImage().inverted();
   m_inputOrigImage = input.origImage();
-  if (m_colorOriginal && (m_inputOrigImage.format() != QImage::Format_ARGB32)
-      && (m_inputOrigImage.format() != QImage::Format_RGB32)) {
-    m_inputOrigImage = convertToRGBorRGBA(m_inputOrigImage);
-  }
   if (!m_blackOnWhite) {
     m_inputOrigImage.invertPixels();
   }
@@ -1548,14 +1539,14 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
   const QTransform working_to_orig
       = QTransform().translate(m_workingBoundingRect.left(), m_workingBoundingRect.top()) * m_xform.transformBack();
   if (!m_renderParams.normalizeIllumination()) {
-    normalized_original = (m_colorOriginal) ? convertToRGBorRGBA(m_inputOrigImage) : m_inputGrayImage;
+    normalized_original = (m_colorOriginal) ? m_inputOrigImage : m_inputGrayImage;
   } else {
     GrayImage normalized_gray = transformToGray(warped_gray_output, working_to_orig, m_inputOrigImage.rect(),
                                                 OutsidePixels::assumeWeakColor(m_outsideBackgroundColor));
     if (!m_colorOriginal) {
       normalized_original = normalized_gray;
     } else {
-      normalized_original = convertToRGBorRGBA(m_inputOrigImage);
+      normalized_original = m_inputOrigImage;
       adjustBrightnessGrayscale(normalized_original, normalized_gray);
       if (m_dbg) {
         m_dbg->add(normalized_original, "norm_illum_color");
@@ -1766,7 +1757,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
 
         QImage orig_without_illumination;
         if (m_colorOriginal) {
-          orig_without_illumination = convertToRGBorRGBA(m_inputOrigImage);
+          orig_without_illumination = m_inputOrigImage;
         } else {
           orig_without_illumination = m_inputGrayImage;
         }

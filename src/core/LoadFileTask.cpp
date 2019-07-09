@@ -17,10 +17,11 @@
  */
 
 #include "LoadFileTask.h"
+#include <imageproc/Grayscale.h>
+#include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QTextDocument>
-#include <QCoreApplication>
 #include "AbstractFilter.h"
 #include "Dpm.h"
 #include "ErrorWidget.h"
@@ -66,7 +67,7 @@ LoadFileTask::LoadFileTask(Type type,
 LoadFileTask::~LoadFileTask() = default;
 
 FilterResultPtr LoadFileTask::operator()() {
-  QImage image(ImageLoader::load(m_imageId));
+  QImage image = ImageLoader::load(m_imageId);
 
   try {
     throwIfCancelled();
@@ -74,6 +75,7 @@ FilterResultPtr LoadFileTask::operator()() {
     if (image.isNull()) {
       return make_intrusive<ErrorResult>(m_imageId.filePath());
     } else {
+      convertToSupportedFormat(image);
       updateImageSizeIfChanged(image);
       overrideDpi(image);
       m_thumbnailCache->ensureThumbnailExists(m_imageId, image);
@@ -106,6 +108,15 @@ void LoadFileTask::overrideDpi(QImage& image) const {
   const Dpm dpm(m_imageMetadata.dpi());
   image.setDotsPerMeterX(dpm.horizontal());
   image.setDotsPerMeterY(dpm.vertical());
+}
+
+void LoadFileTask::convertToSupportedFormat(QImage& image) const {
+  if (((image.format() == QImage::Format_Indexed8) && !image.isGrayscale()) || (image.depth() > 8)) {
+    const QImage::Format fmt = image.hasAlphaChannel() ? QImage::Format_ARGB32 : QImage::Format_RGB32;
+    image = image.convertToFormat(fmt);
+  } else {
+    image = toGrayscale(image);
+  }
 }
 
 /*======================= LoadFileTask::ErrorResult ======================*/

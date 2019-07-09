@@ -56,6 +56,8 @@ class LoadFileTask : public BackgroundTask {
 
   void overrideDpi(QImage& image) const;
 
+  void convertToSupportedFormat(QImage& image) const;
+
   intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
   ImageId m_imageId;
   ImageMetadata m_imageMetadata;

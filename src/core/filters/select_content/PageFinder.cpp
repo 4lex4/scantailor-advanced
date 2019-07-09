@@ -19,13 +19,13 @@
 
 #include "PageFinder.h"
 
-#include "DebugImages.h"
-#include "FilterData.h"
-#include "TaskStatus.h"
 #include <Binarize.h>
 #include <BinaryImage.h>
 #include <GrayRasterOp.h>
 #include <Transform.h>
+#include "DebugImages.h"
+#include "FilterData.h"
+#include "TaskStatus.h"
 
 #include <QDebug>
 
@@ -55,7 +55,7 @@ QRectF PageFinder::findPageBox(const TaskStatus& status,
   std::cout << "exp_width = " << exp_width << "; exp_height" << exp_height << std::endl;
 #endif
 
-  const GrayImage dataGrayImage = data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted();
+  const GrayImage dataGrayImage = data.grayImageBlackOnWhite();
   const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
   const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
 

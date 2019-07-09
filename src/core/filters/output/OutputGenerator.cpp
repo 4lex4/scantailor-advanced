@@ -1209,7 +1209,6 @@ void OutputGenerator::Processor::updateBlackOnWhite(const FilterData& input) {
       m_settings->setParams(m_pageId, params);
     }
   }
-
   m_blackOnWhite = params.isBlackOnWhite();
 }
 

@@ -18,10 +18,18 @@
 
 #include <UnitsProvider.h>
 
+#include <BinaryImage.h>
 #include <BlackOnWhiteEstimator.h>
+#include <Morphology.h>
+#include <OrthogonalRotation.h>
+#include <RasterOp.h>
+#include <ReduceThreshold.h>
+#include <SeedFill.h>
+#include <SkewFinder.h>
+#include <UpscaleIntegerTimes.h>
 #include <imageproc/Grayscale.h>
-#include <imageproc/PolygonRasterizer.h>
 #include <imageproc/OrthogonalRotation.h>
+#include <imageproc/PolygonRasterizer.h>
 #include <QSettings>
 #include <utility>
 #include "DebugImagesImpl.h"
@@ -34,14 +42,6 @@
 #include "Task.h"
 #include "TaskStatus.h"
 #include "filters/select_content/Task.h"
-#include <BinaryImage.h>
-#include <Morphology.h>
-#include <OrthogonalRotation.h>
-#include <RasterOp.h>
-#include <ReduceThreshold.h>
-#include <SeedFill.h>
-#include <SkewFinder.h>
-#include <UpscaleIntegerTimes.h>
 
 namespace deskew {
 using namespace imageproc;
@@ -124,8 +124,7 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
 
     if (bounded_image_area.isValid()) {
       BinaryImage rotated_image(orthogonalRotation(
-          BinaryImage(data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(), bounded_image_area,
-                      data.isBlackOnWhite() ? data.bwThreshold() : BinaryThreshold(256 - int(data.bwThreshold()))),
+          BinaryImage(data.grayImageBlackOnWhite(), bounded_image_area, data.bwThresholdBlackOnWhite()),
           data.xform().preRotation().toDegrees()));
       if (m_dbg) {
         m_dbg->add(rotated_image, "bw_rotated");

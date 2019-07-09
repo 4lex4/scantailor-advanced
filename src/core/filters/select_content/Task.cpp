@@ -159,8 +159,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     return m_nextTask->process(status, FilterData(data, data.xform()), ui_data.pageRect(), ui_data.contentRect());
   } else {
     return make_intrusive<UiUpdater>(m_filter, m_pageId, std::move(m_dbg), data.origImage(), data.xform(),
-                                     data.isBlackOnWhite() ? data.grayImage() : data.grayImage().inverted(), ui_data,
-                                     m_batchProcessing);
+                                     data.grayImageBlackOnWhite(), ui_data, m_batchProcessing);
   }
 }  // Task::process
 

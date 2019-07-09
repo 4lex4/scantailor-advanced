@@ -1262,17 +1262,12 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
                                                                                  BinaryImage* speckles_image) {
   OutputImageBuilder imageBuilder;
 
-  // TODO: rework RenderParams
-  const bool needNormalizeIllumination
-      = (m_renderParams.normalizeIllumination() && m_renderParams.needBinarization())
-        || (m_renderParams.normalizeIlluminationColor() && !m_renderParams.needBinarization());
-
-  QImage maybe_normalized = transformToWorkingCs(needNormalizeIllumination);
+  QImage maybe_normalized = transformToWorkingCs(m_renderParams.normalizeIllumination());
   if (m_dbg) {
     m_dbg->add(maybe_normalized, "maybe_normalized");
   }
 
-  if (needNormalizeIllumination) {
+  if (m_renderParams.normalizeIllumination()) {
     m_outsideBackgroundColor
         = m_backgroundColorCalculator.calcDominantBackgroundColor(maybe_normalized, m_outCropAreaInWorkingCs, m_dbg);
   }
@@ -1331,10 +1326,10 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
       QImage segmented_image;
       {
         QImage color_image(m_targetSize, maybe_normalized.format());
-        color_image.fill(Qt::white);
         if (maybe_normalized.format() == QImage::Format_Indexed8) {
-          color_image.setColorTable(createGrayscalePalette());
+          color_image.setColorTable(maybe_normalized.colorTable());
         }
+        color_image.fill(Qt::white);
         drawOver(color_image, m_croppedContentRect, maybe_normalized, m_contentRectInWorkingCs);
         maybe_normalized = QImage();
 
@@ -1421,7 +1416,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
       maybeDespeckleInPlace(bw_content, m_workingBoundingRect, m_croppedContentRect, m_despeckleLevel, speckles_image,
                             m_dpi);
 
-      if (needNormalizeIllumination && !m_renderParams.normalizeIlluminationColor()) {
+      if (!m_renderParams.normalizeIlluminationColor()) {
         m_outsideBackgroundColor = m_backgroundColorCalculator.calcDominantBackgroundColor(
             !m_colorOriginal ? m_inputGrayImage : m_inputOrigImage, m_outCropAreaInOriginalCs, m_dbg);
         maybe_normalized = transformToWorkingCs(false);
@@ -1469,9 +1464,8 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
 
   assert(!m_targetSize.isEmpty());
   QImage dst(m_targetSize, maybe_normalized.format());
-
   if (maybe_normalized.format() == QImage::Format_Indexed8) {
-    dst.setColorTable(createGrayscalePalette());
+    dst.setColorTable(maybe_normalized.colorTable());
   }
 
   if (dst.isNull()) {
@@ -1509,7 +1503,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
   }
   m_status.throwIfCancelled();
 
-  if (m_renderParams.posterize() && !m_renderParams.mixedOutput()) {
+  if (m_renderParams.posterize() && !m_renderParams.needBinarization()) {
     dst = posterizeImage(dst);
   }
 
@@ -1534,15 +1528,11 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
                                                                               BinaryImage* speckles_image) {
   OutputImageBuilder imageBuilder;
 
-  const bool needNormalizeIllumination
-      = (m_renderParams.normalizeIllumination() && m_renderParams.needBinarization())
-        || (m_renderParams.normalizeIlluminationColor() && !m_renderParams.needBinarization());
-
   // The output we would get if dewarping was turned off, except always grayscale.
   // Used for automatic picture detection and binarization threshold calculation.
   // This image corresponds to the area of workingBoundingRect.
   GrayImage warped_gray_output;
-  if (!needNormalizeIllumination) {
+  if (!m_renderParams.normalizeIllumination()) {
     warped_gray_output = transformToGray(m_inputGrayImage, m_xform.transform(), m_workingBoundingRect,
                                          OutsidePixels::assumeWeakColor(m_outsideBackgroundColor));
   } else {
@@ -1557,7 +1547,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
   QImage normalized_original;
   const QTransform working_to_orig
       = QTransform().translate(m_workingBoundingRect.left(), m_workingBoundingRect.top()) * m_xform.transformBack();
-  if (!needNormalizeIllumination) {
+  if (!m_renderParams.normalizeIllumination()) {
     normalized_original = (m_colorOriginal) ? convertToRGBorRGBA(m_inputOrigImage) : m_inputGrayImage;
   } else {
     GrayImage normalized_gray = transformToGray(warped_gray_output, working_to_orig, m_inputOrigImage.rect(),
@@ -1770,7 +1760,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
       maybeDespeckleInPlace(dewarped_bw_content, m_outRect, m_croppedContentRect, m_despeckleLevel, speckles_image,
                             m_dpi);
 
-      if (needNormalizeIllumination && !m_renderParams.normalizeIlluminationColor()) {
+      if (!m_renderParams.normalizeIlluminationColor()) {
         m_outsideBackgroundColor = m_backgroundColorCalculator.calcDominantBackgroundColor(
             !m_colorOriginal ? m_inputGrayImage : m_inputOrigImage, m_outCropAreaInOriginalCs, m_dbg);
 
@@ -1849,7 +1839,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
   }
   m_status.throwIfCancelled();
 
-  if (m_renderParams.posterize() && !m_renderParams.mixedOutput()) {
+  if (m_renderParams.posterize() && !m_renderParams.needBinarization()) {
     dewarped = posterizeImage(dewarped);
   }
 

@@ -21,25 +21,26 @@
 
 namespace output {
 RenderParams::RenderParams(const ColorParams& colorParams, const SplittingOptions& splittingOptions) : m_mask(0) {
-  const BlackWhiteOptions blackWhiteOptions(colorParams.blackWhiteOptions());
-  const ColorCommonOptions colorCommonOptions(colorParams.colorCommonOptions());
+  const BlackWhiteOptions& blackWhiteOptions = colorParams.blackWhiteOptions();
+  const ColorCommonOptions& colorCommonOptions = colorParams.colorCommonOptions();
   const ColorMode colorMode = colorParams.colorMode();
 
   if ((colorMode == BLACK_AND_WHITE) || (colorMode == MIXED)) {
     m_mask |= NEED_BINARIZATION;
-    if ((colorMode == MIXED) && splittingOptions.isSplitOutput()) {
+    if (colorMode == MIXED) {
+      m_mask |= MIXED_OUTPUT;
+    }
+    if (mixedOutput() && splittingOptions.isSplitOutput()) {
       m_mask |= SPLIT_OUTPUT;
       if (splittingOptions.getSplittingMode() == COLOR_FOREGROUND) {
         m_mask ^= NEED_BINARIZATION;
       }
-      if ((splittingOptions.getSplittingMode() == BLACK_AND_WHITE_FOREGROUND)
-          && (splittingOptions.isOriginalBackgroundEnabled())) {
+      if (needBinarization() && splittingOptions.isOriginalBackgroundEnabled()) {
         m_mask |= ORIGINAL_BACKGROUND;
       }
     }
-    if (colorMode == MIXED) {
-      m_mask |= MIXED_OUTPUT;
-    }
+  }
+  if (needBinarization()) {
     if (blackWhiteOptions.isSavitzkyGolaySmoothingEnabled()) {
       m_mask |= SAVITZKY_GOLAY_SMOOTHING;
     }
@@ -56,6 +57,9 @@ RenderParams::RenderParams(const ColorParams& colorParams, const SplittingOption
       }
     }
   } else {
+    if (colorCommonOptions.normalizeIllumination()) {
+      m_mask |= NORMALIZE_ILLUMINATION;
+    }
     if (colorCommonOptions.getPosterizationOptions().isEnabled()) {
       m_mask |= POSTERIZE;
     }

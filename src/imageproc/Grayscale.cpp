@@ -286,8 +286,6 @@ unsigned char darkestGrayLevel(const QImage& image) {
 }
 
 GrayscaleHistogram::GrayscaleHistogram(const QImage& img) {
-  memset(m_pixels, 0, sizeof(m_pixels));
-
   if (img.isNull()) {
     return;
   }
@@ -309,8 +307,6 @@ GrayscaleHistogram::GrayscaleHistogram(const QImage& img) {
 }
 
 GrayscaleHistogram::GrayscaleHistogram(const QImage& img, const BinaryImage& mask) {
-  memset(m_pixels, 0, sizeof(m_pixels));
-
   if (img.isNull()) {
     return;
   }

@@ -258,7 +258,6 @@ class OutputGenerator::Processor {
   const TaskStatus& m_status;
   DebugImages* const m_dbg;
 
-  BackgroundColorCalculator m_backgroundColorCalculator;
   QColor m_outsideBackgroundColor;
 };
 
@@ -621,17 +620,6 @@ void removeAutoPictureZones(ZoneSet& picture_zones) {
     } else {
       ++it;
     }
-  }
-}
-
-BackgroundColorCalculator getBackgroundColorCalculator(const PageId& pageId, const intrusive_ptr<Settings>& settings) {
-  QSettings appSettings;
-  if (!(appSettings.value("settings/blackOnWhiteDetection", true).toBool()
-        && appSettings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool())
-      && !settings->getOutputProcessingParams(pageId).isBlackOnWhiteSetManually()) {
-    return BackgroundColorCalculator();
-  } else {
-    return BackgroundColorCalculator(false);
   }
 }
 
@@ -1233,9 +1221,8 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processImpl(ZoneSet& pi
     return buildEmptyImage();
   }
 
-  m_backgroundColorCalculator = getBackgroundColorCalculator(m_pageId, m_settings);
-  m_outsideBackgroundColor = m_backgroundColorCalculator.calcDominantBackgroundColor(
-      !m_colorOriginal ? m_inputGrayImage : m_inputOrigImage, m_outCropAreaInOriginalCs, m_dbg);
+  m_outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
+      m_colorOriginal ? m_inputOrigImage : m_inputGrayImage, m_outCropAreaInOriginalCs);
 
   if ((m_dewarpingOptions.dewarpingMode() == AUTO) || (m_dewarpingOptions.dewarpingMode() == MARGINAL)
       || ((m_dewarpingOptions.dewarpingMode() == MANUAL) && distortion_model.isValid())) {
@@ -1259,7 +1246,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
 
   if (m_renderParams.normalizeIllumination()) {
     m_outsideBackgroundColor
-        = m_backgroundColorCalculator.calcDominantBackgroundColor(maybe_normalized, m_outCropAreaInWorkingCs, m_dbg);
+        = BackgroundColorCalculator::calcDominantBackgroundColor(maybe_normalized, m_outCropAreaInWorkingCs);
   }
 
   m_status.throwIfCancelled();
@@ -1407,8 +1394,8 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
                             m_dpi);
 
       if (!m_renderParams.normalizeIlluminationColor()) {
-        m_outsideBackgroundColor = m_backgroundColorCalculator.calcDominantBackgroundColor(
-            !m_colorOriginal ? m_inputGrayImage : m_inputOrigImage, m_outCropAreaInOriginalCs, m_dbg);
+        m_outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
+            m_colorOriginal ? m_inputOrigImage : m_inputGrayImage, m_outCropAreaInOriginalCs);
         maybe_normalized = transformToWorkingCs(false);
       }
 
@@ -1552,8 +1539,8 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
       }
     }
 
-    m_outsideBackgroundColor = m_backgroundColorCalculator.calcDominantBackgroundColor(
-        normalized_original, m_outCropAreaInOriginalCs, m_dbg);
+    m_outsideBackgroundColor
+        = BackgroundColorCalculator::calcDominantBackgroundColor(normalized_original, m_outCropAreaInOriginalCs);
   }
 
   m_status.throwIfCancelled();
@@ -1751,23 +1738,20 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
                             m_dpi);
 
       if (!m_renderParams.normalizeIlluminationColor()) {
-        m_outsideBackgroundColor = m_backgroundColorCalculator.calcDominantBackgroundColor(
-            !m_colorOriginal ? m_inputGrayImage : m_inputOrigImage, m_outCropAreaInOriginalCs, m_dbg);
+        m_outsideBackgroundColor = BackgroundColorCalculator::calcDominantBackgroundColor(
+            m_colorOriginal ? m_inputOrigImage : m_inputGrayImage, m_outCropAreaInOriginalCs);
 
-        QImage orig_without_illumination;
-        if (m_colorOriginal) {
-          orig_without_illumination = m_inputOrigImage;
-        } else {
-          orig_without_illumination = m_inputGrayImage;
+        {
+          QImage orig_without_illumination;
+          if (m_colorOriginal) {
+            orig_without_illumination = m_inputOrigImage;
+          } else {
+            orig_without_illumination = m_inputGrayImage;
+          }
+          dewarped = dewarp(QTransform(), orig_without_illumination, m_xform.transform(), distortion_model,
+                            depth_perception, m_outsideBackgroundColor);
         }
-
-        m_status.throwIfCancelled();
-
-        dewarped = dewarp(QTransform(), orig_without_illumination, m_xform.transform(), distortion_model,
-                          depth_perception, m_outsideBackgroundColor);
-        orig_without_illumination = QImage();
         applyAffineTransform(dewarped, rotate_xform, m_outsideBackgroundColor);
-
         m_status.throwIfCancelled();
       }
 

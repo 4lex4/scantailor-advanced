@@ -23,9 +23,12 @@
 #include "FillZoneComparator.h"
 #include "IncompleteThumbnail.h"
 #include "OutputGenerator.h"
+#include "OutputParams.h"
 #include "PageInfo.h"
+#include "Params.h"
 #include "PictureZoneComparator.h"
 #include "RenderParams.h"
+#include "Settings.h"
 #include "Thumbnail.h"
 #include "Utils.h"
 #include "core/AbstractFilterDataCollector.h"
@@ -71,10 +74,7 @@ void CacheDrivenTask::process(const PageInfo& page_info,
         break;
       }
 
-      const OutputGenerator generator(params.outputDpi(), params.colorParams(), params.splittingOptions(),
-                                      params.pictureShapeOptions(), params.dewarpingOptions(),
-                                      m_settings->getOutputProcessingParams(page_info.id()), params.despeckleLevel(),
-                                      new_xform, content_rect_phys);
+      const OutputGenerator generator(new_xform, content_rect_phys);
       const OutputImageParams new_output_image_params(
           generator.outputImageSize(), generator.outputContentRect(), new_xform, params.outputDpi(),
           params.colorParams(), params.splittingOptions(), params.dewarpingOptions(), params.distortionModel(),

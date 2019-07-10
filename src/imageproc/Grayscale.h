@@ -52,7 +52,7 @@ class GrayscaleHistogram {
 
   void fromAnyImage(const QImage& img, const BinaryImage& mask);
 
-  int m_pixels[256];
+  int m_pixels[256] = {0};
 };
 
 

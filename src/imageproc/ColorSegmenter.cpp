@@ -6,6 +6,7 @@
 #include "BinaryThreshold.h"
 #include "ConnectivityMap.h"
 #include "GrayImage.h"
+#include "ImageCombination.h"
 #include "InfluenceMap.h"
 #include "RasterOp.h"
 
@@ -166,14 +167,16 @@ void reduceNoise(ConnectivityMap& segmentsMap, const Dpi& dpi, const int noiseTh
   segmentsMap.removeComponents(labels);
 }
 
-BinaryImage componentFromChannel(const BinaryImage& image,
-                                 const QImage& colorImage,
-                                 const RgbChannel channel,
-                                 const int adjustment) {
+QImage prepareToMap(const QImage& colorImage, const BinaryImage& image) {
+  QImage dst = colorImage;
+  applyMask(dst, image);
+  return dst;
+}
+
+BinaryImage componentFromChannel(const QImage& colorImage, const RgbChannel channel, const int adjustment) {
   GrayImage channelImage = extractRgbChannel(colorImage, channel);
   BinaryThreshold threshold = BinaryThreshold::otsuThreshold(channelImage);
   BinaryImage component = BinaryImage(channelImage, adjustThreshold(threshold, adjustment));
-  rasterOp<RopAnd<RopSrc, RopDst>>(component, image);
   return component;
 }
 
@@ -184,9 +187,11 @@ ConnectivityMap buildMapFromRgb(const BinaryImage& image,
                                 const int redThresholdAdjustment,
                                 const int greenThresholdAdjustment,
                                 const int blueThresholdAdjustment) {
-  BinaryImage redComponent = componentFromChannel(image, colorImage, RED_CHANNEL, redThresholdAdjustment);
-  BinaryImage greenComponent = componentFromChannel(image, colorImage, GREEN_CHANNEL, greenThresholdAdjustment);
-  BinaryImage blueComponent = componentFromChannel(image, colorImage, BLUE_CHANNEL, blueThresholdAdjustment);
+  QImage imageToMap = prepareToMap(colorImage, image);
+
+  BinaryImage redComponent = componentFromChannel(imageToMap, RED_CHANNEL, redThresholdAdjustment);
+  BinaryImage greenComponent = componentFromChannel(imageToMap, GREEN_CHANNEL, greenThresholdAdjustment);
+  BinaryImage blueComponent = componentFromChannel(imageToMap, BLUE_CHANNEL, blueThresholdAdjustment);
 
   BinaryImage yellowComponent(redComponent);
   rasterOp<RopAnd<RopSrc, RopDst>>(yellowComponent, greenComponent);

@@ -205,7 +205,7 @@ class OutputGenerator::Processor {
                              BinaryImage* speckles_img,
                              const Dpi& dpi) const;
 
-  QImage segmentImage(const BinaryImage& image, const QImage& color_image, const BinaryImage* mask = nullptr) const;
+  QImage segmentImage(const BinaryImage& image, const QImage& color_image) const;
 
   QImage posterizeImage(const QImage& image, const QColor& background_color = Qt::white) const;
 
@@ -1406,7 +1406,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
           combineImages(maybe_normalized, bw_content, bw_mask);
         }
       } else {
-        QImage segmented_image = segmentImage(bw_content, maybe_normalized, &bw_mask);
+        QImage segmented_image = segmentImage(bw_content, maybe_normalized);
         if (m_renderParams.posterize()) {
           segmented_image = posterizeImage(segmented_image, m_outsideBackgroundColor);
         }
@@ -1762,7 +1762,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
           combineImages(dewarped, dewarped_bw_content, dewarped_bw_mask);
         }
       } else {
-        QImage segmented_image = segmentImage(dewarped_bw_content, dewarped, &dewarped_bw_mask);
+        QImage segmented_image = segmentImage(dewarped_bw_content, dewarped);
         if (m_renderParams.posterize()) {
           segmented_image = posterizeImage(segmented_image, m_outsideBackgroundColor);
         }
@@ -2362,9 +2362,7 @@ double OutputGenerator::Processor::findSkew(const QImage& image) const {
   return .0;
 }
 
-QImage OutputGenerator::Processor::segmentImage(const BinaryImage& image,
-                                                const QImage& color_image,
-                                                const BinaryImage* mask) const {
+QImage OutputGenerator::Processor::segmentImage(const BinaryImage& image, const QImage& color_image) const {
   const BlackWhiteOptions::ColorSegmenterOptions& segmenterOptions
       = m_colorParams.blackWhiteOptions().getColorSegmenterOptions();
   ColorSegmenter segmenter(m_dpi, segmenterOptions.getNoiseReduction(), segmenterOptions.getRedThresholdAdjustment(),
@@ -2373,14 +2371,10 @@ QImage OutputGenerator::Processor::segmentImage(const BinaryImage& image,
 
   QImage segmented;
   {
-    QImage color_image_content = color_image;
-    if (mask) {
-      applyMask(color_image_content, *mask);
-    }
-    if (!color_image.allGray()) {
-      segmented = segmenter.segment(image, color_image_content);
+    if (m_colorOriginal) {
+      segmented = segmenter.segment(image, color_image);
     } else {
-      segmented = segmenter.segment(image, GrayImage(color_image_content));
+      segmented = segmenter.segment(image, GrayImage(color_image));
     }
   }
 

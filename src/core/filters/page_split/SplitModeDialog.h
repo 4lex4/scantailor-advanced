@@ -40,8 +40,7 @@ class SplitModeDialog : public QDialog, private Ui::SplitModeDialog {
                   const PageId& cur_page,
                   const PageSelectionAccessor& page_selection_accessor,
                   LayoutType layout_type,
-                  PageLayout::Type auto_detected_layout_type,
-                  bool auto_detected_layout_type_valid);
+                  PageLayout::Type auto_detected_layout_type);
 
   ~SplitModeDialog() override;
 
@@ -68,7 +67,6 @@ class SplitModeDialog : public QDialog, private Ui::SplitModeDialog {
   QButtonGroup* m_scopeGroup;
   LayoutType m_layoutType;
   PageLayout::Type m_autoDetectedLayoutType;
-  bool m_autoDetectedLayoutTypeValid;
 };
 }  // namespace page_split
 #endif  // ifndef PAGE_SPLIT_SPLITMODEDIALOG_H_

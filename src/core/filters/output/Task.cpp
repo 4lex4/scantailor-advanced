@@ -20,6 +20,7 @@
 #include <DewarpingPointMapper.h>
 #include <PolygonUtils.h>
 #include <UnitsProvider.h>
+#include <core/TiffWriter.h>
 #include <QDir>
 #include <boost/bind.hpp>
 #include <utility>
@@ -166,10 +167,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     }
   }
 
-  OutputGenerator generator(params.outputDpi(), params.colorParams(), params.splittingOptions(),
-                            params.pictureShapeOptions(), params.dewarpingOptions(),
-                            m_settings->getOutputProcessingParams(m_pageId), params.despeckleLevel(), new_xform,
-                            content_rect_phys);
+  const OutputGenerator generator(new_xform, content_rect_phys);
 
   OutputImageParams new_output_image_params(
       generator.outputImageSize(), generator.outputContentRect(), new_xform, params.outputDpi(), params.colorParams(),

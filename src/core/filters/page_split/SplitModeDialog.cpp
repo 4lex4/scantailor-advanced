@@ -26,16 +26,14 @@ SplitModeDialog::SplitModeDialog(QWidget* const parent,
                                  const PageId& cur_page,
                                  const PageSelectionAccessor& page_selection_accessor,
                                  const LayoutType layout_type,
-                                 const PageLayout::Type auto_detected_layout_type,
-                                 const bool auto_detected_layout_type_valid)
+                                 const PageLayout::Type auto_detected_layout_type)
     : QDialog(parent),
       m_pages(page_selection_accessor.allPages()),
       m_selectedPages(page_selection_accessor.selectedPages()),
       m_curPage(cur_page),
       m_scopeGroup(new QButtonGroup(this)),
       m_layoutType(layout_type),
-      m_autoDetectedLayoutType(auto_detected_layout_type),
-      m_autoDetectedLayoutTypeValid(auto_detected_layout_type_valid) {
+      m_autoDetectedLayoutType(auto_detected_layout_type) {
   setupUi(this);
   m_scopeGroup->addButton(thisPageRB);
   m_scopeGroup->addButton(allPagesRB);
@@ -127,10 +125,6 @@ void SplitModeDialog::onSubmit() {
 LayoutType SplitModeDialog::combinedLayoutType() const {
   if (m_layoutType != AUTO_LAYOUT_TYPE) {
     return m_layoutType;
-  }
-
-  if (!m_autoDetectedLayoutTypeValid) {
-    return AUTO_LAYOUT_TYPE;
   }
 
   switch (m_autoDetectedLayoutType) {

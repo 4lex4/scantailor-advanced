@@ -212,7 +212,7 @@ void OptionsWidget::showChangeDialog() {
   }
 
   auto* dialog = new SplitModeDialog(this, m_pageId, m_pageSelectionAccessor, record.combinedLayoutType(),
-                                     params->pageLayout().type(), params->splitLineMode() == MODE_AUTO);
+                                     params->pageLayout().type());
   dialog->setAttribute(Qt::WA_DeleteOnClose);
   connect(dialog, SIGNAL(accepted(const std::set<PageId>&, LayoutType, bool)), this,
           SLOT(layoutTypeSet(const std::set<PageId>&, LayoutType, bool)));

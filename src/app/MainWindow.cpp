@@ -410,7 +410,7 @@ void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
 }  // MainWindow::switchToNewProject
 
 void MainWindow::showNewOpenProjectPanel() {
-  std::unique_ptr<QWidget> outer_widget(new QWidget);
+  auto outer_widget = std::make_unique<QWidget>();
   QGridLayout* layout = new QGridLayout(outer_widget.get());
   outer_widget->setLayout(layout);
 
@@ -1750,8 +1750,8 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, const Image
   };
 
 
-  std::unique_ptr<QFileDialog> dialog(
-      new QFileDialog(this, tr("Files to insert"), QFileInfo(existing.filePath()).absolutePath()));
+  auto dialog
+      = std::make_unique<QFileDialog>(this, tr("Files to insert"), QFileInfo(existing.filePath()).absolutePath());
   dialog->setFileMode(QFileDialog::ExistingFiles);
   dialog->setProxyModel(new ProxyModel(*m_pages));
   dialog->setNameFilter(tr("Images not in project (%1)").arg("*.png *.tiff *.tif *.jpeg *.jpg"));
@@ -1795,7 +1795,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, const Image
   }
 
   if (!failed_files.empty()) {
-    std::unique_ptr<LoadFilesStatusDialog> err_dialog(new LoadFilesStatusDialog(this));
+    auto err_dialog = std::make_unique<LoadFilesStatusDialog>(this);
     err_dialog->setLoadedFiles(loaded_files);
     err_dialog->setFailedFiles(failed_files);
     err_dialog->setOkButtonName(QString(" %1 ").arg(tr("Skip failed files")));
@@ -1807,7 +1807,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, const Image
   // Check if there is at least one DPI that's not OK.
   if (std::find_if(new_files.begin(), new_files.end(), [&](ImageFileInfo p) -> bool { return !p.isDpiOK(); })
       != new_files.end()) {
-    std::unique_ptr<FixDpiDialog> dpi_dialog(new FixDpiDialog(new_files, this));
+    auto dpi_dialog = std::make_unique<FixDpiDialog>(new_files, this);
     dpi_dialog->setWindowModality(Qt::WindowModal);
     if (dpi_dialog->exec() != QDialog::Accepted) {
       return;
@@ -1830,7 +1830,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, const Image
 }  // MainWindow::showInsertFileDialog
 
 void MainWindow::showRemovePagesDialog(const std::set<PageId>& pages) {
-  std::unique_ptr<QDialog> dialog(new QDialog(this));
+  auto dialog = std::make_unique<QDialog>(this);
   Ui::RemovePagesDialog ui;
   ui.setupUi(dialog.get());
   ui.icon->setPixmap(style()->standardIcon(QStyle::SP_MessageBoxQuestion).pixmap(48, 48));

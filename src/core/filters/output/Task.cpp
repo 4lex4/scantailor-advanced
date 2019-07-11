@@ -512,14 +512,14 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
 
   auto tab_image_rect_map = std::make_unique<std::unordered_map<ImageViewTab, QRectF, std::hash<int>>>();
 
-  std::unique_ptr<ImageViewBase> image_view(new ImageView(m_outputImage, m_downscaledOutputImage));
+  auto image_view = std::make_unique<ImageView>(m_outputImage, m_downscaledOutputImage);
   const QPixmap downscaled_output_pixmap(image_view->downscaledPixmap());
   tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_OUTPUT, m_xform.resultingRect()));
 
-  std::unique_ptr<ImageViewBase> dewarping_view(new DewarpingView(
+  auto dewarping_view = std::make_unique<DewarpingView>(
       m_origImage, m_downscaledOrigImage, m_xform.transform(),
       PolygonUtils::convexHull(m_xform.resultingPreCropArea().toStdVector()), m_virtContentRect, m_pageId,
-      m_params.dewarpingOptions(), m_params.distortionModel(), opt_widget->depthPerception()));
+      m_params.dewarpingOptions(), m_params.distortionModel(), opt_widget->depthPerception());
   const QPixmap downscaled_orig_pixmap(dewarping_view->downscaledPixmap());
   QObject::connect(opt_widget, SIGNAL(depthPerceptionChanged(double)), dewarping_view.get(),
                    SLOT(depthPerceptionChanged(double)));
@@ -551,9 +551,8 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   if ((m_params.dewarpingOptions().dewarpingMode() != OFF) && m_params.distortionModel().isValid()) {
     const QTransform rotate_xform
         = Utils::rotate(m_params.dewarpingOptions().getPostDeskewAngle(), m_xform.resultingRect().toRect());
-    std::shared_ptr<DewarpingPointMapper> mapper(
-        new DewarpingPointMapper(m_params.distortionModel(), m_params.depthPerception().value(), m_xform.transform(),
-                                 m_virtContentRect, rotate_xform));
+    auto mapper = std::make_shared<DewarpingPointMapper>(m_params.distortionModel(), m_params.depthPerception().value(),
+                                                         m_xform.transform(), m_virtContentRect, rotate_xform);
     orig_to_output = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
     output_to_orig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
   } else {
@@ -562,8 +561,8 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
     output_to_orig = boost::bind((MapPointFunc) &QTransform::map, m_xform.transformBack(), _1);
   }
 
-  std::unique_ptr<QWidget> fill_zone_editor(new FillZoneEditor(m_outputImage, downscaled_output_pixmap, orig_to_output,
-                                                               output_to_orig, m_pageId, m_settings));
+  auto fill_zone_editor = std::make_unique<FillZoneEditor>(m_outputImage, downscaled_output_pixmap, orig_to_output,
+                                                           output_to_orig, m_pageId, m_settings);
   QObject::connect(fill_zone_editor.get(), SIGNAL(invalidateThumbnail(const PageId&)), opt_widget,
                    SIGNAL(invalidateThumbnail(const PageId&)));
   tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_FILL_ZONES, m_xform.resultingRect()));
@@ -578,7 +577,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
     tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_DESPECKLING, m_xform.resultingRect()));
   }
 
-  std::unique_ptr<TabbedImageView> tab_widget(new TabbedImageView);
+  auto tab_widget = std::make_unique<TabbedImageView>();
   tab_widget->setDocumentMode(true);
   tab_widget->setTabPosition(QTabWidget::East);
   tab_widget->addTab(image_view.release(), tr("Output"), TAB_OUTPUT);

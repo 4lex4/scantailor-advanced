@@ -1605,8 +1605,8 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
   }
   m_status.throwIfCancelled();
 
-  std::shared_ptr<DewarpingPointMapper> mapper(new DewarpingPointMapper(
-      distortion_model, depth_perception.value(), m_xform.transform(), m_croppedContentRect, rotate_xform));
+  auto mapper = std::make_shared<DewarpingPointMapper>(distortion_model, depth_perception.value(), m_xform.transform(),
+                                                       m_croppedContentRect, rotate_xform);
   const boost::function<QPointF(const QPointF&)> orig_to_output(
       boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1));
 

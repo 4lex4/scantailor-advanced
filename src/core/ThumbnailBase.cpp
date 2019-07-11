@@ -76,7 +76,7 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
   QPixmap pixmap;
 
   if (!m_completionHandler) {
-    std::shared_ptr<LoadCompletionHandler> handler(new LoadCompletionHandler(this));
+    auto handler = std::make_shared<LoadCompletionHandler>(this);
     const ThumbnailPixmapCache::Status status = m_thumbnailCache->loadRequest(m_imageId, pixmap, handler);
     if (status == ThumbnailPixmapCache::QUEUED) {
       m_completionHandler.swap(handler);

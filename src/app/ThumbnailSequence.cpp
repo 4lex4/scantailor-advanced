@@ -1277,10 +1277,10 @@ std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabel
     text = ThumbnailSequence::tr("%1 (page %2)").arg(text).arg(page_id.imageId().page());
   }
 
-  std::unique_ptr<QGraphicsSimpleTextItem> normal_text_item(new QGraphicsSimpleTextItem);
+  auto normal_text_item = std::make_unique<QGraphicsSimpleTextItem>();
   normal_text_item->setText(text);
 
-  std::unique_ptr<QGraphicsSimpleTextItem> bold_text_item(new QGraphicsSimpleTextItem);
+  auto bold_text_item = std::make_unique<QGraphicsSimpleTextItem>();
   bold_text_item->setText(text);
 
   const QBrush selected_item_text_color = ColorSchemeManager::instance().getColorParam(
@@ -1309,7 +1309,7 @@ std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabel
   }
 
   const QPixmap pixmap(pixmap_resource);
-  std::unique_ptr<QGraphicsPixmapItem> pixmap_item(new QGraphicsPixmapItem);
+  auto pixmap_item = std::make_unique<QGraphicsPixmapItem>();
   pixmap_item->setPixmap(pixmap);
 
   const int label_pixmap_spacing = 5;
@@ -1328,7 +1328,7 @@ std::unique_ptr<ThumbnailSequence::CompositeItem> ThumbnailSequence::Impl::getCo
   std::unique_ptr<QGraphicsItem> thumb(getThumbnail(page_info));
   std::unique_ptr<LabelGroup> label_group(getLabelGroup(page_info));
 
-  std::unique_ptr<CompositeItem> composite(new CompositeItem(*this, std::move(thumb), std::move(label_group)));
+  auto composite = std::make_unique<CompositeItem>(*this, std::move(thumb), std::move(label_group));
   composite->setItem(item);
 
   return composite;
@@ -1430,7 +1430,7 @@ void ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selecti
   m_boldLabel->setVisible(selection_leader);
 
   const QBrush item_text_color = ColorSchemeManager::instance().getColorParam(ColorScheme::ThumbnailSequenceItemText,
-                                                                               QApplication::palette().text());
+                                                                              QApplication::palette().text());
   const QBrush selected_item_text_color = ColorSchemeManager::instance().getColorParam(
       ColorScheme::ThumbnailSequenceSelectedItemText, QApplication::palette().highlightedText());
 

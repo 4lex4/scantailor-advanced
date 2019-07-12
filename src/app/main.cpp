@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include <core/Application.h>
+#include <core/ApplicationSettings.h>
 #include <core/ColorSchemeFactory.h>
 #include <core/ColorSchemeManager.h>
 #include <QSettings>
@@ -47,11 +48,11 @@ int main(int argc, char* argv[]) {
   }
   QSettings settings;
 
-  app.installLanguage(settings.value("settings/language", QLocale::system().name()).toString());
+  app.installLanguage(ApplicationSettings::getInstance().getLanguage());
 
   {
-    QString scheme_name = settings.value("settings/color_scheme", "dark").toString();
-    std::unique_ptr<ColorScheme> scheme = ColorSchemeFactory().create(scheme_name);
+    std::unique_ptr<ColorScheme> scheme
+        = ColorSchemeFactory().create(ApplicationSettings::getInstance().getColorScheme());
     ColorSchemeManager::instance().setColorScheme(*scheme);
   }
 

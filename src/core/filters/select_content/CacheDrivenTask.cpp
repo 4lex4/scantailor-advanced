@@ -25,8 +25,7 @@
 #include "core/ContentBoxCollector.h"
 #include "core/ThumbnailCollector.h"
 #include "filters/page_layout/CacheDrivenTask.h"
-
-#include <QtCore/QSettings>
+#include <core/ApplicationSettings.h>
 #include <iostream>
 #include <utility>
 
@@ -64,9 +63,9 @@ void CacheDrivenTask::process(const PageInfo& page_info,
     return;
   }
 
-  QSettings settings;
-  const double deviationCoef = settings.value("settings/selectContentDeviationCoef", 0.35).toDouble();
-  const double deviationThreshold = settings.value("settings/selectContentDeviationThreshold", 1.0).toDouble();
+  ApplicationSettings& settings = ApplicationSettings::getInstance();
+  const double deviationCoef = settings.getSelectContentDeviationCoef();
+  const double deviationThreshold = settings.getSelectContentDeviationThreshold();
 
   if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
     thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(

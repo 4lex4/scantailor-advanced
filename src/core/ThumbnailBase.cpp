@@ -22,9 +22,9 @@
 #include <QPainter>
 #include <QPixmapCache>
 #include <QStyleOptionGraphicsItem>
-#include <QtCore/QSettings>
 #include <cmath>
 #include <utility>
+#include "ApplicationSettings.h"
 #include "PixmapRenderer.h"
 
 using namespace imageproc;
@@ -200,8 +200,7 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
 }  // ThumbnailBase::paint
 
 void ThumbnailBase::paintDeviant(QPainter& painter) {
-  QSettings settings;
-  if (!settings.value("settings/highlight_deviation", true).toBool()) {
+  if (!ApplicationSettings::getInstance().isHighlightDeviationEnabled()) {
     return;
   }
 

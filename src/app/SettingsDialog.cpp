@@ -17,8 +17,8 @@
  */
 
 #include "SettingsDialog.h"
+#include <core/ApplicationSettings.h>
 #include <tiff.h>
-#include <QSettings>
 #include <QtCore/QDir>
 #include <QtWidgets/QMessageBox>
 #include <cmath>
@@ -28,7 +28,7 @@
 SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
   ui.setupUi(this);
 
-  QSettings settings;
+  ApplicationSettings& settings = ApplicationSettings::getInstance();
 
   if (!OpenGLSupport::supported()) {
     ui.enableOpenglCb->setChecked(false);
@@ -36,117 +36,101 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
     ui.openglDeviceLabel->setEnabled(false);
     ui.openglDeviceLabel->setText(tr("Your hardware / driver don't provide the necessary features"));
   } else {
-    ui.enableOpenglCb->setChecked(settings.value("settings/enable_opengl", false).toBool());
+    ui.enableOpenglCb->setChecked(settings.isOpenGlEnabled());
     const QString openglDevicePattern = ui.openglDeviceLabel->text();
     ui.openglDeviceLabel->setText(openglDevicePattern.arg(OpenGLSupport::deviceName()));
   }
 
-  ui.colorSchemeBox->addItem(tr("Dark"));
-  ui.colorSchemeBox->addItem(tr("Light"));
-  ui.colorSchemeBox->addItem(tr("Native"));
-  QString val = settings.value("settings/color_scheme", "dark").toString();
-  if (val == "native") {
-    ui.colorSchemeBox->setCurrentIndex(2);
-  } else if (val == "light") {
-    ui.colorSchemeBox->setCurrentIndex(1);
-  } else {
-    ui.colorSchemeBox->setCurrentIndex(0);
-  }
-
-  ui.tiffCompressionBWBox->addItem(tr("None"), COMPRESSION_NONE);
-  ui.tiffCompressionBWBox->addItem(tr("LZW"), COMPRESSION_LZW);
-  ui.tiffCompressionBWBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
-  ui.tiffCompressionBWBox->addItem(tr("CCITT G4"), COMPRESSION_CCITTFAX4);
-
-  ui.tiffCompressionBWBox->setCurrentIndex(
-      ui.tiffCompressionBWBox->findData(settings.value("settings/bw_compression", COMPRESSION_CCITTFAX4).toInt()));
-
-  ui.tiffCompressionColorBox->addItem(tr("None"), COMPRESSION_NONE);
-  ui.tiffCompressionColorBox->addItem(tr("LZW"), COMPRESSION_LZW);
-  ui.tiffCompressionColorBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
-  ui.tiffCompressionColorBox->addItem(tr("JPEG"), COMPRESSION_JPEG);
-
-  ui.tiffCompressionColorBox->setCurrentIndex(
-      ui.tiffCompressionColorBox->findData(settings.value("settings/color_compression", COMPRESSION_LZW).toInt()));
-
-  auto* app = static_cast<Application*>(qApp);
-  for (const QString& locale : app->getLanguagesList()) {
-    QString languageName = QLocale::languageToString(QLocale(locale).language());
-    ui.languageBox->addItem(languageName, locale);
-  }
-  ui.languageBox->setCurrentIndex(ui.languageBox->findData(app->getCurrentLocale()));
-  ui.languageBox->setEnabled(ui.languageBox->count() > 1);
-
-  ui.blackOnWhiteDetectionCB->setChecked(settings.value("settings/blackOnWhiteDetection", true).toBool());
-  ui.blackOnWhiteDetectionAtOutputCB->setEnabled(ui.blackOnWhiteDetectionCB->isChecked());
-  ui.blackOnWhiteDetectionAtOutputCB->setChecked(
-      settings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool());
-  connect(ui.blackOnWhiteDetectionCB, SIGNAL(clicked(bool)), SLOT(blackOnWhiteDetectionToggled(bool)));
-
-  ui.deskewDeviationCoefSB->setValue(settings.value("settings/deskewDeviationCoef", 1.5).toDouble());
-  ui.deskewDeviationThresholdSB->setValue(settings.value("settings/deskewDeviationThreshold", 1.0).toDouble());
-  ui.selectContentDeviationCoefSB->setValue(settings.value("settings/selectContentDeviationCoef", 0.35).toDouble());
-  ui.selectContentDeviationThresholdSB->setValue(
-      settings.value("settings/selectContentDeviationThreshold", 1.0).toDouble());
-  ui.marginsDeviationCoefSB->setValue(settings.value("settings/marginsDeviationCoef", 0.35).toDouble());
-  ui.marginsDeviationThresholdSB->setValue(settings.value("settings/marginsDeviationThreshold", 1.0).toDouble());
-
-  connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
-  ui.autoSaveProjectCB->setChecked(settings.value("settings/auto_save_project").toBool());
-  ui.highlightDeviationCB->setChecked(settings.value("settings/highlight_deviation", true).toBool());
-
+  ui.colorSchemeBox->addItem(tr("Dark"), "dark");
+  ui.colorSchemeBox->addItem(tr("Light"), "light");
+  ui.colorSchemeBox->addItem(tr("Native"), "native");
+  ui.colorSchemeBox->setCurrentIndex(ui.colorSchemeBox->findData(settings.getColorScheme()));
   connect(ui.colorSchemeBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int) {
     QMessageBox::information(this, tr("Information"),
                              tr("ScanTailor need to be restarted to apply the color scheme changes."));
   });
 
-  ui.thumbnailQualitySB->setValue(settings.value("settings/thumbnail_quality", QSize(200, 200)).toSize().width());
-  ui.thumbnailSizeSB->setValue(
-      settings.value("settings/max_logical_thumb_size", QSizeF(250, 160)).toSizeF().toSize().width());
+  ui.tiffCompressionBWBox->addItem(tr("None"), COMPRESSION_NONE);
+  ui.tiffCompressionBWBox->addItem(tr("LZW"), COMPRESSION_LZW);
+  ui.tiffCompressionBWBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
+  ui.tiffCompressionBWBox->addItem(tr("CCITT G4"), COMPRESSION_CCITTFAX4);
+  ui.tiffCompressionBWBox->setCurrentIndex(ui.tiffCompressionBWBox->findData(settings.getTiffBwCompression()));
 
-  ui.singleColumnThumbnailsCB->setChecked(settings.value("settings/single_column_thumbnail_display", false).toBool());
+  ui.tiffCompressionColorBox->addItem(tr("None"), COMPRESSION_NONE);
+  ui.tiffCompressionColorBox->addItem(tr("LZW"), COMPRESSION_LZW);
+  ui.tiffCompressionColorBox->addItem(tr("Deflate"), COMPRESSION_DEFLATE);
+  ui.tiffCompressionColorBox->addItem(tr("JPEG"), COMPRESSION_JPEG);
+  ui.tiffCompressionColorBox->setCurrentIndex(ui.tiffCompressionColorBox->findData(settings.getTiffColorCompression()));
+
+  {
+    auto* app = static_cast<Application*>(qApp);
+    for (const QString& locale : app->getLanguagesList()) {
+      QString languageName = QLocale::languageToString(QLocale(locale).language());
+      ui.languageBox->addItem(languageName, locale);
+    }
+    ui.languageBox->setCurrentIndex(ui.languageBox->findData(app->getCurrentLocale()));
+    ui.languageBox->setEnabled(ui.languageBox->count() > 1);
+  }
+
+  ui.blackOnWhiteDetectionCB->setChecked(settings.isBlackOnWhiteDetectionEnabled());
+  ui.blackOnWhiteDetectionAtOutputCB->setEnabled(ui.blackOnWhiteDetectionCB->isChecked());
+  ui.blackOnWhiteDetectionAtOutputCB->setChecked(settings.isBlackOnWhiteDetectionOutputEnabled());
+  connect(ui.blackOnWhiteDetectionCB, SIGNAL(clicked(bool)), SLOT(blackOnWhiteDetectionToggled(bool)));
+
+  ui.highlightDeviationCB->setChecked(settings.isHighlightDeviationEnabled());
+
+  ui.deskewDeviationCoefSB->setValue(settings.getDeskewDeviationCoef());
+  ui.deskewDeviationThresholdSB->setValue(settings.getDeskewDeviationThreshold());
+  ui.selectContentDeviationCoefSB->setValue(settings.getSelectContentDeviationCoef());
+  ui.selectContentDeviationThresholdSB->setValue(settings.getSelectContentDeviationThreshold());
+  ui.marginsDeviationCoefSB->setValue(settings.getMarginsDeviationCoef());
+  ui.marginsDeviationThresholdSB->setValue(settings.getMarginsDeviationThreshold());
+
+  ui.autoSaveProjectCB->setChecked(settings.isAutoSaveProjectEnabled());
+
+  ui.thumbnailQualitySB->setValue(settings.getThumbnailQuality().width());
+  ui.thumbnailSizeSB->setValue(settings.getMaxLogicalThumbnailSize().toSize().width());
+
+  ui.singleColumnThumbnailsCB->setChecked(settings.isSingleColumnThumbnailDisplayEnabled());
+
+  connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
 }
 
 SettingsDialog::~SettingsDialog() = default;
 
 void SettingsDialog::commitChanges() {
-  QSettings settings;
-  settings.setValue("settings/enable_opengl", ui.enableOpenglCb->isChecked());
-  settings.setValue("settings/auto_save_project", ui.autoSaveProjectCB->isChecked());
-  settings.setValue("settings/highlight_deviation", ui.highlightDeviationCB->isChecked());
-  if (ui.colorSchemeBox->currentIndex() == 0) {
-    settings.setValue("settings/color_scheme", "dark");
-  } else if (ui.colorSchemeBox->currentIndex() == 1) {
-    settings.setValue("settings/color_scheme", "light");
-  } else if (ui.colorSchemeBox->currentIndex() == 2) {
-    settings.setValue("settings/color_scheme", "native");
-  }
+  ApplicationSettings& settings = ApplicationSettings::getInstance();
 
-  settings.setValue("settings/bw_compression", ui.tiffCompressionBWBox->currentData().toInt());
-  settings.setValue("settings/color_compression", ui.tiffCompressionColorBox->currentData().toInt());
-  settings.setValue("settings/language", ui.languageBox->currentData().toString());
+  settings.setOpenGlEnabled(ui.enableOpenglCb->isChecked());
+  settings.setAutoSaveProjectEnabled(ui.autoSaveProjectCB->isChecked());
+  settings.setHighlightDeviationEnabled(ui.highlightDeviationCB->isChecked());
+  settings.setColorScheme(ui.colorSchemeBox->currentData().toString());
 
-  settings.setValue("settings/deskewDeviationCoef", ui.deskewDeviationCoefSB->value());
-  settings.setValue("settings/deskewDeviationThreshold", ui.deskewDeviationThresholdSB->value());
-  settings.setValue("settings/selectContentDeviationCoef", ui.selectContentDeviationCoefSB->value());
-  settings.setValue("settings/selectContentDeviationThreshold", ui.selectContentDeviationThresholdSB->value());
-  settings.setValue("settings/marginsDeviationCoef", ui.marginsDeviationCoefSB->value());
-  settings.setValue("settings/marginsDeviationThreshold", ui.marginsDeviationThresholdSB->value());
+  settings.setTiffBwCompression(ui.tiffCompressionBWBox->currentData().toInt());
+  settings.setTiffColorCompression(ui.tiffCompressionColorBox->currentData().toInt());
+  settings.setLanguage(ui.languageBox->currentData().toString());
 
-  settings.setValue("settings/blackOnWhiteDetection", ui.blackOnWhiteDetectionCB->isChecked());
-  settings.setValue("settings/blackOnWhiteDetectionAtOutput", ui.blackOnWhiteDetectionAtOutputCB->isChecked());
+  settings.setDeskewDeviationCoef(ui.deskewDeviationCoefSB->value());
+  settings.setDeskewDeviationThreshold(ui.deskewDeviationThresholdSB->value());
+  settings.setSelectContentDeviationCoef(ui.selectContentDeviationCoefSB->value());
+  settings.setSelectContentDeviationThreshold(ui.selectContentDeviationThresholdSB->value());
+  settings.setMarginsDeviationCoef(ui.marginsDeviationCoefSB->value());
+  settings.setMarginsDeviationThreshold(ui.marginsDeviationThresholdSB->value());
+
+  settings.setBlackOnWhiteDetectionEnabled(ui.blackOnWhiteDetectionCB->isChecked());
+  settings.setBlackOnWhiteDetectionOutputEnabled(ui.blackOnWhiteDetectionAtOutputCB->isChecked());
 
   {
     const int quality = ui.thumbnailQualitySB->value();
-    settings.setValue("settings/thumbnail_quality", QSize(quality, quality));
+    settings.setThumbnailQuality(QSize(quality, quality));
   }
   {
     const double width = ui.thumbnailSizeSB->value();
     const double height = std::round((width * (16.0 / 25.0)) * 100) / 100;
-    settings.setValue("settings/max_logical_thumb_size", QSizeF(width, height));
+    settings.setMaxLogicalThumbnailSize(QSizeF(width, height));
   }
 
-  settings.setValue("settings/single_column_thumbnail_display", ui.singleColumnThumbnailsCB->isChecked());
+  settings.setSingleColumnThumbnailDisplayEnabled(ui.singleColumnThumbnailsCB->isChecked());
 
   emit settingsChanged();
 }

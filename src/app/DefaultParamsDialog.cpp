@@ -1,12 +1,12 @@
 
 #include "DefaultParamsDialog.h"
+#include <core/ApplicationSettings.h>
 #include <filters/output/ColorParams.h>
 #include <filters/output/DewarpingOptions.h>
 #include <filters/output/PictureShapeOptions.h>
 #include <filters/page_split/LayoutType.h>
 #include <foundation/ScopedIncDec.h>
 #include <QLineEdit>
-#include <QtCore/QSettings>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QToolTip>
 #include <cassert>
@@ -1003,7 +1003,7 @@ void DefaultParamsDialog::commitChanges() {
     params = buildParams();
   }
   DefaultParamsProvider::getInstance().setParams(std::move(params), profile);
-  QSettings().setValue("settings/current_profile", profile);
+  ApplicationSettings::getInstance().setCurrentProfile(profile);
 }
 
 void DefaultParamsDialog::setTabWidgetsEnabled(const bool enabled) {

@@ -1,11 +1,11 @@
 
 #include "UnitsProvider.h"
-#include <QtCore/QSettings>
 #include <algorithm>
+#include "ApplicationSettings.h"
 #include "Dpm.h"
 #include "UnitsConverter.h"
 
-UnitsProvider::UnitsProvider() : m_units(unitsFromString(QSettings().value("settings/units", "mm").toString())) {}
+UnitsProvider::UnitsProvider() : m_units(unitsFromString(ApplicationSettings::getInstance().getUnits())) {}
 
 UnitsProvider& UnitsProvider::getInstance() {
   static UnitsProvider instance;

@@ -43,6 +43,7 @@
 #include <TextLineTracer.h>
 #include <TopBottomEdgeTracer.h>
 #include <Transform.h>
+#include <core/ApplicationSettings.h>
 #include <imageproc/BackgroundColorCalculator.h>
 #include <imageproc/ColorSegmenter.h>
 #include <imageproc/ImageCombination.h>
@@ -57,7 +58,6 @@
 #include <QPolygonF>
 #include <QSize>
 #include <QTransform>
-#include <QtCore/QSettings>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <cmath>
@@ -1187,10 +1187,9 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::buildEmptyImage() const
 }
 
 void OutputGenerator::Processor::updateBlackOnWhite(const FilterData& input) {
-  QSettings appSettings;
+  ApplicationSettings& appSettings = ApplicationSettings::getInstance();
   Params params = m_settings->getParams(m_pageId);
-  if ((appSettings.value("settings/blackOnWhiteDetection", true).toBool()
-       && appSettings.value("settings/blackOnWhiteDetectionAtOutput", true).toBool())
+  if ((appSettings.isBlackOnWhiteDetectionEnabled() && appSettings.isBlackOnWhiteDetectionOutputEnabled())
       && !m_settings->getOutputProcessingParams(m_pageId).isBlackOnWhiteSetManually()) {
     if (params.isBlackOnWhite() != input.isBlackOnWhite()) {
       params.setBlackOnWhite(input.isBlackOnWhite());

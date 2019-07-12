@@ -18,8 +18,8 @@
 
 #include "CacheDrivenTask.h"
 
-#include <QtCore/QSettings>
 #include <utility>
+#include <core/ApplicationSettings.h>
 #include "IncompleteThumbnail.h"
 #include "PageInfo.h"
 #include "Settings.h"
@@ -58,9 +58,9 @@ void CacheDrivenTask::process(const PageInfo& page_info,
     return;
   }
 
-  QSettings settings;
-  const double deviationCoef = settings.value("settings/deskewDeviationCoef", 1.5).toDouble();
-  const double deviationThreshold = settings.value("settings/deskewDeviationThreshold", 1.0).toDouble();
+  ApplicationSettings& settings = ApplicationSettings::getInstance();
+  const double deviationCoef = settings.getDeskewDeviationCoef();
+  const double deviationThreshold = settings.getDeskewDeviationThreshold();
 
   if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
     thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(

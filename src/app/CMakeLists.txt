@@ -46,7 +46,9 @@ set(gui_only_ui_files
 
 set(win32_resource_file "")
 if (WIN32)
-  set(rc_file "${SCANTAILOR_RESOURCES_DIR}/win32/resources.rc")
+  string(REPLACE "/" "\\\\" SCANTAILOR_WIN_DIR_NATIVE "${SCANTAILOR_RESOURCES_DIR}/win32")
+  configure_file("${SCANTAILOR_RESOURCES_DIR}/win32/resources.rc.in" "${CMAKE_BINARY_DIR}/resources.rc" @ONLY)
+  set(rc_file "${CMAKE_BINARY_DIR}/resources.rc")
   file(GLOB win32_resources "${SCANTAILOR_RESOURCES_DIR}/win32/*.ico")
   set_source_files_properties(
       "${rc_file}" PROPERTIES

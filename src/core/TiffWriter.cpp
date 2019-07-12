@@ -17,15 +17,15 @@
  */
 
 #include "TiffWriter.h"
+#include <Constants.h>
+#include <Grayscale.h>
 #include <tiffio.h>
 #include <QDebug>
 #include <QtCore/QFile>
-#include <QtCore/QSettings>
 #include <cassert>
 #include <cmath>
+#include "ApplicationSettings.h"
 #include "Dpm.h"
-#include <Constants.h>
-#include <Grayscale.h>
 
 /**
  * m_reverseBitsLUT[byte] gives the same byte, but with bit order reversed.
@@ -241,10 +241,9 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
 
   if (image.format() == QImage::Format_Indexed8) {
     TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-                 uint16(QSettings().value("settings/color_compression", COMPRESSION_LZW).toInt()));
+                 uint16(ApplicationSettings::getInstance().getTiffColorCompression()));
   } else {
-    TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-                 uint16(QSettings().value("settings/bw_compression", COMPRESSION_CCITTFAX4).toInt()));
+    TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16(ApplicationSettings::getInstance().getTiffBwCompression()));
   }
 
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, bits_per_sample);
@@ -283,8 +282,7 @@ bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_RGB32);
 
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(3));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-               uint16(QSettings().value("settings/color_compression", COMPRESSION_LZW).toInt()));
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16(ApplicationSettings::getInstance().getTiffColorCompression()));
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 
@@ -318,8 +316,7 @@ bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_ARGB32);
 
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(4));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-               uint16(QSettings().value("settings/color_compression", COMPRESSION_LZW).toInt()));
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16(ApplicationSettings::getInstance().getTiffColorCompression()));
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 

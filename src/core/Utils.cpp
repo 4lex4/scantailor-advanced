@@ -19,9 +19,9 @@
 #include "Utils.h"
 #include <QDir>
 #include <QRegExp>
-#include <QSettings>
 #include <QTextDocument>
 #include <cmath>
+#include "ApplicationSettings.h"
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -61,7 +61,7 @@ QString Utils::outputDirToThumbDir(const QString& output_dir) {
 }
 
 intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& output_dir) {
-  const QSize max_pixmap_size = QSettings().value("settings/thumbnail_quality", QSize(200, 200)).toSize();
+  const QSize max_pixmap_size = ApplicationSettings::getInstance().getThumbnailQuality();
   const QString thumbs_cache_path(outputDirToThumbDir(output_dir));
 
   return make_intrusive<ThumbnailPixmapCache>(thumbs_cache_path, max_pixmap_size, 40, 5);

@@ -17,15 +17,17 @@
  */
 
 #include "ImageViewBase.h"
+#include <PolygonUtils.h>
+#include <Transform.h>
 #include <QApplication>
 #include <QGLWidget>
 #include <QMouseEvent>
 #include <QPaintEngine>
 #include <QPointer>
 #include <QScrollBar>
-#include <QSettings>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QStatusBar>
+#include "ApplicationSettings.h"
 #include "BackgroundExecutor.h"
 #include "ColorSchemeManager.h"
 #include "Dpm.h"
@@ -35,8 +37,6 @@
 #include "ScopedIncDec.h"
 #include "UnitsProvider.h"
 #include "Utils.h"
-#include <PolygonUtils.h>
-#include <Transform.h>
 
 using namespace core;
 using namespace imageproc;
@@ -157,7 +157,7 @@ ImageViewBase::ImageViewBase(const QImage& image,
    */
   viewport()->setAutoFillBackground(false);
 
-  if (QSettings().value("settings/use_3d_acceleration", false) != false) {
+  if (ApplicationSettings::getInstance().isOpenGlEnabled()) {
     if (OpenGLSupport::supported()) {
       QGLFormat format;
       format.setSampleBuffers(true);

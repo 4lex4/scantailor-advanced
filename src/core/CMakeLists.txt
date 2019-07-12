@@ -61,7 +61,6 @@ set(common_sources
     AtomicFileOverwriter.cpp AtomicFileOverwriter.h
     EstimateBackground.cpp EstimateBackground.h
     Despeckle.cpp Despeckle.h
-    ThreadPriority.cpp ThreadPriority.h
     FileNameDisambiguator.cpp FileNameDisambiguator.h
     OpenGLSupport.cpp OpenGLSupport.h
     OutputFileNameGenerator.cpp OutputFileNameGenerator.h
@@ -106,7 +105,8 @@ set(common_sources
     OrderByCompletenessProvider.cpp OrderByCompletenessProvider.h
     SkinnedButton.cpp SkinnedButton.h
     CollapsibleGroupBox.cpp CollapsibleGroupBox.h
-    ColorSchemeFactory.cpp ColorSchemeFactory.h)
+    ColorSchemeFactory.cpp ColorSchemeFactory.h
+    ApplicationSettings.cpp ApplicationSettings.h)
 
 add_library(core STATIC ${common_sources} ${common_ui_files})
 target_link_libraries(

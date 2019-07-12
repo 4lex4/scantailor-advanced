@@ -16,8 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <UnitsProvider.h>
-
+#include "Task.h"
 #include <BinaryImage.h>
 #include <BlackOnWhiteEstimator.h>
 #include <Morphology.h>
@@ -26,11 +25,12 @@
 #include <ReduceThreshold.h>
 #include <SeedFill.h>
 #include <SkewFinder.h>
+#include <UnitsProvider.h>
 #include <UpscaleIntegerTimes.h>
+#include <core/ApplicationSettings.h>
 #include <imageproc/Grayscale.h>
 #include <imageproc/OrthogonalRotation.h>
 #include <imageproc/PolygonRasterizer.h>
-#include <QSettings>
 #include <utility>
 #include "DebugImagesImpl.h"
 #include "Dpm.h"
@@ -39,7 +39,6 @@
 #include "FilterUiInterface.h"
 #include "ImageView.h"
 #include "OptionsWidget.h"
-#include "Task.h"
 #include "TaskStatus.h"
 #include "filters/select_content/Task.h"
 
@@ -230,7 +229,7 @@ void Task::updateFilterData(const TaskStatus& status, FilterData& data, bool nee
     BinaryImage mask(img.size(), BLACK);
     PolygonRasterizer::fillExcept(mask, WHITE, data.xform().resultingPreCropArea(), Qt::WindingFill);
     bool isBlackOnWhite = true;
-    if (QSettings().value("settings/blackOnWhiteDetection", true).toBool()) {
+    if (ApplicationSettings::getInstance().isBlackOnWhiteDetectionEnabled()) {
       isBlackOnWhite = BlackOnWhiteEstimator::isBlackOnWhite(data.grayImage(), data.xform(), status, m_dbg.get());
     }
     ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)), isBlackOnWhite);

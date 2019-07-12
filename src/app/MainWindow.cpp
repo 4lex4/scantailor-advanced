@@ -1,3 +1,5 @@
+#include <memory>
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -16,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MainWindow.h"
+#include <core/ApplicationSettings.h>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -41,6 +43,7 @@
 #include "ImageMetadataLoader.h"
 #include "LoadFileTask.h"
 #include "LoadFilesStatusDialog.h"
+#include "MainWindow.h"
 #include "NewOpenProjectPanel.h"
 #include "OutOfMemoryDialog.h"
 #include "OutOfMemoryHandler.h"
@@ -113,13 +116,12 @@ MainWindow::MainWindow()
       m_ignorePageOrderingChanges(0),
       m_debug(false),
       m_closing(false) {
-  QSettings app_settings;
+  ApplicationSettings& settings = ApplicationSettings::getInstance();
 
-  m_maxLogicalThumbSize = app_settings.value("settings/max_logical_thumb_size", QSize(250, 160)).toSizeF();
-  const ThumbnailSequence::ViewMode view_mode
-      = (app_settings.value("settings/single_column_thumbnail_display", false).toBool())
-            ? ThumbnailSequence::SINGLE_COLUMN
-            : ThumbnailSequence::MULTI_COLUMN;
+  m_maxLogicalThumbSize = settings.getMaxLogicalThumbnailSize();
+  const ThumbnailSequence::ViewMode view_mode = settings.isSingleColumnThumbnailDisplayEnabled()
+                                                    ? ThumbnailSequence::SINGLE_COLUMN
+                                                    : ThumbnailSequence::MULTI_COLUMN;
 
   m_thumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize, view_mode);
 
@@ -130,13 +132,13 @@ MainWindow::MainWindow()
   sortOptions->setVisible(false);
 
   createBatchProcessingWidget();
-  m_processingIndicationWidget.reset(new ProcessingIndicationWidget);
+  m_processingIndicationWidget = std::make_unique<ProcessingIndicationWidget>();
 
   filterList->setStages(m_stages);
   filterList->selectRow(0);
 
   setupThumbView();  // Expects m_thumbSequence to be initialized.
-  m_tabbedDebugImages.reset(new TabbedDebugImages);
+  m_tabbedDebugImages = std::make_unique<TabbedDebugImages>();
 
   m_debug = actionDebug->isChecked();
 
@@ -160,7 +162,7 @@ MainWindow::MainWindow()
   for (QAction* action : menuUnits->actions()) {
     m_unitsMenuActionGroup->addAction(action);
   }
-  switch (unitsFromString(QSettings().value("settings/units", "mm").toString())) {
+  switch (unitsFromString(settings.getUnits())) {
     case PIXELS:
       actionPixels->setChecked(true);
       break;
@@ -174,28 +176,28 @@ MainWindow::MainWindow()
       actionInches->setChecked(true);
       break;
   }
-  connect(actionPixels, &QAction::toggled, [this](bool checked) {
+  connect(actionPixels, &QAction::toggled, [this, &settings](bool checked) {
     if (checked) {
       UnitsProvider::getInstance().setUnits(PIXELS);
-      QSettings().setValue("settings/units", unitsToString(PIXELS));
+      settings.setUnits(unitsToString(PIXELS));
     }
   });
-  connect(actionMilimeters, &QAction::toggled, [this](bool checked) {
+  connect(actionMilimeters, &QAction::toggled, [this, &settings](bool checked) {
     if (checked) {
       UnitsProvider::getInstance().setUnits(MILLIMETRES);
-      QSettings().setValue("settings/units", unitsToString(MILLIMETRES));
+      settings.setUnits(unitsToString(MILLIMETRES));
     }
   });
-  connect(actionCentimetres, &QAction::toggled, [this](bool checked) {
+  connect(actionCentimetres, &QAction::toggled, [this, &settings](bool checked) {
     if (checked) {
       UnitsProvider::getInstance().setUnits(CENTIMETRES);
-      QSettings().setValue("settings/units", unitsToString(CENTIMETRES));
+      settings.setUnits(unitsToString(CENTIMETRES));
     }
   });
-  connect(actionInches, &QAction::toggled, [this](bool checked) {
+  connect(actionInches, &QAction::toggled, [this, &settings](bool checked) {
     if (checked) {
       UnitsProvider::getInstance().setUnits(INCHES);
-      QSettings().setValue("settings/units", unitsToString(INCHES));
+      settings.setUnits(unitsToString(INCHES));
     }
   });
 
@@ -295,14 +297,15 @@ MainWindow::MainWindow()
   updateWindowTitle();
   updateMainArea();
 
-  QSettings settings;
-  if (settings.value("mainWindow/maximized") == false) {
-    const QVariant geom(settings.value("mainWindow/nonMaximizedGeometry"));
+  QSettings qSettings;
+  if (qSettings.value("mainWindow/maximized") == false) {
+    const QVariant geom(qSettings.value("mainWindow/nonMaximizedGeometry"));
     if (!restoreGeometry(geom.toByteArray())) {
       resize(1014, 689);  // A sensible value.
     }
   }
-  m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
+
+  m_autoSaveProject = settings.isAutoSaveProjectEnabled();
 
   m_maxLogicalThumbSizeUpdater.setSingleShot(true);
   connect(&m_maxLogicalThumbSizeUpdater, &QTimer::timeout, this, &MainWindow::updateMaxLogicalThumbSize);
@@ -1346,8 +1349,7 @@ void MainWindow::openProject() {
     return;
   }
 
-  QSettings settings;
-  const QString project_dir(settings.value("project/lastDir").toString());
+  const QString project_dir(QSettings().value("project/lastDir").toString());
 
   const QString project_file(QFileDialog::getOpenFileName(this, tr("Open Project"), project_dir,
                                                           tr("Scan Tailor Projects") + " (*.ScanTailor)"));
@@ -1376,7 +1378,7 @@ void MainWindow::openProject(const QString& project_file) {
 
   file.close();
 
-  ProjectOpeningContext* context = new ProjectOpeningContext(this, project_file, doc);
+  auto* context = new ProjectOpeningContext(this, project_file, doc);
   connect(context, SIGNAL(done(ProjectOpeningContext*)), SLOT(projectOpened(ProjectOpeningContext*)));
   context->proceed();
 }
@@ -1387,8 +1389,7 @@ void MainWindow::projectOpened(ProjectOpeningContext* context) {
   rp.setMostRecent(context->projectFile());
   rp.write();
 
-  QSettings settings;
-  settings.setValue("project/lastDir", QFileInfo(context->projectFile()).absolutePath());
+  QSettings().setValue("project/lastDir", QFileInfo(context->projectFile()).absolutePath());
 
   switchToNewProject(context->projectReader()->pages(), context->projectReader()->outputDirectory(),
                      context->projectFile(), context->projectReader());
@@ -1399,7 +1400,7 @@ void MainWindow::closeProject() {
 }
 
 void MainWindow::openSettingsDialog() {
-  SettingsDialog* dialog = new SettingsDialog(this);
+  auto* dialog = new SettingsDialog(this);
   dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->setWindowModality(Qt::WindowModal);
   connect(dialog, SIGNAL(settingsChanged()), this, SLOT(onSettingsChanged()));
@@ -1407,22 +1408,22 @@ void MainWindow::openSettingsDialog() {
 }
 
 void MainWindow::openDefaultParamsDialog() {
-  DefaultParamsDialog* dialog = new DefaultParamsDialog(this);
+  auto* dialog = new DefaultParamsDialog(this);
   dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->setWindowModality(Qt::WindowModal);
   dialog->show();
 }
 
 void MainWindow::onSettingsChanged() {
-  QSettings settings;
+  ApplicationSettings& settings = ApplicationSettings::getInstance();
   bool need_invalidate = true;
 
-  m_autoSaveProject = settings.value("settings/auto_save_project").toBool();
+  m_autoSaveProject = ApplicationSettings::getInstance().isAutoSaveProjectEnabled();
 
-  static_cast<Application*>(qApp)->installLanguage(settings.value("settings/language").toString());
+  static_cast<Application*>(qApp)->installLanguage(settings.getLanguage());
 
   if (m_thumbnailCache) {
-    const QSize max_thumb_size = settings.value("settings/thumbnail_quality").toSize();
+    const QSize max_thumb_size = settings.getThumbnailQuality();
     if (m_thumbnailCache->getMaxThumbSize() != max_thumb_size) {
       m_thumbnailCache->setMaxThumbSize(max_thumb_size);
     }
@@ -1430,7 +1431,7 @@ void MainWindow::onSettingsChanged() {
 
   {
     const ThumbnailSequence::ViewMode view_mode
-        = (settings.value("settings/single_column_thumbnail_display", false).toBool())
+        = (ApplicationSettings::getInstance().isSingleColumnThumbnailDisplayEnabled())
               ? ThumbnailSequence::SINGLE_COLUMN
               : ThumbnailSequence::MULTI_COLUMN;
     if (m_thumbSequence->getViewMode() != view_mode) {
@@ -1438,7 +1439,7 @@ void MainWindow::onSettingsChanged() {
     }
   }
 
-  const QSizeF max_logical_thumb_size = settings.value("settings/max_logical_thumb_size").toSizeF();
+  const QSizeF max_logical_thumb_size = settings.getMaxLogicalThumbnailSize();
   if (m_maxLogicalThumbSize != max_logical_thumb_size) {
     m_maxLogicalThumbSize = max_logical_thumb_size;
     updateMaxLogicalThumbSize();
@@ -2067,7 +2068,7 @@ void MainWindow::scaleThumbnails(const QWheelEvent* wheel_event) {
       m_maxLogicalThumbSizeUpdater.start(350);
     }
 
-    QSettings().setValue("settings/max_logical_thumb_size", m_maxLogicalThumbSize);
+    ApplicationSettings::getInstance().setMaxLogicalThumbnailSize(m_maxLogicalThumbSize);
   }
 }
 

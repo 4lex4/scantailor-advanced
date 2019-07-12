@@ -1,15 +1,15 @@
 
 #include "DefaultParamsProvider.h"
-#include <QtCore/QSettings>
 #include <cassert>
+#include "ApplicationSettings.h"
 #include "DefaultParams.h"
 #include "DefaultParamsProfileManager.h"
 
 DefaultParamsProvider::DefaultParamsProvider() {
-  QSettings settings;
+  ApplicationSettings& settings = ApplicationSettings::getInstance();
   DefaultParamsProfileManager defaultParamsProfileManager;
 
-  const QString profile = settings.value("settings/current_profile", "Default").toString();
+  const QString profile = settings.getCurrentProfile();
   if (profile == "Default") {
     m_params = defaultParamsProfileManager.createDefaultProfile();
     m_profileName = profile;
@@ -24,7 +24,7 @@ DefaultParamsProvider::DefaultParamsProvider() {
     } else {
       m_params = defaultParamsProfileManager.createDefaultProfile();
       m_profileName = "Default";
-      settings.setValue("settings/current_profile", "Default");
+      settings.setCurrentProfile("Default");
     }
   }
 }

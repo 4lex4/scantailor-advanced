@@ -294,22 +294,10 @@ static void transformGeneric(const StorageUnit* const src_data,
   }
 }  // transformGeneric
 
-void fixDpiInPlace(QImage& image, const QTransform& xform) {
-  if (xform.isScaling()) {
-    QRect dpi_rect(QPoint(0, 0), QSize(image.dotsPerMeterX(), image.dotsPerMeterY()));
-    xform.mapRect(dpi_rect);
-    image.setDotsPerMeterX(dpi_rect.width());
-    image.setDotsPerMeterY(dpi_rect.height());
-  }
-}
-
-void fixDpiInPlace(GrayImage& image, const QTransform& xform) {
-  if (xform.isScaling()) {
-    QRect dpi_rect(QPoint(0, 0), QSize(image.dotsPerMeterX(), image.dotsPerMeterY()));
-    xform.mapRect(dpi_rect);
-    image.setDotsPerMeterX(dpi_rect.width());
-    image.setDotsPerMeterY(dpi_rect.height());
-  }
+template <typename ImageT>
+void fixDpiInPlace(ImageT& dst, const QImage& src, const QTransform& xform) {
+  dst.setDotsPerMeterX(qRound(src.dotsPerMeterX() * xform.m11()));
+  dst.setDotsPerMeterY(qRound(src.dotsPerMeterY() * xform.m22()));
 }
 }  // namespace
 
@@ -321,11 +309,9 @@ QImage transform(const QImage& src,
   if (src.isNull() || dst_rect.isEmpty()) {
     return QImage();
   }
-
   if (!xform.isAffine()) {
     throw std::invalid_argument("transform: only affine transformations are supported");
   }
-
   if (!dst_rect.isValid()) {
     throw std::invalid_argument("transform: dst_rect is invalid");
   }
@@ -348,7 +334,7 @@ QImage transform(const QImage& src,
             gray_src.data(), gray_src.stride(), src.size(), gray_dst.data(), gray_dst.stride(), xform, dst_rect,
             outside_pixels.grayLevel(), outside_pixels.flags(), min_mapping_area);
 
-        fixDpiInPlace(gray_dst, xform);
+        fixDpiInPlace(gray_dst, src, xform);
 
         return gray_dst;
       }
@@ -364,7 +350,7 @@ QImage transform(const QImage& src,
             (const uint32_t*) src_rgb32.bits(), src_rgb32.bytesPerLine() / 4, src_rgb32.size(), (uint32_t*) dst.bits(),
             dst.bytesPerLine() / 4, xform, dst_rect, outside_pixels.rgb(), outside_pixels.flags(), min_mapping_area);
 
-        fixDpiInPlace(dst, xform);
+        fixDpiInPlace(dst, src, xform);
 
         return dst;
       } else {
@@ -379,7 +365,7 @@ QImage transform(const QImage& src,
             (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect, outside_pixels.rgba(),
             outside_pixels.flags(), min_mapping_area);
 
-        fixDpiInPlace(dst, xform);
+        fixDpiInPlace(dst, src, xform);
 
         return dst;
       }
@@ -394,11 +380,9 @@ GrayImage transformToGray(const QImage& src,
   if (src.isNull() || dst_rect.isEmpty()) {
     return GrayImage();
   }
-
   if (!xform.isAffine()) {
     throw std::invalid_argument("transformToGray: only affine transformations are supported");
   }
-
   if (!dst_rect.isValid()) {
     throw std::invalid_argument("transformToGray: dst_rect is invalid");
   }
@@ -411,7 +395,7 @@ GrayImage transformToGray(const QImage& src,
                                                        dst.stride(), xform, dst_rect, outside_pixels.grayLevel(),
                                                        outside_pixels.flags(), min_mapping_area);
 
-  fixDpiInPlace(dst, xform);
+  fixDpiInPlace(dst, src, xform);
 
   return dst;
 }

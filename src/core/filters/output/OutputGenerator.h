@@ -173,7 +173,7 @@ class OutputGenerator {
 
   void deskew(QImage* image, double angle, const QColor& outside_color) const;
 
-  double maybe_deskew(QImage* dewarped, DewarpingOptions dewarping_options, const QColor& outside_color) const;
+  double maybe_deskew(QImage* dewarped, const QColor& outside_color) const;
 
   void movePointToTopMargin(BinaryImage& bw_image, std::vector<QPointF>& polyline, int idx) const;
 
@@ -199,17 +199,6 @@ class OutputGenerator {
   static QSize to300dpi(const QSize& size, const Dpi& source_dpi);
 
   static QImage convertToRGBorRGBA(const QImage& src);
-
-  static void fillMarginsInPlace(QImage& image,
-                                 const QPolygonF& content_poly,
-                                 const QColor& color,
-                                 bool antialiasing = true);
-
-  static void fillMarginsInPlace(BinaryImage& image, const QPolygonF& content_poly, BWColor color);
-
-  static void fillMarginsInPlace(QImage& image, const BinaryImage& content_mask, const QColor& color);
-
-  static void fillMarginsInPlace(BinaryImage& image, const BinaryImage& content_mask, BWColor color);
 
   static imageproc::GrayImage normalizeIlluminationGray(const TaskStatus& status,
                                                         const QImage& input,

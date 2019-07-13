@@ -47,6 +47,7 @@
 #include <imageproc/ColorSegmenter.h>
 #include <imageproc/ImageCombination.h>
 #include <imageproc/OrthogonalRotation.h>
+#include <imageproc/PolygonUtils.h>
 #include <imageproc/Posterizer.h>
 #include <QDebug>
 #include <QPainter>
@@ -232,6 +233,82 @@ void fillExcept(BinaryImage& image, const BinaryImage& bw_mask, const BWColor co
     }
     image_line += image_stride;
     bw_mask_line += bw_mask_stride;
+  }
+}
+
+void fillMarginsInPlace(QImage& image,
+                        const QPolygonF& content_poly,
+                        const QColor& color,
+                        const bool antialiasing = true) {
+  if (content_poly.intersected(QRectF(image.rect())) != content_poly) {
+    throw std::invalid_argument("fillMarginsInPlace: the content area exceeds image rect.");
+  }
+
+  if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
+    BinaryImage binaryImage(image);
+    PolygonRasterizer::fillExcept(binaryImage, (color == Qt::black) ? BLACK : WHITE, content_poly, Qt::WindingFill);
+    image = binaryImage.toQImage();
+    return;
+  }
+  if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
+    PolygonRasterizer::grayFillExcept(image, static_cast<unsigned char>(qGray(color.rgb())), content_poly,
+                                      Qt::WindingFill);
+    return;
+  }
+
+  assert(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
+
+  const QImage::Format imageFormat = image.format();
+  image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+  {
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing, antialiasing);
+    painter.setBrush(color);
+    painter.setPen(Qt::NoPen);
+
+    QPainterPath outer_path;
+    outer_path.addRect(image.rect());
+    QPainterPath inner_path;
+    inner_path.addPolygon(PolygonUtils::round(content_poly));
+
+    painter.drawPath(outer_path.subtracted(inner_path));
+  }
+  image = image.convertToFormat(imageFormat);
+}
+
+void fillMarginsInPlace(BinaryImage& image, const QPolygonF& content_poly, const BWColor color) {
+  if (content_poly.intersected(QRectF(image.rect())) != content_poly) {
+    throw std::invalid_argument("fillMarginsInPlace: the content area exceeds image rect.");
+  }
+
+  PolygonRasterizer::fillExcept(image, color, content_poly, Qt::WindingFill);
+}
+
+void fillMarginsInPlace(BinaryImage& image, const BinaryImage& content_mask, const BWColor color) {
+  if (image.size() != content_mask.size()) {
+    throw std::invalid_argument("fillMarginsInPlace: img and mask have different sizes");
+  }
+
+  fillExcept(image, content_mask, color);
+}
+
+void fillMarginsInPlace(QImage& image, const BinaryImage& content_mask, const QColor& color) {
+  if (image.size() != content_mask.size()) {
+    throw std::invalid_argument("fillMarginsInPlace: img and mask have different sizes");
+  }
+
+  if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
+    BinaryImage binaryImage(image);
+    fillExcept(binaryImage, content_mask, (color == Qt::black) ? BLACK : WHITE);
+    image = binaryImage.toQImage();
+    return;
+  }
+
+  if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
+    fillExcept<uint8_t>(image, content_mask, color);
+  } else {
+    assert(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
+    fillExcept<uint32_t>(image, content_mask, color);
   }
 }
 
@@ -440,7 +517,7 @@ const int MultiplyDeBruijnBitPosition2[32] = {0, 9,  1,  10, 13, 21, 2,  29, 11,
  *
  * https://graphics.stanford.edu/~seander/bithacks.html#ZerosOnRightMultLookup
  */
-const inline int countConsecutiveZeroBitsTrailing(uint32_t v) {
+inline int countConsecutiveZeroBitsTrailing(uint32_t v) {
   return MultiplyDeBruijnBitPosition[((uint32_t)((v & -signed(v)) * 0x077CB531U)) >> 27];
 }
 
@@ -450,7 +527,7 @@ const inline int countConsecutiveZeroBitsTrailing(uint32_t v) {
  *
  * https://graphics.stanford.edu/~seander/bithacks.html#IntegerLogDeBruijn
  */
-const inline int findPositionOfTheHighestBitSet(uint32_t v) {
+inline int findPositionOfTheHighestBitSet(uint32_t v) {
   v |= v >> 1;  // first round down to one less than a power of 2
   v |= v >> 2;
   v |= v >> 4;
@@ -884,12 +961,12 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithoutDewarping(const Task
       return imageRectInOutputCs.intersected(QRectF(m_outRect));
     }
   }();
-  const QPolygonF contentArea
-      = preCropArea.intersected(QRectF(render_params.fillMargins() ? m_contentRect : m_outRect));
+  QPolygonF contentArea = preCropArea.intersected(QRectF(render_params.fillMargins() ? m_contentRect : m_outRect));
   const QRect contentRect = contentArea.boundingRect().toRect();
+  contentArea = contentArea.intersected(QRectF(contentRect));
   const QPolygonF outCropArea = preCropArea.intersected(QRectF(m_outRect));
 
-  const QSize target_size(m_outRect.size().expandedTo(QSize(1, 1)));
+  const QSize target_size = m_outRect.size().expandedTo(QSize(1, 1));
   // If the content area is empty or outside the cropping area, return a blank page.
   if (contentRect.isEmpty()) {
     return buildEmptyImage(render_params, target_size);
@@ -906,17 +983,17 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithoutDewarping(const Task
   // generally smaller margins are better, except when there is
   // some garbage that connects the content to the edge of the
   // image area.
-  const QRect workingBoundingRect(
-      preCropArea
-          .intersected(QRectF(contentRect.adjusted(-content_margin, -content_margin, content_margin, content_margin)))
-          .boundingRect()
-          .toRect());
-  const QRect contentRectInWorkingCs(contentRect.translated(-workingBoundingRect.topLeft()));
-  const QPolygonF contentAreaInWorkingCs(contentArea.translated(-workingBoundingRect.topLeft()));
-  const QPolygonF outCropAreaInWorkingCs(outCropArea.translated(-workingBoundingRect.topLeft()));
-  const QPolygonF preCropAreaInOriginalCs(m_xform.transformBack().map(preCropArea));
-  const QPolygonF contentAreaInOriginalCs(m_xform.transformBack().map(contentArea));
-  const QPolygonF outCropAreaInOriginalCs(m_xform.transformBack().map(outCropArea));
+  const QRect workingBoundingRect
+      = preCropArea
+            .intersected(QRectF(contentRect.adjusted(-content_margin, -content_margin, content_margin, content_margin)))
+            .boundingRect()
+            .toRect();
+  const QRect contentRectInWorkingCs = contentRect.translated(-workingBoundingRect.topLeft());
+  const QPolygonF contentAreaInWorkingCs = contentArea.translated(-workingBoundingRect.topLeft());
+  const QPolygonF outCropAreaInWorkingCs = outCropArea.translated(-workingBoundingRect.topLeft());
+  const QPolygonF preCropAreaInOriginalCs = m_xform.transformBack().map(preCropArea);
+  const QPolygonF contentAreaInOriginalCs = m_xform.transformBack().map(contentArea);
+  const QPolygonF outCropAreaInOriginalCs = m_xform.transformBack().map(outCropArea);
 
   const bool isBlackOnWhite = updateBlackOnWhite(input, pageId, settings);
   const GrayImage inputGrayImage = isBlackOnWhite ? input.grayImage() : input.grayImage().inverted();
@@ -1346,12 +1423,12 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
       return imageRectInOutputCs.intersected(QRectF(m_outRect));
     }
   }();
-  const QPolygonF contentArea
-      = preCropArea.intersected(QRectF(render_params.fillMargins() ? m_contentRect : m_outRect));
+  QPolygonF contentArea = preCropArea.intersected(QRectF(render_params.fillMargins() ? m_contentRect : m_outRect));
   const QRect contentRect = contentArea.boundingRect().toRect();
+  contentArea = contentArea.intersected(QRectF(contentRect));
   const QPolygonF outCropArea = preCropArea.intersected(QRectF(m_outRect));
 
-  const QSize target_size(m_outRect.size().expandedTo(QSize(1, 1)));
+  const QSize target_size = m_outRect.size().expandedTo(QSize(1, 1));
   // If the content area is empty or outside the cropping area, return a blank page.
   if (contentRect.isEmpty()) {
     return buildEmptyImage(render_params, target_size);
@@ -1368,17 +1445,17 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
   // generally smaller margins are better, except when there is
   // some garbage that connects the content to the edge of the
   // image area.
-  const QRect workingBoundingRect(
-      preCropArea
-          .intersected(QRectF(contentRect.adjusted(-content_margin, -content_margin, content_margin, content_margin)))
-          .boundingRect()
-          .toRect());
-  const QRect contentRectInWorkingCs(contentRect.translated(-workingBoundingRect.topLeft()));
-  const QPolygonF contentAreaInWorkingCs(contentArea.translated(-workingBoundingRect.topLeft()));
-  const QPolygonF outCropAreaInWorkingCs(outCropArea.translated(-workingBoundingRect.topLeft()));
-  const QPolygonF preCropAreaInOriginalCs(m_xform.transformBack().map(preCropArea));
-  const QPolygonF contentAreaInOriginalCs(m_xform.transformBack().map(contentArea));
-  const QPolygonF outCropAreaInOriginalCs(m_xform.transformBack().map(outCropArea));
+  const QRect workingBoundingRect
+      = preCropArea
+            .intersected(QRectF(contentRect.adjusted(-content_margin, -content_margin, content_margin, content_margin)))
+            .boundingRect()
+            .toRect();
+  const QRect contentRectInWorkingCs = contentRect.translated(-workingBoundingRect.topLeft());
+  const QPolygonF contentAreaInWorkingCs = contentArea.translated(-workingBoundingRect.topLeft());
+  const QPolygonF outCropAreaInWorkingCs = outCropArea.translated(-workingBoundingRect.topLeft());
+  const QPolygonF preCropAreaInOriginalCs = m_xform.transformBack().map(preCropArea);
+  const QPolygonF contentAreaInOriginalCs = m_xform.transformBack().map(contentArea);
+  const QPolygonF outCropAreaInOriginalCs = m_xform.transformBack().map(outCropArea);
 
   const bool isBlackOnWhite = updateBlackOnWhite(input, pageId, settings);
   const GrayImage inputGrayImage = isBlackOnWhite ? input.grayImage() : input.grayImage().inverted();
@@ -1768,7 +1845,7 @@ std::unique_ptr<OutputImage> OutputGenerator::processWithDewarping(const TaskSta
   const boost::function<QPointF(const QPointF&)> orig_to_output(
       boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1));
 
-  const double deskew_angle = maybe_deskew(&dewarped, m_dewarpingOptions, outsideBackgroundColor);
+  const double deskew_angle = maybe_deskew(&dewarped, outsideBackgroundColor);
 
   {
     QTransform post_rotate;
@@ -2191,73 +2268,6 @@ QImage OutputGenerator::convertToRGBorRGBA(const QImage& src) {
   const QImage::Format fmt = src.hasAlphaChannel() ? QImage::Format_ARGB32 : QImage::Format_RGB32;
 
   return src.convertToFormat(fmt);
-}
-
-void OutputGenerator::fillMarginsInPlace(QImage& image,
-                                         const QPolygonF& content_poly,
-                                         const QColor& color,
-                                         const bool antialiasing) {
-  if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
-    BinaryImage binaryImage(image);
-    PolygonRasterizer::fillExcept(binaryImage, (color == Qt::black) ? BLACK : WHITE, content_poly, Qt::WindingFill);
-    image = binaryImage.toQImage();
-
-    return;
-  }
-
-  if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
-    PolygonRasterizer::grayFillExcept(image, static_cast<unsigned char>(qGray(color.rgb())), content_poly,
-                                      Qt::WindingFill);
-
-    return;
-  }
-
-  assert(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
-
-  const QImage::Format imageFormat = image.format();
-  image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-
-  {
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing, antialiasing);
-    painter.setBrush(color);
-    painter.setPen(Qt::NoPen);
-
-    QPainterPath outer_path;
-    outer_path.addRect(image.rect());
-    QPainterPath inner_path;
-    inner_path.addPolygon(content_poly);
-
-    painter.drawPath(outer_path.subtracted(inner_path));
-  }
-
-  image = image.convertToFormat(imageFormat);
-}  // OutputGenerator::fillMarginsInPlace
-
-void OutputGenerator::fillMarginsInPlace(BinaryImage& image, const QPolygonF& content_poly, const BWColor color) {
-  PolygonRasterizer::fillExcept(image, color, content_poly, Qt::WindingFill);
-}
-
-void OutputGenerator::fillMarginsInPlace(QImage& image, const BinaryImage& content_mask, const QColor& color) {
-  if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
-    BinaryImage binaryImage(image);
-    fillExcept(binaryImage, content_mask, (color == Qt::black) ? BLACK : WHITE);
-    image = binaryImage.toQImage();
-
-    return;
-  }
-
-  if (image.format() == QImage::Format_Indexed8) {
-    fillExcept<uint8_t>(image, content_mask, color);
-  } else {
-    assert(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
-
-    fillExcept<uint32_t>(image, content_mask, color);
-  }
-}
-
-void OutputGenerator::fillMarginsInPlace(BinaryImage& image, const BinaryImage& content_mask, const BWColor color) {
-  fillExcept(image, content_mask, color);
 }
 
 GrayImage OutputGenerator::detectPictures(const GrayImage& input_300dpi,
@@ -2792,9 +2802,7 @@ void OutputGenerator::deskew(QImage* image, const double angle, const QColor& ou
   *image = imageproc::transform(*image, rot, image->rect(), OutsidePixels::assumeWeakColor(outside_color));
 }
 
-double OutputGenerator::maybe_deskew(QImage* dewarped,
-                                     DewarpingOptions m_dewarpingOptions,
-                                     const QColor& outside_color) const {
+double OutputGenerator::maybe_deskew(QImage* dewarped, const QColor& outside_color) const {
   if (m_dewarpingOptions.needPostDeskew()
       && ((m_dewarpingOptions.dewarpingMode() == MARGINAL) || (m_dewarpingOptions.dewarpingMode() == MANUAL))) {
     BinaryThreshold bw_threshold(128);
@@ -2804,13 +2812,10 @@ double OutputGenerator::maybe_deskew(QImage* dewarped,
     const Skew skew(skew_finder.findSkew(bw_image));
     if ((skew.angle() != 0.0) && (skew.confidence() >= Skew::GOOD_CONFIDENCE)) {
       const double angle_deg = skew.angle();
-
       deskew(dewarped, angle_deg, outside_color);
-
       return angle_deg;
     }
   }
-
   return .0;
 }
 

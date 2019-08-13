@@ -62,7 +62,7 @@ void LightColorScheme::loadPalette() {
 }
 
 void LightColorScheme::loadStyleSheet() {
-  QFile styleSheetFile(QString::fromUtf8(":/light_scheme/qss/stylesheet.qss"));
+  QFile styleSheetFile(QString::fromUtf8(":/light_scheme/stylesheet/stylesheet.qss"));
   if (styleSheetFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
     m_styleSheet = styleSheetFile.readAll();
     styleSheetFile.close();

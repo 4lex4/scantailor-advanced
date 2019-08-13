@@ -3,8 +3,8 @@ set(CMAKE_AUTORCC ON)
 
 set(resource_files
     resources.qrc
-    dark_scheme.qrc
-    light_scheme.qrc)
+    dark_scheme/dark_scheme.qrc
+    light_scheme/light_scheme.qrc)
 list_items_prepend(resource_files "${SCANTAILOR_RESOURCES_DIR}/")
 
 set(gui_only_sources

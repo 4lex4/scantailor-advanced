@@ -62,7 +62,7 @@ void DarkColorScheme::loadPalette() {
 }
 
 void DarkColorScheme::loadStyleSheet() {
-  QFile styleSheetFile(QString::fromUtf8(":/dark_scheme/qss/stylesheet.qss"));
+  QFile styleSheetFile(QString::fromUtf8(":/dark_scheme/stylesheet/stylesheet.qss"));
   if (styleSheetFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
     m_styleSheet = styleSheetFile.readAll();
     styleSheetFile.close();

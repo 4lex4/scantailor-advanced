@@ -1,0 +1,32 @@
+<RCC>
+  <qresource prefix="/dark_scheme">
+    <file>stylesheet/stylesheet.qss</file>
+    <file>icons/branch_closed.svg</file>
+    <file>icons/branch_end.svg</file>
+    <file>icons/branch_more.svg</file>
+    <file>icons/branch_open.svg</file>
+    <file>icons/vline.svg</file>
+    <file>icons/checkbox_checked.svg</file>
+    <file>icons/checkbox_indeterminate.svg</file>
+    <file>icons/checkbox_checked_pressed.svg</file>
+    <file>icons/checkbox_indeterminate_pressed.svg</file>
+    <file>icons/checkbox_checked_disabled.svg</file>
+    <file>icons/checkbox_indeterminate_disabled.svg</file>
+    <file>icons/radiobutton_checked.svg</file>
+    <file>icons/radiobutton_checked_pressed.svg</file>
+    <file>icons/radiobutton_checked_disabled.svg</file>
+    <file>icons/window_close.svg</file>
+    <file>icons/window_close_disabled.svg</file>
+    <file>icons/window_restore.svg</file>
+    <file>icons/window_restore_disabled.svg</file>
+    <file>icons/scroll_bar_left_arrow.svg</file>
+    <file>icons/scroll_bar_right_arrow.svg</file>
+    <file>icons/scroll_bar_down_arrow.svg</file>
+    <file>icons/scroll_bar_up_arrow.svg</file>
+    <file>icons/down_arrow.svg</file>
+    <file>icons/up_arrow.svg</file>
+    <file>icons/down_arrow_pressed.svg</file>
+    <file>icons/up_arrow_pressed.svg</file>
+    <file>icons/slider_handle.svg</file>
+  </qresource>
+</RCC>

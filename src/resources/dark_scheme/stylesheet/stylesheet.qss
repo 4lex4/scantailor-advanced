@@ -46,12 +46,12 @@ QPushButton:pressed, QToolButton:pressed, QPushButton:checked:active:focus, QToo
 }
 
 QPushButton:checked, QToolButton:checked {
-  border-color: #595fb1;
+  border-color: #0f64d2;
   background-color: #383838;
 }
 
 QPushButton:checked:disabled, QToolButton:checked:disabled {
-  border-color: #595fb1;
+  border-color: #0f64d2;
   background-color: #4d4d4d;
 }
 
@@ -285,6 +285,7 @@ QMenuBar::item:pressed {
 
 QMenu {
   background-color: palette(base);
+  padding: 2px 4px 2px 4px;
 }
 
 QMenu::separator {
@@ -505,6 +506,10 @@ QComboBox {
   min-width: 17px;
   selection-background-color: #3399ff;
   selection-color: white;
+}
+
+QComboBox:editable {
+  padding-left: 1px;
 }
 
 QComboBox:disabled, QAbstractSpinBox:disabled {

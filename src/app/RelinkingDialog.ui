@@ -101,7 +101,7 @@
        </property>
        <property name="icon">
         <iconset resource="../resources/resources.qrc">
-         <normaloff>:/icons/undo-22.png</normaloff>:/icons/undo-22.png</iconset>
+         <normaloff>:/icons/undo.svg</normaloff>:/icons/undo.svg</iconset>
        </property>
       </widget>
      </item>

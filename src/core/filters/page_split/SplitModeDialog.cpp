@@ -19,6 +19,7 @@
 #include "SplitModeDialog.h"
 #include <cassert>
 #include <iostream>
+#include <core/IconProvider.h>
 #include "PageSelectionAccessor.h"
 
 namespace page_split {
@@ -49,7 +50,7 @@ SplitModeDialog::SplitModeDialog(QWidget* const parent,
     everyOtherSelectedHint->setEnabled(false);
   }
 
-  layoutTypeLabel->setPixmap(QPixmap(iconFor(m_layoutType)));
+  layoutTypeLabel->setPixmap(iconFor(m_layoutType).pixmap(32, 32));
   if (m_layoutType == AUTO_LAYOUT_TYPE) {
     modeAuto->setChecked(true);
     applyCutOption->setEnabled(false);
@@ -66,14 +67,13 @@ SplitModeDialog::SplitModeDialog(QWidget* const parent,
 SplitModeDialog::~SplitModeDialog() = default;
 
 void SplitModeDialog::autoDetectionSelected() {
-  layoutTypeLabel->setPixmap(QPixmap(":/icons/layout_type_auto.png"));
+  layoutTypeLabel->setPixmap(iconFor(AUTO_LAYOUT_TYPE).pixmap(32, 32));
   applyCutOption->setEnabled(false);
   applyCutOption->setChecked(false);
 }
 
 void SplitModeDialog::manualModeSelected() {
-  const char* resource = iconFor(combinedLayoutType());
-  layoutTypeLabel->setPixmap(QPixmap(resource));
+  layoutTypeLabel->setPixmap(iconFor(combinedLayoutType()).pixmap(32, 32));
   applyCutOption->setEnabled(true);
 }
 
@@ -141,24 +141,22 @@ LayoutType SplitModeDialog::combinedLayoutType() const {
   return AUTO_LAYOUT_TYPE;
 }
 
-const char* SplitModeDialog::iconFor(const LayoutType layout_type) {
-  const char* resource = "";
-
+QIcon SplitModeDialog::iconFor(const LayoutType layout_type) {
+  QIcon icon;
   switch (layout_type) {
     case AUTO_LAYOUT_TYPE:
-      resource = ":/icons/layout_type_auto.png";
+      icon = IconProvider::getInstance().getIcon("layout_type_auto");
       break;
     case SINGLE_PAGE_UNCUT:
-      resource = ":/icons/single_page_uncut_selected.png";
+      icon = IconProvider::getInstance().getIcon("single_page_uncut");
       break;
     case PAGE_PLUS_OFFCUT:
-      resource = ":/icons/right_page_plus_offcut_selected.png";
+      icon = IconProvider::getInstance().getIcon("right_page_plus_offcut");
       break;
     case TWO_PAGES:
-      resource = ":/icons/two_pages_selected.png";
+      icon = IconProvider::getInstance().getIcon("two_pages");
       break;
   }
-
-  return resource;
+  return icon;
 }
 }  // namespace page_split

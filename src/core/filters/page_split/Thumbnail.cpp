@@ -17,6 +17,7 @@
  */
 
 #include "Thumbnail.h"
+#include <core/IconProvider.h>
 #include <QPainter>
 #include <utility>
 
@@ -33,7 +34,7 @@ Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
       m_leftHalfRemoved(left_half_removed),
       m_rightHalfRemoved(right_half_removed) {
   if (left_half_removed || right_half_removed) {
-    m_trashPixmap = QPixmap(":/icons/trashed-small.png");
+    m_trashPixmap = IconProvider::getInstance().getIcon("trashed").pixmap(64, 64);
   }
 }
 

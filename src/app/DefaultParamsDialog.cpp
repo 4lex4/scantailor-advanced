@@ -1,6 +1,7 @@
 
 #include "DefaultParamsDialog.h"
 #include <core/ApplicationSettings.h>
+#include <core/IconProvider.h>
 #include <filters/output/ColorParams.h>
 #include <filters/output/DewarpingOptions.h>
 #include <filters/output/PictureShapeOptions.h>
@@ -28,6 +29,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
       m_currentUnits(MILLIMETRES),
       m_ignoreProfileChanges(0) {
   setupUi(this);
+  setupIcons();
 
   layoutModeCB->addItem(tr("Auto"), MODE_AUTO);
   layoutModeCB->addItem(tr("Manual"), MODE_MANUAL);
@@ -78,8 +80,6 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
   m_reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Source")));
   m_reservedProfileNames.insert(profileCB->itemText(profileCB->findData("Custom")));
 
-  m_chainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png")));
-  m_brokenChainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png")));
   setLinkButtonLinked(topBottomLink, m_topBottomLinkEnabled);
   setLinkButtonLinked(leftRightLink, m_leftRightLinkEnabled);
 
@@ -334,7 +334,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
   despeckleToggled(despeckleCB->isChecked());
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void DefaultParamsDialog::setupUiConnections() {
   CONNECT(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
@@ -414,26 +414,25 @@ void DefaultParamsDialog::setRotation(const OrthogonalRotation& rotation) {
 }
 
 void DefaultParamsDialog::setRotationPixmap() {
-  const char* path = nullptr;
-
+  QIcon icon;
   switch (m_orthogonalRotation.toDegrees()) {
     case 0:
-      path = ":/icons/big-up-arrow.png";
+      icon = IconProvider::getInstance().getIcon("big-up-arrow");
       break;
     case 90:
-      path = ":/icons/big-right-arrow.png";
+      icon = IconProvider::getInstance().getIcon("big-right-arrow");
       break;
     case 180:
-      path = ":/icons/big-down-arrow.png";
+      icon = IconProvider::getInstance().getIcon("big-down-arrow");
       break;
     case 270:
-      path = ":/icons/big-left-arrow.png";
+      icon = IconProvider::getInstance().getIcon("big-left-arrow");
       break;
     default:
       assert(!"Unreachable");
   }
 
-  rotationIndicator->setPixmap(QPixmap(path));
+  rotationIndicator->setPixmap(icon.pixmap(QSize(32, 32)));
 }
 
 void DefaultParamsDialog::layoutModeChanged(const int idx) {
@@ -1128,4 +1127,26 @@ void DefaultParamsDialog::updateAlignmentModeEnabled() {
 
   alignmentMode->setEnabled(!is_alignment_null);
   autoAlignSettingsGroup->setEnabled(!is_alignment_null);
+}
+
+void DefaultParamsDialog::setupIcons() {
+  auto& iconProvider = IconProvider::getInstance();
+  rotateLeftBtn->setIcon(iconProvider.getIcon("object-rotate-left"));
+  rotateRightBtn->setIcon(iconProvider.getIcon("object-rotate-right"));
+  topBottomLink->setIcon(iconProvider.getIcon("ver_chain"));
+  leftRightLink->setIcon(iconProvider.getIcon("ver_chain"));
+  singlePageUncutBtn->setIcon(iconProvider.getIcon("single_page_uncut"));
+  pagePlusOffcutBtn->setIcon(iconProvider.getIcon("right_page_plus_offcut"));
+  twoPagesBtn->setIcon(iconProvider.getIcon("two_pages"));
+  alignTopLeftBtn->setIcon(iconProvider.getIcon("stock-gravity-north-west"));
+  alignTopBtn->setIcon(iconProvider.getIcon("stock-gravity-north"));
+  alignTopRightBtn->setIcon(iconProvider.getIcon("stock-gravity-north-east"));
+  alignRightBtn->setIcon(iconProvider.getIcon("stock-gravity-east"));
+  alignBottomRightBtn->setIcon(iconProvider.getIcon("stock-gravity-south-east"));
+  alignBottomBtn->setIcon(iconProvider.getIcon("stock-gravity-south"));
+  alignBottomLeftBtn->setIcon(iconProvider.getIcon("stock-gravity-south-west"));
+  alignLeftBtn->setIcon(iconProvider.getIcon("stock-gravity-west"));
+  alignCenterBtn->setIcon(iconProvider.getIcon("stock-center"));
+  m_chainIcon = iconProvider.getIcon("stock-vchain");
+  m_brokenChainIcon = iconProvider.getIcon("stock-vchain-broken");
 }

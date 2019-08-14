@@ -17,6 +17,7 @@
  */
 
 #include "RelinkingDialog.h"
+#include <core/IconProvider.h>
 #include <QDir>
 #include <QFileDialog>
 #include <cassert>
@@ -27,6 +28,7 @@ RelinkingDialog::RelinkingDialog(const QString& project_file_path, QWidget* pare
       m_sortingModel(new RelinkingSortingModel),
       m_projectFileDir(QFileInfo(project_file_path).path()) {
   ui.setupUi(this);
+  ui.undoButton->setIcon(IconProvider::getInstance().getIcon("undo"));
   m_sortingModel->setSourceModel(&m_model);
   ui.listView->setModel(m_sortingModel);
   ui.listView->setTextElideMode(Qt::ElideMiddle);

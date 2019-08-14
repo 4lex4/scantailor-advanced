@@ -17,6 +17,7 @@
  */
 
 #include "OptionsWidget.h"
+#include <core/IconProvider.h>
 #include <cassert>
 #include <utility>
 #include "ApplyDialog.h"
@@ -28,6 +29,7 @@ namespace fix_orientation {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
     : m_settings(std::move(settings)), m_pageSelectionAccessor(page_selection_accessor) {
   setupUi(this);
+  setupIcons();
 
   setupUiConnections();
 }
@@ -113,29 +115,27 @@ void OptionsWidget::setRotation(const OrthogonalRotation& rotation) {
 }
 
 void OptionsWidget::setRotationPixmap() {
-  const char* path = nullptr;
-
+  QIcon icon;
   switch (m_rotation.toDegrees()) {
     case 0:
-      path = ":/icons/big-up-arrow.png";
+      icon = IconProvider::getInstance().getIcon("big-up-arrow");
       break;
     case 90:
-      path = ":/icons/big-right-arrow.png";
+      icon = IconProvider::getInstance().getIcon("big-right-arrow");
       break;
     case 180:
-      path = ":/icons/big-down-arrow.png";
+      icon = IconProvider::getInstance().getIcon("big-down-arrow");
       break;
     case 270:
-      path = ":/icons/big-left-arrow.png";
+      icon = IconProvider::getInstance().getIcon("big-left-arrow");
       break;
     default:
       assert(!"Unreachable");
   }
-
-  rotationIndicator->setPixmap(QPixmap(path));
+  rotationIndicator->setPixmap(icon.pixmap(32, 32));
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
@@ -151,5 +151,11 @@ void OptionsWidget::removeUiConnections() {
     disconnect(connection);
   }
   m_connectionList.clear();
+}
+
+void OptionsWidget::setupIcons() {
+  auto& iconProvider = IconProvider::getInstance();
+  rotateLeftBtn->setIcon(iconProvider.getIcon("object-rotate-left"));
+  rotateRightBtn->setIcon(iconProvider.getIcon("object-rotate-right"));
 }
 }  // namespace fix_orientation

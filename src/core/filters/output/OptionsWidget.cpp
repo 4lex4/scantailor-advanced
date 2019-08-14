@@ -902,7 +902,7 @@ void OptionsWidget::sendReloadRequested() {
   emit reloadRequested();
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(changeDpiButton, SIGNAL(clicked()), this, SLOT(changeDpiButtonClicked()));

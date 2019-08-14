@@ -17,6 +17,7 @@
  */
 
 #include "OptionsWidget.h"
+#include <core/IconProvider.h>
 #include <cassert>
 #include <utility>
 #include "Filter.h"
@@ -36,6 +37,8 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
       m_ignoreAutoManualToggle(0),
       m_ignoreLayoutTypeToggle(0) {
   setupUi(this);
+  setupIcons();
+
   // Workaround for QTBUG-182
   auto* grp = new QButtonGroup(this);
   grp->addButton(autoBtn);
@@ -296,7 +299,7 @@ void OptionsWidget::commitCurrentParams() {
   m_settings->updatePage(m_pageId.imageId(), update);
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(singlePageUncutBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
@@ -313,6 +316,13 @@ void OptionsWidget::removeUiConnections() {
     disconnect(connection);
   }
   m_connectionList.clear();
+}
+
+void OptionsWidget::setupIcons() {
+  auto& iconProvider = IconProvider::getInstance();
+  singlePageUncutBtn->setIcon(iconProvider.getIcon("single_page_uncut"));
+  pagePlusOffcutBtn->setIcon(iconProvider.getIcon("right_page_plus_offcut"));
+  twoPagesBtn->setIcon(iconProvider.getIcon("two_pages"));
 }
 
 /*============================= Widget::UiData ==========================*/

@@ -78,6 +78,8 @@ class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog {
 
   void finishLoadingMetadata();
 
+  void setupIcons();
+
   QSet<QString> m_supportedExtensions;
   std::unique_ptr<FileList> m_offProjectFiles;
   std::unique_ptr<SortedFileList> m_offProjectFilesSorted;

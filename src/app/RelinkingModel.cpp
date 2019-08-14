@@ -17,6 +17,7 @@
  */
 
 #include "RelinkingModel.h"
+#include <core/IconProvider.h>
 #include <foundation/Hashes.h>
 #include <QCoreApplication>
 #include <QDir>
@@ -100,8 +101,8 @@ class RelinkingModel::StatusUpdateThread : private QThread {
 /*============================ RelinkingModel =============================*/
 
 RelinkingModel::RelinkingModel()
-    : m_fileIcon(":/icons/file-16.png"),
-      m_folderIcon(":/icons/folder-16.png"),
+    : m_fileIcon(IconProvider::getInstance().getIcon("file").pixmap(16, 16)),
+      m_folderIcon(IconProvider::getInstance().getIcon("folder").pixmap(16, 16)),
       m_relinker(new Relinker),
       m_statusUpdateThread(new StatusUpdateThread(this)),
       m_haveUncommittedChanges(true) {}

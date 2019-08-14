@@ -21,7 +21,7 @@
 
 #include <QAbstractListModel>
 #include <QModelIndex>
-#include <QPixmap>
+#include <QIcon>
 #include <QString>
 #include <QThread>
 #include <Qt>

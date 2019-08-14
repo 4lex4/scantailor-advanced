@@ -17,14 +17,15 @@
  */
 
 #include "OptionsWidget.h"
+#include <Constants.h>
 #include <UnitsProvider.h>
+#include <core/IconProvider.h>
 #include <QSettings>
 #include <utility>
 #include "../../Utils.h"
 #include "ApplyDialog.h"
 #include "ScopedIncDec.h"
 #include "Settings.h"
-#include <Constants.h>
 
 using namespace core;
 using namespace imageproc::constants;
@@ -41,10 +42,9 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
     m_topBottomLinked = app_settings.value("margins/topBottomLinked", true).toBool();
   }
 
-  m_chainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-24.png")));
-  m_brokenChainIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/stock-vchain-broken-24.png")));
-
   setupUi(this);
+  setupIcons();
+
   updateLinkDisplay(topBottomLink, m_topBottomLinked);
   updateLinkDisplay(leftRightLink, m_leftRightLinked);
   updateAlignmentButtonsEnabled();
@@ -430,7 +430,7 @@ void OptionsWidget::updateMarginsControlsEnabled() {
   leftRightLink->setEnabled(enabled);
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(topMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
@@ -566,5 +566,22 @@ void OptionsWidget::updateAlignmentModeEnabled() {
 
   alignmentMode->setEnabled(!is_alignment_null);
   autoAlignSettingsGroup->setEnabled(!is_alignment_null);
+}
+
+void OptionsWidget::setupIcons() {
+  auto& iconProvider = IconProvider::getInstance();
+  topBottomLink->setIcon(iconProvider.getIcon("ver_chain"));
+  leftRightLink->setIcon(iconProvider.getIcon("ver_chain"));
+  alignTopLeftBtn->setIcon(iconProvider.getIcon("stock-gravity-north-west"));
+  alignTopBtn->setIcon(iconProvider.getIcon("stock-gravity-north"));
+  alignTopRightBtn->setIcon(iconProvider.getIcon("stock-gravity-north-east"));
+  alignRightBtn->setIcon(iconProvider.getIcon("stock-gravity-east"));
+  alignBottomRightBtn->setIcon(iconProvider.getIcon("stock-gravity-south-east"));
+  alignBottomBtn->setIcon(iconProvider.getIcon("stock-gravity-south"));
+  alignBottomLeftBtn->setIcon(iconProvider.getIcon("stock-gravity-south-west"));
+  alignLeftBtn->setIcon(iconProvider.getIcon("stock-gravity-west"));
+  alignCenterBtn->setIcon(iconProvider.getIcon("stock-center"));
+  m_chainIcon = iconProvider.getIcon("stock-vchain");
+  m_brokenChainIcon = iconProvider.getIcon("stock-vchain-broken");
 }
 }  // namespace page_layout

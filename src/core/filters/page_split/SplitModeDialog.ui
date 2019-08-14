@@ -38,7 +38,7 @@
         <enum>QFrame::StyledPanel</enum>
        </property>
        <property name="pixmap">
-        <pixmap>:/icons/layout_type_auto.png</pixmap>
+        <pixmap>:/icons/layout_type_auto.svg</pixmap>
        </property>
       </widget>
      </item>

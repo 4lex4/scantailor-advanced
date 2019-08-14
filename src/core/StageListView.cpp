@@ -27,6 +27,7 @@
 #include "BubbleAnimation.h"
 #include "ChangedStateItemDelegate.h"
 #include "ColorSchemeManager.h"
+#include "IconProvider.h"
 #include "SkinnedButton.h"
 #include "StageSequence.h"
 
@@ -102,8 +103,11 @@ StageListView::StageListView(QWidget* parent)
   v_header->setSectionResizeMode(QHeaderView::ResizeToContents);
   v_header->setSectionsMovable(false);
 
-  m_launchBtn = new SkinnedButton(":/icons/play-small.png", ":/icons/play-small-hovered.png",
-                                  ":/icons/play-small-pressed.png", viewport());
+  const auto& iconProvider = IconProvider::getInstance();
+  m_launchBtn = new SkinnedButton(iconProvider.getIcon("play"), iconProvider.getIcon("play-hovered"),
+                                  iconProvider.getIcon("play-pressed"), viewport());
+  static_cast<QToolButton*>(m_launchBtn)->setMinimumSize({18, 18});
+  static_cast<QToolButton*>(m_launchBtn)->setIconSize({18, 18});
   m_launchBtn->setStatusTip(tr("Launch batch processing"));
   m_launchBtn->hide();
 
@@ -270,10 +274,10 @@ void StageListView::createBatchAnimationSequence(const int square_side) {
   const int num_frames = 8;
   m_batchAnimationPixmaps.resize(num_frames);
 
-  const QColor head_color = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::StageListHead, palette().color(QPalette::Window).darker(200));
-  const QColor tail_color = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::StageListTail, palette().color(QPalette::Window).darker(130));
+  const QColor head_color = ColorSchemeManager::instance().getColorParam(ColorScheme::StageListHead,
+                                                                         palette().color(QPalette::Window).darker(200));
+  const QColor tail_color = ColorSchemeManager::instance().getColorParam(ColorScheme::StageListTail,
+                                                                         palette().color(QPalette::Window).darker(130));
 
   BubbleAnimation animation(num_frames);
   for (int i = 0; i < num_frames; ++i) {

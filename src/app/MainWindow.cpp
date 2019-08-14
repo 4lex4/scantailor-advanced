@@ -19,6 +19,7 @@
  */
 
 #include <core/ApplicationSettings.h>
+#include <core/IconProvider.h>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -129,6 +130,14 @@ MainWindow::MainWindow()
   connect(&m_autoSaveTimer, SIGNAL(timeout()), SLOT(autoSaveProject()));
 
   setupUi(this);
+
+  // TODO: move to setupIcons()
+  auto& iconProvider = IconProvider::getInstance();
+  focusButton->setIcon(iconProvider.getIcon("eye"));
+  prevPageBtn->setIcon(iconProvider.getIcon("triangle-up-arrow"));
+  nextPageBtn->setIcon(iconProvider.getIcon("triangle-down-arrow"));
+  filterSelectedBtn->setIcon(iconProvider.getIcon("check-mark"));
+
   sortOptions->setVisible(false);
 
   createBatchProcessingWidget();
@@ -441,8 +450,10 @@ void MainWindow::createBatchProcessingWidget() {
   QGridLayout* layout = new QGridLayout(m_batchProcessingWidget.get());
   m_batchProcessingWidget->setLayout(layout);
 
-  SkinnedButton* stop_btn = new SkinnedButton(":/icons/stop-big.png", ":/icons/stop-big-hovered.png",
-                                              ":/icons/stop-big-pressed.png", m_batchProcessingWidget.get());
+  const auto& iconProvider = IconProvider::getInstance();
+  auto* stop_btn = new SkinnedButton(iconProvider.getIcon("stop"), iconProvider.getIcon("stop-hovered"),
+                                     iconProvider.getIcon("stop-pressed"), m_batchProcessingWidget.get());
+  stop_btn->setIconSize({128, 128});
   stop_btn->setStatusTip(tr("Stop batch processing"));
 
   class LowerPanel : public QWidget {
@@ -923,12 +934,13 @@ void MainWindow::pageContextMenuRequested(const PageInfo& page_info_, const QPoi
 
   QMenu menu;
 
-  QAction* ins_before = menu.addAction(QIcon(":/icons/insert-before-16.png"), tr("Insert before ..."));
-  QAction* ins_after = menu.addAction(QIcon(":/icons/insert-after-16.png"), tr("Insert after ..."));
+  auto& iconProvider = IconProvider::getInstance();
+  QAction* ins_before = menu.addAction(iconProvider.getIcon("insert-before"), tr("Insert before ..."));
+  QAction* ins_after = menu.addAction(iconProvider.getIcon("insert-after"), tr("Insert after ..."));
 
   menu.addSeparator();
 
-  QAction* remove = menu.addAction(QIcon(":/icons/user-trash.png"), tr("Remove from project ..."));
+  QAction* remove = menu.addAction(iconProvider.getIcon("user-trash"), tr("Remove from project ..."));
 
   QAction* action = menu.exec(screen_pos);
   if (action == ins_before) {
@@ -946,7 +958,7 @@ void MainWindow::pastLastPageContextMenuRequested(const QPoint& screen_pos) {
   }
 
   QMenu menu;
-  menu.addAction(QIcon(":/icons/insert-here-16.png"), tr("Insert here ..."));
+  menu.addAction(IconProvider::getInstance().getIcon("insert-here"), tr("Insert here ..."));
 
   if (menu.exec(screen_pos)) {
     showInsertFileDialog(BEFORE, ImageId());
@@ -1453,7 +1465,7 @@ void MainWindow::onSettingsChanged() {
 
 void MainWindow::showAboutDialog() {
   Ui::AboutDialog ui;
-  QDialog* dialog = new QDialog(this);
+  auto* dialog = new QDialog(this);
   ui.setupUi(dialog);
   ui.version->setText(QString(tr("version ")) + QString::fromUtf8(VERSION));
 

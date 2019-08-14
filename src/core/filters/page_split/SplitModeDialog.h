@@ -59,7 +59,7 @@ class SplitModeDialog : public QDialog, private Ui::SplitModeDialog {
  private:
   LayoutType combinedLayoutType() const;
 
-  static const char* iconFor(LayoutType layout_type);
+  static QIcon iconFor(LayoutType layout_type);
 
   PageSequence m_pages;
   std::set<PageId> m_selectedPages;

@@ -1,3 +1,5 @@
+#include <memory>
+
 /*
     Scan Tailor - Interactive post-processing tool for scanned pages.
     Copyright (C)  Joseph Artsimovich <joseph.artsimovich@gmail.com>
@@ -16,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ThumbnailSequence.h"
+#include <core/IconProvider.h>
 #include <QApplication>
 #include <QFileInfo>
 #include <QGraphicsScene>
@@ -35,6 +37,7 @@
 #include "IncompleteThumbnail.h"
 #include "PageSequence.h"
 #include "ThumbnailFactory.h"
+#include "ThumbnailSequence.h"
 
 using namespace ::boost::multi_index;
 using namespace ::boost::lambda;
@@ -257,13 +260,16 @@ class ThumbnailSequence::LabelGroup : public QGraphicsItemGroup {
  public:
   LabelGroup(std::unique_ptr<QGraphicsSimpleTextItem> normal_label,
              std::unique_ptr<QGraphicsSimpleTextItem> bold_label,
-             std::unique_ptr<QGraphicsPixmapItem> pixmap = nullptr);
+             std::unique_ptr<QGraphicsPixmapItem> pixmap = nullptr,
+             std::unique_ptr<QGraphicsPixmapItem> pixmap_selected = nullptr);
 
   void updateAppearence(bool selected, bool selection_leader);
 
  private:
   QGraphicsSimpleTextItem* m_normalLabel;
   QGraphicsSimpleTextItem* m_boldLabel;
+  QGraphicsPixmapItem* m_pixmap;
+  QGraphicsPixmapItem* m_pixmapSelected;
 };
 
 
@@ -1296,31 +1302,36 @@ std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabel
   normal_text_item->setPos(normal_text_box.topLeft());
   bold_text_item->setPos(bold_text_box.topLeft());
 
-  const char* pixmap_resource = 0;
+  QIcon page_thumb;
   switch (page_id.subPage()) {
     case PageId::LEFT_PAGE:
-      pixmap_resource = ":/icons/left_page_thumb.png";
+      page_thumb = IconProvider::getInstance().getIcon("left_page_thumb");
       break;
     case PageId::RIGHT_PAGE:
-      pixmap_resource = ":/icons/right_page_thumb.png";
+      page_thumb = IconProvider::getInstance().getIcon("right_page_thumb");
       break;
     default:
-      return std::unique_ptr<LabelGroup>(new LabelGroup(std::move(normal_text_item), std::move(bold_text_item)));
+      return std::make_unique<LabelGroup>(std::move(normal_text_item), std::move(bold_text_item));
   }
 
-  const QPixmap pixmap(pixmap_resource);
+  const QSize size = {23, 17};
+  const QPixmap pixmap = page_thumb.pixmap(size);
+  const QPixmap pixmap_selected = page_thumb.pixmap(size, QIcon::Selected);
   auto pixmap_item = std::make_unique<QGraphicsPixmapItem>();
   pixmap_item->setPixmap(pixmap);
+  auto pixmap_item_selected = std::make_unique<QGraphicsPixmapItem>();
+  pixmap_item_selected->setPixmap(pixmap_selected);
 
   const int label_pixmap_spacing = 5;
 
   QRectF pixmap_box(pixmap_item->boundingRect());
-  pixmap_box.moveCenter(bold_text_box.center());
+  pixmap_box.moveTop(bold_text_box.top());
   pixmap_box.moveLeft(bold_text_box.right() + label_pixmap_spacing);
   pixmap_item->setPos(pixmap_box.topLeft());
+  pixmap_item_selected->setPos(pixmap_box.topLeft());
 
-  return std::unique_ptr<LabelGroup>(
-      new LabelGroup(std::move(normal_text_item), std::move(bold_text_item), std::move(pixmap_item)));
+  return std::make_unique<LabelGroup>(std::move(normal_text_item), std::move(bold_text_item), std::move(pixmap_item),
+                                      std::move(pixmap_item_selected));
 }  // ThumbnailSequence::Impl::getLabelGroup
 
 std::unique_ptr<ThumbnailSequence::CompositeItem> ThumbnailSequence::Impl::getCompositeItem(const Item* item,
@@ -1409,8 +1420,12 @@ void ThumbnailSequence::PlaceholderThumb::paint(QPainter* painter, const QStyleO
 
 ThumbnailSequence::LabelGroup::LabelGroup(std::unique_ptr<QGraphicsSimpleTextItem> normal_label,
                                           std::unique_ptr<QGraphicsSimpleTextItem> bold_label,
-                                          std::unique_ptr<QGraphicsPixmapItem> pixmap)
-    : m_normalLabel(normal_label.get()), m_boldLabel(bold_label.get()) {
+                                          std::unique_ptr<QGraphicsPixmapItem> pixmap,
+                                          std::unique_ptr<QGraphicsPixmapItem> pixmap_selected)
+    : m_normalLabel(normal_label.get()),
+      m_boldLabel(bold_label.get()),
+      m_pixmap(pixmap.get()),
+      m_pixmapSelected(pixmap_selected.get()) {
   m_normalLabel->setVisible(true);
   m_boldLabel->setVisible(false);
 
@@ -1422,6 +1437,9 @@ ThumbnailSequence::LabelGroup::LabelGroup(std::unique_ptr<QGraphicsSimpleTextIte
   addToGroup(bold_label.release());
   if (pixmap) {
     addToGroup(pixmap.release());
+  }
+  if (pixmap_selected) {
+    addToGroup(pixmap_selected.release());
   }
 }
 
@@ -1440,6 +1458,11 @@ void ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selecti
     m_normalLabel->setBrush(selected_item_text_color);
   } else {
     m_normalLabel->setBrush(item_text_color);
+  }
+
+  if (m_pixmap && m_pixmapSelected) {
+    m_pixmap->setVisible(!selected);
+    m_pixmapSelected->setVisible(selected);
   }
 }
 

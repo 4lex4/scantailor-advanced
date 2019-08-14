@@ -17,6 +17,8 @@
  */
 
 #include "ImageView.h"
+#include <Constants.h>
+#include <core/IconProvider.h>
 #include <QAction>
 #include <QPainter>
 #include <QScrollBar>
@@ -24,7 +26,6 @@
 #include <QWheelEvent>
 #include <boost/bind.hpp>
 #include "ImagePresentation.h"
-#include <Constants.h>
 
 namespace deskew {
 const double ImageView::m_maxRotationDeg = 45.0;
@@ -33,7 +34,7 @@ const int ImageView::m_cellSize = 20;
 
 ImageView::ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform)
     : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
-      m_handlePixmap(":/icons/aqua-sphere.png"),
+      m_handlePixmap(IconProvider::getInstance().getIcon("aqua-sphere").pixmap(16, 16)),
       m_dragHandler(*this),
       m_zoomHandler(*this),
       m_xform(xform) {

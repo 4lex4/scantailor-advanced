@@ -56,7 +56,7 @@ void SauvolaBinarizationOptionsWidget::sendStateChanged() {
   emit stateChanged();
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void SauvolaBinarizationOptionsWidget::setupUiConnections() {
   CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));

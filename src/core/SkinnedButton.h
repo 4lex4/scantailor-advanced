@@ -19,8 +19,7 @@
 #ifndef SKINNEDBUTTON_H_
 #define SKINNEDBUTTON_H_
 
-#include <QPixmap>
-#include <QString>
+#include <QIcon>
 #include <QToolButton>
 
 /**
@@ -41,7 +40,7 @@ class SkinnedButton : public QToolButton {
    *        image representing the normal state of the button.
    * \param parent An optional parent widget.
    */
-  explicit SkinnedButton(const QString& file, QWidget* parent = nullptr);
+  explicit SkinnedButton(const QIcon& icon, QWidget* parent = nullptr);
 
   /**
    * \brief Construct a skinned button from a set of 3 images.
@@ -56,9 +55,9 @@ class SkinnedButton : public QToolButton {
    *
    * Note that the sizes of all 3 images should be the same.
    */
-  SkinnedButton(const QString& normal_state_file,
-                const QString& hover_state_file,
-                const QString& pressed_state_file,
+  SkinnedButton(const QIcon& normal_state_icon,
+                const QIcon& hover_state_icon,
+                const QIcon& pressed_state_icon,
                 QWidget* parent = nullptr);
 
   /**
@@ -69,7 +68,7 @@ class SkinnedButton : public QToolButton {
    *        This image should have the same size as the normal
    *        state image.
    */
-  void setHoverImage(const QString& file);
+  void setHoverImage(const QIcon& icon);
 
   /**
    * \brief Set the pressed state image.
@@ -79,35 +78,24 @@ class SkinnedButton : public QToolButton {
    *        This image should have the same size as the normal
    *        state image.
    */
-  void setPressedImage(const QString& file);
+  void setPressedImage(const QIcon& icon);
 
-  /**
-   * \brief Set the mask of the widget based on the alpha channel
-   *        of the normal state image.
-   *
-   * The mask affects things like the mouse-over handling.
-   */
-  void setMask();
-
-  /**
-   * Bring in the other signatures of setMask().
-   */
-  using QToolButton::setMask;
-
-  /**
-   * \brief Reimplemented sizeHint().
-   *
-   * \return The size of the normal state image.
-   */
-  QSize sizeHint() const override;
+ protected:
+  bool event(QEvent* e) override;
 
  private:
-  void updateStyleSheet();
+  void initialize();
 
-  QPixmap m_normalStatePixmap;
-  QString m_normalStateFile;
-  QString m_hoverStateFile;
-  QString m_pressedStateFile;
+  void initStyleSheet();
+
+  void updateAppearance();
+
+ private:
+  QIcon m_normalStateIcon;
+  QIcon m_hoverStateIcon;
+  QIcon m_pressedStateIcon;
+  bool m_hovered = false;
+  bool m_pressed = false;
 };
 
 

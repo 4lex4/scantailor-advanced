@@ -106,7 +106,12 @@ set(common_sources
     SkinnedButton.cpp SkinnedButton.h
     CollapsibleGroupBox.cpp CollapsibleGroupBox.h
     ColorSchemeFactory.cpp ColorSchemeFactory.h
-    ApplicationSettings.cpp ApplicationSettings.h)
+    ApplicationSettings.cpp ApplicationSettings.h
+    IconProvider.cpp IconProvider.h
+    IconPack.h
+    AbstractIconPack.cpp AbstractIconPack.h
+    StyledIconPack.cpp StyledIconPack.h
+    FontIconPack.cpp FontIconPack.h)
 
 add_library(core STATIC ${common_sources} ${common_ui_files})
 target_link_libraries(

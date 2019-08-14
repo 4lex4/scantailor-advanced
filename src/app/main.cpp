@@ -21,13 +21,16 @@
 #include <core/ApplicationSettings.h>
 #include <core/ColorSchemeFactory.h>
 #include <core/ColorSchemeManager.h>
+#include <core/FontIconPack.h>
+#include <core/IconProvider.h>
+#include <core/StyledIconPack.h>
 #include <QSettings>
 #include <QStringList>
 #include "MainWindow.h"
 
 int main(int argc, char* argv[]) {
-  // Rescaling for high DPI displays.
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
   Application app(argc, argv);
 
@@ -55,6 +58,7 @@ int main(int argc, char* argv[]) {
         = ColorSchemeFactory().create(ApplicationSettings::getInstance().getColorScheme());
     ColorSchemeManager::instance().setColorScheme(*scheme);
   }
+  IconProvider::getInstance().setIconPack(StyledIconPack::createDefault());
 
   auto* main_wnd = new MainWindow();
   main_wnd->setAttribute(Qt::WA_DeleteOnClose);

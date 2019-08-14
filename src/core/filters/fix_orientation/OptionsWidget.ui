@@ -45,7 +45,7 @@
           </property>
           <property name="icon">
            <iconset resource="../../../resources/resources.qrc">
-            <normaloff>:/icons/object-rotate-left.png</normaloff>:/icons/object-rotate-left.png</iconset>
+            <normaloff>:/icons/object-rotate-left.svg</normaloff>:/icons/object-rotate-left.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -62,7 +62,7 @@
           </property>
           <property name="icon">
            <iconset resource="../../../resources/resources.qrc">
-            <normaloff>:/icons/object-rotate-right.png</normaloff>:/icons/object-rotate-right.png</iconset>
+            <normaloff>:/icons/object-rotate-right.svg</normaloff>:/icons/object-rotate-right.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -108,7 +108,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../../resources/resources.qrc">:/icons/big-up-arrow.png</pixmap>
+           <pixmap resource="../../../resources/resources.qrc">:/icons/big-up-arrow.svg</pixmap>
           </property>
          </widget>
         </item>

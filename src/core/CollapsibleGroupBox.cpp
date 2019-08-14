@@ -4,6 +4,7 @@
 #include <QSettings>
 #include <QtCore/QEvent>
 #include <QtGui/QShowEvent>
+#include "IconProvider.h"
 
 CollapsibleGroupBox::CollapsibleGroupBox(QWidget* parent) : QGroupBox(parent) {
   initialize();
@@ -14,13 +15,13 @@ CollapsibleGroupBox::CollapsibleGroupBox(const QString& title, QWidget* parent) 
 }
 
 void CollapsibleGroupBox::initialize() {
-  m_collapseIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/minus-16.png")));
-  m_expandIcon.addPixmap(QPixmap(QString::fromLatin1(":/icons/plus-16.png")));
+  m_collapseIcon = IconProvider::getInstance().getIcon("collapse");
+  m_expandIcon = IconProvider::getInstance().getIcon("expand");
   m_collapseButton = new QToolButton(this);
   m_collapseButton->setObjectName("collapseButton");
   m_collapseButton->setAutoRaise(true);
   m_collapseButton->setFixedSize(14, 14);
-  m_collapseButton->setIconSize(QSize(12, 12));
+  m_collapseButton->setIconSize({10, 10});
   m_collapseButton->setIcon(m_collapseIcon);
   setFocusProxy(m_collapseButton);
   setFocusPolicy(Qt::StrongFocus);

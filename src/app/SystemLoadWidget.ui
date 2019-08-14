@@ -73,7 +73,7 @@
      </property>
      <property name="icon">
       <iconset resource="../resources/resources.qrc">
-       <normaloff>:/icons/minus-16.png</normaloff>:/icons/minus-16.png</iconset>
+       <normaloff>:/icons/minus.svg</normaloff>:/icons/minus.svg</iconset>
      </property>
      <property name="autoRaise">
       <bool>true</bool>
@@ -126,7 +126,7 @@
      </property>
      <property name="icon">
       <iconset resource="../resources/resources.qrc">
-       <normaloff>:/icons/plus-16.png</normaloff>:/icons/plus-16.png</iconset>
+       <normaloff>:/icons/plus.svg</normaloff>:/icons/plus.svg</iconset>
      </property>
      <property name="autoRaise">
       <bool>true</bool>

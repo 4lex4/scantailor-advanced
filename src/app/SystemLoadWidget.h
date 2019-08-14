@@ -42,6 +42,8 @@ class SystemLoadWidget : public QWidget {
  private:
   void showHideToolTip(int threads);
 
+  void setupIcons();
+
   Ui::SystemLoadWidget ui;
   int m_maxThreads;
 };

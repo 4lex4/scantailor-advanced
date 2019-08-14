@@ -17,6 +17,7 @@
  */
 
 #include "ProjectFilesDialog.h"
+#include <core/IconProvider.h>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
@@ -183,6 +184,9 @@ ProjectFilesDialog::ProjectFilesDialog(QWidget* parent)
   m_supportedExtensions.insert("tiff");
 
   setupUi(this);
+
+  setupIcons();
+
   offProjectList->setModel(m_offProjectFilesSorted->model());
   inProjectList->setModel(m_inProjectFilesSorted->model());
 
@@ -490,6 +494,12 @@ void ProjectFilesDialog::finishLoadingMetadata() {
   }
 
   accept();
+}
+
+void ProjectFilesDialog::setupIcons() {
+  auto& iconProvider = IconProvider::getInstance();
+  addToProjectBtn->setIcon(iconProvider.getIcon("right-arrow-inscribed"));
+  removeFromProjectBtn->setIcon(iconProvider.getIcon("left-arrow-inscribed"));
 }
 
 /*====================== ProjectFilesDialog::FileList ====================*/

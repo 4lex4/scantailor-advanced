@@ -308,7 +308,7 @@ void OptionsWidget::onUnitsChanged(Units units) {
   setupUiConnections();
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(widthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));

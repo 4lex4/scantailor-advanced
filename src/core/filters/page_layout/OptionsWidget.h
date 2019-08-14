@@ -127,6 +127,8 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   void removeUiConnections();
 
+  void setupIcons();
+
   intrusive_ptr<Settings> m_settings;
   PageSelectionAccessor m_pageSelectionAccessor;
   QIcon m_chainIcon;

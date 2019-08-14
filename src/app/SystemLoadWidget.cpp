@@ -17,6 +17,7 @@
  */
 
 #include "SystemLoadWidget.h"
+#include <core/IconProvider.h>
 #include <QSettings>
 #include <QThread>
 #include <QToolTip>
@@ -25,6 +26,7 @@ static const char* const key = "settings/batch_processing_threads";
 
 SystemLoadWidget::SystemLoadWidget(QWidget* parent) : QWidget(parent), m_maxThreads(QThread::idealThreadCount()) {
   ui.setupUi(this);
+  setupIcons();
 
   if (sizeof(void*) <= 4) {
     // Restricting num of processors for 32-bit due to
@@ -84,4 +86,9 @@ void SystemLoadWidget::showHideToolTip(int threads) {
   }
   tooltip_pos = ui.slider->mapToGlobal(tooltip_pos);
   QToolTip::showText(tooltip_pos, QString("%1/%2").arg(threads).arg(m_maxThreads), ui.slider);
+}
+
+void SystemLoadWidget::setupIcons() {
+  ui.minusBtn->setIcon(IconProvider::getInstance().getIcon("minus"));
+  ui.plusBtn->setIcon(IconProvider::getInstance().getIcon("plus"));
 }

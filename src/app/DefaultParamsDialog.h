@@ -140,6 +140,8 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
 
   void setTabWidgetsEnabled(bool enabled);
 
+  void setupIcons();
+
   QIcon m_chainIcon;
   QIcon m_brokenChainIcon;
   bool m_leftRightLinkEnabled;

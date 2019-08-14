@@ -17,6 +17,7 @@
  */
 
 #include "ImageView.h"
+#include <core/IconProvider.h>
 #include <QDebug>
 #include <QPainter>
 #include <boost/bind.hpp>
@@ -42,7 +43,7 @@ ImageView::ImageView(const QImage& image,
       m_rightUnremoveButton(boost::bind(&ImageView::rightPageCenter, this)),
       m_dragHandler(*this),
       m_zoomHandler(*this),
-      m_handlePixmap(":/icons/aqua-sphere.png"),
+      m_handlePixmap(IconProvider::getInstance().getIcon("aqua-sphere").pixmap(16, 16)),
       m_virtLayout(layout),
       m_leftPageRemoved(left_half_removed),
       m_rightPageRemoved(right_half_removed) {

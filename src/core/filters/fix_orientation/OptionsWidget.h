@@ -68,6 +68,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void removeUiConnections();
 
+  void setupIcons();
+
   intrusive_ptr<Settings> m_settings;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;

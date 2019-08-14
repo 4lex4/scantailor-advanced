@@ -18,70 +18,77 @@
 
 #include "SkinnedButton.h"
 #include <QBitmap>
+#include <QEvent>
 
-SkinnedButton::SkinnedButton(const QString& file, QWidget* parent)
-    : QToolButton(parent), m_normalStatePixmap(file), m_normalStateFile(file) {
-  updateStyleSheet();
+SkinnedButton::SkinnedButton(const QIcon& icon, QWidget* parent) : QToolButton(parent), m_normalStateIcon(icon) {
+  initialize();
 }
 
-SkinnedButton::SkinnedButton(const QString& normal_state_file,
-                             const QString& hover_state_file,
-                             const QString& pressed_state_file,
+SkinnedButton::SkinnedButton(const QIcon& normal_state_icon,
+                             const QIcon& hover_state_icon,
+                             const QIcon& pressed_state_icon,
                              QWidget* parent)
     : QToolButton(parent),
-      m_normalStatePixmap(normal_state_file),
-      m_normalStateFile(normal_state_file),
-      m_hoverStateFile(hover_state_file),
-      m_pressedStateFile(pressed_state_file) {
-  updateStyleSheet();
+      m_normalStateIcon(normal_state_icon),
+      m_hoverStateIcon(hover_state_icon),
+      m_pressedStateIcon(pressed_state_icon) {
+  initialize();
 }
 
-void SkinnedButton::setHoverImage(const QString& file) {
-  m_hoverStateFile = file;
-  updateStyleSheet();
+void SkinnedButton::setHoverImage(const QIcon& icon) {
+  m_hoverStateIcon = icon;
 }
 
-void SkinnedButton::setPressedImage(const QString& file) {
-  m_pressedStateFile = file;
-  updateStyleSheet();
+void SkinnedButton::setPressedImage(const QIcon& icon) {
+  m_pressedStateIcon = icon;
 }
 
-void SkinnedButton::setMask() {
-  setMask(m_normalStatePixmap.mask());
+void SkinnedButton::initialize() {
+  initStyleSheet();
+
+  setIconSize(size());
+  updateAppearance();
+
+  connect(this, &QToolButton::pressed, [this]() {
+    m_pressed = true;
+    updateAppearance();
+  });
+  connect(this, &QToolButton::released, [this]() {
+    m_pressed = false;
+    updateAppearance();
+  });
 }
 
-QSize SkinnedButton::sizeHint() const {
-  if (m_normalStatePixmap.isNull()) {
-    return QToolButton::sizeHint();
-  } else {
-    return m_normalStatePixmap.size();
-  }
-}
-
-void SkinnedButton::updateStyleSheet() {
-  QString style = QString(
-                      "QToolButton {"
-                      "border: none;"
-                      "background: transparent;"
-                      "image: url(%1);"
-                      "}")
-                      .arg(m_normalStateFile);
-
-  if (!m_hoverStateFile.isEmpty()) {
-    style += QString(
-                 "QToolButton:hover {"
-                 "image: url(%1);"
-                 "}")
-                 .arg(m_hoverStateFile);
-  }
-
-  if (!m_pressedStateFile.isEmpty()) {
-    style += QString(
-                 "QToolButton:hover:pressed {"
-                 "image: url(%1);"
-                 "}")
-                 .arg(m_pressedStateFile);
-  }
-
+void SkinnedButton::initStyleSheet() {
+  const QString style
+      = "QToolButton {"
+        "border: none;"
+        "background: transparent;"
+        "}";
   setStyleSheet(style);
+}
+
+bool SkinnedButton::event(QEvent* e) {
+  switch (e->type()) {
+    case QEvent::HoverEnter:
+      m_hovered = true;
+      break;
+    case QEvent::HoverLeave:
+      m_hovered = false;
+      break;
+    default:
+      return QToolButton::event(e);
+  }
+  updateAppearance();
+  return true;
+}
+
+void SkinnedButton::updateAppearance() {
+  if (m_pressed && !m_pressedStateIcon.isNull()) {
+    setIcon(m_pressedStateIcon);
+  } else if (m_hovered && !m_hoverStateIcon.isNull()) {
+    setIcon(m_hoverStateIcon);
+  } else {
+    setIcon(m_normalStateIcon);
+  }
 }

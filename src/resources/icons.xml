@@ -1,0 +1,161 @@
+<!--
+<icon name="@string" [styled="on|off"]>
+  <file [mode="normal|disabled|selected|active"] [state="on|off"] [width="@int" height="@int"]>@path_to_icon</file>
+  ...
+</icon>
+...
+-->
+<icons>
+  <icon name="file" styled="on">
+    <file>:/icons/file.svg</file>
+  </icon>
+  <icon name="folder" styled="on">
+    <file>:/icons/folder.svg</file>
+  </icon>
+  <icon name="undo" styled="on">
+    <file>:/icons/undo.svg</file>
+  </icon>
+  <icon name="plus">
+    <file>:/icons/plus.svg</file>
+  </icon>
+  <icon name="trashed">
+    <file>:/icons/trashed.svg</file>
+  </icon>
+  <icon name="untrash">
+    <file>:/icons/untrash.svg</file>
+  </icon>
+  <icon name="minus">
+    <file>:/icons/minus.svg</file>
+  </icon>
+  <icon name="insert-here" styled="on">
+    <file>:/icons/insert-here.svg</file>
+  </icon>
+  <icon name="user-trash">
+    <file>:/icons/user-trash.svg</file>
+  </icon>
+  <icon name="insert-after" styled="on">
+    <file>:/icons/insert-after.svg</file>
+  </icon>
+  <icon name="insert-before" styled="on">
+    <file>:/icons/insert-before.svg</file>
+  </icon>
+  <icon name="play-hovered" styled="on">
+    <file>:/icons/play-hovered.svg</file>
+  </icon>
+  <icon name="play" styled="on">
+    <file>:/icons/play.svg</file>
+  </icon>
+  <icon name="play-pressed" styled="on">
+    <file>:/icons/play-pressed.svg</file>
+  </icon>
+  <icon name="stop">
+    <file>:/icons/stop.svg</file>
+  </icon>
+  <icon name="stop-hovered">
+    <file>:/icons/stop-hovered.svg</file>
+  </icon>
+  <icon name="stop-pressed">
+    <file>:/icons/stop-pressed.svg</file>
+  </icon>
+  <icon name="stock-center" styled="on">
+    <file>:/icons/stock-center.svg</file>
+  </icon>
+  <icon name="stock-gravity-east" styled="on">
+    <file>:/icons/stock-gravity-east.svg</file>
+  </icon>
+  <icon name="stock-gravity-north" styled="on">
+    <file>:/icons/stock-gravity-north.svg</file>
+  </icon>
+  <icon name="stock-gravity-north-east" styled="on">
+    <file>:/icons/stock-gravity-north-east.svg</file>
+  </icon>
+  <icon name="stock-gravity-north-west" styled="on">
+    <file>:/icons/stock-gravity-north-west.svg</file>
+  </icon>
+  <icon name="stock-gravity-south" styled="on">
+    <file>:/icons/stock-gravity-south.svg</file>
+  </icon>
+  <icon name="stock-gravity-south-east" styled="on">
+    <file>:/icons/stock-gravity-south-east.svg</file>
+  </icon>
+  <icon name="stock-gravity-south-west" styled="on">
+    <file>:/icons/stock-gravity-south-west.svg</file>
+  </icon>
+  <icon name="stock-gravity-west" styled="on">
+    <file>:/icons/stock-gravity-west.svg</file>
+  </icon>
+  <icon name="stock-vchain" styled="on">
+    <file>:/icons/stock-vchain.svg</file>
+  </icon>
+  <icon name="stock-vchain-broken" styled="on">
+    <file>:/icons/stock-vchain-broken.svg</file>
+  </icon>
+  <icon name="right_page_thumb" styled="on">
+    <file>:/icons/right_page_thumb.svg</file>
+  </icon>
+  <icon name="left_page_thumb" styled="on">
+    <file>:/icons/left_page_thumb.svg</file>
+  </icon>
+  <icon name="aqua-sphere">
+    <file>:/icons/aqua-sphere.svg</file>
+  </icon>
+  <icon name="big-down-arrow" styled="on">
+    <file>:/icons/big-down-arrow.svg</file>
+  </icon>
+  <icon name="big-left-arrow" styled="on">
+    <file>:/icons/big-left-arrow.svg</file>
+  </icon>
+  <icon name="big-right-arrow" styled="on">
+    <file>:/icons/big-right-arrow.svg</file>
+  </icon>
+  <icon name="big-up-arrow" styled="on">
+    <file>:/icons/big-up-arrow.svg</file>
+  </icon>
+  <icon name="object-rotate-left" styled="on">
+    <file>:/icons/object-rotate-left.svg</file>
+  </icon>
+  <icon name="object-rotate-right" styled="on">
+    <file>:/icons/object-rotate-right.svg</file>
+  </icon>
+  <icon name="two_pages" styled="on">
+    <file>:/icons/two_pages.svg</file>
+  </icon>
+  <icon name="layout_type_auto" styled="on">
+    <file>:/icons/layout_type_auto.svg</file>
+  </icon>
+  <icon name="single_page_uncut" styled="on">
+    <file>:/icons/single_page_uncut.svg</file>
+  </icon>
+  <icon name="left_page_plus_offcut" styled="on">
+    <file>:/icons/left_page_plus_offcut.svg</file>
+  </icon>
+  <icon name="right_page_plus_offcut" styled="on">
+    <file>:/icons/right_page_plus_offcut.svg</file>
+  </icon>
+  <icon name="eye" styled="on">
+    <file state="off">:/icons/eye-disabled.svg</file>
+    <file state="on">:/icons/eye.svg</file>
+  </icon>
+  <icon name="triangle-down-arrow" styled="on">
+    <file>:/icons/triangle-down-arrow.svg</file>
+  </icon>
+  <icon name="triangle-up-arrow" styled="on">
+    <file>:/icons/triangle-up-arrow.svg</file>
+  </icon>
+  <icon name="check-mark" styled="on">
+    <file state="off">:/icons/check-mark-disabled.svg</file>
+    <file state="on">:/icons/check-mark.svg</file>
+  </icon>
+  <icon name="left-arrow-inscribed" styled="on">
+    <file>:/icons/left-arrow-inscribed.svg</file>
+  </icon>
+  <icon name="right-arrow-inscribed" styled="on">
+    <file>:/icons/right-arrow-inscribed.svg</file>
+  </icon>
+  <icon name="collapse" styled="on">
+    <file>:/icons/collapse.svg</file>
+  </icon>
+  <icon name="expand" styled="on">
+    <file>:/icons/expand.svg</file>
+  </icon>
+</icons>

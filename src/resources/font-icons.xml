@@ -1,0 +1,9 @@
+<!--
+<icon name="@string">
+  <symbol font="@string" codepoint="@hex_int" [state="on|off"] [scale="@float"] />
+  ...
+</icon>
+...
+-->
+<icons>
+</icons>

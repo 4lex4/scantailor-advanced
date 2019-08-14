@@ -17,6 +17,7 @@
  */
 
 #include "UnremoveButton.h"
+#include <core/IconProvider.h>
 #include <QMouseEvent>
 #include <QPainter>
 
@@ -24,8 +25,8 @@ namespace page_split {
 UnremoveButton::UnremoveButton(const PositionGetter& position_getter)
     : m_positionGetter(position_getter),
       m_clickCallback(&UnremoveButton::noOp),
-      m_defaultPixmap(":/icons/trashed-big.png"),
-      m_hoveredPixmap(":/icons/untrash-big.png"),
+      m_defaultPixmap(IconProvider::getInstance().getIcon("trashed").pixmap(128, 128)),
+      m_hoveredPixmap(IconProvider::getInstance().getIcon("untrash").pixmap(128, 128)),
       m_wasHovered(false) {
   m_proximityInteraction.setProximityCursor(Qt::PointingHandCursor);
   m_proximityInteraction.setProximityStatusTip(tr("Restore removed page."));

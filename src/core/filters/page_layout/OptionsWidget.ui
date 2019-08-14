@@ -84,26 +84,35 @@
            <widget class="QToolButton" name="topBottomLink">
             <property name="minimumSize">
              <size>
-              <width>24</width>
-              <height>48</height>
+              <width>18</width>
+              <height>46</height>
              </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>18</width>
+              <height>46</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QToolButton:!hover, QToolButton:pressed {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}</string>
             </property>
             <property name="text">
              <string>...</string>
             </property>
             <property name="icon">
              <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-vchain-broken-24.png</normaloff>
-              <normalon>:/icons/stock-vchain-24.png</normalon>:/icons/stock-vchain-broken-24.png</iconset>
+              <normaloff>:/icons/stock-vchain.svg</normaloff>:/icons/stock-vchain.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
-              <width>9</width>
-              <height>24</height>
+              <width>10</width>
+              <height>30</height>
              </size>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -132,29 +141,38 @@
            <widget class="QToolButton" name="leftRightLink">
             <property name="minimumSize">
              <size>
-              <width>24</width>
-              <height>48</height>
+              <width>18</width>
+              <height>46</height>
              </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>18</width>
+              <height>46</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QToolButton:!hover, QToolButton:pressed {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}</string>
             </property>
             <property name="text">
              <string>...</string>
             </property>
             <property name="icon">
              <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-vchain-broken-24.png</normaloff>
-              <normalon>:/icons/stock-vchain-24.png</normalon>:/icons/stock-vchain-broken-24.png</iconset>
+              <normaloff>:/icons/stock-vchain.svg</normaloff>:/icons/stock-vchain.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
-              <width>9</width>
-              <height>24</height>
+              <width>10</width>
+              <height>30</height>
              </size>
             </property>
             <property name="checked">
              <bool>false</bool>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -506,8 +524,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-gravity-north-west-24.png</normaloff>:/icons/stock-gravity-north-west-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-gravity-north-west.svg</normaloff>:/icons/stock-gravity-north-west.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -529,8 +547,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-gravity-north-24.png</normaloff>:/icons/stock-gravity-north-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-gravity-north.svg</normaloff>:/icons/stock-gravity-north.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -552,8 +570,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-gravity-north-east-24.png</normaloff>:/icons/stock-gravity-north-east-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-gravity-north-east.svg</normaloff>:/icons/stock-gravity-north-east.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -575,8 +593,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-gravity-west-24.png</normaloff>:/icons/stock-gravity-west-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-gravity-west.svg</normaloff>:/icons/stock-gravity-west.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -598,8 +616,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-center-24.png</normaloff>:/icons/stock-center-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-center.svg</normaloff>:/icons/stock-center.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -624,8 +642,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-gravity-east-24.png</normaloff>:/icons/stock-gravity-east-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-gravity-east.svg</normaloff>:/icons/stock-gravity-east.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -647,8 +665,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-gravity-south-west-24.png</normaloff>:/icons/stock-gravity-south-west-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-gravity-south-west.svg</normaloff>:/icons/stock-gravity-south-west.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -670,8 +688,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-gravity-south-24.png</normaloff>:/icons/stock-gravity-south-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-gravity-south.svg</normaloff>:/icons/stock-gravity-south.svg</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -693,8 +711,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../../../resources/resources.qrc">
-              <normaloff>:/icons/stock-gravity-south-east-24.png</normaloff>:/icons/stock-gravity-south-east-24.png</iconset>
+             <iconset>
+              <normaloff>:/icons/stock-gravity-south-east.svg</normaloff>:/icons/stock-gravity-south-east.svg</iconset>
             </property>
             <property name="iconSize">
              <size>

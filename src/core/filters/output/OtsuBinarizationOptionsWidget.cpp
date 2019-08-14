@@ -118,7 +118,7 @@ void OtsuBinarizationOptionsWidget::updateView() {
   thresholLabel->setText(QString::number(blackWhiteOptions.thresholdAdjustment()));
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void OtsuBinarizationOptionsWidget::setupUiConnections() {
   CONNECT(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));

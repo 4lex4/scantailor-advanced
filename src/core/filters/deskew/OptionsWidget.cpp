@@ -193,7 +193,7 @@ double OptionsWidget::degreesToSpinBox(const double degrees) {
   return -degrees;
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__));
+#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(angleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(spinBoxValueChanged(double)));

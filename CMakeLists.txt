@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
+# Disable in-source builds.
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+  message(FATAL_ERROR
+      "FATAL: In-source builds are not allowed."
+      " You should create a separate directory for build files.")
+endif()
+
 # Set cmake policies.
 if (POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
@@ -44,41 +51,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}"
     CACHE STRING "Common link flags for all build configurations." FORCE)
 
-enable_testing()
-
-# An undocumented side-effect of configure_file() is that it makes
-# the whole project depend on the file we are parsing / copying.
-configure_file(
-    "${PROJECT_SOURCE_DIR}/version.h"
-    "${PROJECT_BINARY_DIR}/.version.h" COPYONLY)
-
-# Prevent this leftover from old builds to be used in favour
-# of the one in ${PROJECT_SOURCE_DIR}
-if (NOT "${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
-  file(REMOVE "${PROJECT_BINARY_DIR}/version.h")
-endif()
-
-# Extract VERSION and VERSION_QUAD from version.h
-file(READ "${PROJECT_SOURCE_DIR}/version.h" version_h_contents)
-string(
-    REGEX REPLACE
-    ".*#define[ \\t]+VERSION[ \\t]+\"([^\"]*)\".*"
-    "\\1" VERSION "${version_h_contents}")
-if ("${VERSION}" STREQUAL "${version_h_contents}")
-  message(FATAL_ERROR "Failed to extract VERSION from version.h")
-endif()
-
-# VERSION_QUAD must be either empty or be in the form of X.Y.Z.Y
-string(
-    REGEX REPLACE
-    ".*#define[ \\t]+VERSION_QUAD[ \\t]+\"(([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)?)\".*"
-    "\\1" VERSION_QUAD "${version_h_contents}")
-if ("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
-  message(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
-endif()
-
 include(cmake/SetDefaultBuildType.cmake)
 include(cmake/UpdateTranslations.cmake)
+include(cmake/ListItemsPrepend.cmake)
 if (WIN32)
   include(cmake/CopyToBuildDir.cmake)
   include(cmake/AddDynamicLibraryLocations.cmake)
@@ -182,7 +157,7 @@ endif()
 
 if (WIN32)
   if (MINGW)
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
       set(Boost_ARCHITECTURE "-x64")
     else()
       set(Boost_ARCHITECTURE "-x32")
@@ -242,6 +217,8 @@ if (WIN32 AND MSVC)
   add_compile_definitions(NOMINMAX)
 endif()
 
+enable_testing()
+
 # Prepare config.h
 option(PORTABLE_VERSION "Whether to build the portable version or not." ON)
 if (PORTABLE_VERSION)
@@ -255,227 +232,35 @@ else()
   set(TRANSLATION_DIRS ".:translations:../share/${APPLICATION_NAME}/translations")
   set(PLUGIN_DIRS ".:../lib/${APPLICATION_NAME}")
 endif()
-configure_file(config.h.in ${CMAKE_BINARY_DIR}/config.h @ONLY)
-include_directories(BEFORE "${CMAKE_CURRENT_BINARY_DIR}")
+configure_file(config.h.in "${CMAKE_BINARY_DIR}/config.h" @ONLY)
+include_directories(BEFORE "${CMAKE_BINARY_DIR}")
 
-add_subdirectory(foundation)
-add_subdirectory(math)
-add_subdirectory(imageproc)
-add_subdirectory(dewarping)
-add_subdirectory(interaction)
-add_subdirectory(zones)
-add_subdirectory(tests)
-add_subdirectory(filters/fix_orientation)
-add_subdirectory(filters/page_split)
-add_subdirectory(filters/deskew)
-add_subdirectory(filters/select_content)
-add_subdirectory(filters/page_layout)
-add_subdirectory(filters/output)
-
-set(common_ui_files
-    ErrorWidget.ui)
-
-set(common_sources
-    BackgroundExecutor.cpp BackgroundExecutor.h
-    PixmapRenderer.cpp PixmapRenderer.h
-    BubbleAnimation.cpp BubbleAnimation.h
-    ProcessingIndicationWidget.cpp ProcessingIndicationWidget.h
-    NonOwningWidget.cpp NonOwningWidget.h
-    SmartFilenameOrdering.cpp SmartFilenameOrdering.h
-    AbstractRelinker.h
-    RelinkablePath.cpp RelinkablePath.h
-    ImageInfo.cpp ImageInfo.h
-    ImageFileInfo.cpp ImageFileInfo.h
-    ImageMetadata.cpp ImageMetadata.h
-    RecentProjects.cpp RecentProjects.h
-    OutOfMemoryHandler.cpp OutOfMemoryHandler.h
-    PageSelectionAccessor.cpp PageSelectionAccessor.h
-    PageSelectionProvider.h
-    ContentSpanFinder.cpp ContentSpanFinder.h
-    ImageTransformation.cpp ImageTransformation.h
-    ImagePixmapUnion.h
-    ImageViewBase.cpp ImageViewBase.h
-    BasicImageView.cpp BasicImageView.h
-    StageListView.cpp StageListView.h
-    DebugImageView.cpp DebugImageView.h
-    TabbedDebugImages.cpp TabbedDebugImages.h
-    ThumbnailLoadResult.h
-    ThumbnailPixmapCache.cpp ThumbnailPixmapCache.h
-    ThumbnailBase.cpp ThumbnailBase.h
-    ThumbnailFactory.cpp ThumbnailFactory.h
-    IncompleteThumbnail.cpp IncompleteThumbnail.h
-    ContentBoxPropagator.cpp ContentBoxPropagator.h
-    PageOrientationPropagator.cpp PageOrientationPropagator.h
-    DebugImagesImpl.cpp DebugImagesImpl.h
-    ImageId.cpp ImageId.h
-    PageId.cpp PageId.h
-    PageInfo.cpp PageInfo.h
-    BackgroundTask.cpp BackgroundTask.h
-    ProcessingTaskQueue.cpp ProcessingTaskQueue.h
-    PageSequence.cpp PageSequence.h
-    StageSequence.cpp StageSequence.h
-    ProjectPages.cpp ProjectPages.h
-    FilterData.cpp FilterData.h
-    ImageMetadataLoader.cpp ImageMetadataLoader.h
-    TiffReader.cpp TiffReader.h
-    TiffWriter.cpp TiffWriter.h
-    PngMetadataLoader.cpp PngMetadataLoader.h
-    TiffMetadataLoader.cpp TiffMetadataLoader.h
-    JpegMetadataLoader.cpp JpegMetadataLoader.h
-    ImageLoader.cpp ImageLoader.h
-    ErrorWidget.cpp ErrorWidget.h
-    OrthogonalRotation.cpp OrthogonalRotation.h
-    WorkerThreadPool.cpp WorkerThreadPool.h
-    LoadFileTask.cpp LoadFileTask.h
-    FilterOptionsWidget.cpp FilterOptionsWidget.h
-    FilterUiInterface.h
-    ProjectReader.cpp ProjectReader.h
-    ProjectWriter.cpp ProjectWriter.h
-    AtomicFileOverwriter.cpp AtomicFileOverwriter.h
-    EstimateBackground.cpp EstimateBackground.h
-    Despeckle.cpp Despeckle.h
-    ThreadPriority.cpp ThreadPriority.h
-    FileNameDisambiguator.cpp FileNameDisambiguator.h
-    OpenGLSupport.cpp OpenGLSupport.h
-    OutputFileNameGenerator.cpp OutputFileNameGenerator.h
-    Margins.cpp Margins.h
-    ColorScheme.h
-    DarkScheme.cpp DarkScheme.h
-    LightScheme.cpp LightScheme.h
-    NativeScheme.cpp NativeScheme.h
-    ColorSchemeManager.cpp ColorSchemeManager.h
-    PageRange.cpp PageRange.h
-    SelectedPage.cpp SelectedPage.h
-    Utils.cpp Utils.h
-    PageView.h
-    AutoManualMode.cpp AutoManualMode.h
-    AbstractCommand.h
-    AbstractFilter.h
-    BeforeOrAfter.h
-    FilterResult.h
-    CompositeCacheDrivenTask.h
-    ChangedStateItemDelegate.h
-    PageOrderProvider.h
-    PageOrderOption.h
-    PayloadEvent.h
-    filter_dc/AbstractFilterDataCollector.h
-    filter_dc/ThumbnailCollector.h
-    filter_dc/ContentBoxCollector.h
-    filter_dc/PageOrientationCollector.h
-    ImageViewInfoProvider.cpp ImageViewInfoProvider.h
-    ImageViewInfoObserver.h
-    UnitsProvider.cpp UnitsProvider.h
-    UnitsObserver.h UnitsObserver.cpp
-    UnitsConverter.cpp UnitsConverter.h
-    Units.cpp Units.h
-    DefaultParams.cpp DefaultParams.h
-    DefaultParamsProfileManager.cpp DefaultParamsProfileManager.h
-    DefaultParamsProvider.cpp DefaultParamsProvider.h
-    DeviationProvider.h
-    OrderByDeviationProvider.cpp OrderByDeviationProvider.h
-    BlackOnWhiteEstimator.cpp BlackOnWhiteEstimator.h
-    ImageSettings.cpp ImageSettings.h
-    EmptyTaskStatus.h
-    OrderByCompletenessProvider.cpp OrderByCompletenessProvider.h
-    version.h
-    config.h.in
-    ${common_ui_files})
-
-add_library(stcore STATIC ${common_sources} ${common_ui_files})
-target_link_libraries(
-    stcore
-    PRIVATE TIFF::TIFF PNG::PNG ZLIB::ZLIB JPEG::JPEG
-    PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml Qt5::Network Qt5::OpenGL Qt5::Svg
-    imageproc
-    fix_orientation page_split deskew select_content page_layout output)
-target_include_directories(stcore PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
-set_target_properties(stcore PROPERTIES AUTOUIC ON)
-
-translation_sources(scantailor ${common_sources} ${common_ui_files})
-
-set(resource_files 
-    resources/resources.qrc 
-    resources/dark_scheme.qrc 
-    resources/light_scheme.qrc)
-
-set(gui_only_sources
-    Application.cpp Application.h
-    SkinnedButton.cpp SkinnedButton.h
-    RelinkablePathVisualization.cpp RelinkablePathVisualization.h
-    RelinkingModel.cpp RelinkingModel.h
-    RelinkingSortingModel.cpp RelinkingSortingModel.h
-    RelinkingListView.cpp RelinkingListView.h
-    RelinkingDialog.cpp RelinkingDialog.h
-    SettingsDialog.cpp SettingsDialog.h
-    FixDpiDialog.cpp FixDpiDialog.h
-    LoadFilesStatusDialog.cpp LoadFilesStatusDialog.h
-    ProjectCreationContext.cpp ProjectCreationContext.h
-    ProjectOpeningContext.cpp ProjectOpeningContext.h
-    OutOfMemoryDialog.cpp OutOfMemoryDialog.h
-    ThumbnailSequence.cpp ThumbnailSequence.h
-    ProjectFilesDialog.cpp ProjectFilesDialog.h
-    NewOpenProjectPanel.cpp NewOpenProjectPanel.h
-    SystemLoadWidget.cpp SystemLoadWidget.h
-    MainWindow.cpp MainWindow.h
-    main.cpp
-    StatusBarPanel.cpp StatusBarPanel.h
-    DefaultParamsDialog.cpp DefaultParamsDialog.h
-    CollapsibleGroupBox.cpp CollapsibleGroupBox.h)
-
-set(gui_only_ui_files
-    AboutDialog.ui
-    BatchProcessingLowerPanel.ui
-    DefaultParamsDialog.ui
-    FixDpiDialog.ui
-    LoadFilesStatusDialog.ui
-    MainWindow.ui
-    NewOpenProjectPanel.ui
-    OutOfMemoryDialog.ui
-    ProjectFilesDialog.ui
-    RelinkingDialog.ui
-    RemovePagesDialog.ui
-    SettingsDialog.ui
-    StatusBarPanel.ui
-    SystemLoadWidget.ui)
-
-set(win32_resource_file "")
-if (WIN32)
-  set(rc_file "${CMAKE_SOURCE_DIR}/resources/win32/resources.rc")
-  file(GLOB win32_resources resources/win32/*.ico)
-  set_source_files_properties(
-      "${rc_file}" PROPERTIES
-      OBJECT_DEPENDS ${win32_resources})
-  if (MINGW)
-    # CMake doesn't know how to process .rc files with MinGW.
-    set(win32_resource_file "${CMAKE_BINARY_DIR}/win32_resources.o")
-    add_custom_command(
-        OUTPUT "${win32_resource_file}"
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/win32"
-        COMMAND windres -i "${rc_file}" -o "${win32_resource_file}"
-        MAIN_DEPENDENCY "${rc_file}"
-        DEPENDS ${win32_resources})
-  else()
-    set(win32_resource_file "${rc_file}")
-  endif()
+# Extract VERSION and VERSION_QUAD from version.h
+file(READ "${PROJECT_SOURCE_DIR}/version.h.in" version_h_contents)
+string(
+    REGEX REPLACE
+    ".*#define[ \\t]+VERSION[ \\t]+\"([^\"]*)\".*"
+    "\\1" VERSION "${version_h_contents}")
+if ("${VERSION}" STREQUAL "${version_h_contents}")
+  message(FATAL_ERROR "Failed to extract VERSION from version.h")
 endif()
+# VERSION_QUAD must be either empty or be in the form of X.Y.Z.Y
+string(
+    REGEX REPLACE
+    ".*#define[ \\t]+VERSION_QUAD[ \\t]+\"(([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)?)\".*"
+    "\\1" VERSION_QUAD "${version_h_contents}")
+if ("${VERSION_QUAD}" STREQUAL "${version_h_contents}")
+  message(FATAL_ERROR "Failed to extract VERSION_QUAD from version.h")
+endif()
+configure_file(version.h.in "${CMAKE_BINARY_DIR}/version.h" COPYONLY)
 
-add_executable(
-    scantailor WIN32 ${gui_only_sources} ${gui_only_ui_files}
-    ${resource_files} ${win32_resource_file})
-target_link_libraries(
-    scantailor
-    PRIVATE stcore ${EXTRA_LIBS})
-target_include_directories(scantailor PRIVATE "$<TARGET_PROPERTY:TIFF::TIFF,INTERFACE_INCLUDE_DIRECTORIES>")
-set_target_properties(
-    scantailor PROPERTIES
-    AUTOUIC ON
-    AUTORCC ON)
-install(TARGETS scantailor RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+set(SCANTAILOR_RESOURCES_DIR "${CMAKE_SOURCE_DIR}/src/resources")
+set(SCANTAILOR_TRANSLATIONS_DIR "${CMAKE_SOURCE_DIR}/src/translations")
 
-translation_sources(scantailor ${gui_only_sources} ${gui_only_ui_files})
+add_subdirectory(src)
 
 # Translations
-file(GLOB translation_files translations/scantailor_*.ts)
+file(GLOB translation_files "${SCANTAILOR_TRANSLATIONS_DIR}/scantailor_*.ts")
 
 finalize_translation_set(scantailor ${translation_files})
 update_translations_target(update_translations scantailor)
@@ -574,11 +359,13 @@ if (WIN32)
 endif()
 
 if (UNIX)
-  install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/scantailor.desktop" DESTINATION "share/applications")
-  install(FILES "${CMAKE_SOURCE_DIR}/resources/appicon.svg"
+  install(FILES "${SCANTAILOR_RESOURCES_DIR}/unix/scantailor.desktop"
+      DESTINATION "share/applications")
+  install(FILES "${SCANTAILOR_RESOURCES_DIR}/appicon.svg"
       DESTINATION "share/icons/hicolor/scalable/apps"
       RENAME "ScanTailor.svg")
-  install(FILES "${CMAKE_SOURCE_DIR}/resources/unix/mime/scantailor-project.xml" DESTINATION "share/mime/packages")
+  install(FILES "${SCANTAILOR_RESOURCES_DIR}/unix/mime/scantailor-project.xml"
+      DESTINATION "share/mime/packages")
 endif()
 
 if (WIN32 AND MSVC)
@@ -602,7 +389,7 @@ if (WIN32)
   set(CPACK_NSIS_INSTALLED_ICON_NAME "scantailor.exe")
   set(CPACK_NSIS_PACKAGE_NAME "${CMAKE_PROJECT_NAME}")
   set(CPACK_NSIS_DISPLAY_NAME "${CMAKE_PROJECT_NAME} ${VERSION}")
-  set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
+  set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
   set(CPACK_NSIS_EXECUTABLES_DIRECTORY "${CMAKE_BINARY_DIR}")
   set(CPACK_PACKAGE_INSTALL_DIRECTORY "${CMAKE_PROJECT_NAME}")
   set(CPACK_NSIS_CREATE_ICONS_EXTRA

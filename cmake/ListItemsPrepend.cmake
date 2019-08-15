@@ -1,0 +1,7 @@
+function (list_items_prepend List Prefix)
+  set(tmp_list)
+  foreach (item ${${List}})
+    list(APPEND tmp_list "${Prefix}${item}")
+  endforeach()
+  set(${List} "${tmp_list}" PARENT_SCOPE)
+endfunction()

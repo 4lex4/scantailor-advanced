@@ -7,8 +7,6 @@
 #include <QDomElement>
 #include "Dpm.h"
 
-using namespace imageproc;
-
 Dpi::Dpi() : m_xDpi(0), m_yDpi(0) {}
 
 Dpi::Dpi(int horizontal, int vertical) : m_xDpi(horizontal), m_yDpi(vertical) {}

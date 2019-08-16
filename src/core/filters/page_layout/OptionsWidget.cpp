@@ -13,7 +13,7 @@
 #include "Settings.h"
 
 using namespace core;
-using namespace imageproc::constants;
+using namespace constants;
 
 namespace page_layout {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)

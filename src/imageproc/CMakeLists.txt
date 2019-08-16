@@ -1,5 +1,4 @@
 set(sources
-    Constants.h Constants.cpp
     BinaryImage.cpp BinaryImage.h
     BinaryThreshold.cpp BinaryThreshold.h
     SlicedHistogram.cpp SlicedHistogram.h

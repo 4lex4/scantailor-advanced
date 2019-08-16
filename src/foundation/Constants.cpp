@@ -3,11 +3,10 @@
 
 #include "Constants.h"
 
-namespace imageproc {
 namespace constants {
 const double SQRT_2 = 1.4142135623730950488016887242097;
 
-const double PI = 3.141592653589793;
+const double PI = 3.141592653589793238462643383279502884;
 
 const double DEG2RAD = PI / 180.0;
 
@@ -21,4 +20,3 @@ const double DPM2DPI = 0.0254;
 
 const double DPI2DPM = 1.0 / DPM2DPI;
 }  // namespace constants
-}  // namespace imageproc

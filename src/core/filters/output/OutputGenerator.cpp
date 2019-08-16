@@ -1114,7 +1114,8 @@ void movePointToBottomMargin(BinaryImage& bw_image, std::vector<QPointF>& polyli
 }
 
 inline float vertBorderSkewAngle(const QPointF& top, const QPointF& bottom) {
-  return static_cast<float>(std::abs(std::atan((bottom.x() - top.x()) / (bottom.y() - top.y())) * 180.0 / M_PI));
+  return static_cast<float>(
+      std::abs(std::atan((bottom.x() - top.x()) / (bottom.y() - top.y())) * 180.0 / constants::PI));
 }
 
 QImage smoothToGrayscale(const QImage& src, const Dpi& dpi) {

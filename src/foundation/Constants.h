@@ -4,7 +4,6 @@
 #ifndef IMAGEPROC_CONSTANTS_H_
 #define IMAGEPROC_CONSTANTS_H_
 
-namespace imageproc {
 namespace constants {
 extern const double PI;
 
@@ -40,5 +39,4 @@ extern const double DPI2DPM;
  */
 extern const double DPM2DPI;
 }  // namespace constants
-}  // namespace imageproc
 #endif

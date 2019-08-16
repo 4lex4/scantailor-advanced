@@ -4,7 +4,7 @@
 #include "ImageMetadata.h"
 #include <Constants.h>
 
-using namespace imageproc::constants;
+using namespace constants;
 
 bool ImageMetadata::operator==(const ImageMetadata& other) const {
   if (m_size != other.m_size) {

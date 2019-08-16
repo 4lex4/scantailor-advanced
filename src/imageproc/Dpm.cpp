@@ -6,8 +6,6 @@
 #include "Dpi.h"
 #include <Constants.h>
 
-using namespace imageproc;
-
 Dpm::Dpm(const QSize size) : m_xDpm(size.width()), m_yDpm(size.height()) {}
 
 Dpm::Dpm(const Dpi dpi)

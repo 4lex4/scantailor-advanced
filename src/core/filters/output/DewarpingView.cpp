@@ -16,8 +16,6 @@
 #include "spfit/SplineFitter.h"
 
 namespace output {
-using namespace imageproc;
-
 DewarpingView::DewarpingView(const QImage& image,
                              const ImagePixmapUnion& downscaled_image,
                              const QTransform& image_to_virt,

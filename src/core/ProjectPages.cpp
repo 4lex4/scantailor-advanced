@@ -8,6 +8,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
+#include <cassert>
 #include <unordered_map>
 #include "AbstractRelinker.h"
 #include "ImageFileInfo.h"

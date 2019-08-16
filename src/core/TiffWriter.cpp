@@ -166,7 +166,7 @@ bool TiffWriter::writeImage(QIODevice& device, const QImage& image) {
  * Set the physical resolution, if it's defined.
  */
 void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
-  using namespace imageproc::constants;
+  using namespace constants;
 
   if (dpm.isNull()) {
     return;

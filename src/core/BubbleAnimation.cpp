@@ -32,7 +32,7 @@ bool BubbleAnimation::nextFrame(const QColor& head_color,
   const QPointF center(rect.center());
   const double radius = std::min(center.x() - rect.x(), center.y() - rect.y());
 
-  const double PI = imageproc::constants::PI;
+  const double PI = constants::PI;
   const double arc_fraction_as_radius = 0.25;
   // We have the following system of equations:
   // bubble_radius = arc_between_bubbles * arc_fraction_as_radius;

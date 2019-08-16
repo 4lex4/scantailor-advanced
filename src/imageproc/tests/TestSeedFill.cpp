@@ -31,7 +31,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(SeedFillTestSuite);
+BOOST_AUTO_TEST_SUITE(SeedFillTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_regression_1) {
   int seed_data[70 * 2] = {0};
@@ -159,6 +159,6 @@ BOOST_AUTO_TEST_CASE(test_gray_vs_binary) {
   }
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

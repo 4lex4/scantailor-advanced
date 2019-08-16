@@ -27,7 +27,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(BinaryImageTestSuite);
+BOOST_AUTO_TEST_SUITE(BinaryImageTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
   BOOST_CHECK(BinaryImage().toQImage() == QImage());
@@ -141,6 +141,6 @@ BOOST_AUTO_TEST_CASE(test_content_bounding_box4) {
   BOOST_CHECK(img.contentBoundingBox() == QRect(1, 1, 6, 6));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

@@ -30,7 +30,7 @@
 
 namespace imageproc {
 namespace tests {
-BOOST_AUTO_TEST_SUITE(SkewFinderTestSuite);
+BOOST_AUTO_TEST_SUITE(SkewFinderTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_positive_detection) {
   int argc = 1;
@@ -86,6 +86,6 @@ BOOST_AUTO_TEST_CASE(test_negative_detection) {
   BOOST_CHECK(skew.confidence() < Skew::GOOD_CONFIDENCE);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

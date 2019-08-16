@@ -40,7 +40,7 @@ PropertySet::PropertySet(const QDomElement& el, const PropertyFactory& factory) 
   }
 }
 
-PropertySet::PropertySet(const PropertySet& other) {
+PropertySet::PropertySet(const PropertySet& other) : ref_countable(other) {
   m_props.reserve(other.m_props.size());
   for (const auto& [type, prop] : other.m_props) {
     m_props[type] = prop->clone();

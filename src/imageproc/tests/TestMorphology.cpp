@@ -30,7 +30,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(MorphologyTestSuite);
+BOOST_AUTO_TEST_SUITE(MorphologyTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_dilate_1x1) {
   static const int inp[] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
@@ -685,6 +685,6 @@ BOOST_AUTO_TEST_CASE(test_hmr_1) {
   BOOST_CHECK(hitMissReplace(img, BLACK, pattern, 3, 3) == control);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

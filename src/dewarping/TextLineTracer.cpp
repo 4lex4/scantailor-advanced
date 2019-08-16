@@ -170,7 +170,7 @@ bool TextLineTracer::isCurvatureConsistent(const std::vector<QPointF>& polyline)
     return true;
   }
   // Threshold angle between a polyline segment and a normal to the previous one.
-  const auto cos_threshold = static_cast<const float>(std::cos((90.0f - 6.0f) * constants::DEG2RAD));
+  const auto cos_threshold = static_cast<float>(std::cos((90.0f - 6.0f) * constants::DEG2RAD));
   const float cos_sq_threshold = cos_threshold * cos_threshold;
   bool significant_positive = false;
   bool significant_negative = false;

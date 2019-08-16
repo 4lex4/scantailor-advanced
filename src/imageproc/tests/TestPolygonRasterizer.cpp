@@ -38,7 +38,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(PolygonRasterizerTestSuite);
+BOOST_AUTO_TEST_SUITE(PolygonRasterizerTestSuite)
 
 static QPolygonF createShape(const QSize& image_size, double radius) {
   const QPointF center(0.5 * image_size.width(), 0.5 * image_size.height());
@@ -164,6 +164,6 @@ BOOST_AUTO_TEST_CASE(regression_test_1) {
   BOOST_CHECK(testFillExceptShape(QSize(938, 1299), shape, Qt::WindingFill));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

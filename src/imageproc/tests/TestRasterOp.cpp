@@ -30,7 +30,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(RasterOpTestSuite);
+BOOST_AUTO_TEST_SUITE(RasterOpTestSuite)
 
 template <typename Rop>
 static bool check_subimage_rop(const QImage& dst, const QRect& dst_rect, const QImage& src, const QPoint& src_pt) {
@@ -175,6 +175,6 @@ BOOST_AUTO_TEST_CASE(test_move_blocks) {
   BOOST_REQUIRE(tester.testBlockMove(QRect(51, 35, 199, 200), 1, 1));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

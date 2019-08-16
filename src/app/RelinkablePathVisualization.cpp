@@ -24,9 +24,7 @@
 #include <QStyleOption>
 #include <QStylePainter>
 #include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 #include "ColorSchemeManager.h"
-#include "QtSignalForwarder.h"
 #include "RelinkablePath.h"
 
 struct RelinkablePathVisualization::PathComponent {
@@ -124,9 +122,9 @@ void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool click
     }
     stylePathComponentButton(btn, path_component.exists);
 
-    new QtSignalForwarder(btn, SIGNAL(clicked()),
-                          boost::bind(&RelinkablePathVisualization::onClicked, this, component_idx,
-                                      path_component.prefixPath, path_component.suffixPath, path_component.type));
+    connect(btn, &ComponentButton::clicked,
+            boost::bind(&RelinkablePathVisualization::onClicked, this, component_idx, path_component.prefixPath,
+                        path_component.suffixPath, path_component.type));
   }
 
   m_layout->addStretch();

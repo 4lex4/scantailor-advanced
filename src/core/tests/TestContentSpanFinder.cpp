@@ -25,7 +25,7 @@
 namespace Tests {
 using namespace imageproc;
 
-BOOST_AUTO_TEST_SUITE(ContentSpanFinderTestSuite);
+BOOST_AUTO_TEST_SUITE(ContentSpanFinderTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_empty_input) {
   ContentSpanFinder span_finder;
@@ -112,5 +112,5 @@ BOOST_AUTO_TEST_CASE(test_min_content_and_whitespace_width) {
   BOOST_REQUIRE(spans[0] == Span(1, 1 + 4));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace Tests

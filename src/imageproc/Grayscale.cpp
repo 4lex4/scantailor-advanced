@@ -164,7 +164,7 @@ QImage toGrayscale(const QImage& src) {
           return dst;
         }
       }
-      // fall though
+      // fall through
     default:
       return anyToGrayscale(src);
   }
@@ -302,7 +302,7 @@ GrayscaleHistogram::GrayscaleHistogram(const QImage& img) {
         fromGrayscaleImage(img);
         break;
       }
-      // fall though
+      // fall through
     default:
       fromAnyImage(img);
   }
@@ -331,7 +331,7 @@ GrayscaleHistogram::GrayscaleHistogram(const QImage& img, const BinaryImage& mas
         fromGrayscaleImage(img, mask);
         break;
       }
-      // fall though
+      // fall through
     default:
       fromAnyImage(img, mask);
   }

@@ -51,9 +51,9 @@ ImageView::ImageView(const QImage& image,
       m_haveContentMenu(new QMenu(this)),
       m_contentRect(content_rect),
       m_pageRect(page_rect),
-      m_minBoxSize(10.0, 10.0),
       m_pageRectEnabled(page_rect_enabled),
       m_pageRectReloadRequested(false),
+      m_minBoxSize(10.0, 10.0),
       m_adjustmentVerticalModifier(Qt::ControlModifier),
       m_adjustmentHorizontalModifier(Qt::ShiftModifier) {
   setMouseTracking(true);

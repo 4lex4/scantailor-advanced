@@ -33,15 +33,15 @@ void find_iir_constants(float* n_p, float* n_m, float* d_p, float* d_m, float* b
    *  using a 4th order approximation of the gaussian operator
    */
 
-  const auto div = static_cast<const float>(std::sqrt(2.0 * constants::PI) * std_dev);
-  const auto x0 = static_cast<const float>(-1.783 / std_dev);
-  const auto x1 = static_cast<const float>(-1.723 / std_dev);
-  const auto x2 = static_cast<const float>(0.6318 / std_dev);
-  const auto x3 = static_cast<const float>(1.997 / std_dev);
-  const auto x4 = static_cast<const float>(1.6803 / div);
-  const auto x5 = static_cast<const float>(3.735 / div);
-  const auto x6 = static_cast<const float>(-0.6803 / div);
-  const auto x7 = static_cast<const float>(-0.2598 / div);
+  const auto div = static_cast<float>(std::sqrt(2.0 * constants::PI) * std_dev);
+  const auto x0 = static_cast<float>(-1.783 / std_dev);
+  const auto x1 = static_cast<float>(-1.723 / std_dev);
+  const auto x2 = static_cast<float>(0.6318 / std_dev);
+  const auto x3 = static_cast<float>(1.997 / std_dev);
+  const auto x4 = static_cast<float>(1.6803 / div);
+  const auto x5 = static_cast<float>(3.735 / div);
+  const auto x6 = static_cast<float>(-0.6803 / div);
+  const auto x7 = static_cast<float>(-0.2598 / div);
 
   n_p[0] = x4 + x6;
   n_p[1] = std::exp(x1) * (x7 * std::sin(x3) - (x6 + 2 * x4) * std::cos(x3))
@@ -80,8 +80,8 @@ void find_iir_constants(float* n_p, float* n_m, float* d_p, float* d_m, float* b
     sum_d += d_p[i];
   }
 
-  const auto a = static_cast<const float>(sum_n_p / (1.0 + sum_d));
-  const auto b = static_cast<const float>(sum_n_m / (1.0 + sum_d));
+  const auto a = static_cast<float>(sum_n_p / (1.0 + sum_d));
+  const auto b = static_cast<float>(sum_n_m / (1.0 + sum_d));
 
   for (int i = 0; i <= 4; i++) {
     bd_p[i] = d_p[i] * a;

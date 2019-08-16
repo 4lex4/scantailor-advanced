@@ -29,7 +29,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(SEDMTestSuite);
+BOOST_AUTO_TEST_SUITE(SEDMTestSuite)
 
 bool verifySEDM(const SEDM& sedm, const uint32_t* control) {
   const uint32_t* line = sedm.data();
@@ -71,6 +71,6 @@ BOOST_AUTO_TEST_CASE(test1) {
   BOOST_CHECK(verifySEDM(sedm, out));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

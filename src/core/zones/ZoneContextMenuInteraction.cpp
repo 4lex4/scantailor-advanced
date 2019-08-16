@@ -21,10 +21,8 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPainter>
-#include <QSignalMapper>
 #include <boost/bind.hpp>
 #include "ImageViewBase.h"
-#include "QtSignalForwarder.h"
 #include "ZoneInteractionContext.h"
 
 class ZoneContextMenuInteraction::OrderByArea {
@@ -99,12 +97,7 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
   const int v = 255 * 96 / 100;
   const int alpha = 150;
   QColor color;
-
-  auto* hover_map = new QSignalMapper(this);
-  connect(hover_map, SIGNAL(mapped(int)), SLOT(highlightItem(int)));
-
   QPixmap pixmap;
-
   auto it(m_selectableZones.begin());
   const auto end(m_selectableZones.end());
   for (int i = 0; it != end; ++it, ++i, h = (h + h_step) % 360) {
@@ -121,12 +114,10 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
 
     for (const ZoneContextMenuItem& item : menu_customizer(*it, std_items)) {
       QAction* action = m_menu->addAction(pixmap, item.label());
-      new QtSignalForwarder(
-          action, SIGNAL(triggered()),
+      connect(
+          action, &QAction::triggered,
           boost::bind(&ZoneContextMenuInteraction::menuItemTriggered, this, boost::ref(interaction), item.callback()));
-
-      hover_map->setMapping(action, i);
-      connect(action, SIGNAL(hovered()), hover_map, SLOT(map()));
+      connect(action, &QAction::hovered, this, boost::bind(&ZoneContextMenuInteraction::highlightItem, this, i));
     }
 
     m_menu->addSeparator();

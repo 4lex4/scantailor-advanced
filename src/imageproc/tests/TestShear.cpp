@@ -27,7 +27,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(ShearTestSuite);
+BOOST_AUTO_TEST_SUITE(ShearTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_small_image) {
   static const int inp[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0,
@@ -61,6 +61,6 @@ BOOST_AUTO_TEST_CASE(test_small_image) {
   BOOST_REQUIRE(v_shear_inplace == v_out_img);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

@@ -30,7 +30,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(ScaleTestSuite);
+BOOST_AUTO_TEST_SUITE(ScaleTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
   const GrayImage null_img;
@@ -88,6 +88,6 @@ BOOST_AUTO_TEST_CASE(test_random_image) {
   // BOOST_CHECK(checkScale(img, QSize(145, 55)));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

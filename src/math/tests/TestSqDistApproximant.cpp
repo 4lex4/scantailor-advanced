@@ -27,7 +27,7 @@
 
 namespace spfit {
 namespace tests {
-BOOST_AUTO_TEST_SUITE(SqDistApproximantTestSuite);
+BOOST_AUTO_TEST_SUITE(SqDistApproximantTestSuite)
 
 static const double PI = 3.14159265;
 
@@ -89,6 +89,6 @@ BOOST_AUTO_TEST_CASE(test_general_case) {
   }
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace spfit

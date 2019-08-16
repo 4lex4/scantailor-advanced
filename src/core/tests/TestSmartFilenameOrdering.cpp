@@ -22,7 +22,7 @@
 #include <SmartFilenameOrdering.h>
 
 namespace Tests {
-BOOST_AUTO_TEST_SUITE(SmartFilenameOrderingTestSuite);
+BOOST_AUTO_TEST_SUITE(SmartFilenameOrderingTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_same_file) {
   const SmartFilenameOrdering less;
@@ -70,5 +70,5 @@ BOOST_AUTO_TEST_CASE(test_almost_equal) {
   BOOST_CHECK(less(rhs, lhs));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace Tests

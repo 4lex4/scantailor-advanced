@@ -26,7 +26,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(ReduceThresholdTestSuite);
+BOOST_AUTO_TEST_SUITE(ReduceThresholdTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
   BOOST_CHECK(ReduceThreshold(BinaryImage())(2).image().isNull());
@@ -75,6 +75,6 @@ BOOST_AUTO_TEST_CASE(test_lines) {
   BOOST_CHECK(makeBinaryImage(out4, 1, 4) == ReduceThreshold(img)(4));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

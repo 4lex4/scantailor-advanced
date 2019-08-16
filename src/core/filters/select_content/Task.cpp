@@ -179,8 +179,8 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
       m_dbg(std::move(dbg)),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
-      m_xform(xform),
       m_grayImage(gray_image),
+      m_xform(xform),
       m_uiData(ui_data),
       m_batchProcessing(batch) {}
 

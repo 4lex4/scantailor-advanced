@@ -66,7 +66,7 @@ inline void swap(AlignedArray<T, alignment_in_units>& o1, AlignedArray<T, alignm
 
 template <typename T, size_t alignment_in_units>
 AlignedArray<T, alignment_in_units>::AlignedArray(size_t size) {
-  const int a = static_cast<const int>(alignment_in_units > 1 ? alignment_in_units : 1);
+  const int a = static_cast<int>(alignment_in_units > 1 ? alignment_in_units : 1);
   const int am1 = a - 1;
   m_storage = new T[size + am1];
   m_alignedData = m_storage + ((a - ((uintptr_t(m_storage) / sizeof(T)) & am1)) & am1);

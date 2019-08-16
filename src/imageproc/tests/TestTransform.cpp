@@ -30,7 +30,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(TransformTestSuite);
+BOOST_AUTO_TEST_SUITE(TransformTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
   const QImage null_img;
@@ -58,6 +58,6 @@ BOOST_AUTO_TEST_CASE(test_random_image) {
   BOOST_CHECK(transformToGray(img, null_xform, img.rect(), outside_pixels) == img);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

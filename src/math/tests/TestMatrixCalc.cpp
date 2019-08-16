@@ -22,7 +22,7 @@
 
 namespace imageproc {
 namespace tests {
-BOOST_AUTO_TEST_SUITE(MatrixCalcSuite);
+BOOST_AUTO_TEST_SUITE(MatrixCalcSuite)
 
 BOOST_AUTO_TEST_CASE(test1) {
   static const double A[] = {1, 1, 1, 2, 4, -3, 3, 6, -5};
@@ -94,6 +94,6 @@ BOOST_AUTO_TEST_CASE(test4) {
   }
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

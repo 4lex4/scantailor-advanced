@@ -24,7 +24,7 @@
 using namespace foundation;
 
 namespace output {
-Params::Params() : m_dpi(600, 600), m_despeckleLevel(1.0) {}
+Params::Params() : m_dpi(600, 600), m_despeckleLevel(1.0), m_blackOnWhite(true) {}
 
 Params::Params(const Dpi& dpi,
                const ColorParams& colorParams,
@@ -47,12 +47,12 @@ Params::Params(const Dpi& dpi,
 Params::Params(const QDomElement& el)
     : m_dpi(el.namedItem("dpi").toElement()),
       m_colorParams(el.namedItem("color-params").toElement()),
+      m_splittingOptions(el.namedItem("splitting").toElement()),
+      m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
       m_distortionModel(el.namedItem("distortion-model").toElement()),
       m_depthPerception(el.attribute("depthPerception")),
       m_dewarpingOptions(el.namedItem("dewarping-options").toElement()),
       m_despeckleLevel(el.attribute("despeckleLevel").toDouble()),
-      m_pictureShapeOptions(el.namedItem("picture-shape-options").toElement()),
-      m_splittingOptions(el.namedItem("splitting").toElement()),
       m_blackOnWhite(el.attribute("blackOnWhite") == "1") {}
 
 QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {

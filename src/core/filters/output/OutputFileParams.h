@@ -40,7 +40,7 @@ class OutputFileParams {
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-  const bool isValid() const;
+  bool isValid() const;
 
   /**
    * \brief Returns true if it's likely we have two identical files.

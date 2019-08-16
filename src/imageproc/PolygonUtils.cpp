@@ -185,7 +185,7 @@ QPolygonF PolygonUtils::convexHull(std::vector<QPointF> point_cloud) {
   // "Monotone chain" algorithm.
   // http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
 
-  const auto n = static_cast<const int>(point_cloud.size());
+  const auto n = static_cast<int>(point_cloud.size());
   int k = 0;
   std::vector<QPointF> hull(n * 2);
 

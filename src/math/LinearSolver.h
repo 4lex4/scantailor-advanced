@@ -150,7 +150,7 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
   for (size_t y_col = 0; y_col < m_colsBX; ++y_col) {
     size_t virt_row = 0;
     for (; virt_row < m_colsArowsX; ++virt_row) {
-      const int phys_row = static_cast<const int>(perm[virt_row]);
+      const int phys_row = static_cast<int>(perm[virt_row]);
       T right(p_b_col[phys_row]);
 
       // Move already calculated factors to the right side.
@@ -167,7 +167,7 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
 
     // Continue below the square part (if any).
     for (; virt_row < m_rowsAB; ++virt_row) {
-      const int phys_row = static_cast<const int>(perm[virt_row]);
+      const int phys_row = static_cast<int>(perm[virt_row]);
       T right(p_b_col[phys_row]);
 
       // Move everything to the right side, then verify it's zero.

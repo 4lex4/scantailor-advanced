@@ -427,8 +427,8 @@ void dewarpGeneric(const PixelType* const src_data,
   const double model_domain_left = model_domain.left();
   const double model_x_scale = 1.0 / (model_domain.right() - model_domain.left());
 
-  const auto model_domain_top = static_cast<const float>(model_domain.top());
-  const auto model_y_scale = static_cast<const float>(1.0 / (model_domain.bottom() - model_domain.top()));
+  const auto model_domain_top = static_cast<float>(model_domain.top());
+  const auto model_y_scale = static_cast<float>(1.0 / (model_domain.bottom() - model_domain.top()));
 
   std::vector<Vec2f> prev_grid_column(dst_height + 1);
   std::vector<Vec2f> next_grid_column(dst_height + 1);
@@ -466,7 +466,7 @@ QImage dewarpGrayscale(const QImage& src,
                        const QRectF& model_domain,
                        const QColor& bg_color) {
   GrayImage dst(dst_size);
-  const auto bg_sample = static_cast<const uint8_t>(qGray(bg_color.rgb()));
+  const auto bg_sample = static_cast<uint8_t>(qGray(bg_color.rgb()));
   dst.fill(bg_sample);
   dewarpGeneric<GrayColorMixer<MixingWeight>, uint8_t>(src.bits(), src.size(), src.bytesPerLine(), dst.data(), dst_size,
                                                        dst.stride(), distortion_model, model_domain, bg_sample);

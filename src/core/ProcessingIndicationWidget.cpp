@@ -17,11 +17,11 @@
  */
 
 #include "ProcessingIndicationWidget.h"
+#include <ColorInterpolation.h>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QTimerEvent>
 #include "ColorSchemeManager.h"
-#include <ColorInterpolation.h>
 
 using namespace imageproc;
 
@@ -31,9 +31,9 @@ static const double distinction_decrease = -1.0 / 3.0;
 ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
     : QWidget(parent), m_animation(10), m_distinction(1.0), m_distinctionDelta(distinction_increase), m_timerId(0) {
   m_headColor = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationHeadColor,
-                                                              palette().color(QPalette::Window).darker(200));
+                                                             palette().color(QPalette::Window).darker(200));
   m_tailColor = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationTail,
-                                                              palette().color(QPalette::Window).darker(130));
+                                                             palette().color(QPalette::Window).darker(130));
 }
 
 void ProcessingIndicationWidget::resetAnimation() {
@@ -66,8 +66,8 @@ void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
 
   QPainter painter(this);
 
-  QColor fade_color = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationFade,
-                                                                    palette().background().color());
+  QColor fade_color
+      = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationFade, palette().window().color());
   fade_color.setAlpha(127);
   painter.fillRect(rect(), fade_color);
 

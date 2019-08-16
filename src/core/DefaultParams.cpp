@@ -301,7 +301,7 @@ DefaultParams::OutputParams::OutputParams(const Dpi& dpi,
       m_dewarpingOptions(dewarpingOptions),
       m_despeckleLevel(despeckleLevel) {}
 
-DefaultParams::OutputParams::OutputParams() : m_despeckleLevel(1.0), m_dpi(600, 600) {}
+DefaultParams::OutputParams::OutputParams() : m_dpi(600, 600), m_despeckleLevel(1.0) {}
 
 const Dpi& DefaultParams::OutputParams::getDpi() const {
   return m_dpi;

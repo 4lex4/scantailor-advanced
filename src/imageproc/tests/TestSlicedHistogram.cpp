@@ -41,7 +41,7 @@ static bool checkHistogram(const SlicedHistogram& hist, const int* data_begin, c
   return true;
 }
 
-BOOST_AUTO_TEST_SUITE(SlicedHistogramTestSuite);
+BOOST_AUTO_TEST_SUITE(SlicedHistogramTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
   const BinaryImage null_img;
@@ -84,6 +84,6 @@ BOOST_AUTO_TEST_CASE(test_small_image) {
   BOOST_CHECK(checkHistogram(ver_hist, ver_counts + 1, ver_counts + 9));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

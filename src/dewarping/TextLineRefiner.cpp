@@ -162,8 +162,8 @@ void TextLineRefiner::calcBlurredGradient(Grid<float>& gradient, float h_sigma, 
 }
 
 float TextLineRefiner::externalEnergyAt(const Grid<float>& gradient, const Vec2f& pos, float penalty_if_outside) {
-  const auto x_base = static_cast<const float>(std::floor(pos[0]));
-  const auto y_base = static_cast<const float>(std::floor(pos[1]));
+  const auto x_base = static_cast<float>(std::floor(pos[0]));
+  const auto y_base = static_cast<float>(std::floor(pos[1]));
   const auto x_base_i = (int) x_base;
   const auto y_base_i = (int) y_base;
 
@@ -190,7 +190,7 @@ TextLineRefiner::Snake TextLineRefiner::makeSnake(const std::vector<QPointF>& po
     total_length += std::sqrt(Vec2f(polyline[i] - polyline[i - 1]).squaredNorm());
   }
 
-  const auto points_in_snake = static_cast<const int>(total_length / 20);
+  const auto points_in_snake = static_cast<int>(total_length / 20);
   Snake snake;
   snake.iterationsRemaining = iterations;
 
@@ -200,7 +200,7 @@ TextLineRefiner::Snake TextLineRefiner::makeSnake(const std::vector<QPointF>& po
   for (size_t i = 1; i < polyline_size; ++i) {
     const Vec2f base(polyline[i - 1]);
     const Vec2f vec((polyline[i] - base));
-    const auto next_t = static_cast<const float>(base_t + std::sqrt(vec.squaredNorm()));
+    const auto next_t = static_cast<float>(base_t + std::sqrt(vec.squaredNorm()));
 
     while (next_t >= next_insert_t) {
       const float fraction = (next_insert_t - base_t) / (next_t - base_t);
@@ -251,7 +251,7 @@ void TextLineRefiner::calcFrenetFrames(std::vector<FrenetFrame>& frenet_frames,
     }
 
     Vec2f tangent_vec(0.5 * (prev_segment + next_segment));
-    const auto len = static_cast<const float>(std::sqrt(tangent_vec.squaredNorm()));
+    const auto len = static_cast<float>(std::sqrt(tangent_vec.squaredNorm()));
     if (len > std::numeric_limits<float>::epsilon()) {
       tangent_vec /= len;
     }
@@ -606,7 +606,7 @@ bool TextLineRefiner::Optimizer::normalMovement(Snake& snake, const Grid<float>&
   // paths to the 3rd node, each path corresponding to a combination of movement of
   // the first and the second node.  That's the approach we are taking here.
   for (float normal_movement : normal_movements) {
-    const auto prev_step_idx = static_cast<const uint32_t>(step_storage.size());
+    const auto prev_step_idx = static_cast<uint32_t>(step_storage.size());
     {
       // Movements of the first node.
       const Vec2f down_normal(m_frenetFrames[0].unitDownNormal);
@@ -720,7 +720,7 @@ float TextLineRefiner::Optimizer::calcExternalEnergy(const Grid<float>& gradient
 
 float TextLineRefiner::Optimizer::calcElasticityEnergy(const SnakeNode& node1, const SnakeNode& node2, float avg_dist) {
   const Vec2f vec(node1.center - node2.center);
-  const auto vec_len = static_cast<const float>(std::sqrt(vec.squaredNorm()));
+  const auto vec_len = static_cast<float>(std::sqrt(vec.squaredNorm()));
 
   if (vec_len < 1.0f) {
     return 1000.0f;  // Penalty for moving too close to another node.
@@ -735,14 +735,14 @@ float TextLineRefiner::Optimizer::calcBendingEnergy(const SnakeNode& node,
                                                     const SnakeNode& prev_node,
                                                     const SnakeNode& prev_prev_node) {
   const Vec2f vec(node.center - prev_node.center);
-  const auto vec_len = static_cast<const float>(std::sqrt(vec.squaredNorm()));
+  const auto vec_len = static_cast<float>(std::sqrt(vec.squaredNorm()));
 
   if (vec_len < 1.0f) {
     return 1000.0f;  // Penalty for moving too close to another node.
   }
 
   const Vec2f prev_vec(prev_node.center - prev_prev_node.center);
-  const auto prev_vec_len = static_cast<const float>(std::sqrt(prev_vec.squaredNorm()));
+  const auto prev_vec_len = static_cast<float>(std::sqrt(prev_vec.squaredNorm()));
   if (prev_vec_len < 1.0f) {
     return 1000.0f;  // Penalty for moving too close to another node.
   }

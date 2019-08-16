@@ -495,10 +495,10 @@ void DefaultParamsDialog::colorModeChanged(const int idx) {
     case MIXED:
       picture_shape_visible = true;
       splitting_options_visible = true;
-      // fall into
+      // fall through
     case BLACK_AND_WHITE:
       threshold_options_visible = true;
-      // fall into
+      // fall through
     case COLOR_GRAYSCALE:
       break;
   }

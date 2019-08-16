@@ -75,7 +75,7 @@ SqDistApproximant PolylineModelShape::localSqDistApproximant(const QPointF& pt,
     }
   }
   // Check if pt is closer to a vertex than to any segment.
-  const auto num_points = static_cast<const int>(m_vertices.size());
+  const auto num_points = static_cast<int>(m_vertices.size());
   for (int i = 0; i < num_points; ++i) {
     const QPointF vtx(m_vertices[i].point);
     const Vec2d vec(pt - vtx);

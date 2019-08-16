@@ -566,7 +566,7 @@ Qt::ItemFlags ProjectFilesDialog::FileList::flags(const QModelIndex& index) cons
 
 void ProjectFilesDialog::FileList::prepareForLoadingFiles() {
   std::deque<int> item_indexes;
-  const auto num_items = static_cast<const int>(m_items.size());
+  const auto num_items = static_cast<int>(m_items.size());
   for (int i = 0; i < num_items; ++i) {
     item_indexes.push_back(i);
   }

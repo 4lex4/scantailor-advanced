@@ -52,7 +52,7 @@ class PictureZoneEditor::MaskTransformTask : public AbstractCommand<intrusive_pt
 
   void cancel() { m_result->cancel(); }
 
-  const bool isCancelled() const { return m_result->isCancelled(); }
+  bool isCancelled() const { return m_result->isCancelled(); }
 
   intrusive_ptr<AbstractCommand<void>> operator()() override;
 

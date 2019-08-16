@@ -1734,7 +1734,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, const Image
 
    protected:
     virtual bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const {
-      const QModelIndex idx(source_parent.child(source_row, 0));
+      const QModelIndex idx = sourceModel()->index(source_row, 0, source_parent);
       const QVariant data(idx.data(QFileSystemModel::FilePathRole));
       if (data.isNull()) {
         return true;

@@ -40,8 +40,8 @@ double PolynomialLine::calcScale(const int num_values) {
 }
 
 void PolynomialLine::doLeastSquares(const VecT<double>& data_points, VecT<double>& coeffs) {
-  const auto num_terms = static_cast<const int>(coeffs.size());
-  const auto num_values = static_cast<const int>(data_points.size());
+  const auto num_terms = static_cast<int>(coeffs.size());
+  const auto num_values = static_cast<int>(data_points.size());
 
   // The least squares equation is A^T*A*x = A^T*b
   // We will be building A^T*A and A^T*b incrementally.

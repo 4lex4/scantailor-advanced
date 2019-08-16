@@ -238,7 +238,7 @@ inline T* intrusive_ptr<T>::fork() const noexcept {
 template <typename T, typename... Args>
 inline intrusive_ptr<T> make_intrusive(Args&&... args) {
   return intrusive_ptr<T>(new T(std::forward<Args>(args)...));
-};
+}
 
 template <typename T>
 struct intrusive_ptr<T>::hash {

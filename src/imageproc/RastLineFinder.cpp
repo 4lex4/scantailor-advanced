@@ -98,7 +98,7 @@ RastLineFinder::RastLineFinder(const std::vector<QPointF>& points, const RastLin
     }
   }
 
-  const auto max_dist = static_cast<const float>(std::sqrt(max_sqdist) + 1.0);  // + 1.0 to combant rounding issues
+  const auto max_dist = static_cast<float>(std::sqrt(max_sqdist) + 1.0);  // + 1.0 to combant rounding issues
 
   double delta_deg = std::fmod(params.maxAngleDeg() - params.minAngleDeg(), 360.0);
   if (delta_deg < 0) {

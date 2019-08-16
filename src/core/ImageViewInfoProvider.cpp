@@ -4,7 +4,7 @@
 #include <QtCore/QRectF>
 #include "Units.h"
 
-ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi) : m_dpi(dpi){};
+ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi) : m_dpi(dpi) {}
 
 ImageViewInfoProvider::~ImageViewInfoProvider() {
   for (ImageViewInfoListener* listener : m_infoListeners) {

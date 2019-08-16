@@ -494,7 +494,7 @@ void ContentBoxFinder::inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage&
   const int width = content_blocks.width();
   const int height = content_blocks.height();
 
-  const auto max_spread_dist = static_cast<const uint16_t>(std::min(width, height) / 4);
+  const auto max_spread_dist = static_cast<uint16_t>(std::min(width, height) / 4);
 
   std::vector<uint16_t> map((width + 2) * (height + 2), ~uint16_t(0));
 
@@ -552,7 +552,7 @@ void ContentBoxFinder::inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage&
     queue.pop();
 
     assert(*cell != 0);
-    const auto new_dist = static_cast<const uint16_t>(*cell - 1);
+    const auto new_dist = static_cast<uint16_t>(*cell - 1);
 
     uint16_t* nbh = cell - map_stride;
     if (new_dist > *nbh) {
@@ -781,8 +781,8 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
     }
 
     for (const Range range : ranges) {
-      const auto first = static_cast<const int>(range.first - &hist[0]);
-      const auto last = static_cast<const int>(range.second - &hist[0]);
+      const auto first = static_cast<int>(range.first - &hist[0]);
+      const auto last = static_cast<int>(range.second - &hist[0]);
       if (last - first < min_text_height - 1) {
         continue;
       }
@@ -803,7 +803,7 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
       const double min_fill_factor = 0.22;
       const double max_fill_factor = 0.65;
 
-      const auto center_y = static_cast<const int>((weighted_y + total_weight / 2) / total_weight);
+      const auto center_y = static_cast<int>((weighted_y + total_weight / 2) / total_weight);
       int top = center_y - min_text_height / 2;
       int bottom = top + min_text_height - 1;
       int num_black = 0;

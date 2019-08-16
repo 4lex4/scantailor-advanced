@@ -17,13 +17,13 @@
  */
 
 #include "PageLayout.h"
+#include <PolygonUtils.h>
 #include <QTransform>
 #include <cassert>
 #include "NumericTraits.h"
 #include "ToLineProjector.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include <PolygonUtils.h>
 
 using namespace imageproc;
 
@@ -47,9 +47,9 @@ PageLayout::PageLayout(const QPolygonF& outline, const QLineF& cutter1, const QL
 
 PageLayout::PageLayout(const QDomElement& layout_el)
     : m_uncutOutline(XmlUnmarshaller::polygonF(layout_el.namedItem("outline").toElement())),
-      m_type(typeFromString(layout_el.attribute("type"))),
       m_cutter1(XmlUnmarshaller::lineF(layout_el.namedItem("cutter1").toElement())),
-      m_cutter2(XmlUnmarshaller::lineF(layout_el.namedItem("cutter2").toElement())) {}
+      m_cutter2(XmlUnmarshaller::lineF(layout_el.namedItem("cutter2").toElement())),
+      m_type(typeFromString(layout_el.attribute("type"))) {}
 
 void PageLayout::setType(Type type) {
   m_type = type;

@@ -147,8 +147,8 @@ float TopBottomEdgeTracer::interpolatedGridValue(const Grid<GridNode>& grid,
                                                  Extractor extractor,
                                                  const Vec2f pos,
                                                  float default_value) {
-  const auto x_base = static_cast<const float>(std::floor(pos[0]));
-  const auto y_base = static_cast<const float>(std::floor(pos[1]));
+  const auto x_base = static_cast<float>(std::floor(pos[0]));
+  const auto y_base = static_cast<float>(std::floor(pos[1]));
   const auto x_base_i = (int) x_base;
   const auto y_base_i = (int) y_base;
 
@@ -765,7 +765,7 @@ void TopBottomEdgeTracer::downTheHillSnake(std::vector<QPointF>& snake, const Gr
           float cost = prev_step.pathCost + step.pathCost;
 
           const Vec2f vec(step.pt - prev_step.pt);
-          const auto vec_len = static_cast<const float>(std::sqrt(vec.squaredNorm()));
+          const auto vec_len = static_cast<float>(std::sqrt(vec.squaredNorm()));
           if (vec_len < segment_dist_threshold) {
             cost += 1000;
           }
@@ -779,7 +779,7 @@ void TopBottomEdgeTracer::downTheHillSnake(std::vector<QPointF>& snake, const Gr
             Vec2f prev_normal(prev_step.pt - prev_prev_step.pt);
             std::swap(prev_normal[0], prev_normal[1]);
             prev_normal[0] = -prev_normal[0];
-            const auto prev_normal_len = static_cast<const float>(std::sqrt(prev_normal.squaredNorm()));
+            const auto prev_normal_len = static_cast<float>(std::sqrt(prev_normal.squaredNorm()));
             if (prev_normal_len < segment_dist_threshold) {
               cost += 1000;
             } else {
@@ -895,7 +895,7 @@ void TopBottomEdgeTracer::upTheHillSnake(std::vector<QPointF>& snake, const Grid
           float cost = prev_step.pathCost + step.pathCost;
 
           const Vec2f vec(step.pt - prev_step.pt);
-          const auto vec_len = static_cast<const float>(std::sqrt(vec.squaredNorm()));
+          const auto vec_len = static_cast<float>(std::sqrt(vec.squaredNorm()));
           if (vec_len < segment_dist_threshold) {
             cost += 1000;
           }
@@ -909,7 +909,7 @@ void TopBottomEdgeTracer::upTheHillSnake(std::vector<QPointF>& snake, const Grid
             Vec2f prev_normal(prev_step.pt - prev_prev_step.pt);
             std::swap(prev_normal[0], prev_normal[1]);
             prev_normal[0] = -prev_normal[0];
-            const auto prev_normal_len = static_cast<const float>(std::sqrt(prev_normal.squaredNorm()));
+            const auto prev_normal_len = static_cast<float>(std::sqrt(prev_normal.squaredNorm()));
             if (prev_normal_len < segment_dist_threshold) {
               cost += 1000;
             } else {

@@ -41,7 +41,7 @@ void SplineFitter::setSamplingParams(const FittableSpline::SamplingParams& param
 void SplineFitter::addAttractionForce(const Vec2d& spline_point,
                                       const std::vector<FittableSpline::LinearCoefficient>& coeffs,
                                       const SqDistApproximant& sqdist_approx) {
-  const auto num_coeffs = static_cast<const int>(coeffs.size());
+  const auto num_coeffs = static_cast<int>(coeffs.size());
   const int num_vars = num_coeffs * 2;
   QuadraticFunction f(num_vars);
 

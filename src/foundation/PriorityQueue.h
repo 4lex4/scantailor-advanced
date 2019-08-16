@@ -96,7 +96,7 @@ class PriorityQueue {
 
   SubClass* subClass() { return static_cast<SubClass*>(this); }
 
-  const SubClass* subClass() const { return static_cast<const SubClass*>(this); }
+  const SubClass* subClass() const { return static_cast<SubClass*>(this); }
 
   size_t bubbleUp(size_t idx);
 

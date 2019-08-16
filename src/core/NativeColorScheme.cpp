@@ -30,7 +30,7 @@ void NativeColorScheme::loadStyleSheet() {
                               "  background-color: %1;\n"
                               "  background-attachment: scroll;\n"
                               "}")
-                          .arg(palette.background().color().darker(115).name()));
+                          .arg(palette.window().color().darker(115).name()));
 }
 
 void NativeColorScheme::loadColorParams() {
@@ -38,7 +38,7 @@ void NativeColorScheme::loadColorParams() {
 
   m_customColors[ThumbnailSequenceSelectedItemBackground] = palette.color(QPalette::Highlight).lighter(130);
   m_customColors[ThumbnailSequenceSelectionLeaderBackground] = palette.color(QPalette::Highlight);
-  m_customColors[ProcessingIndicationFade] = palette.background().color().darker(115);
+  m_customColors[ProcessingIndicationFade] = palette.window().color().darker(115);
   if (palette.window().color().lightnessF() < 0.5) {
     // If system scheme is dark, adapt some colors.
     m_customColors[ProcessingIndicationHeadColor] = palette.color(QPalette::Window).lighter(200);

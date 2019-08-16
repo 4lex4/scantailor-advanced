@@ -338,6 +338,7 @@ QImage transform(const QImage& src,
 
         return gray_dst;
       }
+      // fall through
     default:
       if (!src.hasAlphaChannel() && (qAlpha(outside_pixels.rgba()) == 0xff)) {
         const QImage src_rgb32(src.convertToFormat(QImage::Format_RGB32));

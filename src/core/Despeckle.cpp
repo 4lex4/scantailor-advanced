@@ -141,15 +141,15 @@ struct Component {
 
   Component() : num_pixels(0) {}
 
-  const uint32_t anchoredToBig() const { return num_pixels & ANCHORED_TO_BIG; }
+  uint32_t anchoredToBig() const { return num_pixels & ANCHORED_TO_BIG; }
 
   void setAnchoredToBig() { num_pixels |= ANCHORED_TO_BIG; }
 
-  const uint32_t anchoredToSmall() const { return num_pixels & ANCHORED_TO_SMALL; }
+  uint32_t anchoredToSmall() const { return num_pixels & ANCHORED_TO_SMALL; }
 
   void setAnchoredToSmall() { num_pixels |= ANCHORED_TO_SMALL; }
 
-  const bool anchoredToSmallButNotBig() const { return (num_pixels & TAG_MASK) == ANCHORED_TO_SMALL; }
+  bool anchoredToSmallButNotBig() const { return (num_pixels & TAG_MASK) == ANCHORED_TO_SMALL; }
 
   void clearTags() { num_pixels &= ~TAG_MASK; }
 };

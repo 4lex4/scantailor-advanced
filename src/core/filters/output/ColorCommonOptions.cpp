@@ -21,11 +21,11 @@
 
 namespace output {
 ColorCommonOptions::ColorCommonOptions()
-    : m_fillMargins(true), m_fillOffcut(true), m_normalizeIllumination(false), m_fillingColor(FILL_BACKGROUND) {}
+    : m_fillOffcut(true), m_fillMargins(true), m_normalizeIllumination(false), m_fillingColor(FILL_BACKGROUND) {}
 
 ColorCommonOptions::ColorCommonOptions(const QDomElement& el)
-    : m_fillMargins(el.attribute("fillMargins") == "1"),
-      m_fillOffcut(el.attribute("fillOffcut") == "1"),
+    : m_fillOffcut(el.attribute("fillOffcut") == "1"),
+      m_fillMargins(el.attribute("fillMargins") == "1"),
       m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1"),
       m_fillingColor(parseFillingColor(el.attribute("fillingColor"))),
       m_posterizationOptions(el.namedItem("posterization-options").toElement()) {}
@@ -175,5 +175,4 @@ bool ColorCommonOptions::PosterizationOptions::isForceBlackAndWhite() const {
 void ColorCommonOptions::PosterizationOptions::setForceBlackAndWhite(bool forceBlackAndWhite) {
   PosterizationOptions::m_forceBlackAndWhite = forceBlackAndWhite;
 }
-
 }  // namespace output

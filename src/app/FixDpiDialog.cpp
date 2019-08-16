@@ -478,10 +478,10 @@ FixDpiDialog::TreeModel::Tag FixDpiDialog::TreeModel::m_allPagesNodeId;
 FixDpiDialog::TreeModel::Tag FixDpiDialog::TreeModel::m_sizeGroupNodeId;
 
 FixDpiDialog::TreeModel::TreeModel(const std::vector<ImageFileInfo>& files) : m_files(files) {
-  const auto num_files = static_cast<const int>(m_files.size());
+  const auto num_files = static_cast<int>(m_files.size());
   for (int i = 0; i < num_files; ++i) {
     const ImageFileInfo& file = m_files[i];
-    const auto num_images = static_cast<const int>(file.imageInfo().size());
+    const auto num_images = static_cast<int>(file.imageInfo().size());
     for (int j = 0; j < num_images; ++j) {
       const ImageMetadata& metadata = file.imageInfo()[j];
       SizeGroup& group = sizeGroupFor(metadata.size());
@@ -647,7 +647,7 @@ QVariant FixDpiDialog::TreeModel::data(const QModelIndex& index, const int role)
 }  // FixDpiDialog::TreeModel::data
 
 void FixDpiDialog::TreeModel::applyDpiToAllGroups(const Scope scope, const Dpi& dpi) {
-  const auto num_groups = static_cast<const int>(m_sizes.size());
+  const auto num_groups = static_cast<int>(m_sizes.size());
   for (int i = 0; i < num_groups; ++i) {
     applyDpiToGroup(scope, dpi, m_sizes[i], m_dpiCounts);
   }
@@ -660,7 +660,7 @@ void FixDpiDialog::TreeModel::applyDpiToGroup(const Scope scope,
   DpiCounts& group_dpi_counts = group.dpiCounts();
   const ImageMetadata metadata(group.size(), dpi);
   const std::vector<SizeGroup::Item>& items = group.items();
-  const auto num_items = static_cast<const int>(items.size());
+  const auto num_items = static_cast<int>(items.size());
   for (int i = 0; i < num_items; ++i) {
     applyDpiToItem(scope, metadata, items[i], total_dpi_counts, group_dpi_counts);
   }
@@ -687,7 +687,7 @@ void FixDpiDialog::TreeModel::applyDpiToItem(const Scope scope,
 }
 
 void FixDpiDialog::TreeModel::emitAllPagesChanged(const QModelIndex& idx) {
-  const auto num_groups = static_cast<const int>(m_sizes.size());
+  const auto num_groups = static_cast<int>(m_sizes.size());
   for (int i = 0; i < num_groups; ++i) {
     const QModelIndex group_node(index(i, 0, idx));
     const int num_items = rowCount(group_node);

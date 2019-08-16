@@ -24,7 +24,7 @@
 
 namespace adiff {
 namespace tests {
-BOOST_AUTO_TEST_SUITE(AutomaticDifferentiationTestSuite);
+BOOST_AUTO_TEST_SUITE(AutomaticDifferentiationTestSuite)
 
 BOOST_AUTO_TEST_CASE(test1) {
   // F(x) = x^2  | x = 3
@@ -106,6 +106,6 @@ BOOST_AUTO_TEST_CASE(test3) {
   BOOST_REQUIRE_CLOSE(hessian(1, 1), 16, 1e-06);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace adiff

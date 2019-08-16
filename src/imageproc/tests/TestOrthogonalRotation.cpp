@@ -27,7 +27,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(OrthogonalRotationTestSuite);
+BOOST_AUTO_TEST_SUITE(OrthogonalRotationTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
   const BinaryImage null_img;
@@ -100,6 +100,6 @@ BOOST_AUTO_TEST_CASE(test_sub_image) {
   BOOST_REQUIRE(orthogonalRotation(img, rect, -90) == out4_img);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

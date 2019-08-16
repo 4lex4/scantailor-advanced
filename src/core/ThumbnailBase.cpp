@@ -17,6 +17,7 @@
  */
 
 #include "ThumbnailBase.h"
+#include <PolygonUtils.h>
 #include <QApplication>
 #include <QPainter>
 #include <QPixmapCache>
@@ -25,7 +26,6 @@
 #include <cmath>
 #include <utility>
 #include "PixmapRenderer.h"
-#include <PolygonUtils.h>
 
 using namespace imageproc;
 
@@ -61,8 +61,8 @@ ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache
       m_maxSize(max_size),
       m_imageId(image_id),
       m_imageXform(image_xform),
-      m_extendedClipArea(false),
-      m_displayArea(displayArea) {
+      m_displayArea(displayArea),
+      m_extendedClipArea(false) {
   setImageXform(m_imageXform);
 }
 
@@ -122,7 +122,7 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
 
   QPixmap temp_pixmap;
   const QString cache_key(QString::fromLatin1("ThumbnailBase::temp_pixmap"));
-  if (!QPixmapCache::find(cache_key, temp_pixmap) || (temp_pixmap.width() < display_rect.width())
+  if (!QPixmapCache::find(cache_key, &temp_pixmap) || (temp_pixmap.width() < display_rect.width())
       || (temp_pixmap.height() < display_rect.height())) {
     auto w = (int) display_rect.width();
     auto h = (int) display_rect.height();

@@ -432,12 +432,12 @@ void ThumbnailSequence::setViewMode(ThumbnailSequence::ViewMode mode) {
 ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& max_logical_thumb_size, const ViewMode view_mode)
     : m_owner(owner),
       m_maxLogicalThumbSize(max_logical_thumb_size),
+      m_viewMode(view_mode),
       m_items(),
       m_itemsById(m_items.get<ItemsByIdTag>()),
       m_itemsInOrder(m_items.get<ItemsInOrderTag>()),
       m_selectedThenUnselected(m_items.get<SelectedThenUnselectedTag>()),
-      m_selectionLeader(nullptr),
-      m_viewMode(view_mode) {
+      m_selectionLeader(nullptr) {
   m_graphicsScene.setContextMenuEventCallback(
       [&](QGraphicsSceneContextMenuEvent* evt) { this->sceneContextMenuEvent(evt); });
 }

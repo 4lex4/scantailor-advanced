@@ -349,9 +349,9 @@ QImage Posterizer::posterize(const QImage& image) const {
       const uint32_t color = colorAndStat.first;
       const uint32_t normalized_color = colorToNormalizedMap[color];
 
-      auto redGroupIdx = static_cast<const int>(qRed(normalized_color) / levelStride);
-      auto blueGroupIdx = static_cast<const int>(qGreen(normalized_color) / levelStride);
-      auto greenGroupIdx = static_cast<const int>(qBlue(normalized_color) / levelStride);
+      const auto redGroupIdx = static_cast<int>(qRed(normalized_color) / levelStride);
+      const auto blueGroupIdx = static_cast<int>(qGreen(normalized_color) / levelStride);
+      const auto greenGroupIdx = static_cast<int>(qBlue(normalized_color) / levelStride);
 
       auto group = static_cast<uint32_t>((redGroupIdx << 16) | (greenGroupIdx << 8) | (blueGroupIdx));
 

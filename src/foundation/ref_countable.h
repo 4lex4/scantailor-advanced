@@ -25,9 +25,9 @@ class ref_countable {
  public:
   ref_countable() = default;
 
-  ref_countable(const ref_countable& other) {}
+  ref_countable(const ref_countable&) {}
 
-  ref_countable& operator=(const ref_countable& other) { return *this; }
+  ref_countable& operator=(const ref_countable&) { return *this; }
 
   void ref() const { m_counter.fetchAndAddRelaxed(1); }
 

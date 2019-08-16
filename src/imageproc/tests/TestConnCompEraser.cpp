@@ -29,7 +29,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(ConnCompEraserTestSuite);
+BOOST_AUTO_TEST_SUITE(ConnCompEraserTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
   ConnCompEraser eraser(BinaryImage(), CONN4);
@@ -79,6 +79,6 @@ BOOST_AUTO_TEST_CASE(test_small_image) {
   BOOST_CHECK_MESSAGE(c8r.empty(), "Not all 8-connected blocks were found.");
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

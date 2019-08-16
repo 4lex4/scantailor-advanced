@@ -26,7 +26,7 @@ namespace imageproc {
 namespace tests {
 using namespace utils;
 
-BOOST_AUTO_TEST_SUITE(GrayscaleTestSuite);
+BOOST_AUTO_TEST_SUITE(GrayscaleTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
   BOOST_CHECK(toGrayscale(QImage()).isNull());
@@ -72,6 +72,6 @@ BOOST_AUTO_TEST_CASE(test_argb32_to_grayscale) {
   BOOST_CHECK(toGrayscale(argb32) == gray);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()
 }  // namespace tests
 }  // namespace imageproc

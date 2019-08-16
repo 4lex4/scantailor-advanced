@@ -23,7 +23,7 @@ using namespace imageproc;
 
 void ContentSpanFinder::findImpl(const SlicedHistogram& histogram,
                                  const VirtualFunction<void, const Span&>& handler) const {
-  const auto hist_size = static_cast<const int>(histogram.size());
+  const auto hist_size = static_cast<int>(histogram.size());
 
   int i = 0;
   int content_end = -m_minWhitespaceWidth;

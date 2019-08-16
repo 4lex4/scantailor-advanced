@@ -80,7 +80,7 @@ std::set<PageId> PageSequence::selectEveryOther(const PageId& base) const {
     return selection;
   }
 
-  const int base_idx = static_cast<const int>(it - m_pages.begin());
+  const int base_idx = static_cast<int>(it - m_pages.begin());
   int idx = 0;
   for (const PageInfo& page_info : m_pages) {
     if (((idx - base_idx) & 1) == 0) {

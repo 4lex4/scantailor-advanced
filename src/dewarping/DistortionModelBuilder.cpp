@@ -214,7 +214,7 @@ DistortionModelBuilder::TracedCurve DistortionModelBuilder::polylineToCurve(
 }
 
 Vec2d DistortionModelBuilder::centroid(const std::vector<QPointF>& polyline) {
-  const auto num_points = static_cast<const int>(polyline.size());
+  const auto num_points = static_cast<int>(polyline.size());
   if (num_points == 0) {
     return Vec2d();
   } else if (num_points == 1) {

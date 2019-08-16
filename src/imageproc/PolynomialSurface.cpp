@@ -129,7 +129,7 @@ GrayImage PolynomialSurface::render(const QSize& size) const {
   const int height = size.height();
   unsigned char* line = image.data();
   const int bpl = image.stride();
-  const auto num_coeffs = static_cast<const int>(m_coeffs.size());
+  const auto num_coeffs = static_cast<int>(m_coeffs.size());
 
   // Pretend that both x and y positions of pixels
   // lie in range of [0, 1].
@@ -213,7 +213,7 @@ void PolynomialSurface::prepareDataForLeastSquares(const GrayImage& image,
 
   const int width = image.width();
   const int height = image.height();
-  const auto num_terms = static_cast<const int>(Atb.size());
+  const auto num_terms = static_cast<int>(Atb.size());
 
   const uint8_t* line = image.data();
   const int stride = image.stride();
@@ -288,7 +288,7 @@ void PolynomialSurface::prepareDataForLeastSquares(const GrayImage& image,
 
   const int width = image.width();
   const int height = image.height();
-  const auto num_terms = static_cast<const int>(Atb.size());
+  const auto num_terms = static_cast<int>(Atb.size());
 
   const uint8_t* image_line = image.data();
   const int image_stride = image.stride();
@@ -366,7 +366,7 @@ void PolynomialSurface::prepareDataForLeastSquares(const GrayImage& image,
 void PolynomialSurface::fixSquareMatrixRankDeficiency(MatT<double>& mat) {
   assert(mat.cols() == mat.rows());
 
-  const auto dim = static_cast<const int>(mat.cols());
+  const auto dim = static_cast<int>(mat.cols());
   for (int i = 0; i < dim; ++i) {
     mat(i, i) += 1e-5;  // Add a small value to the diagonal.
   }

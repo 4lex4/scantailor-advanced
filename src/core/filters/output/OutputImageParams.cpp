@@ -161,7 +161,7 @@ bool OutputImageParams::colorParamsMatch(const ColorParams& cp1,
       if (so1 != so2) {
         return false;
       }
-      // fall into
+      // fall through
     case BLACK_AND_WHITE:
       if (cp1.blackWhiteOptions() != cp2.blackWhiteOptions()) {
         return false;
@@ -169,7 +169,7 @@ bool OutputImageParams::colorParamsMatch(const ColorParams& cp1,
       if (dl1 != dl2) {
         return false;
       }
-      // fall into
+      // fall through
     case COLOR_GRAYSCALE:
       if (cp1.colorCommonOptions() != cp2.colorCommonOptions()) {
         return false;

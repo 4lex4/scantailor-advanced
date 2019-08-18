@@ -4,7 +4,6 @@
 #include "ChangeDewarpingDialog.h"
 #include <boost/lambda/lambda.hpp>
 #include "PageSelectionAccessor.h"
-#include "QtSignalForwarder.h"
 
 namespace output {
 ChangeDewarpingDialog::ChangeDewarpingDialog(QWidget* parent,
@@ -45,11 +44,10 @@ ChangeDewarpingDialog::ChangeDewarpingDialog(QWidget* parent,
   }
 
   ui.dewarpingPostDeskewCB->setChecked(dewarpingOptions.needPostDeskew());
-  // No, we don't leak memory here.
-  new QtSignalForwarder(ui.offRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = OFF);
-  new QtSignalForwarder(ui.autoRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = AUTO);
-  new QtSignalForwarder(ui.manualRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = MANUAL);
-  new QtSignalForwarder(ui.marginalRB, SIGNAL(clicked(bool)), var(m_dewarpingMode) = MARGINAL);
+  connect(ui.offRB, &QRadioButton::clicked, var(m_dewarpingMode) = OFF);
+  connect(ui.autoRB, &QRadioButton::clicked, var(m_dewarpingMode) = AUTO);
+  connect(ui.manualRB, &QRadioButton::clicked, var(m_dewarpingMode) = MANUAL);
+  connect(ui.marginalRB, &QRadioButton::clicked, var(m_dewarpingMode) = MARGINAL);
 
   connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(onSubmit()));
 }

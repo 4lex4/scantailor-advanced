@@ -190,12 +190,12 @@ set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.60 COMPONENTS unit_test_framework prg_exec_monitor REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
-add_compile_definitions(BOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
+add_definitions(-DBOOST_MULTI_INDEX_DISABLE_SERIALIZATION)
 if (NOT Boost_USE_STATIC_LIBS)
   if (WIN32)
     add_dynamic_library_locations(Boost::unit_test_framework Boost::prg_exec_monitor)
   endif()
-  add_compile_definitions(BOOST_TEST_DYN_LINK)
+  add_definitions(-DBOOST_TEST_DYN_LINK)
 endif()
 
 #=================================== Qt ===================================#
@@ -226,7 +226,7 @@ endif()
 set(CMAKE_AUTOMOC ON)
 
 if (WIN32 AND MSVC)
-  add_compile_definitions(NOMINMAX)
+  add_definitions(-DNOMINMAX)
 endif()
 
 enable_testing()

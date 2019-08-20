@@ -277,7 +277,7 @@ add_subdirectory(src)
 # Translations
 file(GLOB translation_files "${SCANTAILOR_TRANSLATIONS_DIR}/scantailor_*.ts")
 
-finalize_translation_set(scantailor ${translation_files})
+finalize_translations(scantailor ${translation_files})
 update_translations_target(update_translations scantailor)
 
 list(FILTER translation_files EXCLUDE REGEX ".*untranslated.ts")

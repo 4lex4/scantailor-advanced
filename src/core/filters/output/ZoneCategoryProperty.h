@@ -19,8 +19,6 @@ class ZoneCategoryProperty : public Property {
 
   explicit ZoneCategoryProperty(ZoneCategory zone_category = MANUAL);
 
-  ZoneCategoryProperty(const ZoneCategoryProperty& other);
-
   explicit ZoneCategoryProperty(const QDomElement& el);
 
   static void registerIn(PropertyFactory& factory);

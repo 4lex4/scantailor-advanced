@@ -11,8 +11,6 @@ const char ZoneCategoryProperty::m_propertyName[] = "ZoneCategoryProperty";
 ZoneCategoryProperty::ZoneCategoryProperty(ZoneCategoryProperty::ZoneCategory zone_category)
     : m_zoneCategory(zone_category) {}
 
-ZoneCategoryProperty::ZoneCategoryProperty(const ZoneCategoryProperty& other) : m_zoneCategory(MANUAL) {}
-
 ZoneCategoryProperty::ZoneCategoryProperty(const QDomElement& el)
     : m_zoneCategory(zoneCategoryFromString(el.attribute("zone_category"))) {}
 
@@ -37,7 +35,7 @@ intrusive_ptr<Property> ZoneCategoryProperty::construct(const QDomElement& el) {
 }
 
 ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategoryFromString(const QString& str) {
-  if (str == "rectangular_outline") {
+  if (str == "auto") {
     return AUTO;
   } else {
     return MANUAL;
@@ -52,7 +50,7 @@ QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zone_category) {
       str = "manual";
       break;
     case AUTO:
-      str = "rectangular_outline";
+      str = "auto";
       break;
     default:
       str = "";

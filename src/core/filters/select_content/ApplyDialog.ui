@@ -24,22 +24,22 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>
-       <widget class="QCheckBox" name="applyContentBoxOption">
-        <property name="text">
-         <string>Apply content box</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QCheckBox" name="applyPageBoxOption">
         <property name="text">
          <string>Apply page box</string>
         </property>
         <property name="checked">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="applyContentBoxOption">
+        <property name="text">
+         <string>Apply content box</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

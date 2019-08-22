@@ -227,7 +227,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="../resources/resources.qrc">
                     <normaloff>:/icons/object-rotate-left.svg</normaloff>:/icons/object-rotate-left.svg</iconset>
                   </property>
                   <property name="iconSize">
@@ -244,7 +244,7 @@
                    <string>...</string>
                   </property>
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="../resources/resources.qrc">
                     <normaloff>:/icons/object-rotate-right.svg</normaloff>:/icons/object-rotate-right.svg</iconset>
                   </property>
                   <property name="iconSize">
@@ -291,7 +291,7 @@
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap>:/icons/big-up-arrow.svg</pixmap>
+                   <pixmap resource="../resources/resources.qrc">:/icons/big-up-arrow.svg</pixmap>
                   </property>
                  </widget>
                 </item>
@@ -393,8 +393,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>193</width>
+            <height>162</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -469,7 +469,7 @@
                 <item>
                  <widget class="QToolButton" name="singlePageUncutBtn">
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="../resources/resources.qrc">
                     <normaloff>:/icons/single_page_uncut.svg</normaloff>
                     <normalon>:/icons/single_page_uncut_selected.svg</normalon>:/icons/single_page_uncut.svg</iconset>
                   </property>
@@ -496,7 +496,7 @@
                 <item>
                  <widget class="QToolButton" name="pagePlusOffcutBtn">
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="../resources/resources.qrc">
                     <normaloff>:/icons/right_page_plus_offcut.svg</normaloff>
                     <normalon>:/icons/right_page_plus_offcut_selected.svg</normalon>:/icons/right_page_plus_offcut.svg</iconset>
                   </property>
@@ -520,7 +520,7 @@
                 <item>
                  <widget class="QToolButton" name="twoPagesBtn">
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="../resources/resources.qrc">
                     <normaloff>:/icons/two_pages.svg</normaloff>
                     <normalon>:/icons/two_pages_selected.svg</normalon>:/icons/two_pages.svg</iconset>
                   </property>
@@ -638,8 +638,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>208</width>
+            <height>116</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -810,8 +810,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>208</width>
+            <height>314</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -1219,10 +1219,22 @@
                         </size>
                        </property>
                        <property name="styleSheet">
-                        <string notr="true">QToolButton:!hover, QToolButton:pressed {
+                        <string notr="true">QToolButton:!hover {
   padding: 0;
   border: none;
   background-color: transparent;
+}
+
+QToolButton:hover {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(base);
+}
+
+QToolButton:pressed {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(alternative-base);
 }</string>
                        </property>
                        <property name="text">
@@ -1276,10 +1288,22 @@
                         </size>
                        </property>
                        <property name="styleSheet">
-                        <string notr="true">QToolButton:!hover, QToolButton:pressed {
+                        <string notr="true">QToolButton:!hover {
   padding: 0;
   border: none;
   background-color: transparent;
+}
+
+QToolButton:hover {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(base);
+}
+
+QToolButton:pressed {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(alternative-base);
 }</string>
                        </property>
                        <property name="text">
@@ -1660,7 +1684,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-north-west.svg</normaloff>:/icons/stock-gravity-north-west.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1683,7 +1707,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-north.svg</normaloff>:/icons/stock-gravity-north.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1706,7 +1730,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-north-east.svg</normaloff>:/icons/stock-gravity-north-east.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1729,7 +1753,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-west.svg</normaloff>:/icons/stock-gravity-west.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1752,7 +1776,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-center.svg</normaloff>:/icons/stock-center.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1778,7 +1802,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-east.svg</normaloff>:/icons/stock-gravity-east.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1801,7 +1825,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-south-west.svg</normaloff>:/icons/stock-gravity-south-west.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1824,7 +1848,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-south.svg</normaloff>:/icons/stock-gravity-south.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1847,7 +1871,7 @@
                      <string>...</string>
                     </property>
                     <property name="icon">
-                     <iconset>
+                     <iconset resource="../resources/resources.qrc">
                       <normaloff>:/icons/stock-gravity-south-east.svg</normaloff>:/icons/stock-gravity-south-east.svg</iconset>
                     </property>
                     <property name="iconSize">
@@ -1920,7 +1944,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>620</width>
+            <width>615</width>
             <height>496</height>
            </rect>
           </property>

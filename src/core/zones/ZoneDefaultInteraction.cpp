@@ -18,9 +18,9 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
   m_zoneAreaProximity.setProximityStatusTip(
       tr("Right click to edit zone properties. Hold Shift to drag the zone or "
          "Shift+Ctrl to copy. Press Del to delete this zone."));
-  m_zoneAreaDragProximity.setProximityStatusTip("Hold left mouse button to drag the zone.");
+  m_zoneAreaDragProximity.setProximityStatusTip(tr("Hold left mouse button to drag the zone."));
   m_zoneAreaDragProximity.setProximityCursor(Qt::DragMoveCursor);
-  m_zoneAreaDragCopyProximity.setProximityStatusTip("Hold left mouse button to copy and drag the zone.");
+  m_zoneAreaDragCopyProximity.setProximityStatusTip(tr("Hold left mouse button to copy and drag the zone."));
   m_zoneAreaDragCopyProximity.setProximityCursor(Qt::DragCopyCursor);
   m_context.imageView().interactionState().setDefaultStatusTip(
       tr("Click to start creating a new zone. Use Ctrl+Alt+Click to copy the latest created zone."));

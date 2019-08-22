@@ -146,17 +146,17 @@
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="227"/>
         <location filename="../app/DefaultParamsDialog.ui" line="244"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1229"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1286"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1660"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1683"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1706"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1729"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1752"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1778"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1801"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1824"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1847"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1241"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1310"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1684"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1707"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1730"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1753"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1776"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1802"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1825"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1848"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1871"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -172,7 +172,7 @@
     </message>
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="404"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1933"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1957"/>
         <source>Mode</source>
         <translation>Modo</translation>
     </message>
@@ -222,7 +222,7 @@
     </message>
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="872"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1953"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1977"/>
         <source>Options</source>
         <translation>Opciones</translation>
     </message>
@@ -263,342 +263,342 @@
         <translation>Márgenes automáticos</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1246"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1258"/>
         <source>Top</source>
         <translation>Arriba</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1253"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1265"/>
         <source>Right</source>
         <translation>Derecha</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1260"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1272"/>
         <source>Left</source>
         <translation>Izquierda</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1336"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1360"/>
         <source>Bottom</source>
         <translation>Abajo</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1431"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1455"/>
         <source>Alignment</source>
         <translation>Alineación</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1506"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1530"/>
         <source>Auto</source>
         <comment>auto</comment>
         <translation>Automático</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1511"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1535"/>
         <source>Manual</source>
         <comment>manual</comment>
         <translation>Manual</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1516"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1540"/>
         <source>Original</source>
         <comment>original</comment>
         <translation>Original</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1539"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1563"/>
         <source>Auto aligning</source>
         <translation>Alineación automática</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1572"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1596"/>
         <source>Enable horizontal</source>
         <translation>Habilitar en horizontal</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1612"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1636"/>
         <source>Enable vertical</source>
         <translation>Habilitar en vertical</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1455"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1479"/>
         <source>Match size with other pages</source>
         <translation>Igualar el tamaño con otras páginas</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1895"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1919"/>
         <source>Output</source>
         <translation>Salida</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2018"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2042"/>
         <source>Normalize illumination before binarization.</source>
         <translation>Noramalizar la iluminación antes de pasar a binario.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2021"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2045"/>
         <source>Equalize illumination (B&amp;&amp;W)</source>
         <translation>Igualar la iluminación (blanco y negro)</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2028"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2052"/>
         <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
         <translation>Normalizar la iluminación en modo color / en zonas de imágenes en modo mixto.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2031"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2055"/>
         <source>Equalize illumination (Color)</source>
         <translation>Igualar la iluminación (Color)</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2038"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2062"/>
         <source>Savitzky-Golay smoothing</source>
         <translation>Suavizado Savitzky-Golay</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2045"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2069"/>
         <source>Morphological smoothing</source>
         <translation>Suavizado morfológico</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2070"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2094"/>
         <source>Filling</source>
         <translation>Relleno</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2097"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2121"/>
         <source>Color: </source>
         <translation>Color: </translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2128"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2152"/>
         <source>Color operations</source>
         <translation>Operaciones de color</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2179"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2203"/>
         <source>Split the image into color segments and colorize b&amp;w mask.</source>
         <translation>Divide la imagen en segmentos de color y colorea la máscara en blanco y negro.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2185"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2209"/>
         <source>Color segmentation</source>
         <translation>Segmentación de los colores</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2228"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2252"/>
         <source>R</source>
         <translation>R</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2241"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2265"/>
         <source>Red component adjustment. A negative value means the segmenter will be more sensitive to red and vice versa for a positive one.</source>
         <translation>Ajuste del componente rojo. Un valor negativo indica que el segmentador es más sensible al rojo y lo contrario para un valor positivo.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2263"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2287"/>
         <source>G</source>
         <translation>G</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2276"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2300"/>
         <source>Green component adjustment. A negative value means the segmenter will be more sensitive to green and vice versa for a positive one.</source>
         <translation>Ajuste del componente verde. Un valor negativo indica que el segmentador es más sensible al verde y lo contrario para un valor positivo.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2298"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2322"/>
         <source>B</source>
         <translation>B</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2311"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2335"/>
         <source>Blue component adjustment. A negative value means the segmenter will be more sensitive to blue and vice versa for a positive one.</source>
         <translation>Ajuste del componente azul. Un valor negativo indica que el segmentador es más sensible al azul y lo contrario para un valor positivo.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2366"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2390"/>
         <source>Reduce noise:</source>
         <translation>Reducir ruido:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2413"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2437"/>
         <source>Reduce the number of colors of the output image by grouping similar colors.</source>
         <translation>Reduce el número de colores de la imagen de salida agrupando los colores parecidos.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2419"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2443"/>
         <source>Posterize</source>
         <translation>Posterizar</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2462"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2486"/>
         <source>Level:</source>
         <translation>Nivel:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2469"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2493"/>
         <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
         <translation>Un valor más bajo significa un menor número de colores en la imagen de salida, valores entre 2 y 6 inclusive garantizan una imagen indexada.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2530"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2554"/>
         <source>Normalize</source>
         <translation>Normalizar</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2573"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2597"/>
         <source>Make dark and light gray gradients black and white respectively.</source>
         <translation>Hacer los gradientes oscuros y gris oscuro negros y blancos respectivamente.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2579"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2603"/>
         <source>Force b&amp;&amp;w</source>
         <translation>Forzar blanco y negro</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2642"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2666"/>
         <source>Threshold</source>
         <translation>Umbral</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2669"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2693"/>
         <source>Method:</source>
         <translation>Método:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2739"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2763"/>
         <source>0</source>
         <translation>0</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2794"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2818"/>
         <source>Thinner</source>
         <translation>Más fino</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2826"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2850"/>
         <source>Thicker</source>
         <translation>Más grueso</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2883"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2907"/>
         <source>Coef:</source>
         <translation>Coef:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2890"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="2986"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2914"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3010"/>
         <source>The dimensions of a pixel neighborhood to consider.</source>
         <translation>Las dimensiones de un vecindario de píxeles a considerar.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2903"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="2999"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2927"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3023"/>
         <source>Window size:</source>
         <translation>Tamaño de ventana:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2910"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2934"/>
         <source>Default value is 0.34.</source>
         <translation>El valor por omisión es 0,34.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3006"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3030"/>
         <source>The minimum possible gray level that can be made white.</source>
         <translation>El menor nivel posible de gris que se puede hacer blanco.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3019"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3043"/>
         <source>Upper Bound: </source>
         <translation>Límite superior: </translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3026"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3050"/>
         <source>Lower bound: </source>
         <translation>Límite inferior: </translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3033"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3057"/>
         <source>The maximum possible gray level that can be made black.</source>
         <translation>El máximo nivel posible de gris que se puede hacer negro.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3046"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3070"/>
         <source>Coeff:</source>
         <translation>Coef:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3053"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3077"/>
         <source>Default value is 0.3.</source>
         <translation>El valor por omisión es 0,3.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3106"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3130"/>
         <source>Picture Shape</source>
         <translation>Forma de la imagen</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3176"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3200"/>
         <source>Sensitivity (%):</source>
         <translation>Sensibilidad (%):</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3224"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3248"/>
         <source>Higher search sensivity</source>
         <translation>Mayor sensibilidad de búsqueda</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3323"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3347"/>
         <source>Output Resolution (DPI)</source>
         <translation>Resolución de salida (PPP)</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3377"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3401"/>
         <source>Splitting</source>
         <translation>División</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3403"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3427"/>
         <source>Split output</source>
         <translation>Dividir la salida</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3410"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3434"/>
         <source>B&amp;&amp;W foreground</source>
         <translation>Fondo blanco y negro</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3438"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3462"/>
         <source>Save the original background of the foreground layer.</source>
         <translation>Guardar el fondo original de la capa de frente.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3441"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3465"/>
         <source>Original background</source>
         <translation>Fondo original</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3450"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3474"/>
         <source>Color foreground</source>
         <translation>Color de frente</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3477"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3501"/>
         <source>Despeckling</source>
         <translation>Eliminar manchas</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3583"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3607"/>
         <source>Dewarping</source>
         <translation>Antideformación</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3643"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3667"/>
         <source>Post deskew</source>
         <translation>Antideformación posterior</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3668"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3692"/>
         <source>Depth perception</source>
         <translation>Percepción de profundidad</translation>
     </message>
@@ -710,22 +710,22 @@
         <translation>Error al borrar el perfil.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2004"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2028"/>
         <source>Fill offcut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2011"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2035"/>
         <source>Fill margins</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3532"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3556"/>
         <source>Despeckle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1495"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1519"/>
         <source>Mode:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -917,145 +917,145 @@
         <translation>Mantener la página actual a la vista.</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="446"/>
+        <location filename="../app/MainWindow.ui" line="494"/>
         <source>Filters</source>
         <translation>Filtros</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="562"/>
+        <location filename="../app/MainWindow.ui" line="610"/>
         <source>Debug Mode</source>
         <translation>Modo de depuración</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="570"/>
+        <location filename="../app/MainWindow.ui" line="618"/>
         <location filename="../app/MainWindow.cpp" line="524"/>
         <source>Save Project</source>
         <translation>Guardar proyecto</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="578"/>
+        <location filename="../app/MainWindow.ui" line="626"/>
         <source>Save Project As ...</source>
         <translation>Guardar proyecto como...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="586"/>
-        <location filename="../app/MainWindow.ui" line="635"/>
+        <location filename="../app/MainWindow.ui" line="634"/>
+        <location filename="../app/MainWindow.ui" line="683"/>
         <source>Next Page</source>
         <translation>Pagina siguiente</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="597"/>
-        <location filename="../app/MainWindow.ui" line="624"/>
+        <location filename="../app/MainWindow.ui" line="645"/>
+        <location filename="../app/MainWindow.ui" line="672"/>
         <source>Previous Page</source>
         <translation>Página anterior</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="608"/>
+        <location filename="../app/MainWindow.ui" line="656"/>
         <source>New Project ...</source>
         <translation>Proyecto nuevo...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="616"/>
+        <location filename="../app/MainWindow.ui" line="664"/>
         <source>Open Project ...</source>
         <translation>Abrir proyecto...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="646"/>
+        <location filename="../app/MainWindow.ui" line="694"/>
         <source>Close Project</source>
         <translation>Cerrar proyecto</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="654"/>
+        <location filename="../app/MainWindow.ui" line="702"/>
         <source>Quit</source>
         <translation>Salir</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="662"/>
+        <location filename="../app/MainWindow.ui" line="710"/>
         <source>Settings ...</source>
         <translation>Configuración...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="670"/>
+        <location filename="../app/MainWindow.ui" line="718"/>
         <source>First Page</source>
         <translation>Primera página</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="678"/>
+        <location filename="../app/MainWindow.ui" line="726"/>
         <source>Last Page</source>
         <translation>Última página</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="686"/>
+        <location filename="../app/MainWindow.ui" line="734"/>
         <source>About</source>
         <translation>Acerca de</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="694"/>
+        <location filename="../app/MainWindow.ui" line="742"/>
         <source>Fix DPI ...</source>
         <translation>Corregir PPP...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="702"/>
+        <location filename="../app/MainWindow.ui" line="750"/>
         <source>Relinking ...</source>
         <translation>Reconexión...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="710"/>
-        <location filename="../app/MainWindow.ui" line="718"/>
-        <location filename="../app/MainWindow.ui" line="729"/>
-        <location filename="../app/MainWindow.ui" line="740"/>
-        <location filename="../app/MainWindow.ui" line="751"/>
-        <location filename="../app/MainWindow.ui" line="762"/>
+        <location filename="../app/MainWindow.ui" line="758"/>
+        <location filename="../app/MainWindow.ui" line="766"/>
+        <location filename="../app/MainWindow.ui" line="777"/>
+        <location filename="../app/MainWindow.ui" line="788"/>
+        <location filename="../app/MainWindow.ui" line="799"/>
+        <location filename="../app/MainWindow.ui" line="810"/>
         <source>Switch filter to orientation</source>
         <translation>Cambiar al filtro de orientación</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="721"/>
+        <location filename="../app/MainWindow.ui" line="769"/>
         <source>Switch filter to split pages</source>
         <translation>Cambiar al filtro de dividir páginas</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="732"/>
+        <location filename="../app/MainWindow.ui" line="780"/>
         <source>Switch filter to deskew</source>
         <translation>Cambiar al filtro de enderezar</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="743"/>
+        <location filename="../app/MainWindow.ui" line="791"/>
         <source>Switch filter to select content</source>
         <translation>Cambiar al filtro de seleccionar contenido</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="754"/>
+        <location filename="../app/MainWindow.ui" line="802"/>
         <source>Switch filter to margins</source>
         <translation>Cambiar al filtro de márgenes</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="765"/>
+        <location filename="../app/MainWindow.ui" line="813"/>
         <source>Switch filter to output</source>
         <translation>Cambiar al filtro de salida</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="776"/>
+        <location filename="../app/MainWindow.ui" line="824"/>
         <source>Pixels</source>
         <translation>Píxeles</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="793"/>
+        <location filename="../app/MainWindow.ui" line="841"/>
         <source>Millimetres</source>
         <translation>Milímetros</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="807"/>
+        <location filename="../app/MainWindow.ui" line="855"/>
         <source>Inches</source>
         <translation>Pulgadas</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="821"/>
+        <location filename="../app/MainWindow.ui" line="869"/>
         <source>Centimetres</source>
         <translation>Centímetros</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="832"/>
+        <location filename="../app/MainWindow.ui" line="880"/>
         <source>Default parameters ...</source>
         <translation>Parámetros por omisión...</translation>
     </message>
@@ -1167,38 +1167,38 @@ Para determinarlo, ejecute el proceso por lotes en «Seleccionar contenido» o �
         <translation>Eliminar</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="407"/>
+        <location filename="../app/MainWindow.ui" line="455"/>
         <source>Use Home, End, PgUp/Q, PgDown/W to navigate between pages or Shift+PgUp/Q and Shift+PgDown/W to navigate between selected ones. Alt+Wheel - scale thumbnails.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="840"/>
-        <location filename="../app/MainWindow.ui" line="843"/>
-        <location filename="../app/MainWindow.ui" line="882"/>
-        <location filename="../app/MainWindow.ui" line="885"/>
+        <location filename="../app/MainWindow.ui" line="888"/>
+        <location filename="../app/MainWindow.ui" line="891"/>
+        <location filename="../app/MainWindow.ui" line="930"/>
+        <location filename="../app/MainWindow.ui" line="933"/>
         <source>Previous Selected Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="854"/>
-        <location filename="../app/MainWindow.ui" line="857"/>
-        <location filename="../app/MainWindow.ui" line="868"/>
-        <location filename="../app/MainWindow.ui" line="871"/>
+        <location filename="../app/MainWindow.ui" line="902"/>
+        <location filename="../app/MainWindow.ui" line="905"/>
+        <location filename="../app/MainWindow.ui" line="916"/>
+        <location filename="../app/MainWindow.ui" line="919"/>
         <source>Next Selected Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="239"/>
+        <location filename="../app/MainWindow.ui" line="251"/>
         <source>Previous page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="289"/>
+        <location filename="../app/MainWindow.ui" line="313"/>
         <source>Next page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="339"/>
+        <location filename="../app/MainWindow.ui" line="375"/>
         <source>Filter selected pages only.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1926,6 +1926,16 @@ Debería elimnarlos del proyecto.</translation>
         <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="19"/>
         <source>Right click to edit zone properties. Hold Shift to drag the zone or Shift+Ctrl to copy. Press Del to delete this zone.</source>
         <translation>Clic derecho para editar las propiedades de la zona. Mantenga pulsado Mayúsculas para arrastrar la zona o Mayús+Ctrl para copiarla. Pulse Supr para borrar esta zona.</translation>
+    </message>
+    <message>
+        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="21"/>
+        <source>Hold left mouse button to drag the zone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="23"/>
+        <source>Hold left mouse button to copy and drag the zone.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="26"/>
@@ -3073,101 +3083,101 @@ Debería elimnarlos del proyecto.</translation>
         <translation type="unfinished">Márgenes automáticos</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="105"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="162"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="524"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="547"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="570"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="593"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="616"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="642"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="665"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="688"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="711"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="117"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="186"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="548"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="571"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="594"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="617"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="640"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="666"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="689"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="712"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="735"/>
         <source>...</source>
         <translation type="unfinished">...</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="122"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="134"/>
         <source>Top</source>
         <translation type="unfinished">Arriba</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="129"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="141"/>
         <source>Right</source>
         <translation type="unfinished">Derecha</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="136"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="148"/>
         <source>Left</source>
         <translation type="unfinished">Izquierda</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="212"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="236"/>
         <source>Bottom</source>
         <translation type="unfinished">Abajo</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="261"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="766"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="285"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="790"/>
         <source>Apply To ...</source>
         <translation type="unfinished">Aplicar a...</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="286"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="310"/>
         <source>Alignment</source>
         <translation type="unfinished">Alineación</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="316"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="340"/>
         <source>Match size with other pages</source>
         <translation type="unfinished">Igualar el tamaño con otras páginas</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="356"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="380"/>
         <source>Mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="367"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="391"/>
         <source>Auto</source>
         <comment>auto</comment>
         <translation type="unfinished">Automático</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="372"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="396"/>
         <source>Manual</source>
         <comment>manual</comment>
         <translation type="unfinished">Manual</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="377"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="401"/>
         <source>Original</source>
         <comment>original</comment>
         <translation type="unfinished">Original</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="400"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="424"/>
         <source>Auto aligning</source>
         <translation type="unfinished">Alineación automática</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="436"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="460"/>
         <source>Enable horizontal</source>
         <translation type="unfinished">Habilitar en horizontal</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="476"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="500"/>
         <source>Enable vertical</source>
         <translation type="unfinished">Habilitar en vertical</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="797"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="821"/>
         <source>Guides Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="866"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="890"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -3362,12 +3372,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Opciones</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ApplyDialog.ui" line="29"/>
+        <location filename="../core/filters/select_content/ApplyDialog.ui" line="39"/>
         <source>Apply content box</source>
         <translation type="unfinished">Aplicar caja de contenido</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ApplyDialog.ui" line="39"/>
+        <location filename="../core/filters/select_content/ApplyDialog.ui" line="29"/>
         <source>Apply page box</source>
         <translation type="unfinished">Aplicar caja de página</translation>
     </message>
@@ -3504,60 +3514,60 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="20"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="26"/>
         <source>Page Box</source>
         <translation type="unfinished">Caja de página</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="29"/>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="224"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="35"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="230"/>
         <source>Disable</source>
         <translation type="unfinished">Inhabilitar</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="45"/>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="208"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="51"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="214"/>
         <source>Auto</source>
         <translation type="unfinished">Automático</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="58"/>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="237"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="64"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="243"/>
         <source>Manual</source>
         <translation type="unfinished">Manual</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="74"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="80"/>
         <source>Options</source>
         <translation type="unfinished">Opciones</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="95"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="101"/>
         <source>Shift with corners while they are in black. </source>
         <translation type="unfinished">Cambiar con las esquinas mientras estén en negro. </translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="98"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="104"/>
         <source>Fine Tune Page Corners</source>
         <translation type="unfinished">Ajuste fino de las esquinas de la página</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="135"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="141"/>
         <source>Width</source>
         <translation type="unfinished">Ancho</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="142"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="148"/>
         <source>Height</source>
         <translation type="unfinished">Alto</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="199"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="205"/>
         <source>Content Box</source>
         <translation type="unfinished">Caja de contenido</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/OptionsWidget.ui" line="268"/>
+        <location filename="../core/filters/select_content/OptionsWidget.ui" line="274"/>
         <source>Apply to ...</source>
         <translation type="unfinished">Aplicar a...</translation>
     </message>

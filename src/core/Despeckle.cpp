@@ -280,7 +280,7 @@ void updateDistance(std::unordered_map<Connection, uint32_t, Connection::hash>& 
                     uint32_t label1,
                     uint32_t label2,
                     uint32_t sqdist) {
-  typedef std::unordered_map<Connection, uint32_t, Connection::hash> Connections;
+  using Connections = std::unordered_map<Connection, uint32_t, Connection::hash>;
 
   const Connection conn(label1, label2);
   auto it(conns.find(conn));
@@ -744,7 +744,7 @@ void despeckleImpl(BinaryImage& image,
   // Now build a bidirectional map of distances between neighboring
   // connected components.
 
-  typedef std::unordered_map<Connection, uint32_t, Connection::hash> Connections;  // conn -> sqdist
+  using Connections = std::unordered_map<Connection, uint32_t, Connection::hash>;  // conn -> sqdist
   Connections conns;
 
   voronoiDistances(cmap, distanceMatrix, conns);

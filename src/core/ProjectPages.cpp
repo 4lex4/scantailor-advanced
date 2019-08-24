@@ -299,7 +299,7 @@ std::vector<ImageFileInfo> ProjectPages::toImageFileInfo() const {
 }
 
 void ProjectPages::updateMetadataFrom(const std::vector<ImageFileInfo>& files) {
-  typedef std::unordered_map<ImageId, ImageMetadata> MetadataMap;
+  using MetadataMap = std::unordered_map<ImageId, ImageMetadata>;
   MetadataMap metadataMap;
 
   for (const ImageFileInfo& file : files) {

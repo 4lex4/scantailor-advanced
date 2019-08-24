@@ -25,7 +25,7 @@ class StageSequence : public ref_countable {
   DECLARE_NON_COPYABLE(StageSequence)
 
  public:
-  typedef intrusive_ptr<AbstractFilter> FilterPtr;
+  using FilterPtr = intrusive_ptr<AbstractFilter>;
 
   StageSequence(const intrusive_ptr<ProjectPages>& pages, const PageSelectionAccessor& pageSelectionAccessor);
 

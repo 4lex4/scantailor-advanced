@@ -9,12 +9,12 @@
 template <size_t M, size_t N, typename T>
 class MatMNT;
 
-typedef MatMNT<2, 2, float> Mat22f;
-typedef MatMNT<2, 2, double> Mat22d;
-typedef MatMNT<3, 3, float> Mat33f;
-typedef MatMNT<3, 3, double> Mat33d;
-typedef MatMNT<4, 4, float> Mat44f;
-typedef MatMNT<4, 4, double> Mat44d;
+using Mat22f = MatMNT<2, 2, float>;
+using Mat22d = MatMNT<2, 2, double>;
+using Mat33f = MatMNT<3, 3, float>;
+using Mat33d = MatMNT<3, 3, double>;
+using Mat44f = MatMNT<4, 4, float>;
+using Mat44d = MatMNT<4, 4, double>;
 
 /**
  * \brief A matrix with pre-defined dimensions.
@@ -24,7 +24,7 @@ typedef MatMNT<4, 4, double> Mat44d;
 template <size_t M, size_t N, typename T>
 class MatMNT {
  public:
-  typedef T type;
+  using type = T;
   enum { ROWS = static_cast<int>(M), COLS = static_cast<int>(N) };
 
   /**

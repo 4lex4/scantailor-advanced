@@ -543,7 +543,7 @@ void PageLayoutEstimator::removeInsignificantEdgeSpans(std::deque<Span>& spans) 
   }
   // GapInfo.first: the amount of content preceding this gap.
   // GapInfo.second: the amount of content following this gap.
-  typedef std::pair<int, int> GapInfo;
+  using GapInfo = std::pair<int, int>;
 
   std::vector<GapInfo> gaps(spans.size() - 1);
 
@@ -668,7 +668,7 @@ PageLayout PageLayoutEstimator::processContentSpansTwoPages(const LayoutType lay
   } else {
     // GapInfo.first: the amount of content preceding this gap.
     // GapInfo.second: the amount of content following this gap.
-    typedef std::pair<int, int> GapInfo;
+    using GapInfo = std::pair<int, int>;
 
     std::vector<GapInfo> gaps(spans.size() - 1);
 #if 0

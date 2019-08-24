@@ -22,7 +22,7 @@ class ZoneContextMenuItem {
    * you will need to make sure it's disconnected from ZoneInteractionContext
    * before ZoneInteractionContext destroys.
    */
-  typedef boost::function<InteractionHandler*(InteractionState&)> Callback;
+  using Callback = boost::function<InteractionHandler*(InteractionState&)>;
 
   ZoneContextMenuItem(const QString& label, const Callback& callback) : m_label(label), m_callback(callback) {}
 

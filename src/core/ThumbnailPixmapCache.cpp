@@ -112,16 +112,15 @@ class ThumbnailPixmapCache::Impl : public QThread {
   class LoadQueueTag;
   class RemoveQueueTag;
 
-  typedef multi_index_container<
+  using Container = multi_index_container<
       Item,
       indexed_by<hashed_unique<tag<ItemsByKeyTag>, member<Item, ImageId, &Item::imageId>, std::hash<ImageId>>,
                  sequenced<tag<LoadQueueTag>>,
-                 sequenced<tag<RemoveQueueTag>>>>
-      Container;
+                 sequenced<tag<RemoveQueueTag>>>>;
 
-  typedef Container::index<ItemsByKeyTag>::type ItemsByKey;
-  typedef Container::index<LoadQueueTag>::type LoadQueue;
-  typedef Container::index<RemoveQueueTag>::type RemoveQueue;
+  using ItemsByKey = Container::index<ItemsByKeyTag>::type;
+  using LoadQueue = Container::index<LoadQueueTag>::type;
+  using RemoveQueue = Container::index<RemoveQueueTag>::type;
 
   class BackgroundLoader : public QObject {
    public:
@@ -732,7 +731,7 @@ void ThumbnailPixmapCache::Impl::processLoadResult(LoadResultEvent* result) {
   }  // mutex scope
   // Notify listeners.
   const ThumbnailLoadResult loadResult(result->status(), pixmap);
-  typedef std::weak_ptr<CompletionHandler> WeakHandler;
+  using WeakHandler = std::weak_ptr<CompletionHandler>;
   for (const WeakHandler& wh : completionHandlers) {
     const std::shared_ptr<CompletionHandler> sh(wh.lock());
     if (sh) {

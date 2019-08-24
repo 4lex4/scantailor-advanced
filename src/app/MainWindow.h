@@ -187,7 +187,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   enum SavePromptResult { SAVE, DONT_SAVE, CANCEL };
 
-  typedef intrusive_ptr<AbstractFilter> FilterPtr;
+  using FilterPtr = intrusive_ptr<AbstractFilter>;
 
   void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership) override;
 

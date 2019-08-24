@@ -200,7 +200,7 @@ HomographicTransform<2, double> CylindricalSurfaceDewarper::fourPoint2DHomograph
   double* pb = B.data();
   int i = 0;
 
-  typedef std::pair<QPointF, QPointF> Pair;
+  using Pair = std::pair<QPointF, QPointF>;
   for (const Pair& pair : pairs) {
     const QPointF from(pair.first);
     const QPointF to(pair.second);
@@ -247,7 +247,7 @@ HomographicTransform<1, double> CylindricalSurfaceDewarper::threePoint1DHomograp
   double* pa = A.data();
   double* pb = B.data();
 
-  typedef std::pair<double, double> Pair;
+  using Pair = std::pair<double, double>;
   for (const Pair& pair : pairs) {
     const double from = pair.first;
     const double to = pair.second;

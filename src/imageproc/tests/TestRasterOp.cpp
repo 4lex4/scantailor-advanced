@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(test_small_image) {
   BinaryImage img(makeBinaryImage(inp, 9, 8));
   const BinaryImage maskImg(makeBinaryImage(mask, 9, 8));
 
-  typedef RopAnd<RopDst, RopSrc> Rop;
+  using Rop = RopAnd<RopDst, RopSrc>;
 
   rasterOp<Rop>(img, img.rect(), maskImg, QPoint(0, 0));
   BOOST_CHECK(img == makeBinaryImage(out, 9, 8));
@@ -63,7 +63,7 @@ class Tester1 {
   bool testSubImage(const QRect& dstRect, const QPoint& srcPt) const;
 
  private:
-  typedef RopXor<RopDst, RopSrc> Rop;
+  using Rop = RopXor<RopDst, RopSrc>;
 
   BinaryImage m_src;
   BinaryImage m_dstBefore;

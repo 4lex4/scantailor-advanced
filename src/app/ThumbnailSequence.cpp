@@ -53,7 +53,7 @@ class ThumbnailSequence::Item {
 
 class ThumbnailSequence::GraphicsScene : public QGraphicsScene {
  public:
-  typedef boost::function<void(QGraphicsSceneContextMenuEvent*)> ContextMenuEventCallback;
+  using ContextMenuEventCallback = boost::function<void(QGraphicsSceneContextMenuEvent*)>;
 
   void setContextMenuEventCallback(ContextMenuEventCallback callback) { m_contextMenuEventCallback = callback; }
 
@@ -140,16 +140,15 @@ class ThumbnailSequence::Impl {
   class ItemsInOrderTag;
   class SelectedThenUnselectedTag;
 
-  typedef multi_index_container<
+  using Container = multi_index_container<
       Item,
       indexed_by<hashed_unique<tag<ItemsByIdTag>, const_mem_fun<Item, const PageId&, &Item::pageId>, std::hash<PageId>>,
                  sequenced<tag<ItemsInOrderTag>>,
-                 sequenced<tag<SelectedThenUnselectedTag>>>>
-      Container;
+                 sequenced<tag<SelectedThenUnselectedTag>>>>;
 
-  typedef Container::index<ItemsByIdTag>::type ItemsById;
-  typedef Container::index<ItemsInOrderTag>::type ItemsInOrder;
-  typedef Container::index<SelectedThenUnselectedTag>::type SelectedThenUnselected;
+  using ItemsById = Container::index<ItemsByIdTag>::type;
+  using ItemsInOrder = Container::index<ItemsInOrderTag>::type;
+  using SelectedThenUnselected = Container::index<SelectedThenUnselectedTag>::type;
 
   void invalidateThumbnailImpl(ItemsById::iterator idIt);
 

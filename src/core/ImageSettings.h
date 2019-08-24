@@ -54,7 +54,7 @@ class ImageSettings : public ref_countable {
   std::unique_ptr<PageParams> getPageParams(const PageId& pageId) const;
 
  private:
-  typedef std::unordered_map<PageId, PageParams> PerPageParams;
+  using PerPageParams = std::unordered_map<PageId, PageParams>;
 
   mutable QMutex m_mutex;
   PerPageParams m_perPageParams;

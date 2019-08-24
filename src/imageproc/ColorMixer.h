@@ -12,16 +12,16 @@ namespace imageproc {
 namespace color_mixer_impl {
 template <typename Mixer, bool IntegerAccum>
 struct Switcher {
-  typedef typename Mixer::accumType accumType;
-  typedef typename Mixer::resultType resultType;
+  using accumType = typename Mixer::accumType;
+  using resultType = typename Mixer::resultType;
 
   static resultType mix(const Mixer* mixer, accumType totalWeight) { return mixer->nonIntegerMix(totalWeight); }
 };
 
 template <typename Mixer>
 struct Switcher<Mixer, true> {
-  typedef typename Mixer::accumType accumType;
-  typedef typename Mixer::resultType resultType;
+  using accumType = typename Mixer::accumType;
+  using resultType = typename Mixer::resultType;
 
   static resultType mix(const Mixer* mixer, accumType totalWeight) { return mixer->integerMix(totalWeight); }
 };
@@ -39,8 +39,8 @@ class GrayColorMixer {
   friend struct color_mixer_impl::Switcher;
 
  public:
-  typedef AccumType accumType;
-  typedef uint8_t resultType;
+  using accumType = AccumType;
+  using resultType = uint8_t;
 
   GrayColorMixer() : m_accum() {}
 
@@ -62,7 +62,7 @@ class GrayColorMixer {
     assert(totalWeight > 0);
 
     using namespace color_mixer_impl;
-    typedef std::numeric_limits<AccumType> traits;
+    using traits = std::numeric_limits<AccumType>;
     return Switcher<GrayColorMixer<AccumType>, traits::is_integer>::mix(this, totalWeight);
   }
 
@@ -95,8 +95,8 @@ class RgbColorMixer {
   friend struct color_mixer_impl::Switcher;
 
  public:
-  typedef AccumType accumType;
-  typedef uint32_t resultType;
+  using accumType = AccumType;
+  using resultType = uint32_t;
 
   RgbColorMixer() : m_redAccum(), m_greenAccum(), m_blueAccum() {}
 
@@ -112,7 +112,7 @@ class RgbColorMixer {
     assert(totalWeight > 0);
 
     using namespace color_mixer_impl;
-    typedef std::numeric_limits<AccumType> traits;
+    using traits = std::numeric_limits<AccumType>;
     return Switcher<RgbColorMixer<AccumType>, traits::is_integer>::mix(this, totalWeight);
   }
 
@@ -157,8 +157,8 @@ class ArgbColorMixer {
   friend struct color_mixer_impl::Switcher;
 
  public:
-  typedef AccumType accumType;
-  typedef uint32_t resultType;
+  using accumType = AccumType;
+  using resultType = uint32_t;
 
   ArgbColorMixer() : m_alphaAccum(), m_redAccum(), m_greenAccum(), m_blueAccum() {}
 
@@ -183,7 +183,7 @@ class ArgbColorMixer {
     }
 
     using namespace color_mixer_impl;
-    typedef std::numeric_limits<AccumType> traits;
+    using traits = std::numeric_limits<AccumType>;
     return Switcher<ArgbColorMixer<AccumType>, traits::is_integer>::mix(this, totalWeight);
   }
 

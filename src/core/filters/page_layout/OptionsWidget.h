@@ -92,7 +92,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
   void applyAlignment(const std::set<PageId>& pages);
 
  private:
-  typedef std::unordered_map<QToolButton*, Alignment> AlignmentByButton;
+  using AlignmentByButton = std::unordered_map<QToolButton*, Alignment>;
 
   void updateMarginsDisplay();
 

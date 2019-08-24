@@ -16,7 +16,7 @@
 template <typename T>
 class MatT {
  public:
-  typedef T type;
+  using type = T;
 
   /**
    * \brief Constructs an empty 0x0 matrix.

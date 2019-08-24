@@ -14,7 +14,7 @@
 template <typename T>
 class VecT {
  public:
-  typedef T type;
+  using type = T;
 
   /**
    * \brief Constructs an empty vector.

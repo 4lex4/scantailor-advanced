@@ -314,7 +314,7 @@ QImage transform(const QImage& src,
         // which is guaranteed to have a standard palette.
         GrayImage graySrc(src);
         GrayImage grayDst(dstRect.size());
-        typedef uint32_t AccumType;
+        using AccumType = uint32_t;
         transformGeneric<uint8_t, GrayColorMixer<AccumType>>(
             graySrc.data(), graySrc.stride(), src.size(), grayDst.data(), grayDst.stride(), xform, dstRect,
             outsidePixels.grayLevel(), outsidePixels.flags(), minMappingArea);
@@ -331,7 +331,7 @@ QImage transform(const QImage& src,
         QImage dst(dstRect.size(), QImage::Format_RGB32);
         badAllocIfNull(dst);
 
-        typedef uint32_t AccumType;
+        using AccumType = uint32_t;
         transformGeneric<uint32_t, RgbColorMixer<AccumType>>(
             (const uint32_t*) srcRgb32.bits(), srcRgb32.bytesPerLine() / 4, srcRgb32.size(), (uint32_t*) dst.bits(),
             dst.bytesPerLine() / 4, xform, dstRect, outsidePixels.rgb(), outsidePixels.flags(), minMappingArea);
@@ -345,7 +345,7 @@ QImage transform(const QImage& src,
         QImage dst(dstRect.size(), QImage::Format_ARGB32);
         badAllocIfNull(dst);
 
-        typedef float AccumType;
+        using AccumType = float;
         transformGeneric<uint32_t, ArgbColorMixer<AccumType>>(
             (const uint32_t*) srcArgb32.bits(), srcArgb32.bytesPerLine() / 4, srcArgb32.size(), (uint32_t*) dst.bits(),
             dst.bytesPerLine() / 4, xform, dstRect, outsidePixels.rgba(), outsidePixels.flags(), minMappingArea);
@@ -375,7 +375,7 @@ GrayImage transformToGray(const QImage& src,
   const GrayImage graySrc(src);
   GrayImage dst(dstRect.size());
 
-  typedef unsigned AccumType;
+  using AccumType = unsigned;
   transformGeneric<uint8_t, GrayColorMixer<AccumType>>(graySrc.data(), graySrc.stride(), graySrc.size(), dst.data(),
                                                        dst.stride(), xform, dstRect, outsidePixels.grayLevel(),
                                                        outsidePixels.flags(), minMappingArea);

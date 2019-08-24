@@ -31,7 +31,7 @@ class ProjectWriter {
   DECLARE_NON_COPYABLE(ProjectWriter)
 
  public:
-  typedef intrusive_ptr<AbstractFilter> FilterPtr;
+  using FilterPtr = intrusive_ptr<AbstractFilter>;
 
   ProjectWriter(const intrusive_ptr<ProjectPages>& pageSequence,
                 const SelectedPage& selectedPage,
@@ -87,37 +87,33 @@ class ProjectWriter {
 
   class Sequenced;
 
-  typedef std::unordered_map<ImageId, ImageMetadata> MetadataByImage;
+  using MetadataByImage = std::unordered_map<ImageId, ImageMetadata>;
 
-  typedef boost::multi_index::multi_index_container<
+  using Directories = boost::multi_index::multi_index_container<
       Directory,
       boost::multi_index::indexed_by<
           boost::multi_index::hashed_unique<boost::multi_index::member<Directory, QString, &Directory::path>,
                                             hashes::hash<QString>>,
-          boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
-      Directories;
+          boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>;
 
-  typedef boost::multi_index::multi_index_container<
+  using Files = boost::multi_index::multi_index_container<
       File,
       boost::multi_index::indexed_by<
           boost::multi_index::hashed_unique<boost::multi_index::member<File, QString, &File::path>,
                                             hashes::hash<QString>>,
-          boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
-      Files;
+          boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>;
 
-  typedef boost::multi_index::multi_index_container<
+  using Images = boost::multi_index::multi_index_container<
       Image,
       boost::multi_index::indexed_by<
           boost::multi_index::hashed_unique<boost::multi_index::member<Image, ImageId, &Image::id>, std::hash<ImageId>>,
-          boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
-      Images;
+          boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>;
 
-  typedef boost::multi_index::multi_index_container<
+  using Pages = boost::multi_index::multi_index_container<
       Page,
       boost::multi_index::indexed_by<
           boost::multi_index::hashed_unique<boost::multi_index::member<Page, PageId, &Page::id>, std::hash<PageId>>,
-          boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>
-      Pages;
+          boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>;
 
   QDomElement processDirectories(QDomDocument& doc) const;
 

@@ -14,8 +14,8 @@ class BackgroundExecutor {
   DECLARE_NON_COPYABLE(BackgroundExecutor)
 
  public:
-  typedef intrusive_ptr<AbstractCommand<void>> TaskResultPtr;
-  typedef intrusive_ptr<AbstractCommand<TaskResultPtr>> TaskPtr;
+  using TaskResultPtr = intrusive_ptr<AbstractCommand<void>>;
+  using TaskPtr = intrusive_ptr<AbstractCommand<TaskResultPtr>>;
 
   BackgroundExecutor();
 
@@ -47,8 +47,8 @@ class BackgroundExecutor {
   class Impl;
   class Dispatcher;
 
-  typedef PayloadEvent<TaskPtr> TaskEvent;
-  typedef PayloadEvent<TaskResultPtr> ResultEvent;
+  using TaskEvent = PayloadEvent<TaskPtr>;
+  using ResultEvent = PayloadEvent<TaskResultPtr>;
 
   std::unique_ptr<Impl> m_impl;
 };

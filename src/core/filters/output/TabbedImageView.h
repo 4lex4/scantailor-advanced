@@ -17,7 +17,7 @@ namespace output {
 class TabbedImageView : public QTabWidget {
   Q_OBJECT
  private:
-  typedef std::unordered_map<ImageViewTab, QRectF, std::hash<int>> TabImageRectMap;
+  using TabImageRectMap = std::unordered_map<ImageViewTab, QRectF, std::hash<int>>;
 
  public:
   explicit TabbedImageView(QWidget* parent = nullptr);

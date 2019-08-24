@@ -1903,7 +1903,7 @@ void OutputGenerator::Processor::modifyBinarizationMask(BinaryImage& bwMask,
   QTransform xform = m_xform.transform();
   xform *= QTransform().translate(-maskRect.x(), -maskRect.y());
 
-  typedef PictureLayerProperty PLP;
+  using PLP = PictureLayerProperty;
 
   // Pass 1: ERASER1
   for (const Zone& zone : zones) {

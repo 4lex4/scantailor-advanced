@@ -37,7 +37,7 @@ class Settings : public ref_countable {
   bool isRotationNull(const ImageId& imageId) const;
 
  private:
-  typedef std::unordered_map<ImageId, OrthogonalRotation> PerImageRotation;
+  using PerImageRotation = std::unordered_map<ImageId, OrthogonalRotation>;
 
   void setImageRotationLocked(const ImageId& imageId, const OrthogonalRotation& rotation);
 

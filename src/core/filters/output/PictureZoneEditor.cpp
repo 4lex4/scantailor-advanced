@@ -208,7 +208,7 @@ void PictureZoneEditor::paintOverPictureMask(QPainter& painter) {
   painter.setPen(Qt::NoPen);
   painter.setBrush(QColor(maskColor));
 
-  typedef PictureLayerProperty PLP;
+  using PLP = PictureLayerProperty;
 
   painter.setCompositionMode(QPainter::CompositionMode_Clear);
 

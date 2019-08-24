@@ -10,7 +10,7 @@
 template <typename Res, typename... ArgTypes>
 class AbstractCommand : public ref_countable {
  public:
-  typedef intrusive_ptr<AbstractCommand> Ptr;
+  using Ptr = intrusive_ptr<AbstractCommand>;
 
   virtual Res operator()(ArgTypes... args) = 0;
 };

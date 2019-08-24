@@ -72,7 +72,7 @@ class FastQueue {
     }
   };
 
-  typedef boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false>> ChunkList;
+  using ChunkList = boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false>>;
 
   static size_t defaultChunkCapacity() { return (sizeof(T) >= 4096) ? 1 : 4096 / sizeof(T); }
 

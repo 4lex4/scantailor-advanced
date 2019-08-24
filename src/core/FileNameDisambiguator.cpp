@@ -49,18 +49,17 @@ class FileNameDisambiguator::Impl {
     Item(const QString& filePath, const QString& fileName, int lbl);
   };
 
-  typedef multi_index_container<
+  using Container = multi_index_container<
       Item,
       indexed_by<
           ordered_unique<tag<ItemsByFilePathTag>, member<Item, QString, &Item::filePath>>,
           ordered_unique<tag<ItemsByFileNameLabelTag>,
                          composite_key<Item, member<Item, QString, &Item::fileName>, member<Item, int, &Item::label>>>,
-          sequenced<tag<UnorderedItemsTag>>>>
-      Container;
+          sequenced<tag<UnorderedItemsTag>>>>;
 
-  typedef Container::index<ItemsByFilePathTag>::type ItemsByFilePath;
-  typedef Container::index<ItemsByFileNameLabelTag>::type ItemsByFileNameLabel;
-  typedef Container::index<UnorderedItemsTag>::type UnorderedItems;
+  using ItemsByFilePath = Container::index<ItemsByFilePathTag>::type;
+  using ItemsByFileNameLabel = Container::index<ItemsByFileNameLabelTag>::type;
+  using UnorderedItems = Container::index<UnorderedItemsTag>::type;
 
   mutable QMutex m_mutex;
   Container m_items;

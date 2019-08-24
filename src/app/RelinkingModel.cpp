@@ -58,17 +58,16 @@ class RelinkingModel::StatusUpdateThread : private QThread {
   class HashedByPathTag;
   class OrderedByPriorityTag;
 
-  typedef boost::multi_index_container<
+  using TaskList = boost::multi_index_container<
       Task,
       boost::multi_index::indexed_by<
           boost::multi_index::hashed_unique<boost::multi_index::tag<HashedByPathTag>,
                                             boost::multi_index::member<Task, QString, &Task::path>,
                                             hashes::hash<QString>>,
-          boost::multi_index::sequenced<boost::multi_index::tag<OrderedByPriorityTag>>>>
-      TaskList;
+          boost::multi_index::sequenced<boost::multi_index::tag<OrderedByPriorityTag>>>>;
 
-  typedef TaskList::index<HashedByPathTag>::type TasksByPath;
-  typedef TaskList::index<OrderedByPriorityTag>::type TasksByPriority;
+  using TasksByPath = TaskList::index<HashedByPathTag>::type;
+  using TasksByPriority = TaskList::index<OrderedByPriorityTag>::type;
 
   void run() override;
 
@@ -290,7 +289,7 @@ void RelinkingModel::requestStatusUpdate(const QModelIndex& index) {
 }
 
 void RelinkingModel::customEvent(QEvent* event) {
-  typedef PayloadEvent<StatusUpdateResponse> ResponseEvent;
+  using ResponseEvent = PayloadEvent<StatusUpdateResponse>;
   auto* evt = dynamic_cast<ResponseEvent*>(event);
   assert(evt);
 

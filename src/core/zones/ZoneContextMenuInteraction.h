@@ -34,8 +34,8 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
     StandardMenuItems(const ZoneContextMenuItem& propertiesItem, const ZoneContextMenuItem& deleteItem);
   };
 
-  typedef boost::function<std::vector<ZoneContextMenuItem>(const EditableZoneSet::Zone&, const StandardMenuItems&)>
-      MenuCustomizer;
+  using MenuCustomizer
+      = boost::function<std::vector<ZoneContextMenuItem>(const EditableZoneSet::Zone&, const StandardMenuItems&)>;
 
   /**
    * \note This factory method will return null if there are no zones

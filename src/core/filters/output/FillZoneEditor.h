@@ -56,7 +56,7 @@ class FillZoneEditor : public ImageViewBase, private InteractionHandler {
  private:
   class MenuCustomizer;
 
-  typedef QColor (*ColorAdapter)(const QColor&);
+  using ColorAdapter = QColor (*)(const QColor&);
 
   InteractionHandler* createContextMenuInteraction(InteractionState& interaction);
 

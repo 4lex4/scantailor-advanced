@@ -25,6 +25,6 @@ class FilterResult : public ref_countable {
 };
 
 
-typedef intrusive_ptr<FilterResult> FilterResultPtr;
+using FilterResultPtr = intrusive_ptr<FilterResult>;
 
 #endif

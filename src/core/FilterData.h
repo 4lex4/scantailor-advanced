@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef FILTERDATA_H_
-#define FILTERDATA_H_
+#ifndef SCANTAILOR_CORE_FILTERDATA_H_
+#define SCANTAILOR_CORE_FILTERDATA_H_
 
 #include <BinaryThreshold.h>
 #include <GrayImage.h>
@@ -43,4 +43,4 @@ class FilterData {
 };
 
 
-#endif  // ifndef FILTERDATA_H_
+#endif  // ifndef SCANTAILOR_CORE_FILTERDATA_H_

@@ -7,18 +7,18 @@
 RelinkablePath::RelinkablePath(const QString& path, Type type) : m_normalizedPath(normalize(path)), m_type(type) {}
 
 QString RelinkablePath::normalize(const QString& path) {
-  QString front_slashes(path);
-  front_slashes.replace(QChar('\\'), QLatin1String("/"));
+  QString frontSlashes(path);
+  frontSlashes.replace(QChar('\\'), QLatin1String("/"));
 
-  QStringList new_components;
-  for (const QString& comp : front_slashes.split(QChar('/'), QString::KeepEmptyParts)) {
+  QStringList newComponents;
+  for (const QString& comp : frontSlashes.split(QChar('/'), QString::KeepEmptyParts)) {
     if (comp.isEmpty()) {
-      if (new_components.isEmpty()
+      if (newComponents.isEmpty()
 #if _WIN32
-          || (new_components.size() == 1 && new_components.front().isEmpty())
+          || (newComponents.size() == 1 && newComponents.front().isEmpty())
 #endif
       ) {
-        new_components.push_back(comp);
+        newComponents.push_back(comp);
       } else {
         // This will get rid of redundant slashes, including the trailing slash.
         continue;
@@ -26,18 +26,18 @@ QString RelinkablePath::normalize(const QString& path) {
     } else if (comp == ".") {
       continue;
     } else if (comp == "..") {
-      if (new_components.isEmpty()) {
+      if (newComponents.isEmpty()) {
         return QString();  // Error.
       }
-      const QString& last_comp = new_components.back();
-      if (last_comp.isEmpty() || last_comp.endsWith(QChar(':'))) {
+      const QString& lastComp = newComponents.back();
+      if (lastComp.isEmpty() || lastComp.endsWith(QChar(':'))) {
         return QString();  // Error.
       }
-      new_components.pop_back();
+      newComponents.pop_back();
     } else {
-      new_components.push_back(comp);
+      newComponents.push_back(comp);
     }
   }
 
-  return new_components.join(QChar('/'));
+  return newComponents.join(QChar('/'));
 }  // RelinkablePath::normalize

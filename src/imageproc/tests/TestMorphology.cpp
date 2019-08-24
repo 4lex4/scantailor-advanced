@@ -1,14 +1,14 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#include <QImage>
-#include <QPoint>
-#include <QSize>
-#include <boost/test/auto_unit_test.hpp>
 #include <BWColor.h>
 #include <BinaryImage.h>
 #include <GrayImage.h>
 #include <Morphology.h>
+#include <QImage>
+#include <QPoint>
+#include <QSize>
+#include <boost/test/auto_unit_test.hpp>
 #include "Utils.h"
 
 namespace imageproc {
@@ -145,8 +145,8 @@ BOOST_AUTO_TEST_CASE(test_dilate_3x3_gray_shrinked) {
 
   const GrayImage img(makeGrayImage(inp, 9, 9));
   const GrayImage control(makeGrayImage(out, 7, 7));
-  const QRect dst_area(img.rect().adjusted(1, 1, -1, -1));
-  BOOST_CHECK(dilateGray(img, QSize(3, 3), dst_area) == control);
+  const QRect dstArea(img.rect().adjusted(1, 1, -1, -1));
+  BOOST_CHECK(dilateGray(img, QSize(3, 3), dstArea) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_open_1x2_gray) {
@@ -188,9 +188,9 @@ BOOST_AUTO_TEST_CASE(test_dilate_3x3_narrowing_white) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 4, 9));
-  const QRect dst_rect(5, 0, 4, 9);
+  const QRect dstRect(5, 0, 4, 9);
 
-  BOOST_CHECK(dilateBrick(img, QSize(3, 3), dst_rect, WHITE) == control);
+  BOOST_CHECK(dilateBrick(img, QSize(3, 3), dstRect, WHITE) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_dilate_5x5_narrowing_white) {
@@ -210,9 +210,9 @@ BOOST_AUTO_TEST_CASE(test_dilate_5x5_narrowing_white) {
 
   const BinaryImage img(makeBinaryImage(inp, 11, 9));
   const BinaryImage control(makeBinaryImage(out, 6, 5));
-  const QRect dst_rect(4, 1, 6, 5);
+  const QRect dstRect(4, 1, 6, 5);
 
-  BOOST_CHECK(dilateBrick(img, QSize(5, 5), dst_rect, WHITE) == control);
+  BOOST_CHECK(dilateBrick(img, QSize(5, 5), dstRect, WHITE) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_dilate_3x3_narrowing_black) {
@@ -225,9 +225,9 @@ BOOST_AUTO_TEST_CASE(test_dilate_3x3_narrowing_black) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 4, 9));
-  const QRect dst_rect(QRect(5, 0, 4, 9));
+  const QRect dstRect(QRect(5, 0, 4, 9));
 
-  BOOST_CHECK(dilateBrick(img, QSize(3, 3), dst_rect, BLACK) == control);
+  BOOST_CHECK(dilateBrick(img, QSize(3, 3), dstRect, BLACK) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_dilate_3x3_widening_white) {
@@ -244,9 +244,9 @@ BOOST_AUTO_TEST_CASE(test_dilate_3x3_widening_white) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 11, 11));
-  const QRect dst_rect(img.rect().adjusted(-1, -1, 1, 1));
+  const QRect dstRect(img.rect().adjusted(-1, -1, 1, 1));
 
-  BOOST_CHECK(dilateBrick(img, QSize(3, 3), dst_rect, WHITE) == control);
+  BOOST_CHECK(dilateBrick(img, QSize(3, 3), dstRect, WHITE) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_dilate_3x3_widening_black) {
@@ -263,9 +263,9 @@ BOOST_AUTO_TEST_CASE(test_dilate_3x3_widening_black) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 11, 11));
-  const QRect dst_rect(img.rect().adjusted(-1, -1, 1, 1));
+  const QRect dstRect(img.rect().adjusted(-1, -1, 1, 1));
 
-  BOOST_CHECK(dilateBrick(img, QSize(3, 3), dst_rect, BLACK) == control);
+  BOOST_CHECK(dilateBrick(img, QSize(3, 3), dstRect, BLACK) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_dilate_3x1_out_of_brick_white) {
@@ -303,14 +303,14 @@ BOOST_AUTO_TEST_CASE(test_dilate_1x3_out_of_brick_black) {
 BOOST_AUTO_TEST_CASE(test_large_dilate) {
   BinaryImage img(110, 110);
   img.fill(WHITE);
-  const QRect initial_rect(img.rect().center(), QSize(1, 1));
-  img.fill(initial_rect, BLACK);
+  const QRect initialRect(img.rect().center(), QSize(1, 1));
+  img.fill(initialRect, BLACK);
 
   const Brick brick(QSize(80, 80));
-  const QRect extended_rect(initial_rect.adjusted(brick.minX(), brick.minY(), brick.maxX(), brick.maxY()));
+  const QRect extendedRect(initialRect.adjusted(brick.minX(), brick.minY(), brick.maxX(), brick.maxY()));
 
   BinaryImage control(img);
-  control.fill(extended_rect, BLACK);
+  control.fill(extendedRect, BLACK);
 
   BOOST_CHECK(dilateBrick(img, brick, img.rect(), WHITE) == control);
 }
@@ -414,9 +414,9 @@ BOOST_AUTO_TEST_CASE(test_open_2x2_shifted_white) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 9, 9));
-  const QRect dst_rect(img.rect().translated(2, 1));
+  const QRect dstRect(img.rect().translated(2, 1));
 
-  BOOST_CHECK(openBrick(img, QSize(2, 2), dst_rect, WHITE) == control);
+  BOOST_CHECK(openBrick(img, QSize(2, 2), dstRect, WHITE) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_open_2x2_shifted_black) {
@@ -431,9 +431,9 @@ BOOST_AUTO_TEST_CASE(test_open_2x2_shifted_black) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 9, 9));
-  const QRect dst_rect(img.rect().translated(2, 1));
+  const QRect dstRect(img.rect().translated(2, 1));
 
-  BOOST_CHECK(openBrick(img, QSize(2, 2), dst_rect, BLACK) == control);
+  BOOST_CHECK(openBrick(img, QSize(2, 2), dstRect, BLACK) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_open_2x2_narrowing) {
@@ -447,10 +447,10 @@ BOOST_AUTO_TEST_CASE(test_open_2x2_narrowing) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 4, 4));
-  const QRect dst_rect(img.rect().adjusted(2, 2, -3, -3));
+  const QRect dstRect(img.rect().adjusted(2, 2, -3, -3));
 
-  BOOST_CHECK(openBrick(img, QSize(2, 2), dst_rect, WHITE) == control);
-  BOOST_CHECK(openBrick(img, QSize(2, 2), dst_rect, BLACK) == control);
+  BOOST_CHECK(openBrick(img, QSize(2, 2), dstRect, WHITE) == control);
+  BOOST_CHECK(openBrick(img, QSize(2, 2), dstRect, BLACK) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_close_2x2_white) {
@@ -495,9 +495,9 @@ BOOST_AUTO_TEST_CASE(test_close_2x2_shifted_white) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 9, 9));
-  const QRect dst_rect(img.rect().translated(2, 1));
+  const QRect dstRect(img.rect().translated(2, 1));
 
-  BOOST_CHECK(closeBrick(img, QSize(2, 2), dst_rect, WHITE) == control);
+  BOOST_CHECK(closeBrick(img, QSize(2, 2), dstRect, WHITE) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_close_2x2_shifted_black) {
@@ -512,9 +512,9 @@ BOOST_AUTO_TEST_CASE(test_close_2x2_shifted_black) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 9, 9));
-  const QRect dst_rect(img.rect().translated(2, 1));
+  const QRect dstRect(img.rect().translated(2, 1));
 
-  BOOST_CHECK(closeBrick(img, QSize(2, 2), dst_rect, BLACK) == control);
+  BOOST_CHECK(closeBrick(img, QSize(2, 2), dstRect, BLACK) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_close_2x2_narrowing) {
@@ -528,10 +528,10 @@ BOOST_AUTO_TEST_CASE(test_close_2x2_narrowing) {
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
   const BinaryImage control(makeBinaryImage(out, 4, 4));
-  const QRect dst_rect(img.rect().adjusted(2, 2, -3, -3));
+  const QRect dstRect(img.rect().adjusted(2, 2, -3, -3));
 
-  BOOST_CHECK(closeBrick(img, QSize(2, 2), dst_rect, WHITE) == control);
-  BOOST_CHECK(closeBrick(img, QSize(2, 2), dst_rect, BLACK) == control);
+  BOOST_CHECK(closeBrick(img, QSize(2, 2), dstRect, WHITE) == control);
+  BOOST_CHECK(closeBrick(img, QSize(2, 2), dstRect, BLACK) == control);
 }
 
 BOOST_AUTO_TEST_CASE(test_hmm_1) {
@@ -576,11 +576,11 @@ BOOST_AUTO_TEST_CASE(test_hmm_surroundings_1) {
   const QPoint origin(1, 1);
 
   const BinaryImage img(makeBinaryImage(inp, 9, 9));
-  const BinaryImage control_w(makeBinaryImage(out_white, 9, 9));
-  const BinaryImage control_b(makeBinaryImage(out_black, 9, 9));
+  const BinaryImage controlW(makeBinaryImage(out_white, 9, 9));
+  const BinaryImage controlB(makeBinaryImage(out_black, 9, 9));
 
-  BOOST_CHECK(hitMissMatch(img, WHITE, pattern, 3, 3, origin) == control_w);
-  BOOST_CHECK(hitMissMatch(img, BLACK, pattern, 3, 3, origin) == control_b);
+  BOOST_CHECK(hitMissMatch(img, WHITE, pattern, 3, 3, origin) == controlW);
+  BOOST_CHECK(hitMissMatch(img, BLACK, pattern, 3, 3, origin) == controlB);
 }
 
 BOOST_AUTO_TEST_CASE(test_hmm_surroundings_2) {

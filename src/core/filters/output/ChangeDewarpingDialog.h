@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_
-#define OUTPUT_CHANGE_DEWARPING_DIALOG_H_
+#ifndef SCANTAILOR_OUTPUT_CHANGEDEWARPINGDIALOG_H_
+#define SCANTAILOR_OUTPUT_CHANGEDEWARPINGDIALOG_H_
 
 #include <QButtonGroup>
 #include <QDialog>
@@ -21,9 +21,9 @@ class ChangeDewarpingDialog : public QDialog {
   Q_OBJECT
  public:
   ChangeDewarpingDialog(QWidget* parent,
-                        const PageId& cur_page,
+                        const PageId& curPage,
                         const DewarpingOptions& dewarpingOptions,
-                        const PageSelectionAccessor& page_selection_accessor);
+                        const PageSelectionAccessor& pageSelectionAccessor);
 
   ~ChangeDewarpingDialog() override;
 
@@ -45,4 +45,4 @@ class ChangeDewarpingDialog : public QDialog {
   QButtonGroup* m_scopeGroup;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_CHANGE_DEWARPING_DIALOG_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_CHANGEDEWARPINGDIALOG_H_

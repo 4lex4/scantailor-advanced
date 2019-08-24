@@ -3,13 +3,13 @@
 
 #include "SelectedPage.h"
 
-SelectedPage::SelectedPage(const PageId& page_id, PageView view) {
-  set(page_id, view);
+SelectedPage::SelectedPage(const PageId& pageId, PageView view) {
+  set(pageId, view);
 }
 
-void SelectedPage::set(const PageId& page_id, PageView view) {
-  if ((view == PAGE_VIEW) || (page_id.imageId() != m_pageId.imageId())) {
-    m_pageId = page_id;
+void SelectedPage::set(const PageId& pageId, PageView view) {
+  if ((view == PAGE_VIEW) || (pageId.imageId() != m_pageId.imageId())) {
+    m_pageId = pageId;
   }
 }
 

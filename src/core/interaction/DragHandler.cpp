@@ -5,14 +5,14 @@
 #include <QMouseEvent>
 #include "ImageViewBase.h"
 
-DragHandler::DragHandler(ImageViewBase& image_view)
-    : m_imageView(image_view), m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter) {
+DragHandler::DragHandler(ImageViewBase& imageView)
+    : m_imageView(imageView), m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter) {
   init();
 }
 
-DragHandler::DragHandler(ImageViewBase& image_view,
-                         const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter)
-    : m_imageView(image_view), m_interactionPermitter(explicit_interaction_permitter) {
+DragHandler::DragHandler(ImageViewBase& imageView,
+                         const boost::function<bool(const InteractionState&)>& explicitInteractionPermitter)
+    : m_imageView(imageView), m_interactionPermitter(explicitInteractionPermitter) {
   init();
 }
 
@@ -51,13 +51,13 @@ void DragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& interac
   movement -= m_lastMousePos;
   m_lastMousePos = event->pos();
 
-  QPointF adjusted_fp(m_imageView.getWidgetFocalPoint());
-  adjusted_fp += movement;
+  QPointF adjustedFp(m_imageView.getWidgetFocalPoint());
+  adjustedFp += movement;
 
   // These will call update() if necessary.
   if (event->modifiers() & Qt::ShiftModifier) {
-    m_imageView.setWidgetFocalPoint(adjusted_fp);
+    m_imageView.setWidgetFocalPoint(adjustedFp);
   } else {
-    m_imageView.adjustAndSetWidgetFocalPoint(adjusted_fp);
+    m_imageView.adjustAndSetWidgetFocalPoint(adjustedFp);
   }
 }

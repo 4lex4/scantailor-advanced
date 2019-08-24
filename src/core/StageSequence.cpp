@@ -5,13 +5,13 @@
 #include "ProjectPages.h"
 
 StageSequence::StageSequence(const intrusive_ptr<ProjectPages>& pages,
-                             const PageSelectionAccessor& page_selection_accessor)
-    : m_fixOrientationFilter(new fix_orientation::Filter(page_selection_accessor)),
-      m_pageSplitFilter(new page_split::Filter(pages, page_selection_accessor)),
-      m_deskewFilter(new deskew::Filter(page_selection_accessor)),
-      m_selectContentFilter(new select_content::Filter(page_selection_accessor)),
-      m_pageLayoutFilter(new page_layout::Filter(pages, page_selection_accessor)),
-      m_outputFilter(new output::Filter(page_selection_accessor)) {
+                             const PageSelectionAccessor& pageSelectionAccessor)
+    : m_fixOrientationFilter(new fix_orientation::Filter(pageSelectionAccessor)),
+      m_pageSplitFilter(new page_split::Filter(pages, pageSelectionAccessor)),
+      m_deskewFilter(new deskew::Filter(pageSelectionAccessor)),
+      m_selectContentFilter(new select_content::Filter(pageSelectionAccessor)),
+      m_pageLayoutFilter(new page_layout::Filter(pages, pageSelectionAccessor)),
+      m_outputFilter(new output::Filter(pageSelectionAccessor)) {
   m_fixOrientationFilterIdx = static_cast<int>(m_filters.size());
   m_filters.emplace_back(m_fixOrientationFilter);
 

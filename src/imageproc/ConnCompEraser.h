@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_CONNCOMPERASER_H_
-#define IMAGEPROC_CONNCOMPERASER_H_
+#ifndef SCANTAILOR_IMAGEPROC_CONNCOMPERASER_H_
+#define SCANTAILOR_IMAGEPROC_CONNCOMPERASER_H_
 
 #include <cstdint>
 #include <stack>
@@ -63,7 +63,7 @@ class ConnCompEraser {
     int dy;
 
     /**< Vertical direction: 1 or -1. */
-    int dy_wpl; /**< words_per_line or -words_per_line. */
+    int dyWpl; /**< words_per_line or -words_per_line. */
   };
 
   struct BBox;
@@ -95,4 +95,4 @@ class ConnCompEraser {
   int m_y;
 };
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_CONNCOMPERASER_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_CONNCOMPERASER_H_

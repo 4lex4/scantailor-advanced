@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_OUTPUTPROCESSINGPARAMS_H
-#define SCANTAILOR_OUTPUTPROCESSINGPARAMS_H
+#ifndef SCANTAILOR_OUTPUT_OUTPUTPROCESSINGPARAMS_H_
+#define SCANTAILOR_OUTPUT_OUTPUTPROCESSINGPARAMS_H_
 
 class QString;
 class QDomDocument;
@@ -36,4 +36,4 @@ class OutputProcessingParams {
 }  // namespace output
 
 
-#endif  // SCANTAILOR_OUTPUTPROCESSINGPARAMS_H
+#endif  // SCANTAILOR_OUTPUT_OUTPUTPROCESSINGPARAMS_H_

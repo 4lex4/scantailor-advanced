@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUT_OF_MEMORY_HANDLER_H_
-#define OUT_OF_MEMORY_HANDLER_H_
+#ifndef SCANTAILOR_CORE_OUTOFMEMORYHANDLER_H_
+#define SCANTAILOR_CORE_OUTOFMEMORYHANDLER_H_
 
 #include <QMutex>
 #include <QObject>
@@ -41,4 +41,4 @@ class OutOfMemoryHandler : public QObject {
 };
 
 
-#endif  // ifndef OUT_OF_MEMORY_HANDLER_H_
+#endif  // ifndef SCANTAILOR_CORE_OUTOFMEMORYHANDLER_H_

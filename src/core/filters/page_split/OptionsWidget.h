@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_OPTIONSWIDGET_H_
-#define PAGE_SPLIT_OPTIONSWIDGET_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_OPTIONSWIDGET_H_
+#define SCANTAILOR_PAGE_SPLIT_OPTIONSWIDGET_H_
 
 #include <list>
 #include <set>
@@ -57,22 +57,22 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
 
   OptionsWidget(intrusive_ptr<Settings> settings,
-                intrusive_ptr<ProjectPages> page_sequence,
-                const PageSelectionAccessor& page_selection_accessor);
+                intrusive_ptr<ProjectPages> pageSequence,
+                const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
-  void preUpdateUI(const PageId& page_id);
+  void preUpdateUI(const PageId& pageId);
 
-  void postUpdateUI(const UiData& ui_data);
+  void postUpdateUI(const UiData& uiData);
 
  signals:
 
-  void pageLayoutSetLocally(const PageLayout& page_layout);
+  void pageLayoutSetLocally(const PageLayout& pageLayout);
 
  public slots:
 
-  void pageLayoutSetExternally(const PageLayout& page_layout);
+  void pageLayoutSetExternally(const PageLayout& pageLayout);
 
  private slots:
 
@@ -80,9 +80,9 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void showChangeDialog();
 
-  void layoutTypeSet(const std::set<PageId>& pages, LayoutType layout_type, bool apply_cut);
+  void layoutTypeSet(const std::set<PageId>& pages, LayoutType layoutType, bool applyCut);
 
-  void splitLineModeChanged(bool auto_mode);
+  void splitLineModeChanged(bool autoMode);
 
  private:
   void commitCurrentParams();
@@ -104,4 +104,4 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_OPTIONSWIDGET_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_OPTIONSWIDGET_H_

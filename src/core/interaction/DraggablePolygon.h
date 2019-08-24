@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_DRAGGABLEPOLYGON_H
-#define SCANTAILOR_DRAGGABLEPOLYGON_H
+#ifndef SCANTAILOR_INTERACTION_DRAGGABLEPOLYGON_H_
+#define SCANTAILOR_INTERACTION_DRAGGABLEPOLYGON_H_
 
 #include <QPointF>
 #include <QPolygonF>
@@ -21,11 +21,11 @@ class DraggablePolygon : public DraggableObject {
 
   int proximityPriority() const override;
 
-  Proximity proximity(const QPointF& mouse_pos) override;
+  Proximity proximity(const QPointF& mousePos) override;
 
-  void dragInitiated(const QPointF& mouse_pos) override;
+  void dragInitiated(const QPointF& mousePos) override;
 
-  void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) override;
+  void dragContinuation(const QPointF& mousePos, Qt::KeyboardModifiers mask) override;
 
   void setProximityPriority(int priority) { m_proximityPriority = priority; }
 
@@ -47,4 +47,4 @@ class DraggablePolygon : public DraggableObject {
 };
 
 
-#endif  // SCANTAILOR_DRAGGABLEPOLYGON_H
+#endif  // SCANTAILOR_INTERACTION_DRAGGABLEPOLYGON_H_

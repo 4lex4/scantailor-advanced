@@ -2,10 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Margins.h"
+#include <foundation/Utils.h>
 #include <QDomDocument>
 #include <QDomElement>
 #include <QString>
-#include <foundation/Utils.h>
 
 using namespace foundation;
 

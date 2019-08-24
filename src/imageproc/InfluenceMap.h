@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_INFLUENCE_MAP_H_
-#define IMAGEPROC_INFLUENCE_MAP_H_
+#ifndef SCANTAILOR_IMAGEPROC_INFLUENCEMAP_H_
+#define SCANTAILOR_IMAGEPROC_INFLUENCEMAP_H_
 
 #include <QSize>
 #include <cstdint>
@@ -151,4 +151,4 @@ inline void swap(InfluenceMap& o1, InfluenceMap& o2) {
   o1.swap(o2);
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_INFLUENCE_MAP_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_INFLUENCEMAP_H_

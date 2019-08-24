@@ -1,6 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include <BinaryImage.h>
+#include <SkewFinder.h>
 #include <QApplication>
 #include <QColor>
 #include <QImage>
@@ -10,8 +12,6 @@
 #include <boost/test/auto_unit_test.hpp>
 #include <cmath>
 #include <cstdlib>
-#include <BinaryImage.h>
-#include <SkewFinder.h>
 
 namespace imageproc {
 namespace tests {
@@ -47,8 +47,8 @@ BOOST_AUTO_TEST_CASE(test_positive_detection) {
     painter.drawText(image.rect(), text, opt);
   }
 
-  SkewFinder skew_finder;
-  const Skew skew(skew_finder.findSkew(BinaryImage(image)));
+  SkewFinder skewFinder;
+  const Skew skew(skewFinder.findSkew(BinaryImage(image)));
   BOOST_REQUIRE(std::fabs(skew.angle() - 4.5) < 0.15);
   BOOST_CHECK(skew.confidence() >= Skew::GOOD_CONFIDENCE);
 }
@@ -57,17 +57,17 @@ BOOST_AUTO_TEST_CASE(test_negative_detection) {
   QImage image(1000, 800, QImage::Format_Mono);
   image.fill(1);
 
-  const int num_dots = image.width() * image.height() / 5;
-  for (int i = 0; i < num_dots; ++i) {
+  const int numDots = image.width() * image.height() / 5;
+  for (int i = 0; i < numDots; ++i) {
     const int x = rand() % image.width();
     const int y = rand() % image.height();
     image.setPixel(x, y, 0);
   }
 
-  SkewFinder skew_finder;
-  skew_finder.setCoarseReduction(0);
-  skew_finder.setFineReduction(0);
-  const Skew skew(skew_finder.findSkew(BinaryImage(image)));
+  SkewFinder skewFinder;
+  skewFinder.setCoarseReduction(0);
+  skewFinder.setFineReduction(0);
+  const Skew skew(skewFinder.findSkew(BinaryImage(image)));
   BOOST_CHECK(skew.confidence() < Skew::GOOD_CONFIDENCE);
 }
 

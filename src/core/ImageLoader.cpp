@@ -8,31 +8,31 @@
 #include "ImageId.h"
 #include "TiffReader.h"
 
-QImage ImageLoader::load(const ImageId& image_id) {
-  return load(image_id.filePath(), image_id.zeroBasedPage());
+QImage ImageLoader::load(const ImageId& imageId) {
+  return load(imageId.filePath(), imageId.zeroBasedPage());
 }
 
-QImage ImageLoader::load(const QString& file_path, const int page_num) {
-  QFile file(file_path);
+QImage ImageLoader::load(const QString& filePath, const int pageNum) {
+  QFile file(filePath);
   if (!file.open(QIODevice::ReadOnly)) {
     return QImage();
   }
 
-  return load(file, page_num);
+  return load(file, pageNum);
 }
 
-QImage ImageLoader::load(QIODevice& io_dev, const int page_num) {
-  if (TiffReader::canRead(io_dev)) {
-    return TiffReader::readImage(io_dev, page_num);
+QImage ImageLoader::load(QIODevice& ioDev, const int pageNum) {
+  if (TiffReader::canRead(ioDev)) {
+    return TiffReader::readImage(ioDev, pageNum);
   }
 
-  if (page_num != 0) {
+  if (pageNum != 0) {
     // Qt can only load the first page of multi-page images.
     return QImage();
   }
 
   QImage image;
-  QImageReader(&io_dev).read(&image);
+  QImageReader(&ioDev).read(&image);
 
   return image;
 }

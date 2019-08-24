@@ -1,6 +1,7 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include "ThumbnailSequence.h"
 #include <core/IconProvider.h>
 #include <QApplication>
 #include <QFileInfo>
@@ -21,7 +22,6 @@
 #include "IncompleteThumbnail.h"
 #include "PageSequence.h"
 #include "ThumbnailFactory.h"
-#include "ThumbnailSequence.h"
 
 using namespace ::boost::multi_index;
 using namespace ::boost::lambda;
@@ -29,7 +29,7 @@ using namespace ::boost::lambda;
 
 class ThumbnailSequence::Item {
  public:
-  Item(const PageInfo& page_info, CompositeItem* comp_item);
+  Item(const PageInfo& pageInfo, CompositeItem* compItem);
 
   const PageId& pageId() const { return pageInfo.id(); }
 
@@ -39,7 +39,7 @@ class ThumbnailSequence::Item {
 
   void setSelected(bool selected) const;
 
-  void setSelectionLeader(bool selection_leader) const;
+  void setSelectionLeader(bool selectionLeader) const;
 
   PageInfo pageInfo;
   mutable CompositeItem* composite;
@@ -73,7 +73,7 @@ class ThumbnailSequence::GraphicsScene : public QGraphicsScene {
 
 class ThumbnailSequence::Impl {
  public:
-  Impl(ThumbnailSequence& owner, const QSizeF& max_logical_thumb_size, ViewMode view_mode);
+  Impl(ThumbnailSequence& owner, const QSizeF& maxLogicalThumbSize, ViewMode viewMode);
 
   ~Impl();
 
@@ -82,7 +82,7 @@ class ThumbnailSequence::Impl {
   void attachView(QGraphicsView* view);
 
   void reset(const PageSequence& pages,
-             SelectionAction selection_action,
+             SelectionAction selectionAction,
              intrusive_ptr<const PageOrderProvider> provider);
 
   intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
@@ -91,31 +91,31 @@ class ThumbnailSequence::Impl {
 
   void updateSceneItemsPos();
 
-  void invalidateThumbnail(const PageId& page_id);
+  void invalidateThumbnail(const PageId& pageId);
 
-  void invalidateThumbnail(const PageInfo& page_info);
+  void invalidateThumbnail(const PageInfo& pageInfo);
 
   void invalidateAllThumbnails();
 
-  bool setSelection(const PageId& page_id, SelectionAction selection_action);
+  bool setSelection(const PageId& pageId, SelectionAction selectionAction);
 
   PageInfo selectionLeader() const;
 
-  PageInfo prevPage(const PageId& reference_page) const;
+  PageInfo prevPage(const PageId& referencePage) const;
 
-  PageInfo nextPage(const PageId& reference_page) const;
+  PageInfo nextPage(const PageId& referencePage) const;
 
-  PageInfo prevSelectedPage(const PageId& reference_page) const;
+  PageInfo prevSelectedPage(const PageId& referencePage) const;
 
-  PageInfo nextSelectedPage(const PageId& reference_page) const;
+  PageInfo nextSelectedPage(const PageId& referencePage) const;
 
   PageInfo firstPage() const;
 
   PageInfo lastPage() const;
 
-  void insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image);
+  void insert(const PageInfo& newPage, BeforeOrAfter beforeOrAfter, const ImageId& image);
 
-  void removePages(const std::set<PageId>& pages_to_remove);
+  void removePages(const std::set<PageId>& pagesToRemove);
 
   QRectF selectionLeaderSceneRect() const;
 
@@ -123,9 +123,9 @@ class ThumbnailSequence::Impl {
 
   std::vector<PageRange> selectedRanges() const;
 
-  void contextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
+  void contextMenuRequested(const PageInfo& pageInfo, const QPoint& screenPos, bool selected);
 
-  void itemSelectedByUser(CompositeItem* composite_item, Qt::KeyboardModifiers modifiers);
+  void itemSelectedByUser(CompositeItem* compositeItem, Qt::KeyboardModifiers modifiers);
 
   const QSizeF& getMaxLogicalThumbSize() const;
 
@@ -151,7 +151,7 @@ class ThumbnailSequence::Impl {
   typedef Container::index<ItemsInOrderTag>::type ItemsInOrder;
   typedef Container::index<SelectedThenUnselectedTag>::type SelectedThenUnselected;
 
-  void invalidateThumbnailImpl(ItemsById::iterator id_it);
+  void invalidateThumbnailImpl(ItemsById::iterator idIt);
 
   void sceneContextMenuEvent(QGraphicsSceneContextMenuEvent* evt);
 
@@ -177,24 +177,24 @@ class ThumbnailSequence::Impl {
    *
    * \param begin Beginning of the interval to consider.
    * \param end End of the interval to consider.
-   * \param page_id The item to find insertion position for.
-   * \param page_incomplete Whether the page is represented by IncompleteThumbnail.
+   * \param pageId The item to find insertion position for.
+   * \param pageIncomplete Whether the page is represented by IncompleteThumbnail.
    * \param hint The place to start the search.  Must be within [begin, end].
-   * \param dist_from_hint If provided, the distance from \p hint
+   * \param distFromHint If provided, the distance from \p hint
    *        to the calculated insertion position will be written there.
-   *        For example, \p dist_from_hint == -2 would indicate that the
+   *        For example, \p distFromHint == -2 would indicate that the
    *        insertion position is two elements to the left of \p hint.
    */
   ItemsInOrder::iterator itemInsertPosition(ItemsInOrder::iterator begin,
                                             ItemsInOrder::iterator end,
-                                            const PageId& page_id,
-                                            bool page_incomplete,
+                                            const PageId& pageId,
+                                            bool pageIncomplete,
                                             ItemsInOrder::iterator hint,
-                                            int* dist_from_hint = nullptr);
+                                            int* distFromHint = nullptr);
 
-  std::unique_ptr<QGraphicsItem> getThumbnail(const PageInfo& page_info);
+  std::unique_ptr<QGraphicsItem> getThumbnail(const PageInfo& pageInfo);
 
-  std::unique_ptr<LabelGroup> getLabelGroup(const PageInfo& page_info);
+  std::unique_ptr<LabelGroup> getLabelGroup(const PageInfo& pageInfo);
 
   std::unique_ptr<CompositeItem> getCompositeItem(const Item* item, const PageInfo& info);
 
@@ -228,7 +228,7 @@ class ThumbnailSequence::Impl {
 
 class ThumbnailSequence::PlaceholderThumb : public QGraphicsItem {
  public:
-  PlaceholderThumb(const QSizeF& max_size);
+  PlaceholderThumb(const QSizeF& maxSize);
 
   virtual QRectF boundingRect() const;
 
@@ -242,12 +242,12 @@ class ThumbnailSequence::PlaceholderThumb : public QGraphicsItem {
 
 class ThumbnailSequence::LabelGroup : public QGraphicsItemGroup {
  public:
-  LabelGroup(std::unique_ptr<QGraphicsSimpleTextItem> normal_label,
-             std::unique_ptr<QGraphicsSimpleTextItem> bold_label,
+  LabelGroup(std::unique_ptr<QGraphicsSimpleTextItem> normalLabel,
+             std::unique_ptr<QGraphicsSimpleTextItem> boldLabel,
              std::unique_ptr<QGraphicsPixmapItem> pixmap = nullptr,
-             std::unique_ptr<QGraphicsPixmapItem> pixmap_selected = nullptr);
+             std::unique_ptr<QGraphicsPixmapItem> pixmapSelected = nullptr);
 
-  void updateAppearence(bool selected, bool selection_leader);
+  void updateAppearence(bool selected, bool selectionLeader);
 
  private:
   QGraphicsSimpleTextItem* m_normalLabel;
@@ -261,7 +261,7 @@ class ThumbnailSequence::CompositeItem : public QGraphicsItemGroup {
  public:
   CompositeItem(ThumbnailSequence::Impl& owner,
                 std::unique_ptr<QGraphicsItem> thumbnail,
-                std::unique_ptr<LabelGroup> label_group);
+                std::unique_ptr<LabelGroup> labelGroup);
 
   void setItem(const Item* item) { m_item = item; }
 
@@ -269,9 +269,9 @@ class ThumbnailSequence::CompositeItem : public QGraphicsItemGroup {
 
   bool incompleteThumbnail() const;
 
-  void updateSceneRect(QRectF& scene_rect);
+  void updateSceneRect(QRectF& sceneRect);
 
-  void updateAppearence(bool selected, bool selection_leader);
+  void updateAppearence(bool selected, bool selectionLeader);
 
   virtual QRectF boundingRect() const;
 
@@ -299,8 +299,8 @@ class ThumbnailSequence::CompositeItem : public QGraphicsItemGroup {
 
 /*============================= ThumbnailSequence ===========================*/
 
-ThumbnailSequence::ThumbnailSequence(const QSizeF& max_logical_thumb_size, const ViewMode view_mode)
-    : m_impl(new Impl(*this, max_logical_thumb_size, view_mode)) {}
+ThumbnailSequence::ThumbnailSequence(const QSizeF& maxLogicalThumbSize, const ViewMode viewMode)
+    : m_impl(new Impl(*this, maxLogicalThumbSize, viewMode)) {}
 
 ThumbnailSequence::~ThumbnailSequence() {}
 
@@ -313,9 +313,9 @@ void ThumbnailSequence::attachView(QGraphicsView* const view) {
 }
 
 void ThumbnailSequence::reset(const PageSequence& pages,
-                              const SelectionAction selection_action,
-                              intrusive_ptr<const PageOrderProvider> order_provider) {
-  m_impl->reset(pages, selection_action, std::move(order_provider));
+                              const SelectionAction selectionAction,
+                              intrusive_ptr<const PageOrderProvider> orderProvider) {
+  m_impl->reset(pages, selectionAction, std::move(orderProvider));
 }
 
 intrusive_ptr<const PageOrderProvider> ThumbnailSequence::pageOrderProvider() const {
@@ -326,40 +326,40 @@ PageSequence ThumbnailSequence::toPageSequence() const {
   return m_impl->toPageSequence();
 }
 
-void ThumbnailSequence::invalidateThumbnail(const PageId& page_id) {
-  m_impl->invalidateThumbnail(page_id);
+void ThumbnailSequence::invalidateThumbnail(const PageId& pageId) {
+  m_impl->invalidateThumbnail(pageId);
 }
 
-void ThumbnailSequence::invalidateThumbnail(const PageInfo& page_info) {
-  m_impl->invalidateThumbnail(page_info);
+void ThumbnailSequence::invalidateThumbnail(const PageInfo& pageInfo) {
+  m_impl->invalidateThumbnail(pageInfo);
 }
 
 void ThumbnailSequence::invalidateAllThumbnails() {
   m_impl->invalidateAllThumbnails();
 }
 
-bool ThumbnailSequence::setSelection(const PageId& page_id, const SelectionAction selection_action) {
-  return m_impl->setSelection(page_id, selection_action);
+bool ThumbnailSequence::setSelection(const PageId& pageId, const SelectionAction selectionAction) {
+  return m_impl->setSelection(pageId, selectionAction);
 }
 
 PageInfo ThumbnailSequence::selectionLeader() const {
   return m_impl->selectionLeader();
 }
 
-PageInfo ThumbnailSequence::prevPage(const PageId& reference_page) const {
-  return m_impl->prevPage(reference_page);
+PageInfo ThumbnailSequence::prevPage(const PageId& referencePage) const {
+  return m_impl->prevPage(referencePage);
 }
 
-PageInfo ThumbnailSequence::nextPage(const PageId& reference_page) const {
-  return m_impl->nextPage(reference_page);
+PageInfo ThumbnailSequence::nextPage(const PageId& referencePage) const {
+  return m_impl->nextPage(referencePage);
 }
 
-PageInfo ThumbnailSequence::prevSelectedPage(const PageId& reference_page) const {
-  return m_impl->prevSelectedPage(reference_page);
+PageInfo ThumbnailSequence::prevSelectedPage(const PageId& referencePage) const {
+  return m_impl->prevSelectedPage(referencePage);
 }
 
-PageInfo ThumbnailSequence::nextSelectedPage(const PageId& reference_page) const {
-  return m_impl->nextSelectedPage(reference_page);
+PageInfo ThumbnailSequence::nextSelectedPage(const PageId& referencePage) const {
+  return m_impl->nextSelectedPage(referencePage);
 }
 
 PageInfo ThumbnailSequence::firstPage() const {
@@ -370,8 +370,8 @@ PageInfo ThumbnailSequence::lastPage() const {
   return m_impl->lastPage();
 }
 
-void ThumbnailSequence::insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image) {
-  m_impl->insert(new_page, before_or_after, image);
+void ThumbnailSequence::insert(const PageInfo& newPage, BeforeOrAfter beforeOrAfter, const ImageId& image) {
+  m_impl->insert(newPage, beforeOrAfter, image);
 }
 
 void ThumbnailSequence::removePages(const std::set<PageId>& pages) {
@@ -390,11 +390,11 @@ std::vector<PageRange> ThumbnailSequence::selectedRanges() const {
   return m_impl->selectedRanges();
 }
 
-void ThumbnailSequence::emitNewSelectionLeader(const PageInfo& page_info,
+void ThumbnailSequence::emitNewSelectionLeader(const PageInfo& pageInfo,
                                                const CompositeItem* composite,
                                                const SelectionFlags flags) {
-  const QRectF thumb_rect(composite->mapToScene(composite->boundingRect()).boundingRect());
-  emit newSelectionLeader(page_info, thumb_rect, flags);
+  const QRectF thumbRect(composite->mapToScene(composite->boundingRect()).boundingRect());
+  emit newSelectionLeader(pageInfo, thumbRect, flags);
 }
 
 const QSizeF& ThumbnailSequence::getMaxLogicalThumbSize() const {
@@ -419,10 +419,10 @@ void ThumbnailSequence::setViewMode(ThumbnailSequence::ViewMode mode) {
 
 /*======================== ThumbnailSequence::Impl ==========================*/
 
-ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& max_logical_thumb_size, const ViewMode view_mode)
+ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& maxLogicalThumbSize, const ViewMode viewMode)
     : m_owner(owner),
-      m_maxLogicalThumbSize(max_logical_thumb_size),
-      m_viewMode(view_mode),
+      m_maxLogicalThumbSize(maxLogicalThumbSize),
+      m_viewMode(viewMode),
       m_items(),
       m_itemsById(m_items.get<ItemsByIdTag>()),
       m_itemsInOrder(m_items.get<ItemsInOrderTag>()),
@@ -443,17 +443,17 @@ void ThumbnailSequence::Impl::attachView(QGraphicsView* const view) {
 }
 
 void ThumbnailSequence::Impl::reset(const PageSequence& pages,
-                                    const SelectionAction selection_action,
-                                    intrusive_ptr<const PageOrderProvider> order_provider) {
-  m_orderProvider = std::move(order_provider);
+                                    const SelectionAction selectionAction,
+                                    intrusive_ptr<const PageOrderProvider> orderProvider) {
+  m_orderProvider = std::move(orderProvider);
 
   std::set<PageId> selected;
-  PageInfo selection_leader;
+  PageInfo selectionLeader;
 
-  if (selection_action == KEEP_SELECTION) {
+  if (selectionAction == KEEP_SELECTION) {
     selectedItems().swap(selected);
     if (m_selectionLeader) {
-      selection_leader = m_selectionLeader->pageInfo;
+      selectionLeader = m_selectionLeader->pageInfo;
     }
   }
 
@@ -463,35 +463,35 @@ void ThumbnailSequence::Impl::reset(const PageSequence& pages,
     return;
   }
 
-  const Item* some_selected_item = nullptr;
-  for (const PageInfo& page_info : pages) {
-    std::unique_ptr<CompositeItem> composite(getCompositeItem(0, page_info));
-    m_itemsInOrder.push_back(Item(page_info, composite.release()));
+  const Item* someSelectedItem = nullptr;
+  for (const PageInfo& pageInfo : pages) {
+    std::unique_ptr<CompositeItem> composite(getCompositeItem(0, pageInfo));
+    m_itemsInOrder.push_back(Item(pageInfo, composite.release()));
     const Item* item = &m_itemsInOrder.back();
     item->composite->setItem(item);
 
-    const ImageId& image_id = page_info.id().imageId();
+    const ImageId& imageId = pageInfo.id().imageId();
 
-    bool item_found = (selected.find(page_info.id()) != selected.end());
-    if (!item_found) {
-      switch (page_info.id().subPage()) {
+    bool itemFound = (selected.find(pageInfo.id()) != selected.end());
+    if (!itemFound) {
+      switch (pageInfo.id().subPage()) {
         case PageId::LEFT_PAGE:
         case PageId::RIGHT_PAGE:
-          item_found = (selected.find(PageId(image_id, PageId::SINGLE_PAGE)) != selected.end());
+          itemFound = (selected.find(PageId(imageId, PageId::SINGLE_PAGE)) != selected.end());
           break;
         case PageId::SINGLE_PAGE:
-          item_found = (selected.find(PageId(image_id, PageId::LEFT_PAGE)) != selected.end())
-                       || (selected.find(PageId(image_id, PageId::RIGHT_PAGE)) != selected.end());
+          itemFound = (selected.find(PageId(imageId, PageId::LEFT_PAGE)) != selected.end())
+                      || (selected.find(PageId(imageId, PageId::RIGHT_PAGE)) != selected.end());
           break;
       }
     }
-    if (item_found) {
+    if (itemFound) {
       item->setSelected(true);
       moveToSelected(item);
-      some_selected_item = item;
+      someSelectedItem = item;
 
-      if ((page_info.id() == selection_leader.id())
-          || (!m_selectionLeader && (image_id == selection_leader.id().imageId()))) {
+      if ((pageInfo.id() == selectionLeader.id())
+          || (!m_selectionLeader && (imageId == selectionLeader.id().imageId()))) {
         m_selectionLeader = item;
       }
     }
@@ -500,13 +500,13 @@ void ThumbnailSequence::Impl::reset(const PageSequence& pages,
   invalidateAllThumbnails();
 
   if (!m_selectionLeader) {
-    if (some_selected_item) {
-      m_selectionLeader = some_selected_item;
+    if (someSelectedItem) {
+      m_selectionLeader = someSelectedItem;
     }
   }
   if (m_selectionLeader) {
     m_selectionLeader->setSelectionLeader(true);
-    m_owner.emitNewSelectionLeader(selection_leader, m_selectionLeader->composite, DEFAULT_SELECTION_FLAGS);
+    m_owner.emitNewSelectionLeader(selectionLeader, m_selectionLeader->composite, DEFAULT_SELECTION_FLAGS);
   }
 }  // ThumbnailSequence::Impl::reset
 
@@ -524,33 +524,33 @@ PageSequence ThumbnailSequence::Impl::toPageSequence() const {
   return pages;
 }
 
-void ThumbnailSequence::Impl::invalidateThumbnail(const PageId& page_id) {
-  const ItemsById::iterator id_it(m_itemsById.find(page_id));
-  if (id_it != m_itemsById.end()) {
-    invalidateThumbnailImpl(id_it);
+void ThumbnailSequence::Impl::invalidateThumbnail(const PageId& pageId) {
+  const ItemsById::iterator idIt(m_itemsById.find(pageId));
+  if (idIt != m_itemsById.end()) {
+    invalidateThumbnailImpl(idIt);
   }
 }
 
-void ThumbnailSequence::Impl::invalidateThumbnail(const PageInfo& page_info) {
-  const ItemsById::iterator id_it(m_itemsById.find(page_info.id()));
-  if (id_it != m_itemsById.end()) {
-    m_itemsById.modify(id_it, [&page_info](Item& item) { item.pageInfo = page_info; });
-    invalidateThumbnailImpl(id_it);
+void ThumbnailSequence::Impl::invalidateThumbnail(const PageInfo& pageInfo) {
+  const ItemsById::iterator idIt(m_itemsById.find(pageInfo.id()));
+  if (idIt != m_itemsById.end()) {
+    m_itemsById.modify(idIt, [&pageInfo](Item& item) { item.pageInfo = pageInfo; });
+    invalidateThumbnailImpl(idIt);
   }
 }
 
 int ThumbnailSequence::Impl::getGraphicsViewWidth() const {
-  int view_width = 0;
+  int viewWidth = 0;
   if (!m_graphicsScene.views().isEmpty()) {
     QGraphicsView* gv = m_graphicsScene.views().first();
-    view_width = gv->width();
-    view_width -= gv->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
+    viewWidth = gv->width();
+    viewWidth -= gv->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
     if (gv->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents, 0, gv)) {
-      view_width -= gv->frameWidth() * 2;
+      viewWidth -= gv->frameWidth() * 2;
     }
   }
 
-  return view_width;
+  return viewWidth;
 }
 
 void ThumbnailSequence::Impl::orderItems() {
@@ -565,89 +565,89 @@ void ThumbnailSequence::Impl::orderItems() {
 void ThumbnailSequence::Impl::updateSceneItemsPos() {
   m_sceneRect = QRectF(0.0, 0.0, 0.0, 0.0);
 
-  const int view_width = getGraphicsViewWidth();
-  assert(view_width > 0);
-  double y_offset = SPACING;
+  const int viewWidth = getGraphicsViewWidth();
+  assert(viewWidth > 0);
+  double yOffset = SPACING;
 
-  ItemsInOrder::iterator ord_it = m_itemsInOrder.begin();
-  const ItemsInOrder::iterator ord_end(m_itemsInOrder.end());
+  ItemsInOrder::iterator ordIt = m_itemsInOrder.begin();
+  const ItemsInOrder::iterator ordEnd(m_itemsInOrder.end());
 
-  while (ord_it != ord_end) {
-    int items_in_row = 0;
-    double sum_item_widths = 0;
-    double x_offset = SPACING;
+  while (ordIt != ordEnd) {
+    int itemsInRow = 0;
+    double sumItemWidths = 0;
+    double xOffset = SPACING;
 
     if (m_viewMode == MULTI_COLUMN) {
       // Determine how many items can fit into the current row.
-      for (ItemsInOrder::iterator row_it = ord_it; row_it != ord_end; ++row_it) {
-        const double item_width = row_it->composite->boundingRect().width();
-        x_offset += item_width + SPACING;
-        if (x_offset > view_width) {
-          if (items_in_row == 0) {
+      for (ItemsInOrder::iterator rowIt = ordIt; rowIt != ordEnd; ++rowIt) {
+        const double itemWidth = rowIt->composite->boundingRect().width();
+        xOffset += itemWidth + SPACING;
+        if (xOffset > viewWidth) {
+          if (itemsInRow == 0) {
             // At least one page must be in a row.
-            items_in_row = 1;
-            sum_item_widths = item_width;
+            itemsInRow = 1;
+            sumItemWidths = itemWidth;
           }
           break;
         }
-        items_in_row++;
-        sum_item_widths += item_width;
+        itemsInRow++;
+        sumItemWidths += itemWidth;
       }
     } else {
-      items_in_row = 1;
-      sum_item_widths = ord_it->composite->boundingRect().width();
+      itemsInRow = 1;
+      sumItemWidths = ordIt->composite->boundingRect().width();
     }
 
     // Split free space between the items in the current row.
-    const double adj_spacing = std::floor((view_width - sum_item_widths) / (items_in_row + 1));
-    x_offset = adj_spacing;
-    double next_y_offset = 0;
-    for (; items_in_row > 0; --items_in_row, ++ord_it) {
-      CompositeItem* composite = ord_it->composite;
-      composite->setPos(x_offset, y_offset);
+    const double adjSpacing = std::floor((viewWidth - sumItemWidths) / (itemsInRow + 1));
+    xOffset = adjSpacing;
+    double nextYOffset = 0;
+    for (; itemsInRow > 0; --itemsInRow, ++ordIt) {
+      CompositeItem* composite = ordIt->composite;
+      composite->setPos(xOffset, yOffset);
       composite->updateSceneRect(m_sceneRect);
-      x_offset += composite->boundingRect().width() + adj_spacing;
-      next_y_offset = std::max(composite->boundingRect().height() + SPACING, next_y_offset);
+      xOffset += composite->boundingRect().width() + adjSpacing;
+      nextYOffset = std::max(composite->boundingRect().height() + SPACING, nextYOffset);
     }
 
-    if (ord_it != ord_end) {
-      y_offset += next_y_offset;
+    if (ordIt != ordEnd) {
+      yOffset += nextYOffset;
     }
   }
 
   commitSceneRect();
 }
 
-void ThumbnailSequence::Impl::invalidateThumbnailImpl(const ItemsById::iterator id_it) {
-  CompositeItem* const new_composite = getCompositeItem(&*id_it, id_it->pageInfo).release();
-  CompositeItem* const old_composite = id_it->composite;
-  const QSizeF old_size(old_composite->boundingRect().size());
-  const QSizeF new_size(new_composite->boundingRect().size());
-  const QPointF old_pos(new_composite->pos());
+void ThumbnailSequence::Impl::invalidateThumbnailImpl(const ItemsById::iterator idIt) {
+  CompositeItem* const newComposite = getCompositeItem(&*idIt, idIt->pageInfo).release();
+  CompositeItem* const oldComposite = idIt->composite;
+  const QSizeF oldSize(oldComposite->boundingRect().size());
+  const QSizeF newSize(newComposite->boundingRect().size());
+  const QPointF oldPos(newComposite->pos());
 
-  id_it->composite = new_composite;
-  id_it->incompleteThumbnail = new_composite->incompleteThumbnail();
-  delete old_composite;
+  idIt->composite = newComposite;
+  idIt->incompleteThumbnail = newComposite->incompleteThumbnail();
+  delete oldComposite;
 
-  new_composite->updateAppearence(id_it->isSelected(), id_it->isSelectionLeader());
-  m_graphicsScene.addItem(new_composite);
+  newComposite->updateAppearence(idIt->isSelected(), idIt->isSelectionLeader());
+  m_graphicsScene.addItem(newComposite);
 
-  ItemsInOrder::iterator after_old(m_items.project<ItemsInOrderTag>(id_it));
-  // Notice after_old++ below.
+  ItemsInOrder::iterator afterOld(m_items.project<ItemsInOrderTag>(idIt));
+  // Notice afterOld++ below.
   // Move our item to the beginning of m_itemsInOrder, to make it out of range
   // we are going to pass to itemInsertPosition().
-  m_itemsInOrder.relocate(m_itemsInOrder.begin(), after_old++);
-  const ItemsInOrder::iterator after_new(itemInsertPosition(
-      ++m_itemsInOrder.begin(), m_itemsInOrder.end(), id_it->pageInfo.id(), id_it->incompleteThumbnail, after_old));
+  m_itemsInOrder.relocate(m_itemsInOrder.begin(), afterOld++);
+  const ItemsInOrder::iterator afterNew(itemInsertPosition(++m_itemsInOrder.begin(), m_itemsInOrder.end(),
+                                                           idIt->pageInfo.id(), idIt->incompleteThumbnail, afterOld));
   // Move our item to its intended position.
-  m_itemsInOrder.relocate(after_new, m_itemsInOrder.begin());
+  m_itemsInOrder.relocate(afterNew, m_itemsInOrder.begin());
 
   updateSceneItemsPos();
 
   // Possibly emit the newSelectionLeader() signal.
-  if (m_selectionLeader == &*id_it) {
-    if ((old_size != new_size) || (old_pos != id_it->composite->pos())) {
-      m_owner.emitNewSelectionLeader(id_it->pageInfo, id_it->composite, REDUNDANT_SELECTION);
+  if (m_selectionLeader == &*idIt) {
+    if ((oldSize != newSize) || (oldPos != idIt->composite->pos())) {
+      m_owner.emitNewSelectionLeader(idIt->pageInfo, idIt->composite, REDUNDANT_SELECTION);
     }
   }
 }  // ThumbnailSequence::Impl::invalidateThumbnailImpl
@@ -655,18 +655,18 @@ void ThumbnailSequence::Impl::invalidateThumbnailImpl(const ItemsById::iterator 
 void ThumbnailSequence::Impl::invalidateAllThumbnails() {
   // Recreate thumbnails now, whether a thumbnail is incomplete
   // is taken into account when sorting.
-  ItemsInOrder::iterator ord_it(m_itemsInOrder.begin());
-  const ItemsInOrder::iterator ord_end(m_itemsInOrder.end());
-  for (; ord_it != ord_end; ++ord_it) {
-    CompositeItem* const old_composite = ord_it->composite;
-    CompositeItem* const new_composite = getCompositeItem(&*ord_it, ord_it->pageInfo).release();
+  ItemsInOrder::iterator ordIt(m_itemsInOrder.begin());
+  const ItemsInOrder::iterator ordEnd(m_itemsInOrder.end());
+  for (; ordIt != ordEnd; ++ordIt) {
+    CompositeItem* const oldComposite = ordIt->composite;
+    CompositeItem* const newComposite = getCompositeItem(&*ordIt, ordIt->pageInfo).release();
 
-    ord_it->composite = new_composite;
-    ord_it->incompleteThumbnail = new_composite->incompleteThumbnail();
-    delete old_composite;
+    ordIt->composite = newComposite;
+    ordIt->incompleteThumbnail = newComposite->incompleteThumbnail();
+    delete oldComposite;
 
-    new_composite->updateAppearence(ord_it->isSelected(), ord_it->isSelectionLeader());
-    m_graphicsScene.addItem(new_composite);
+    newComposite->updateAppearence(ordIt->isSelected(), ordIt->isSelectionLeader());
+    m_graphicsScene.addItem(newComposite);
   }
 
   orderItems();
@@ -674,15 +674,15 @@ void ThumbnailSequence::Impl::invalidateAllThumbnails() {
 }  // ThumbnailSequence::Impl::invalidateAllThumbnails
 
 
-bool ThumbnailSequence::Impl::setSelection(const PageId& page_id, const SelectionAction selection_action) {
-  const ItemsById::iterator id_it(m_itemsById.find(page_id));
-  if (id_it == m_itemsById.end()) {
+bool ThumbnailSequence::Impl::setSelection(const PageId& pageId, const SelectionAction selectionAction) {
+  const ItemsById::iterator idIt(m_itemsById.find(pageId));
+  if (idIt == m_itemsById.end()) {
     return false;
   }
 
-  const bool was_selection_leader = (&*id_it == m_selectionLeader);
+  const bool wasSelectionLeader = (&*idIt == m_selectionLeader);
 
-  if (selection_action != KEEP_SELECTION) {
+  if (selectionAction != KEEP_SELECTION) {
     // Clear selection from all items except the one for which
     // selection is requested.
     SelectedThenUnselected::iterator it(m_selectedThenUnselected.begin());
@@ -694,7 +694,7 @@ bool ThumbnailSequence::Impl::setSelection(const PageId& page_id, const Selectio
 
       ++it;
 
-      if (&*id_it != &item) {
+      if (&*idIt != &item) {
         item.setSelected(false);
         moveToUnselected(&item);
         if (m_selectionLeader == &item) {
@@ -704,24 +704,24 @@ bool ThumbnailSequence::Impl::setSelection(const PageId& page_id, const Selectio
     }
   } else {
     // Only reset selection leader.
-    if (m_selectionLeader && !was_selection_leader) {
+    if (m_selectionLeader && !wasSelectionLeader) {
       m_selectionLeader->setSelectionLeader(false);
       m_selectionLeader = nullptr;
     }
   }
 
-  if (!was_selection_leader) {
-    m_selectionLeader = &*id_it;
+  if (!wasSelectionLeader) {
+    m_selectionLeader = &*idIt;
     m_selectionLeader->setSelectionLeader(true);
     moveToSelected(m_selectionLeader);
   }
 
   SelectionFlags flags = DEFAULT_SELECTION_FLAGS;
-  if (was_selection_leader) {
+  if (wasSelectionLeader) {
     flags |= REDUNDANT_SELECTION;
   }
 
-  m_owner.emitNewSelectionLeader(id_it->pageInfo, id_it->composite, flags);
+  m_owner.emitNewSelectionLeader(idIt->pageInfo, idIt->composite, flags);
 
   return true;
 }  // ThumbnailSequence::Impl::setSelection
@@ -734,62 +734,62 @@ PageInfo ThumbnailSequence::Impl::selectionLeader() const {
   }
 }
 
-PageInfo ThumbnailSequence::Impl::prevPage(const PageId& reference_page) const {
-  ItemsInOrder::iterator ord_it;
+PageInfo ThumbnailSequence::Impl::prevPage(const PageId& referencePage) const {
+  ItemsInOrder::iterator ordIt;
 
-  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == reference_page)) {
+  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == referencePage)) {
     // Common case optimization.
-    ord_it = m_itemsInOrder.iterator_to(*m_selectionLeader);
+    ordIt = m_itemsInOrder.iterator_to(*m_selectionLeader);
   } else {
-    ord_it = m_items.project<ItemsInOrderTag>(m_itemsById.find(reference_page));
+    ordIt = m_items.project<ItemsInOrderTag>(m_itemsById.find(referencePage));
   }
 
-  if (ord_it != m_itemsInOrder.end()) {
-    if (ord_it != m_itemsInOrder.begin()) {
-      --ord_it;
+  if (ordIt != m_itemsInOrder.end()) {
+    if (ordIt != m_itemsInOrder.begin()) {
+      --ordIt;
 
-      return ord_it->pageInfo;
+      return ordIt->pageInfo;
     }
   }
 
   return PageInfo();
 }
 
-PageInfo ThumbnailSequence::Impl::nextPage(const PageId& reference_page) const {
-  ItemsInOrder::iterator ord_it;
+PageInfo ThumbnailSequence::Impl::nextPage(const PageId& referencePage) const {
+  ItemsInOrder::iterator ordIt;
 
-  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == reference_page)) {
+  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == referencePage)) {
     // Common case optimization.
-    ord_it = m_itemsInOrder.iterator_to(*m_selectionLeader);
+    ordIt = m_itemsInOrder.iterator_to(*m_selectionLeader);
   } else {
-    ord_it = m_items.project<ItemsInOrderTag>(m_itemsById.find(reference_page));
+    ordIt = m_items.project<ItemsInOrderTag>(m_itemsById.find(referencePage));
   }
 
-  if (ord_it != m_itemsInOrder.end()) {
-    ++ord_it;
-    if (ord_it != m_itemsInOrder.end()) {
-      return ord_it->pageInfo;
+  if (ordIt != m_itemsInOrder.end()) {
+    ++ordIt;
+    if (ordIt != m_itemsInOrder.end()) {
+      return ordIt->pageInfo;
     }
   }
 
   return PageInfo();
 }
 
-PageInfo ThumbnailSequence::Impl::prevSelectedPage(const PageId& reference_page) const {
-  ItemsInOrder::iterator ord_it;
+PageInfo ThumbnailSequence::Impl::prevSelectedPage(const PageId& referencePage) const {
+  ItemsInOrder::iterator ordIt;
 
-  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == reference_page)) {
+  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == referencePage)) {
     // Common case optimization.
-    ord_it = m_itemsInOrder.iterator_to(*m_selectionLeader);
+    ordIt = m_itemsInOrder.iterator_to(*m_selectionLeader);
   } else {
-    ord_it = m_items.project<ItemsInOrderTag>(m_itemsById.find(reference_page));
+    ordIt = m_items.project<ItemsInOrderTag>(m_itemsById.find(referencePage));
   }
 
-  if (ord_it != m_itemsInOrder.end()) {
-    while (ord_it != m_itemsInOrder.begin()) {
-      --ord_it;
-      if (ord_it->isSelected()) {
-        return ord_it->pageInfo;
+  if (ordIt != m_itemsInOrder.end()) {
+    while (ordIt != m_itemsInOrder.begin()) {
+      --ordIt;
+      if (ordIt->isSelected()) {
+        return ordIt->pageInfo;
       }
     }
   }
@@ -797,23 +797,23 @@ PageInfo ThumbnailSequence::Impl::prevSelectedPage(const PageId& reference_page)
   return PageInfo();
 }
 
-PageInfo ThumbnailSequence::Impl::nextSelectedPage(const PageId& reference_page) const {
-  ItemsInOrder::iterator ord_it;
+PageInfo ThumbnailSequence::Impl::nextSelectedPage(const PageId& referencePage) const {
+  ItemsInOrder::iterator ordIt;
 
-  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == reference_page)) {
+  if (m_selectionLeader && (m_selectionLeader->pageInfo.id() == referencePage)) {
     // Common case optimization.
-    ord_it = m_itemsInOrder.iterator_to(*m_selectionLeader);
+    ordIt = m_itemsInOrder.iterator_to(*m_selectionLeader);
   } else {
-    ord_it = m_items.project<ItemsInOrderTag>(m_itemsById.find(reference_page));
+    ordIt = m_items.project<ItemsInOrderTag>(m_itemsById.find(referencePage));
   }
 
-  if (ord_it != m_itemsInOrder.end()) {
-    ++ord_it;
-    while (ord_it != m_itemsInOrder.end()) {
-      if (ord_it->isSelected()) {
-        return ord_it->pageInfo;
+  if (ordIt != m_itemsInOrder.end()) {
+    ++ordIt;
+    while (ordIt != m_itemsInOrder.end()) {
+      if (ordIt->isSelected()) {
+        return ordIt->pageInfo;
       }
-      ++ord_it;
+      ++ordIt;
     }
   }
 
@@ -836,93 +836,93 @@ PageInfo ThumbnailSequence::Impl::lastPage() const {
   return m_itemsInOrder.back().pageInfo;
 }
 
-void ThumbnailSequence::Impl::insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image) {
-  ItemsInOrder::iterator ord_it;
+void ThumbnailSequence::Impl::insert(const PageInfo& newPage, BeforeOrAfter beforeOrAfter, const ImageId& image) {
+  ItemsInOrder::iterator ordIt;
 
-  if ((before_or_after == BEFORE) && image.isNull()) {
-    ord_it = m_itemsInOrder.end();
+  if ((beforeOrAfter == BEFORE) && image.isNull()) {
+    ordIt = m_itemsInOrder.end();
   } else {
     // Note that we have to use lower_bound() rather than find() because
     // we are not searching for PageId(image) exactly, which implies
     // PageId::SINGLE_PAGE configuration, but rather we search for
     // a page with any configuration, as long as it references the same image.
-    ItemsById::iterator id_it(m_itemsById.find(PageId(image)));
-    if ((id_it == m_itemsById.end()) || (id_it->pageInfo.imageId() != image)) {
+    ItemsById::iterator idIt(m_itemsById.find(PageId(image)));
+    if ((idIt == m_itemsById.end()) || (idIt->pageInfo.imageId() != image)) {
       // Reference page not found.
       return;
     }
 
-    ord_it = m_items.project<ItemsInOrderTag>(id_it);
+    ordIt = m_items.project<ItemsInOrderTag>(idIt);
 
-    if (before_or_after == AFTER) {
-      ++ord_it;
+    if (beforeOrAfter == AFTER) {
+      ++ordIt;
       if (!m_orderProvider) {
         // Advance past not only the target page, but also its other half, if it follows.
-        while (ord_it != m_itemsInOrder.end() && ord_it->pageInfo.imageId() == image) {
-          ++ord_it;
+        while (ordIt != m_itemsInOrder.end() && ordIt->pageInfo.imageId() == image) {
+          ++ordIt;
         }
       }
     }
   }
 
-  // If m_orderProvider is not set, ord_it won't change.
-  ord_it = itemInsertPosition(m_itemsInOrder.begin(), m_itemsInOrder.end(), new_page.id(),
-                              /*page_incomplete=*/true, ord_it);
+  // If m_orderProvider is not set, ordIt won't change.
+  ordIt = itemInsertPosition(m_itemsInOrder.begin(), m_itemsInOrder.end(), newPage.id(),
+                             /*pageIncomplete=*/true, ordIt);
 
   double offset = 0.0;
   if (!m_items.empty()) {
-    if (ord_it != m_itemsInOrder.end()) {
-      offset = ord_it->composite->pos().y();
+    if (ordIt != m_itemsInOrder.end()) {
+      offset = ordIt->composite->pos().y();
     } else {
-      ItemsInOrder::iterator it(ord_it);
+      ItemsInOrder::iterator it(ordIt);
       --it;
       offset = it->composite->y() + it->composite->boundingRect().height() + SPACING;
     }
   }
-  std::unique_ptr<CompositeItem> composite(getCompositeItem(0, new_page));
+  std::unique_ptr<CompositeItem> composite(getCompositeItem(0, newPage));
   composite->setPos(0.0, offset);
   composite->updateSceneRect(m_sceneRect);
 
-  const QPointF pos_delta(0.0, composite->boundingRect().height() + SPACING);
+  const QPointF posDelta(0.0, composite->boundingRect().height() + SPACING);
 
-  const Item item(new_page, composite.get());
-  const std::pair<ItemsInOrder::iterator, bool> ins(m_itemsInOrder.insert(ord_it, item));
+  const Item item(newPage, composite.get());
+  const std::pair<ItemsInOrder::iterator, bool> ins(m_itemsInOrder.insert(ordIt, item));
   composite->setItem(&*ins.first);
   m_graphicsScene.addItem(composite.release());
 
-  const ItemsInOrder::iterator ord_end(m_itemsInOrder.end());
-  for (; ord_it != ord_end; ++ord_it) {
-    ord_it->composite->setPos(ord_it->composite->pos() + pos_delta);
-    ord_it->composite->updateSceneRect(m_sceneRect);
+  const ItemsInOrder::iterator ordEnd(m_itemsInOrder.end());
+  for (; ordIt != ordEnd; ++ordIt) {
+    ordIt->composite->setPos(ordIt->composite->pos() + posDelta);
+    ordIt->composite->updateSceneRect(m_sceneRect);
   }
 
   commitSceneRect();
 }  // ThumbnailSequence::Impl::insert
 
-void ThumbnailSequence::Impl::removePages(const std::set<PageId>& pages_to_remove) {
+void ThumbnailSequence::Impl::removePages(const std::set<PageId>& pagesToRemove) {
   m_sceneRect = QRectF(0, 0, 0, 0);
 
-  const std::set<PageId>::const_iterator to_remove_end(pages_to_remove.end());
-  QPointF pos_delta(0, 0);
+  const std::set<PageId>::const_iterator to_remove_end(pagesToRemove.end());
+  QPointF posDelta(0, 0);
 
-  ItemsInOrder::iterator ord_it(m_itemsInOrder.begin());
-  const ItemsInOrder::iterator ord_end(m_itemsInOrder.end());
-  while (ord_it != ord_end) {
-    if (pages_to_remove.find(ord_it->pageInfo.id()) == to_remove_end) {
+  ItemsInOrder::iterator ordIt(m_itemsInOrder.begin());
+  const ItemsInOrder::iterator ordEnd(m_itemsInOrder.end());
+  while (ordIt != ordEnd) {
+    if (pagesToRemove.find(ordIt->pageInfo.id()) == to_remove_end) {
       // Keeping this page.
-      if (pos_delta != QPointF(0, 0)) {
-        ord_it->composite->setPos(ord_it->composite->pos() + pos_delta);
+      if (posDelta != QPointF(0, 0)) {
+        ordIt->composite->setPos(ordIt->composite->pos() + posDelta);
       }
-      ord_it->composite->updateSceneRect(m_sceneRect);
-      ++ord_it;
+      ordIt->composite->updateSceneRect(m_sceneRect);
+      ++ordIt;
     } else {
       // Removing this page.
-      if (m_selectionLeader == &*ord_it) {
+      if (m_selectionLeader == &*ordIt) {
         m_selectionLeader = nullptr;
       }
-      pos_delta.ry() -= ord_it->composite->boundingRect().height() + SPACING;
-      delete ord_it->composite;
-      m_itemsInOrder.erase(ord_it++);
+      posDelta.ry() -= ordIt->composite->boundingRect().height() + SPACING;
+      delete ordIt->composite;
+      m_itemsInOrder.erase(ordIt++);
     }
   }
 
@@ -992,15 +992,15 @@ std::vector<PageRange> ThumbnailSequence::Impl::selectedRanges() const {
   return ranges;
 }
 
-void ThumbnailSequence::Impl::contextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected) {
-  emit m_owner.pageContextMenuRequested(page_info, screen_pos, selected);
+void ThumbnailSequence::Impl::contextMenuRequested(const PageInfo& pageInfo, const QPoint& screenPos, bool selected) {
+  emit m_owner.pageContextMenuRequested(pageInfo, screenPos, selected);
 }
 
 void ThumbnailSequence::Impl::sceneContextMenuEvent(QGraphicsSceneContextMenuEvent* evt) {
   if (!m_itemsInOrder.empty()) {
     CompositeItem* composite = m_itemsInOrder.back().composite;
-    const QRectF last_thumb_rect(composite->mapToScene(composite->boundingRect()).boundingRect());
-    if (evt->scenePos().y() <= last_thumb_rect.bottom()) {
+    const QRectF lastThumbRect(composite->mapToScene(composite->boundingRect()).boundingRect());
+    if (evt->scenePos().y() <= lastThumbRect.bottom()) {
       return;
     }
   }
@@ -1008,26 +1008,26 @@ void ThumbnailSequence::Impl::sceneContextMenuEvent(QGraphicsSceneContextMenuEve
   emit m_owner.pastLastPageContextMenuRequested(evt->screenPos());
 }
 
-void ThumbnailSequence::Impl::itemSelectedByUser(CompositeItem* composite_item, const Qt::KeyboardModifiers modifiers) {
-  const ItemsById::iterator id_it(m_itemsById.iterator_to(*composite_item->item()));
+void ThumbnailSequence::Impl::itemSelectedByUser(CompositeItem* compositeItem, const Qt::KeyboardModifiers modifiers) {
+  const ItemsById::iterator idIt(m_itemsById.iterator_to(*compositeItem->item()));
 
   if (modifiers & Qt::ControlModifier) {
-    selectItemWithControl(id_it);
+    selectItemWithControl(idIt);
   } else if (modifiers & Qt::ShiftModifier) {
-    selectItemWithShift(id_it);
+    selectItemWithShift(idIt);
   } else {
-    selectItemNoModifiers(id_it);
+    selectItemNoModifiers(idIt);
   }
 }
 
-void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& id_it) {
+void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& idIt) {
   SelectionFlags flags = SELECTED_BY_USER;
 
-  if (!id_it->isSelected()) {
+  if (!idIt->isSelected()) {
     if (m_selectionLeader) {
       m_selectionLeader->setSelectionLeader(false);
     }
-    m_selectionLeader = &*id_it;
+    m_selectionLeader = &*idIt;
     m_selectionLeader->setSelectionLeader(true);
     moveToSelected(m_selectionLeader);
 
@@ -1045,31 +1045,31 @@ void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& i
   }
 
   // Unselect it.
-  id_it->setSelected(false);
-  moveToUnselected(&*id_it);
+  idIt->setSelected(false);
+  moveToUnselected(&*idIt);
 
-  if (m_selectionLeader != &*id_it) {
+  if (m_selectionLeader != &*idIt) {
     // The selection leader remains the same - we are done.
     return;
   }
   // Select the new selection leader among other selected items.
   m_selectionLeader = nullptr;
   flags |= AVOID_SCROLLING_TO;
-  ItemsInOrder::iterator ord_it1(m_items.project<ItemsInOrderTag>(id_it));
-  ItemsInOrder::iterator ord_it2(ord_it1);
+  ItemsInOrder::iterator ordIt1(m_items.project<ItemsInOrderTag>(idIt));
+  ItemsInOrder::iterator ordIt2(ordIt1);
   while (true) {
-    if (ord_it1 != m_itemsInOrder.begin()) {
-      --ord_it1;
-      if (ord_it1->isSelected()) {
-        m_selectionLeader = &*ord_it1;
+    if (ordIt1 != m_itemsInOrder.begin()) {
+      --ordIt1;
+      if (ordIt1->isSelected()) {
+        m_selectionLeader = &*ordIt1;
         break;
       }
     }
-    if (ord_it2 != m_itemsInOrder.end()) {
-      ++ord_it2;
-      if (ord_it2 != m_itemsInOrder.end()) {
-        if (ord_it2->isSelected()) {
-          m_selectionLeader = &*ord_it2;
+    if (ordIt2 != m_itemsInOrder.end()) {
+      ++ordIt2;
+      if (ordIt2 != m_itemsInOrder.end()) {
+        if (ordIt2->isSelected()) {
+          m_selectionLeader = &*ordIt2;
           break;
         }
       }
@@ -1083,21 +1083,21 @@ void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& i
   m_owner.emitNewSelectionLeader(m_selectionLeader->pageInfo, m_selectionLeader->composite, flags);
 }  // ThumbnailSequence::Impl::selectItemWithControl
 
-void ThumbnailSequence::Impl::selectItemWithShift(const ItemsById::iterator& id_it) {
+void ThumbnailSequence::Impl::selectItemWithShift(const ItemsById::iterator& idIt) {
   if (!m_selectionLeader) {
-    selectItemNoModifiers(id_it);
+    selectItemNoModifiers(idIt);
 
     return;
   }
 
   SelectionFlags flags = SELECTED_BY_USER;
-  if (m_selectionLeader == &*id_it) {
+  if (m_selectionLeader == &*idIt) {
     flags |= REDUNDANT_SELECTION;
   }
 
   // Select all the items between the selection leader and the item that was clicked.
   ItemsInOrder::iterator endpoint1(m_itemsInOrder.iterator_to(*m_selectionLeader));
-  ItemsInOrder::iterator endpoint2(m_items.project<ItemsInOrderTag>(id_it));
+  ItemsInOrder::iterator endpoint2(m_items.project<ItemsInOrderTag>(idIt));
 
   if (endpoint1 == endpoint2) {
     // One-element sequence, already selected.
@@ -1105,21 +1105,21 @@ void ThumbnailSequence::Impl::selectItemWithShift(const ItemsById::iterator& id_
   }
   // The problem is that we don't know which endpoint precedes the other.
   // Let's find out.
-  ItemsInOrder::iterator ord_it1(endpoint1);
-  ItemsInOrder::iterator ord_it2(endpoint1);
+  ItemsInOrder::iterator ordIt1(endpoint1);
+  ItemsInOrder::iterator ordIt2(endpoint1);
   while (true) {
-    if (ord_it1 != m_itemsInOrder.begin()) {
-      --ord_it1;
-      if (ord_it1 == endpoint2) {
+    if (ordIt1 != m_itemsInOrder.begin()) {
+      --ordIt1;
+      if (ordIt1 == endpoint2) {
         // endpoint2 was found before endpoint1.
         std::swap(endpoint1, endpoint2);
         break;
       }
     }
-    if (ord_it2 != m_itemsInOrder.end()) {
-      ++ord_it2;
-      if (ord_it2 != m_itemsInOrder.end()) {
-        if (ord_it2 == endpoint2) {
+    if (ordIt2 != m_itemsInOrder.end()) {
+      ++ordIt2;
+      if (ordIt2 != m_itemsInOrder.end()) {
+        if (ordIt2 == endpoint2) {
           // endpoint2 was found after endpoint1.
           break;
         }
@@ -1135,25 +1135,25 @@ void ThumbnailSequence::Impl::selectItemWithShift(const ItemsById::iterator& id_
   // Switch the selection leader.
   assert(m_selectionLeader);
   m_selectionLeader->setSelectionLeader(false);
-  m_selectionLeader = &*id_it;
+  m_selectionLeader = &*idIt;
   m_selectionLeader->setSelectionLeader(true);
 
-  m_owner.emitNewSelectionLeader(id_it->pageInfo, id_it->composite, flags);
+  m_owner.emitNewSelectionLeader(idIt->pageInfo, idIt->composite, flags);
 }  // ThumbnailSequence::Impl::selectItemWithShift
 
-void ThumbnailSequence::Impl::selectItemNoModifiers(const ItemsById::iterator& id_it) {
+void ThumbnailSequence::Impl::selectItemNoModifiers(const ItemsById::iterator& idIt) {
   SelectionFlags flags = SELECTED_BY_USER;
-  if (m_selectionLeader == &*id_it) {
+  if (m_selectionLeader == &*idIt) {
     flags |= REDUNDANT_SELECTION;
   }
 
   clearSelection();
 
-  m_selectionLeader = &*id_it;
+  m_selectionLeader = &*idIt;
   m_selectionLeader->setSelectionLeader(true);
   moveToSelected(m_selectionLeader);
 
-  m_owner.emitNewSelectionLeader(id_it->pageInfo, id_it->composite, flags);
+  m_owner.emitNewSelectionLeader(idIt->pageInfo, idIt->composite, flags);
 }
 
 void ThumbnailSequence::Impl::clear() {
@@ -1186,63 +1186,62 @@ void ThumbnailSequence::Impl::clearSelection() {
 ThumbnailSequence::Impl::ItemsInOrder::iterator ThumbnailSequence::Impl::itemInsertPosition(
     const ItemsInOrder::iterator begin,
     const ItemsInOrder::iterator end,
-    const PageId& page_id,
-    const bool page_incomplete,
+    const PageId& pageId,
+    const bool pageIncomplete,
     const ItemsInOrder::iterator hint,
-    int* dist_from_hint) {
+    int* distFromHint) {
   // Note that to preserve stable ordering, this function *must* return hint,
   // as long as it's an acceptable position.
 
   if (!m_orderProvider) {
-    if (dist_from_hint) {
-      *dist_from_hint = 0;
+    if (distFromHint) {
+      *distFromHint = 0;
     }
 
     return hint;
   }
 
-  ItemsInOrder::iterator ins_pos(hint);
+  ItemsInOrder::iterator insPos(hint);
   int dist = 0;
-  // While the element immediately preceeding ins_pos is supposed to
-  // follow the page we are inserting, move ins_pos one element back.
-  while (ins_pos != begin) {
-    ItemsInOrder::iterator prev(ins_pos);
+  // While the element immediately preceeding insPos is supposed to
+  // follow the page we are inserting, move insPos one element back.
+  while (insPos != begin) {
+    ItemsInOrder::iterator prev(insPos);
     --prev;
-    const bool precedes
-        = m_orderProvider->precedes(page_id, page_incomplete, prev->pageId(), prev->incompleteThumbnail);
+    const bool precedes = m_orderProvider->precedes(pageId, pageIncomplete, prev->pageId(), prev->incompleteThumbnail);
     if (precedes) {
-      ins_pos = prev;
+      insPos = prev;
       --dist;
     } else {
       break;
     }
   }
 
-  // While the element pointed to by ins_pos is supposed to precede
-  // the page we are inserting, advance ins_pos.
-  while (ins_pos != end) {
+  // While the element pointed to by insPos is supposed to precede
+  // the page we are inserting, advance insPos.
+  while (insPos != end) {
     const bool precedes
-        = m_orderProvider->precedes(ins_pos->pageId(), ins_pos->incompleteThumbnail, page_id, page_incomplete);
+        = m_orderProvider->precedes(insPos->pageId(), insPos->incompleteThumbnail, pageId, pageIncomplete);
     if (precedes) {
-      ++ins_pos;
+      ++insPos;
       ++dist;
     } else {
       break;
     }
   }
 
-  if (dist_from_hint) {
-    *dist_from_hint = dist;
+  if (distFromHint) {
+    *distFromHint = dist;
   }
 
-  return ins_pos;
+  return insPos;
 }  // ThumbnailSequence::Impl::itemInsertPosition
 
-std::unique_ptr<QGraphicsItem> ThumbnailSequence::Impl::getThumbnail(const PageInfo& page_info) {
+std::unique_ptr<QGraphicsItem> ThumbnailSequence::Impl::getThumbnail(const PageInfo& pageInfo) {
   std::unique_ptr<QGraphicsItem> thumb;
 
   if (m_factory) {
-    thumb = m_factory->get(page_info);
+    thumb = m_factory->get(pageInfo);
   }
 
   if (!thumb) {
@@ -1252,78 +1251,78 @@ std::unique_ptr<QGraphicsItem> ThumbnailSequence::Impl::getThumbnail(const PageI
   return thumb;
 }
 
-std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabelGroup(const PageInfo& page_info) {
-  const PageId& page_id = page_info.id();
-  const QFileInfo file_info(page_id.imageId().filePath());
-  const QString file_name(file_info.completeBaseName());
+std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabelGroup(const PageInfo& pageInfo) {
+  const PageId& pageId = pageInfo.id();
+  const QFileInfo fileInfo(pageId.imageId().filePath());
+  const QString fileName(fileInfo.completeBaseName());
 
   QString text;
-  if (file_name.size() <= 15) {
-    text = file_name;
+  if (fileName.size() <= 15) {
+    text = fileName;
   } else {
-    text = "..." + file_name.right(15);
+    text = "..." + fileName.right(15);
   }
-  if (page_info.imageId().isMultiPageFile()) {
-    text = ThumbnailSequence::tr("%1 (page %2)").arg(text).arg(page_id.imageId().page());
+  if (pageInfo.imageId().isMultiPageFile()) {
+    text = ThumbnailSequence::tr("%1 (page %2)").arg(text).arg(pageId.imageId().page());
   }
 
-  auto normal_text_item = std::make_unique<QGraphicsSimpleTextItem>();
-  normal_text_item->setText(text);
+  auto normalTextItem = std::make_unique<QGraphicsSimpleTextItem>();
+  normalTextItem->setText(text);
 
-  auto bold_text_item = std::make_unique<QGraphicsSimpleTextItem>();
-  bold_text_item->setText(text);
+  auto boldTextItem = std::make_unique<QGraphicsSimpleTextItem>();
+  boldTextItem->setText(text);
 
-  const QBrush selected_item_text_color = ColorSchemeManager::instance().getColorParam(
+  const QBrush selectedItemTextColor = ColorSchemeManager::instance().getColorParam(
       ColorScheme::ThumbnailSequenceSelectedItemText, QApplication::palette().highlightedText());
-  const QBrush selection_leader_text_color = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::ThumbnailSequenceSelectionLeaderText, selected_item_text_color);
-  bold_text_item->setBrush(selection_leader_text_color);
+  const QBrush selectionLeaderTextColor = ColorSchemeManager::instance().getColorParam(
+      ColorScheme::ThumbnailSequenceSelectionLeaderText, selectedItemTextColor);
+  boldTextItem->setBrush(selectionLeaderTextColor);
 
-  QRectF normal_text_box(normal_text_item->boundingRect());
-  QRectF bold_text_box(bold_text_item->boundingRect());
-  normal_text_box.moveCenter(bold_text_box.center());
-  normal_text_box.moveRight(bold_text_box.right());
-  normal_text_item->setPos(normal_text_box.topLeft());
-  bold_text_item->setPos(bold_text_box.topLeft());
+  QRectF normalTextBox(normalTextItem->boundingRect());
+  QRectF boldTextBox(boldTextItem->boundingRect());
+  normalTextBox.moveCenter(boldTextBox.center());
+  normalTextBox.moveRight(boldTextBox.right());
+  normalTextItem->setPos(normalTextBox.topLeft());
+  boldTextItem->setPos(boldTextBox.topLeft());
 
-  QIcon page_thumb;
-  switch (page_id.subPage()) {
+  QIcon pageThumb;
+  switch (pageId.subPage()) {
     case PageId::LEFT_PAGE:
-      page_thumb = IconProvider::getInstance().getIcon("left_page_thumb");
+      pageThumb = IconProvider::getInstance().getIcon("left_page_thumb");
       break;
     case PageId::RIGHT_PAGE:
-      page_thumb = IconProvider::getInstance().getIcon("right_page_thumb");
+      pageThumb = IconProvider::getInstance().getIcon("right_page_thumb");
       break;
     default:
-      return std::make_unique<LabelGroup>(std::move(normal_text_item), std::move(bold_text_item));
+      return std::make_unique<LabelGroup>(std::move(normalTextItem), std::move(boldTextItem));
   }
 
   const QSize size = {23, 17};
-  const QPixmap pixmap = page_thumb.pixmap(size);
-  const QPixmap pixmap_selected = page_thumb.pixmap(size, QIcon::Selected);
-  auto pixmap_item = std::make_unique<QGraphicsPixmapItem>();
-  pixmap_item->setPixmap(pixmap);
-  auto pixmap_item_selected = std::make_unique<QGraphicsPixmapItem>();
-  pixmap_item_selected->setPixmap(pixmap_selected);
+  const QPixmap pixmap = pageThumb.pixmap(size);
+  const QPixmap pixmapSelected = pageThumb.pixmap(size, QIcon::Selected);
+  auto pixmapItem = std::make_unique<QGraphicsPixmapItem>();
+  pixmapItem->setPixmap(pixmap);
+  auto pixmapItemSelected = std::make_unique<QGraphicsPixmapItem>();
+  pixmapItemSelected->setPixmap(pixmapSelected);
 
-  const int label_pixmap_spacing = 5;
+  const int labelPixmapSpacing = 5;
 
-  QRectF pixmap_box(pixmap_item->boundingRect());
-  pixmap_box.moveTop(bold_text_box.top());
-  pixmap_box.moveLeft(bold_text_box.right() + label_pixmap_spacing);
-  pixmap_item->setPos(pixmap_box.topLeft());
-  pixmap_item_selected->setPos(pixmap_box.topLeft());
+  QRectF pixmapBox(pixmapItem->boundingRect());
+  pixmapBox.moveTop(boldTextBox.top());
+  pixmapBox.moveLeft(boldTextBox.right() + labelPixmapSpacing);
+  pixmapItem->setPos(pixmapBox.topLeft());
+  pixmapItemSelected->setPos(pixmapBox.topLeft());
 
-  return std::make_unique<LabelGroup>(std::move(normal_text_item), std::move(bold_text_item), std::move(pixmap_item),
-                                      std::move(pixmap_item_selected));
+  return std::make_unique<LabelGroup>(std::move(normalTextItem), std::move(boldTextItem), std::move(pixmapItem),
+                                      std::move(pixmapItemSelected));
 }  // ThumbnailSequence::Impl::getLabelGroup
 
 std::unique_ptr<ThumbnailSequence::CompositeItem> ThumbnailSequence::Impl::getCompositeItem(const Item* item,
-                                                                                            const PageInfo& page_info) {
-  std::unique_ptr<QGraphicsItem> thumb(getThumbnail(page_info));
-  std::unique_ptr<LabelGroup> label_group(getLabelGroup(page_info));
+                                                                                            const PageInfo& pageInfo) {
+  std::unique_ptr<QGraphicsItem> thumb(getThumbnail(pageInfo));
+  std::unique_ptr<LabelGroup> labelGroup(getLabelGroup(pageInfo));
 
-  auto composite = std::make_unique<CompositeItem>(*this, std::move(thumb), std::move(label_group));
+  auto composite = std::make_unique<CompositeItem>(*this, std::move(thumb), std::move(labelGroup));
   composite->setItem(item);
 
   return composite;
@@ -1355,32 +1354,32 @@ void ThumbnailSequence::Impl::setViewMode(ThumbnailSequence::ViewMode mode) {
 
 /*==================== ThumbnailSequence::Item ======================*/
 
-ThumbnailSequence::Item::Item(const PageInfo& page_info, CompositeItem* comp_item)
-    : pageInfo(page_info),
-      composite(comp_item),
-      incompleteThumbnail(comp_item->incompleteThumbnail()),
+ThumbnailSequence::Item::Item(const PageInfo& pageInfo, CompositeItem* compItem)
+    : pageInfo(pageInfo),
+      composite(compItem),
+      incompleteThumbnail(compItem->incompleteThumbnail()),
       m_isSelected(false),
       m_isSelectionLeader(false) {}
 
 void ThumbnailSequence::Item::setSelected(bool selected) const {
-  const bool was_selected = m_isSelected;
-  const bool was_selection_leader = m_isSelectionLeader;
+  const bool wasSelected = m_isSelected;
+  const bool wasSelectionLeader = m_isSelectionLeader;
   m_isSelected = selected;
   m_isSelectionLeader = m_isSelectionLeader && selected;
 
-  if ((was_selected != m_isSelected) || (was_selection_leader != m_isSelectionLeader)) {
+  if ((wasSelected != m_isSelected) || (wasSelectionLeader != m_isSelectionLeader)) {
     composite->updateAppearence(m_isSelected, m_isSelectionLeader);
     composite->update();
   }
 }
 
-void ThumbnailSequence::Item::setSelectionLeader(bool selection_leader) const {
-  const bool was_selected = m_isSelected;
-  const bool was_selection_leader = m_isSelectionLeader;
-  m_isSelected = m_isSelected || selection_leader;
-  m_isSelectionLeader = selection_leader;
+void ThumbnailSequence::Item::setSelectionLeader(bool selectionLeader) const {
+  const bool wasSelected = m_isSelected;
+  const bool wasSelectionLeader = m_isSelectionLeader;
+  m_isSelected = m_isSelected || selectionLeader;
+  m_isSelectionLeader = selectionLeader;
 
-  if ((was_selected != m_isSelected) || (was_selection_leader != m_isSelectionLeader)) {
+  if ((wasSelected != m_isSelected) || (wasSelectionLeader != m_isSelectionLeader)) {
     composite->updateAppearence(m_isSelected, m_isSelectionLeader);
     composite->update();
   }
@@ -1390,7 +1389,7 @@ void ThumbnailSequence::Item::setSelectionLeader(bool selection_leader) const {
 
 QPainterPath ThumbnailSequence::PlaceholderThumb::m_sCachedPath;
 
-ThumbnailSequence::PlaceholderThumb::PlaceholderThumb(const QSizeF& max_size) : m_maxSize(max_size) {}
+ThumbnailSequence::PlaceholderThumb::PlaceholderThumb(const QSizeF& maxSize) : m_maxSize(maxSize) {}
 
 QRectF ThumbnailSequence::PlaceholderThumb::boundingRect() const {
   return QRectF(QPointF(0.0, 0.0), m_maxSize);
@@ -1402,46 +1401,46 @@ void ThumbnailSequence::PlaceholderThumb::paint(QPainter* painter, const QStyleO
 
 /*====================== ThumbnailSequence::LabelGroup ======================*/
 
-ThumbnailSequence::LabelGroup::LabelGroup(std::unique_ptr<QGraphicsSimpleTextItem> normal_label,
-                                          std::unique_ptr<QGraphicsSimpleTextItem> bold_label,
+ThumbnailSequence::LabelGroup::LabelGroup(std::unique_ptr<QGraphicsSimpleTextItem> normalLabel,
+                                          std::unique_ptr<QGraphicsSimpleTextItem> boldLabel,
                                           std::unique_ptr<QGraphicsPixmapItem> pixmap,
-                                          std::unique_ptr<QGraphicsPixmapItem> pixmap_selected)
-    : m_normalLabel(normal_label.get()),
-      m_boldLabel(bold_label.get()),
+                                          std::unique_ptr<QGraphicsPixmapItem> pixmapSelected)
+    : m_normalLabel(normalLabel.get()),
+      m_boldLabel(boldLabel.get()),
       m_pixmap(pixmap.get()),
-      m_pixmapSelected(pixmap_selected.get()) {
+      m_pixmapSelected(pixmapSelected.get()) {
   m_normalLabel->setVisible(true);
   m_boldLabel->setVisible(false);
 
-  bold_label->setPos(
-      bold_label->pos().x() + 0.5 * (bold_label->boundingRect().width() - normal_label->boundingRect().width()),
-      bold_label->pos().y());
+  boldLabel->setPos(
+      boldLabel->pos().x() + 0.5 * (boldLabel->boundingRect().width() - normalLabel->boundingRect().width()),
+      boldLabel->pos().y());
 
-  addToGroup(normal_label.release());
-  addToGroup(bold_label.release());
+  addToGroup(normalLabel.release());
+  addToGroup(boldLabel.release());
   if (pixmap) {
     addToGroup(pixmap.release());
   }
-  if (pixmap_selected) {
-    addToGroup(pixmap_selected.release());
+  if (pixmapSelected) {
+    addToGroup(pixmapSelected.release());
   }
 }
 
-void ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selection_leader) {
-  m_normalLabel->setVisible(!selection_leader);
-  m_boldLabel->setVisible(selection_leader);
+void ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selectionLeader) {
+  m_normalLabel->setVisible(!selectionLeader);
+  m_boldLabel->setVisible(selectionLeader);
 
-  const QBrush item_text_color = ColorSchemeManager::instance().getColorParam(ColorScheme::ThumbnailSequenceItemText,
-                                                                              QApplication::palette().text());
-  const QBrush selected_item_text_color = ColorSchemeManager::instance().getColorParam(
+  const QBrush itemTextColor = ColorSchemeManager::instance().getColorParam(ColorScheme::ThumbnailSequenceItemText,
+                                                                            QApplication::palette().text());
+  const QBrush selectedItemTextColor = ColorSchemeManager::instance().getColorParam(
       ColorScheme::ThumbnailSequenceSelectedItemText, QApplication::palette().highlightedText());
 
-  if (selection_leader) {
+  if (selectionLeader) {
     assert(selected);
   } else if (selected) {
-    m_normalLabel->setBrush(selected_item_text_color);
+    m_normalLabel->setBrush(selectedItemTextColor);
   } else {
-    m_normalLabel->setBrush(item_text_color);
+    m_normalLabel->setBrush(itemTextColor);
   }
 
   if (m_pixmap && m_pixmapSelected) {
@@ -1454,18 +1453,18 @@ void ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selecti
 
 ThumbnailSequence::CompositeItem::CompositeItem(ThumbnailSequence::Impl& owner,
                                                 std::unique_ptr<QGraphicsItem> thumbnail,
-                                                std::unique_ptr<LabelGroup> label_group)
-    : m_owner(owner), m_item(0), m_thumb(thumbnail.get()), m_labelGroup(label_group.get()) {
-  const QSizeF thumb_size(thumbnail->boundingRect().size());
-  const QSizeF label_size(label_group->boundingRect().size());
+                                                std::unique_ptr<LabelGroup> labelGroup)
+    : m_owner(owner), m_item(0), m_thumb(thumbnail.get()), m_labelGroup(labelGroup.get()) {
+  const QSizeF thumbSize(thumbnail->boundingRect().size());
+  const QSizeF labelSize(labelGroup->boundingRect().size());
 
-  const int thumb_label_spacing = 1;
+  const int thumbLabelSpacing = 1;
   thumbnail->setPos(0.0, 0.0);
-  label_group->setPos(thumbnail->pos().x() + 0.5 * (thumb_size.width() - label_size.width()),
-                      thumb_size.height() + thumb_label_spacing);
+  labelGroup->setPos(thumbnail->pos().x() + 0.5 * (thumbSize.width() - labelSize.width()),
+                     thumbSize.height() + thumbLabelSpacing);
 
   addToGroup(thumbnail.release());
-  addToGroup(label_group.release());
+  addToGroup(labelGroup.release());
 
   setCursor(Qt::PointingHandCursor);
   setZValue(-1);
@@ -1475,22 +1474,22 @@ bool ThumbnailSequence::CompositeItem::incompleteThumbnail() const {
   return dynamic_cast<IncompleteThumbnail*>(m_thumb) != 0;
 }
 
-void ThumbnailSequence::CompositeItem::updateSceneRect(QRectF& scene_rect) {
+void ThumbnailSequence::CompositeItem::updateSceneRect(QRectF& sceneRect) {
   QRectF rect(m_thumb->boundingRect());
   rect.translate(m_thumb->pos());
   rect.translate(pos());
 
-  QRectF bounding_rect(boundingRect());
-  bounding_rect.translate(pos());
+  QRectF boundingRect(this->boundingRect());
+  boundingRect.translate(pos());
 
-  rect.setTop(bounding_rect.top());
-  rect.setBottom(bounding_rect.bottom());
+  rect.setTop(boundingRect.top());
+  rect.setBottom(boundingRect.bottom());
 
-  scene_rect |= rect;
+  sceneRect |= rect;
 }
 
-void ThumbnailSequence::CompositeItem::updateAppearence(bool selected, bool selection_leader) {
-  m_labelGroup->updateAppearence(selected, selection_leader);
+void ThumbnailSequence::CompositeItem::updateAppearence(bool selected, bool selectionLeader) {
+  m_labelGroup->updateAppearence(selected, selectionLeader);
 }
 
 QRectF ThumbnailSequence::CompositeItem::boundingRect() const {
@@ -1502,15 +1501,15 @@ QRectF ThumbnailSequence::CompositeItem::boundingRect() const {
 void ThumbnailSequence::CompositeItem::paint(QPainter* painter,
                                              const QStyleOptionGraphicsItem* option,
                                              QWidget* widget) {
-  const QBrush selected_item_background_color = ColorSchemeManager::instance().getColorParam(
+  const QBrush selectedItemBackgroundColor = ColorSchemeManager::instance().getColorParam(
       ColorScheme::ThumbnailSequenceSelectedItemBackground, QApplication::palette().color(QPalette::Highlight));
-  const QBrush selection_leader_background_color = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::ThumbnailSequenceSelectionLeaderBackground, selected_item_background_color);
+  const QBrush selectionLeaderBackgroundColor = ColorSchemeManager::instance().getColorParam(
+      ColorScheme::ThumbnailSequenceSelectionLeaderBackground, selectedItemBackgroundColor);
 
   if (m_item->isSelectionLeader()) {
-    painter->fillRect(boundingRect(), selection_leader_background_color);
+    painter->fillRect(boundingRect(), selectionLeaderBackgroundColor);
   } else if (m_item->isSelected()) {
-    painter->fillRect(boundingRect(), selected_item_background_color);
+    painter->fillRect(boundingRect(), selectedItemBackgroundColor);
   }
 }
 

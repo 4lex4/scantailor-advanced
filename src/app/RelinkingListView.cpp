@@ -50,8 +50,8 @@ void RelinkingListView::paintEvent(QPaintEvent* e) {
 }
 
 void RelinkingListView::maybeDrawStatusLayer(QPainter* painter,
-                                             const QModelIndex& item_index,
-                                             const QRect& item_paint_rect) {
+                                             const QModelIndex& itemIndex,
+                                             const QRect& itemPaintRect) {
   if (m_statusLayerDrawn) {
     return;
   }
@@ -61,7 +61,7 @@ void RelinkingListView::maybeDrawStatusLayer(QPainter* painter,
   // We can't be sure about its origin (widget top-left, viewport top-left?)
   // and its clipping region.  The origin is not hard to figure out,
   // while the clipping region we are just going to reset.
-  painter->translate(item_paint_rect.topLeft() - visualRect(item_index).topLeft());
+  painter->translate(itemPaintRect.topLeft() - visualRect(itemIndex).topLeft());
   painter->setClipRect(viewport()->rect());
   drawStatusLayer(painter);
   painter->restore();
@@ -70,36 +70,36 @@ void RelinkingListView::maybeDrawStatusLayer(QPainter* painter,
 }
 
 void RelinkingListView::drawStatusLayer(QPainter* painter) {
-  const QRect drawing_rect(viewport()->rect());
-  QModelIndex top_index(this->indexAt(drawing_rect.topLeft()));
-  if (!top_index.isValid()) {
+  const QRect drawingRect(viewport()->rect());
+  QModelIndex topIndex(this->indexAt(drawingRect.topLeft()));
+  if (!topIndex.isValid()) {
     // No [visible] elements at all?
     return;
   }
 
-  if (top_index.row() > 0) {
+  if (topIndex.row() > 0) {
     // The appearence of any element actually depends on its neighbours,
     // so we start with the element above our topmost visible one.
-    top_index = top_index.sibling(top_index.row() - 1, 0);
+    topIndex = topIndex.sibling(topIndex.row() - 1, 0);
   }
 
-  GroupAggregator group_aggregator;
-  const int rows = top_index.model()->rowCount(top_index.parent());
+  GroupAggregator groupAggregator;
+  const int rows = topIndex.model()->rowCount(topIndex.parent());
 
-  for (int row = top_index.row(); row < rows; ++row) {
-    const QModelIndex index(top_index.sibling(row, 0));
-    const QRect item_rect(visualRect(index));
+  for (int row = topIndex.row(); row < rows; ++row) {
+    const QModelIndex index(topIndex.sibling(row, 0));
+    const QRect itemRect(visualRect(index));
 
-    QRect rect(drawing_rect);
-    rect.setTop(item_rect.top());
-    rect.setBottom(item_rect.bottom());
-    rect.setWidth(item_rect.height());
-    rect.moveRight(drawing_rect.right());
+    QRect rect(drawingRect);
+    rect.setTop(itemRect.top());
+    rect.setBottom(itemRect.bottom());
+    rect.setWidth(itemRect.height());
+    rect.moveRight(drawingRect.right());
 
     const int status = index.data(RelinkingModel::UncommittedStatusRole).toInt();
-    group_aggregator.process(rect, status);
+    groupAggregator.process(rect, status);
 
-    if ((row != top_index.row()) && !item_rect.intersects(drawing_rect)) {
+    if ((row != topIndex.row()) && !itemRect.intersects(drawingRect)) {
       // Note that we intentionally break *after* processing
       // the first invisible item. That's because the appearence
       // of its immediate predecessor depends on it. The topmost item
@@ -121,7 +121,7 @@ void RelinkingListView::drawStatusLayer(QPainter* painter) {
     painter->setPen(pen);
     painter->setBrush(brush);
 
-    for (const IndicationGroup& group : group_aggregator.groups()) {
+    for (const IndicationGroup& group : groupAggregator.groups()) {
       if (group.status == status) {
         const qreal radius = 0.5 * group.rect.width();
         QRectF rect(group.rect);

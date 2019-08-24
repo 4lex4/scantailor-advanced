@@ -24,12 +24,12 @@ ImageMetadataLoader::StaticInit::StaticInit() {
 
 ImageMetadataLoader::StaticInit ImageMetadataLoader::m_staticInit;
 
-ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
+ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& ioDevice,
                                                           const VirtualFunction<void, const ImageMetadata&>& out) {
   auto it(m_sLoaders.begin());
   const auto end(m_sLoaders.end());
   for (; it != end; ++it) {
-    const Status status = (*it)->loadMetadata(io_device, out);
+    const Status status = (*it)->loadMetadata(ioDevice, out);
     if (status != FORMAT_NOT_RECOGNIZED) {
       return status;
     }
@@ -38,9 +38,9 @@ ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& io_device,
   return FORMAT_NOT_RECOGNIZED;
 }
 
-ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(const QString& file_path,
+ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(const QString& filePath,
                                                           const VirtualFunction<void, const ImageMetadata&>& out) {
-  QFile file(file_path);
+  QFile file(filePath);
   if (!file.open(QIODevice::ReadOnly)) {
     return GENERIC_ERROR;
   }

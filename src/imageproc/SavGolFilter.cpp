@@ -7,30 +7,30 @@
 
 namespace imageproc {
 namespace {
-int calcNumTerms(const int hor_degree, const int vert_degree) {
-  return (hor_degree + 1) * (vert_degree + 1);
+int calcNumTerms(const int horDegree, const int vertDegree) {
+  return (horDegree + 1) * (vertDegree + 1);
 }
 
 class Kernel : public SavGolKernel {
  public:
-  Kernel(const QSize& size, const QPoint& origin, int hor_degree, int vert_degree)
-      : SavGolKernel(size, origin, hor_degree, vert_degree) {}
+  Kernel(const QSize& size, const QPoint& origin, int horDegree, int vertDegree)
+      : SavGolKernel(size, origin, horDegree, vertDegree) {}
 
-  void convolve(uint8_t* dst, const uint8_t* src_top_left, int src_bpl) const;
+  void convolve(uint8_t* dst, const uint8_t* srcTopLeft, int srcBpl) const;
 };
 
 
-inline void Kernel::convolve(uint8_t* dst, const uint8_t* src_top_left, int src_bpl) const {
-  const uint8_t* p_src = src_top_left;
-  const float* p_kernel = data();
+inline void Kernel::convolve(uint8_t* dst, const uint8_t* srcTopLeft, int srcBpl) const {
+  const uint8_t* pSrc = srcTopLeft;
+  const float* pKernel = data();
   float sum = 0.5;  // For rounding purposes.
   const int w = width();
   const int h = height();
 
-  for (int y = 0; y < h; ++y, p_src += src_bpl) {
+  for (int y = 0; y < h; ++y, pSrc += srcBpl) {
     for (int x = 0; x < w; ++x) {
-      sum += p_src[x] * *p_kernel;
-      ++p_kernel;
+      sum += pSrc[x] * *pKernel;
+      ++pKernel;
     }
   }
 
@@ -38,16 +38,13 @@ inline void Kernel::convolve(uint8_t* dst, const uint8_t* src_top_left, int src_
   *dst = static_cast<uint8_t>(qBound(0, val, 255));
 }
 
-QImage savGolFilterGrayToGray(const QImage& src,
-                              const QSize& window_size,
-                              const int hor_degree,
-                              const int vert_degree) {
+QImage savGolFilterGrayToGray(const QImage& src, const QSize& windowSize, const int horDegree, const int vertDegree) {
   const int width = src.width();
   const int height = src.height();
 
   // Kernel width and height.
-  const int kw = window_size.width();
-  const int kh = window_size.height();
+  const int kw = windowSize.width();
+  const int kh = windowSize.height();
 
   if ((kw > width) || (kh > height)) {
     return src;
@@ -63,27 +60,27 @@ QImage savGolFilterGrayToGray(const QImage& src,
    */
 
   // Co-ordinates of the central point (C) of the kernel.
-  const QPoint k_center(kw / 2, kh / 2);
+  const QPoint kCenter(kw / 2, kh / 2);
 
   // Origin is the current hot spot of the kernel.
-  // Normally it's at k_center, but sometimes we move
+  // Normally it's at kCenter, but sometimes we move
   // it to other locations to avoid parts of the kernel
   // from going outside of the image area.
-  QPoint k_origin;
+  QPoint kOrigin;
 
   // Length of the top segment (T) of the kernel.
-  const int k_top = k_center.y();
+  const int kTop = kCenter.y();
 
   // Length of the bottom segment (B) of the kernel.
-  const int k_bottom = kh - k_top - 1;
+  const int kBottom = kh - kTop - 1;
 
   // Length of the left segment (L) of the kernel.
-  const int k_left = k_center.x();
+  const int kLeft = kCenter.x();
   // Length of the right segment (R) of the kernel.
-  const int k_right = kw - k_left - 1;
+  const int kRight = kw - kLeft - 1;
 
-  const uint8_t* const src_data = src.bits();
-  const int src_bpl = src.bytesPerLine();
+  const uint8_t* const srcData = src.bits();
+  const int srcBpl = src.bytesPerLine();
 
   QImage dst(width, height, QImage::Format_Indexed8);
   dst.setColorTable(createGrayscalePalette());
@@ -91,191 +88,191 @@ QImage savGolFilterGrayToGray(const QImage& src,
     throw std::bad_alloc();
   }
 
-  uint8_t* const dst_data = dst.bits();
-  const int dst_bpl = dst.bytesPerLine();
+  uint8_t* const dstData = dst.bits();
+  const int dstBpl = dst.bytesPerLine();
   // Top-left corner.
-  const uint8_t* src_line = src_data;
-  uint8_t* dst_line = dst_data;
-  Kernel kernel(window_size, QPoint(0, 0), hor_degree, vert_degree);
-  for (int y = 0; y < k_top; ++y, dst_line += dst_bpl) {
-    k_origin.setY(y);
-    for (int x = 0; x < k_left; ++x) {
-      k_origin.setX(x);
-      kernel.recalcForOrigin(k_origin);
-      kernel.convolve(dst_line + x, src_line, src_bpl);
+  const uint8_t* srcLine = srcData;
+  uint8_t* dstLine = dstData;
+  Kernel kernel(windowSize, QPoint(0, 0), horDegree, vertDegree);
+  for (int y = 0; y < kTop; ++y, dstLine += dstBpl) {
+    kOrigin.setY(y);
+    for (int x = 0; x < kLeft; ++x) {
+      kOrigin.setX(x);
+      kernel.recalcForOrigin(kOrigin);
+      kernel.convolve(dstLine + x, srcLine, srcBpl);
     }
   }
 
   // Top area between two corners.
-  k_origin.setX(k_center.x());
-  src_line = src_data - k_left;
-  dst_line = dst_data;
-  for (int y = 0; y < k_top; ++y, dst_line += dst_bpl) {
-    k_origin.setY(y);
-    kernel.recalcForOrigin(k_origin);
-    for (int x = k_left; x < width - k_right; ++x) {
-      kernel.convolve(dst_line + x, src_line + x, src_bpl);
+  kOrigin.setX(kCenter.x());
+  srcLine = srcData - kLeft;
+  dstLine = dstData;
+  for (int y = 0; y < kTop; ++y, dstLine += dstBpl) {
+    kOrigin.setY(y);
+    kernel.recalcForOrigin(kOrigin);
+    for (int x = kLeft; x < width - kRight; ++x) {
+      kernel.convolve(dstLine + x, srcLine + x, srcBpl);
     }
   }
   // Top-right corner.
-  k_origin.setY(0);
-  src_line = src_data + width - kw;
-  dst_line = dst_data;
-  for (int y = 0; y < k_top; ++y, dst_line += dst_bpl) {
-    k_origin.setX(k_center.x() + 1);
-    for (int x = width - k_right; x < width; ++x) {
-      kernel.recalcForOrigin(k_origin);
-      kernel.convolve(dst_line + x, src_line, src_bpl);
-      k_origin.rx() += 1;
+  kOrigin.setY(0);
+  srcLine = srcData + width - kw;
+  dstLine = dstData;
+  for (int y = 0; y < kTop; ++y, dstLine += dstBpl) {
+    kOrigin.setX(kCenter.x() + 1);
+    for (int x = width - kRight; x < width; ++x) {
+      kernel.recalcForOrigin(kOrigin);
+      kernel.convolve(dstLine + x, srcLine, srcBpl);
+      kOrigin.rx() += 1;
     }
-    k_origin.ry() += 1;
+    kOrigin.ry() += 1;
   }
   // Central area.
 #if 0
             // Simple but slow implementation.
-                    kernel.recalcForOrigin(k_center);
-                    src_line = src_data - k_left;
-                    dst_line = dst_data + dst_bpl * k_top;
-                    for (int y = k_top; y < height - k_bottom; ++y) {
-                        for (int x = k_left; x < width - k_right; ++x) {
-                            kernel.convolve(dst_line + x, src_line + x, src_bpl);
+                    kernel.recalcForOrigin(kCenter);
+                    srcLine = srcData - kLeft;
+                    dstLine = dstData + dstBpl * kTop;
+                    for (int y = kTop; y < height - kBottom; ++y) {
+                        for (int x = kLeft; x < width - kRight; ++x) {
+                            kernel.convolve(dstLine + x, srcLine + x, srcBpl);
                         }
-                        src_line += src_bpl;
-                        dst_line += dst_bpl;
+                        srcLine += srcBpl;
+                        dstLine += dstBpl;
                     }
 #else
   // Take advantage of Savitzky-Golay filter being separable.
-  const SavGolKernel hor_kernel(QSize(window_size.width(), 1), QPoint(k_center.x(), 0), hor_degree, 0);
-  const SavGolKernel vert_kernel(QSize(1, window_size.height()), QPoint(0, k_center.y()), 0, vert_degree);
+  const SavGolKernel horKernel(QSize(windowSize.width(), 1), QPoint(kCenter.x(), 0), horDegree, 0);
+  const SavGolKernel vertKernel(QSize(1, windowSize.height()), QPoint(0, kCenter.y()), 0, vertDegree);
 
   const int shift = kw - 1;
 
   // Allocate a 16-byte aligned temporary storage.
   // That may help the compiler to emit efficient SSE code.
-  const int temp_stride = (width - shift + 3) & ~3;
-  AlignedArray<float, 4> temp_array(temp_stride * height);
+  const int tempStride = (width - shift + 3) & ~3;
+  AlignedArray<float, 4> tempArray(tempStride * height);
   // Horizontal pass.
-  src_line = src_data - shift;
-  float* temp_line = temp_array.data() - shift;
+  srcLine = srcData - shift;
+  float* tempLine = tempArray.data() - shift;
   for (int y = 0; y < height; ++y) {
     for (int i = shift; i < width; ++i) {
       float sum = 0.0f;
 
-      const uint8_t* src = src_line + i;
+      const uint8_t* src = srcLine + i;
       for (int j = 0; j < kw; ++j) {
-        sum += src[j] * hor_kernel[j];
+        sum += src[j] * horKernel[j];
       }
-      temp_line[i] = sum;
+      tempLine[i] = sum;
     }
-    temp_line += temp_stride;
-    src_line += src_bpl;
+    tempLine += tempStride;
+    srcLine += srcBpl;
   }
   // Vertical pass.
-  dst_line = dst_data + k_top * dst_bpl + k_left - shift;
-  temp_line = temp_array.data() - shift;
-  for (int y = k_top; y < height - k_bottom; ++y) {
+  dstLine = dstData + kTop * dstBpl + kLeft - shift;
+  tempLine = tempArray.data() - shift;
+  for (int y = kTop; y < height - kBottom; ++y) {
     for (int i = shift; i < width; ++i) {
       float sum = 0.0f;
 
-      float* tmp = temp_line + i;
-      for (int j = 0; j < kh; ++j, tmp += temp_stride) {
-        sum += *tmp * vert_kernel[j];
+      float* tmp = tempLine + i;
+      for (int j = 0; j < kh; ++j, tmp += tempStride) {
+        sum += *tmp * vertKernel[j];
       }
       const auto val = static_cast<int>(sum);
-      dst_line[i] = static_cast<uint8_t>(qBound(0, val, 255));
+      dstLine[i] = static_cast<uint8_t>(qBound(0, val, 255));
     }
 
-    temp_line += temp_stride;
-    dst_line += dst_bpl;
+    tempLine += tempStride;
+    dstLine += dstBpl;
   }
 #endif  // if 0
 
   // Left area between two corners.
-  k_origin.setX(0);
-  k_origin.setY(k_center.y() + 1);
-  for (int x = 0; x < k_left; ++x) {
-    src_line = src_data;
-    dst_line = dst_data + dst_bpl * k_top;
+  kOrigin.setX(0);
+  kOrigin.setY(kCenter.y() + 1);
+  for (int x = 0; x < kLeft; ++x) {
+    srcLine = srcData;
+    dstLine = dstData + dstBpl * kTop;
 
-    kernel.recalcForOrigin(k_origin);
-    for (int y = k_top; y < height - k_bottom; ++y) {
-      kernel.convolve(dst_line + x, src_line, src_bpl);
-      src_line += src_bpl;
-      dst_line += dst_bpl;
+    kernel.recalcForOrigin(kOrigin);
+    for (int y = kTop; y < height - kBottom; ++y) {
+      kernel.convolve(dstLine + x, srcLine, srcBpl);
+      srcLine += srcBpl;
+      dstLine += dstBpl;
     }
-    k_origin.rx() += 1;
+    kOrigin.rx() += 1;
   }
   // Right area between two corners.
-  k_origin.setX(k_center.x() + 1);
-  k_origin.setY(k_center.y());
-  for (int x = width - k_right; x < width; ++x) {
-    src_line = src_data + width - kw;
-    dst_line = dst_data + dst_bpl * k_top;
+  kOrigin.setX(kCenter.x() + 1);
+  kOrigin.setY(kCenter.y());
+  for (int x = width - kRight; x < width; ++x) {
+    srcLine = srcData + width - kw;
+    dstLine = dstData + dstBpl * kTop;
 
-    kernel.recalcForOrigin(k_origin);
-    for (int y = k_top; y < height - k_bottom; ++y) {
-      kernel.convolve(dst_line + x, src_line, src_bpl);
-      src_line += src_bpl;
-      dst_line += dst_bpl;
+    kernel.recalcForOrigin(kOrigin);
+    for (int y = kTop; y < height - kBottom; ++y) {
+      kernel.convolve(dstLine + x, srcLine, srcBpl);
+      srcLine += srcBpl;
+      dstLine += dstBpl;
     }
-    k_origin.rx() += 1;
+    kOrigin.rx() += 1;
   }
 
   // Bottom-left corner.
-  k_origin.setY(k_center.y() + 1);
-  src_line = src_data + src_bpl * (height - kh);
-  dst_line = dst_data + dst_bpl * (height - k_bottom);
-  for (int y = height - k_bottom; y < height; ++y, dst_line += dst_bpl) {
-    for (int x = 0; x < k_left; ++x) {
-      k_origin.setX(x);
-      kernel.recalcForOrigin(k_origin);
-      kernel.convolve(dst_line + x, src_line, src_bpl);
+  kOrigin.setY(kCenter.y() + 1);
+  srcLine = srcData + srcBpl * (height - kh);
+  dstLine = dstData + dstBpl * (height - kBottom);
+  for (int y = height - kBottom; y < height; ++y, dstLine += dstBpl) {
+    for (int x = 0; x < kLeft; ++x) {
+      kOrigin.setX(x);
+      kernel.recalcForOrigin(kOrigin);
+      kernel.convolve(dstLine + x, srcLine, srcBpl);
     }
-    k_origin.ry() += 1;
+    kOrigin.ry() += 1;
   }
 
   // Bottom area between two corners.
-  k_origin.setX(k_center.x());
-  k_origin.setY(k_center.y() + 1);
-  src_line = src_data + src_bpl * (height - kh) - k_left;
-  dst_line = dst_data + dst_bpl * (height - k_bottom);
-  for (int y = height - k_bottom; y < height; ++y, dst_line += dst_bpl) {
-    kernel.recalcForOrigin(k_origin);
-    for (int x = k_left; x < width - k_right; ++x) {
-      kernel.convolve(dst_line + x, src_line + x, src_bpl);
+  kOrigin.setX(kCenter.x());
+  kOrigin.setY(kCenter.y() + 1);
+  srcLine = srcData + srcBpl * (height - kh) - kLeft;
+  dstLine = dstData + dstBpl * (height - kBottom);
+  for (int y = height - kBottom; y < height; ++y, dstLine += dstBpl) {
+    kernel.recalcForOrigin(kOrigin);
+    for (int x = kLeft; x < width - kRight; ++x) {
+      kernel.convolve(dstLine + x, srcLine + x, srcBpl);
     }
-    k_origin.ry() += 1;
+    kOrigin.ry() += 1;
   }
   // Bottom-right corner.
-  k_origin.setY(k_center.y() + 1);
-  src_line = src_data + src_bpl * (height - kh) + (width - kw);
-  dst_line = dst_data + dst_bpl * (height - k_bottom);
-  for (int y = height - k_bottom; y < height; ++y, dst_line += dst_bpl) {
-    k_origin.setX(k_center.x() + 1);
-    for (int x = width - k_right; x < width; ++x) {
-      kernel.recalcForOrigin(k_origin);
-      kernel.convolve(dst_line + x, src_line, src_bpl);
-      k_origin.rx() += 1;
+  kOrigin.setY(kCenter.y() + 1);
+  srcLine = srcData + srcBpl * (height - kh) + (width - kw);
+  dstLine = dstData + dstBpl * (height - kBottom);
+  for (int y = height - kBottom; y < height; ++y, dstLine += dstBpl) {
+    kOrigin.setX(kCenter.x() + 1);
+    for (int x = width - kRight; x < width; ++x) {
+      kernel.recalcForOrigin(kOrigin);
+      kernel.convolve(dstLine + x, srcLine, srcBpl);
+      kOrigin.rx() += 1;
     }
-    k_origin.ry() += 1;
+    kOrigin.ry() += 1;
   }
 
   return dst;
 }  // savGolFilterGrayToGray
 }  // namespace
 
-QImage savGolFilter(const QImage& src, const QSize& window_size, const int hor_degree, const int vert_degree) {
-  if ((hor_degree < 0) || (vert_degree < 0)) {
+QImage savGolFilter(const QImage& src, const QSize& windowSize, const int horDegree, const int vertDegree) {
+  if ((horDegree < 0) || (vertDegree < 0)) {
     throw std::invalid_argument("savGolFilter: invalid polynomial degree");
   }
-  if (window_size.isEmpty()) {
+  if (windowSize.isEmpty()) {
     throw std::invalid_argument("savGolFilter: invalid window size");
   }
 
-  if (calcNumTerms(hor_degree, vert_degree) > window_size.width() * window_size.height()) {
+  if (calcNumTerms(horDegree, vertDegree) > windowSize.width() * windowSize.height()) {
     throw std::invalid_argument("savGolFilter: order is too big for that window");
   }
 
-  return savGolFilterGrayToGray(toGrayscale(src), window_size, hor_degree, vert_degree);
+  return savGolFilterGrayToGray(toGrayscale(src), windowSize, horDegree, vertDegree);
 }
 }  // namespace imageproc

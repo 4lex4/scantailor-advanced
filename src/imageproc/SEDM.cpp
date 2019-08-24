@@ -16,7 +16,7 @@ const uint32_t SEDM::INF_DIST = ~uint32_t(0) - 1;
 
 SEDM::SEDM() : m_plainData(nullptr), m_size(), m_stride(0) {}
 
-SEDM::SEDM(const BinaryImage& image, const DistType dist_type, const Borders borders)
+SEDM::SEDM(const BinaryImage& image, const DistType distType, const Borders borders)
     : m_plainData(nullptr), m_size(image.size()), m_stride(0) {
   if (image.isNull()) {
     return;
@@ -50,7 +50,7 @@ SEDM::SEDM(const BinaryImage& image, const DistType dist_type, const Borders bor
   }
 
   uint32_t initial_distance[2];
-  if (dist_type == DIST_TO_WHITE) {
+  if (distType == DIST_TO_WHITE) {
     initial_distance[0] = 0;         // white
     initial_distance[1] = INF_DIST;  // black
   } else {
@@ -58,17 +58,17 @@ SEDM::SEDM(const BinaryImage& image, const DistType dist_type, const Borders bor
     initial_distance[1] = 0;         // black
   }
 
-  uint32_t* p_dist = m_plainData;
-  const uint32_t* img_line = image.data();
-  const int img_stride = image.wordsPerLine();
+  uint32_t* pDist = m_plainData;
+  const uint32_t* imgLine = image.data();
+  const int imgStride = image.wordsPerLine();
   for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x, ++p_dist) {
-      uint32_t word = img_line[x >> 5];
+    for (int x = 0; x < width; ++x, ++pDist) {
+      uint32_t word = imgLine[x >> 5];
       word >>= 31 - (x & 31);
-      *p_dist = initial_distance[word & 1];
+      *pDist = initial_distance[word & 1];
     }
-    p_dist += 2;
-    img_line += img_stride;
+    pDist += 2;
+    imgLine += imgStride;
   }
 
   processColumns();
@@ -87,16 +87,16 @@ SEDM::SEDM(ConnectivityMap& cmap) : m_plainData(nullptr), m_size(cmap.size()), m
   m_stride = width + 2;
   m_plainData = &m_data[0] + m_stride + 1;
 
-  uint32_t* p_dist = m_plainData;
-  const uint32_t* p_label = cmap.data();
+  uint32_t* pDist = m_plainData;
+  const uint32_t* pLabel = cmap.data();
   for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width; ++x, ++p_dist, ++p_label) {
-      if (*p_label) {
-        *p_dist = 0;
+    for (int x = 0; x < width; ++x, ++pDist, ++pLabel) {
+      if (*pLabel) {
+        *pDist = 0;
       }
     }
-    p_dist += 2;
-    p_label += 2;
+    pDist += 2;
+    pLabel += 2;
   }
 
   processColumns(cmap);
@@ -128,13 +128,12 @@ BinaryImage SEDM::findPeaksDestructive() {
     return BinaryImage();
   }
 
-  BinaryImage peak_candidates(findPeakCandidatesNonPadded());
+  BinaryImage peakCandidates(findPeakCandidatesNonPadded());
   // To check if a peak candidate is really a peak, we have to check
   // that every cell in its neighborhood has a lower value than that
   // candidate.  We are working with 3x3 neighborhoods.
-  BinaryImage neighborhood_mask(
-      dilateBrick(peak_candidates, QSize(3, 3), peak_candidates.rect().adjusted(-1, -1, 1, 1)));
-  rasterOp<RopXor<RopSrc, RopDst>>(neighborhood_mask, neighborhood_mask.rect().adjusted(1, 1, -1, -1), peak_candidates,
+  BinaryImage neighborhoodMask(dilateBrick(peakCandidates, QSize(3, 3), peakCandidates.rect().adjusted(-1, -1, 1, 1)));
+  rasterOp<RopXor<RopSrc, RopDst>>(neighborhoodMask, neighborhoodMask.rect().adjusted(1, 1, -1, -1), peakCandidates,
                                    QPoint(0, 0));
 
   // Cells in the neighborhood of a peak candidate fall into two categories:
@@ -146,46 +145,46 @@ BinaryImage SEDM::findPeaksDestructive() {
   // of the cells in the neighborhood of peak candidates, find the peak
   // candidates again and analize the differences.
 
-  incrementMaskedPadded(neighborhood_mask);
-  neighborhood_mask.release();
+  incrementMaskedPadded(neighborhoodMask);
+  neighborhoodMask.release();
 
   BinaryImage diff(findPeakCandidatesNonPadded());
-  rasterOp<RopXor<RopSrc, RopDst>>(diff, peak_candidates);
+  rasterOp<RopXor<RopSrc, RopDst>>(diff, peakCandidates);
 
   // If a bin that has changed its state was a part of a peak candidate,
   // it means a neighboring bin went from equal to a greater value,
   // which indicates that such candidate is not a peak.
-  const BinaryImage not_peaks(seedFill(diff, peak_candidates, CONN8));
+  const BinaryImage notPeaks(seedFill(diff, peakCandidates, CONN8));
   diff.release();
 
-  rasterOp<RopXor<RopSrc, RopDst>>(peak_candidates, not_peaks);
+  rasterOp<RopXor<RopSrc, RopDst>>(peakCandidates, notPeaks);
 
-  return peak_candidates;
+  return peakCandidates;
 }  // SEDM::findPeaksDestructive
 
-inline uint32_t SEDM::distSq(const int x1, const int x2, const uint32_t dy_sq) {
-  if (dy_sq == INF_DIST) {
+inline uint32_t SEDM::distSq(const int x1, const int x2, const uint32_t dySq) {
+  if (dySq == INF_DIST) {
     return INF_DIST;
   }
   const int dx = x1 - x2;
-  const uint32_t dx_sq = dx * dx;
+  const uint32_t dxSq = dx * dx;
 
-  return dx_sq + dy_sq;
+  return dxSq + dySq;
 }
 
 void SEDM::processColumns() {
   const int width = m_size.width() + 2;
   const int height = m_size.height() + 2;
 
-  uint32_t* p_sqd = &m_data[0];
-  for (int x = 0; x < width; ++x, ++p_sqd) {
+  uint32_t* pSqd = &m_data[0];
+  for (int x = 0; x < width; ++x, ++pSqd) {
     // (d + 1)^2 = d^2 + 2d + 1
     uint32_t b = 1;  // 2d + 1 in the above formula.
     for (int todo = height - 1; todo > 0; --todo) {
-      const uint32_t sqd = *p_sqd + b;
-      p_sqd += width;
-      if (*p_sqd > sqd) {
-        *p_sqd = sqd;
+      const uint32_t sqd = *pSqd + b;
+      pSqd += width;
+      if (*pSqd > sqd) {
+        *pSqd = sqd;
         b += 2;
       } else {
         b = 1;
@@ -194,10 +193,10 @@ void SEDM::processColumns() {
 
     b = 1;
     for (int todo = height - 1; todo > 0; --todo) {
-      const uint32_t sqd = *p_sqd + b;
-      p_sqd -= width;
-      if (*p_sqd > sqd) {
-        *p_sqd = sqd;
+      const uint32_t sqd = *pSqd + b;
+      pSqd -= width;
+      if (*pSqd > sqd) {
+        *pSqd = sqd;
         b += 2;
       } else {
         b = 1;
@@ -210,18 +209,18 @@ void SEDM::processColumns(ConnectivityMap& cmap) {
   const int width = m_size.width() + 2;
   const int height = m_size.height() + 2;
 
-  uint32_t* p_sqd = &m_data[0];
-  uint32_t* p_label = cmap.paddedData();
-  for (int x = 0; x < width; ++x, ++p_sqd, ++p_label) {
+  uint32_t* pSqd = &m_data[0];
+  uint32_t* pLabel = cmap.paddedData();
+  for (int x = 0; x < width; ++x, ++pSqd, ++pLabel) {
     // (d + 1)^2 = d^2 + 2d + 1
     uint32_t b = 1;  // 2d + 1 in the above formula.
     for (int todo = height - 1; todo > 0; --todo) {
-      const uint32_t sqd = *p_sqd + b;
-      p_sqd += width;
-      p_label += width;
-      if (sqd < *p_sqd) {
-        *p_sqd = sqd;
-        *p_label = p_label[-width];
+      const uint32_t sqd = *pSqd + b;
+      pSqd += width;
+      pLabel += width;
+      if (sqd < *pSqd) {
+        *pSqd = sqd;
+        *pLabel = pLabel[-width];
         b += 2;
       } else {
         b = 1;
@@ -230,12 +229,12 @@ void SEDM::processColumns(ConnectivityMap& cmap) {
 
     b = 1;
     for (int todo = height - 1; todo > 0; --todo) {
-      const uint32_t sqd = *p_sqd + b;
-      p_sqd -= width;
-      p_label -= width;
-      if (sqd < *p_sqd) {
-        *p_sqd = sqd;
-        *p_label = p_label[width];
+      const uint32_t sqd = *pSqd + b;
+      pSqd -= width;
+      pLabel -= width;
+      if (sqd < *pSqd) {
+        *pSqd = sqd;
+        *pLabel = pLabel[width];
         b += 2;
       } else {
         b = 1;
@@ -250,7 +249,7 @@ void SEDM::processRows() {
 
   std::vector<int> s(width, 0);
   std::vector<int> t(width, 0);
-  std::vector<uint32_t> row_copy(width, 0);
+  std::vector<uint32_t> rowCopy(width, 0);
 
   uint32_t* line = &m_data[0];
   for (int y = 0; y < height; ++y, line += width) {
@@ -280,11 +279,11 @@ void SEDM::processRows() {
       }
     }
 
-    memcpy(&row_copy[0], line, width * sizeof(*line));
+    memcpy(&rowCopy[0], line, width * sizeof(*line));
 
     for (int x = width - 1; x >= 0; --x) {
       const int x2 = s[q];
-      line[x] = distSq(x, x2, row_copy[x2]);
+      line[x] = distSq(x, x2, rowCopy[x2]);
       if (x == t[q]) {
         --q;
       }
@@ -298,12 +297,12 @@ void SEDM::processRows(ConnectivityMap& cmap) {
 
   std::vector<int> s(width, 0);
   std::vector<int> t(width, 0);
-  std::vector<uint32_t> row_copy(width, 0);
-  std::vector<uint32_t> cmap_row_copy(width, 0);
+  std::vector<uint32_t> rowCopy(width, 0);
+  std::vector<uint32_t> cmapRowCopy(width, 0);
 
   uint32_t* line = &m_data[0];
-  uint32_t* cmap_line = cmap.paddedData();
-  for (int y = 0; y < height; ++y, line += width, cmap_line += width) {
+  uint32_t* cmapLine = cmap.paddedData();
+  for (int y = 0; y < height; ++y, line += width, cmapLine += width) {
     int q = 0;
     s[0] = 0;
     t[0] = 0;
@@ -330,13 +329,13 @@ void SEDM::processRows(ConnectivityMap& cmap) {
       }
     }
 
-    memcpy(&row_copy[0], line, width * sizeof(*line));
-    memcpy(&cmap_row_copy[0], cmap_line, width * sizeof(*cmap_line));
+    memcpy(&rowCopy[0], line, width * sizeof(*line));
+    memcpy(&cmapRowCopy[0], cmapLine, width * sizeof(*cmapLine));
 
     for (int x = width - 1; x >= 0; --x) {
       const int x2 = s[q];
-      line[x] = distSq(x, x2, row_copy[x2]);
-      cmap_line[x] = cmap_row_copy[x2];
+      line[x] = distSq(x, x2, rowCopy[x2]);
+      cmapLine[x] = cmapRowCopy[x2];
       if (x == t[q]) {
         --q;
       }
@@ -360,22 +359,22 @@ BinaryImage SEDM::buildEqualMapNonPadded(const uint32_t* src1, const uint32_t* s
   const int height = m_size.height();
 
   BinaryImage dst(width, height, WHITE);
-  uint32_t* dst_line = dst.data();
-  const int dst_wpl = dst.wordsPerLine();
-  const int src_stride = m_stride;
-  const uint32_t* src1_line = src1 + src_stride + 1;
-  const uint32_t* src2_line = src2 + src_stride + 1;
+  uint32_t* dstLine = dst.data();
+  const int dstWpl = dst.wordsPerLine();
+  const int srcStride = m_stride;
+  const uint32_t* src1Line = src1 + srcStride + 1;
+  const uint32_t* src2Line = src2 + srcStride + 1;
   const uint32_t msb = uint32_t(1) << 31;
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (std::max(src1_line[x], src2_line[x]) - std::min(src1_line[x], src2_line[x]) == 0) {
-        dst_line[x >> 5] |= msb >> (x & 31);
+      if (std::max(src1Line[x], src2Line[x]) - std::min(src1Line[x], src2Line[x]) == 0) {
+        dstLine[x >> 5] |= msb >> (x & 31);
       }
     }
-    dst_line += dst_wpl;
-    src1_line += src_stride;
-    src2_line += src_stride;
+    dstLine += dstWpl;
+    src1Line += srcStride;
+    src2Line += srcStride;
   }
 
   return dst;
@@ -391,26 +390,26 @@ void SEDM::max3x1(const uint32_t* src, uint32_t* dst) const {
   const int width = m_size.width() + 2;
   const int height = m_size.height() + 2;
 
-  const uint32_t* src_line = &src[0];
-  uint32_t* dst_line = &dst[0];
+  const uint32_t* srcLine = &src[0];
+  uint32_t* dstLine = &dst[0];
 
   for (int y = 0; y < height; ++y) {
     // First column (no left neighbors).
     int x = 0;
-    dst_line[x] = std::max(src_line[x], src_line[x + 1]);
+    dstLine[x] = std::max(srcLine[x], srcLine[x + 1]);
 
     for (++x; x < width - 1; ++x) {
-      const uint32_t prev = src_line[x - 1];
-      const uint32_t cur = src_line[x];
-      const uint32_t next = src_line[x + 1];
-      dst_line[x] = std::max(prev, std::max(cur, next));
+      const uint32_t prev = srcLine[x - 1];
+      const uint32_t cur = srcLine[x];
+      const uint32_t next = srcLine[x + 1];
+      dstLine[x] = std::max(prev, std::max(cur, next));
     }
 
     // Last column (no right neighbors).
-    dst_line[x] = std::max(src_line[x], src_line[x - 1]);
+    dstLine[x] = std::max(srcLine[x], srcLine[x - 1]);
 
-    src_line += width;
-    dst_line += width;
+    srcLine += width;
+    dstLine += width;
   }
 }
 
@@ -418,31 +417,31 @@ void SEDM::max1x3(const uint32_t* src, uint32_t* dst) const {
   const int width = m_size.width() + 2;
   const int height = m_size.height() + 2;
   // First row (no top neighbors).
-  const uint32_t* p_src = &src[0];
-  uint32_t* p_dst = &dst[0];
+  const uint32_t* pSrc = &src[0];
+  uint32_t* pDst = &dst[0];
   for (int x = 0; x < width; ++x) {
-    *p_dst = std::max(p_src[0], p_src[width]);
-    ++p_src;
-    ++p_dst;
+    *pDst = std::max(pSrc[0], pSrc[width]);
+    ++pSrc;
+    ++pDst;
   }
 
   for (int y = 1; y < height - 1; ++y) {
     for (int x = 0; x < width; ++x) {
-      const uint32_t prev = p_src[x - width];
-      const uint32_t cur = p_src[x];
-      const uint32_t next = p_src[x + width];
-      p_dst[x] = std::max(prev, std::max(cur, next));
+      const uint32_t prev = pSrc[x - width];
+      const uint32_t cur = pSrc[x];
+      const uint32_t next = pSrc[x + width];
+      pDst[x] = std::max(prev, std::max(cur, next));
     }
 
-    p_src += width;
-    p_dst += width;
+    pSrc += width;
+    pDst += width;
   }
 
   // Last row (no bottom neighbors).
   for (int x = 0; x < width; ++x) {
-    *p_dst = std::max(p_src[0], p_src[-width]);
-    ++p_src;
-    ++p_dst;
+    *pDst = std::max(pSrc[0], pSrc[-width]);
+    ++pSrc;
+    ++pDst;
   }
 }
 
@@ -450,19 +449,19 @@ void SEDM::incrementMaskedPadded(const BinaryImage& mask) {
   const int width = m_size.width() + 2;
   const int height = m_size.height() + 2;
 
-  uint32_t* data_line = &m_data[0];
-  const uint32_t* mask_line = mask.data();
-  const int mask_wpl = mask.wordsPerLine();
+  uint32_t* dataLine = &m_data[0];
+  const uint32_t* maskLine = mask.data();
+  const int maskWpl = mask.wordsPerLine();
 
   const uint32_t msb = uint32_t(1) << 31;
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (mask_line[x >> 5] & (msb >> (x & 31))) {
-        ++data_line[x];
+      if (maskLine[x >> 5] & (msb >> (x & 31))) {
+        ++dataLine[x];
       }
     }
-    data_line += width;
-    mask_line += mask_wpl;
+    dataLine += width;
+    maskLine += maskWpl;
   }
 }
 }  // namespace imageproc

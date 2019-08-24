@@ -5,8 +5,8 @@
 #include <algorithm>
 
 namespace spfit {
-OptimizationResult::OptimizationResult(double force_before, double force_after)
-    : m_forceBefore(std::max<double>(force_before, 0)), m_forceAfter(std::max<double>(force_after, 0)) {
+OptimizationResult::OptimizationResult(double forceBefore, double forceAfter)
+    : m_forceBefore(std::max<double>(forceBefore, 0)), m_forceAfter(std::max<double>(forceAfter, 0)) {
   // In theory, these distances can't be negative, but in practice they can.
   // We are going to treat negative ones as they are zeros.
 }

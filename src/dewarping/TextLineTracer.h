@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DEWARPING_TEXT_LINE_TRACER_H_
-#define DEWARPING_TEXT_LINE_TRACER_H_
+#ifndef SCANTAILOR_DEWARPING_TEXTLINETRACER_H_
+#define SCANTAILOR_DEWARPING_TEXTLINETRACER_H_
 
 #include <QLineF>
 #include <QPoint>
@@ -35,7 +35,7 @@ class TextLineTracer {
  public:
   static void trace(const imageproc::GrayImage& input,
                     const Dpi& dpi,
-                    const QRect& content_rect,
+                    const QRect& contentRect,
                     DistortionModelBuilder& output,
                     const TaskStatus& status,
                     DebugImages* dbg = nullptr);
@@ -43,7 +43,7 @@ class TextLineTracer {
  private:
   static imageproc::GrayImage downscale(const imageproc::GrayImage& input, const Dpi& dpi);
 
-  static void sanitizeBinaryImage(imageproc::BinaryImage& image, const QRect& content_rect);
+  static void sanitizeBinaryImage(imageproc::BinaryImage& image, const QRect& contentRect);
 
   static void extractTextLines(std::list<std::vector<QPointF>>& out,
                                const imageproc::GrayImage& image,
@@ -58,19 +58,19 @@ class TextLineTracer {
 
   static QLineF calcMidLine(const QLineF& line1, const QLineF& line2);
 
-  static void findMidLineSeeds(const imageproc::SEDM& sedm, QLineF mid_line, std::vector<QPoint>& seeds);
+  static void findMidLineSeeds(const imageproc::SEDM& sedm, QLineF midLine, std::vector<QPoint>& seeds);
 
   static bool isCurvatureConsistent(const std::vector<QPointF>& polyline);
 
-  static bool isInsideBounds(const QPointF& pt, const QLineF& left_bound, const QLineF& right_bound);
+  static bool isInsideBounds(const QPointF& pt, const QLineF& leftBound, const QLineF& rightBound);
 
   static void filterShortCurves(std::list<std::vector<QPointF>>& polylines,
-                                const QLineF& left_bound,
-                                const QLineF& right_bound);
+                                const QLineF& leftBound,
+                                const QLineF& rightBound);
 
   static void filterOutOfBoundsCurves(std::list<std::vector<QPointF>>& polylines,
-                                      const QLineF& left_bound,
-                                      const QLineF& right_bound);
+                                      const QLineF& leftBound,
+                                      const QLineF& rightBound);
 
   static void filterEdgyCurves(std::list<std::vector<QPointF>>& polylines);
 
@@ -81,12 +81,12 @@ class TextLineTracer {
   static QImage visualizeMidLineSeeds(const QImage& background,
                                       const imageproc::BinaryImage& overlay,
                                       std::pair<QLineF, QLineF> bounds,
-                                      QLineF mid_line,
+                                      QLineF midLine,
                                       const std::vector<QPoint>& seeds);
 
   static QImage visualizePolylines(const QImage& background,
                                    const std::list<std::vector<QPointF>>& polylines,
-                                   const std::pair<QLineF, QLineF>* vert_bounds = nullptr);
+                                   const std::pair<QLineF, QLineF>* vertBounds = nullptr);
 };
 }  // namespace dewarping
-#endif  // ifndef DEWARPING_TEXT_LINE_TRACER_H_
+#endif  // ifndef SCANTAILOR_DEWARPING_TEXTLINETRACER_H_

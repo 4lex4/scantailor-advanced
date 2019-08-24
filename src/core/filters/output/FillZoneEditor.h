@@ -2,8 +2,8 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 
-#ifndef OUTPUT_FILL_ZONE_EDITOR_H_
-#define OUTPUT_FILL_ZONE_EDITOR_H_
+#ifndef SCANTAILOR_OUTPUT_FILLZONEEDITOR_H_
+#define SCANTAILOR_OUTPUT_FILLZONEEDITOR_H_
 
 #include <QColor>
 #include <QPoint>
@@ -32,17 +32,17 @@ class FillZoneEditor : public ImageViewBase, private InteractionHandler {
   Q_OBJECT
  public:
   FillZoneEditor(const QImage& image,
-                 const ImagePixmapUnion& downscaled_version,
-                 const boost::function<QPointF(const QPointF&)>& orig_to_image,
-                 const boost::function<QPointF(const QPointF&)>& image_to_orig,
-                 const PageId& page_id,
+                 const ImagePixmapUnion& downscaledVersion,
+                 const boost::function<QPointF(const QPointF&)>& origToImage,
+                 const boost::function<QPointF(const QPointF&)>& imageToOrig,
+                 const PageId& pageId,
                  intrusive_ptr<Settings> settings);
 
   ~FillZoneEditor() override;
 
  signals:
 
-  void invalidateThumbnail(const PageId& page_id);
+  void invalidateThumbnail(const PageId& pageId);
 
  protected:
   void onPaint(QPainter& painter, const InteractionState& interaction) override;
@@ -87,4 +87,4 @@ class FillZoneEditor : public ImageViewBase, private InteractionHandler {
   intrusive_ptr<Settings> m_settings;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_FILL_ZONE_EDITOR_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_FILLZONEEDITOR_H_

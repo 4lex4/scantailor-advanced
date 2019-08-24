@@ -37,16 +37,16 @@ void InteractionState::resetProximity() {
 void InteractionState::updateProximity(Captor& captor,
                                        const Proximity& proximity,
                                        int priority,
-                                       Proximity proximity_threshold) {
+                                       Proximity proximityThreshold) {
   if (captor.is_linked()) {
     return;
   }
 
-  if (proximity_threshold == Proximity()) {
-    proximity_threshold = m_proximityThreshold;
+  if (proximityThreshold == Proximity()) {
+    proximityThreshold = m_proximityThreshold;
   }
 
-  if (proximity <= proximity_threshold) {
+  if (proximity <= proximityThreshold) {
     if (betterProximity(proximity, priority)) {
       m_proximityLeader.clear();
       m_proximityLeader.push_back(captor);

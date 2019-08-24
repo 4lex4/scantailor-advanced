@@ -11,9 +11,9 @@ EditableSpline::EditableSpline(const SerializableSpline& spline) {
     appendVertex(pt);
   }
 
-  SplineVertex::Ptr last_vertex(lastVertex());
-  if (last_vertex && (firstVertex()->point() == last_vertex->point())) {
-    last_vertex->remove();
+  SplineVertex::Ptr lastVertex(this->lastVertex());
+  if (lastVertex && (firstVertex()->point() == lastVertex->point())) {
+    lastVertex->remove();
   }
 
   setBridged(true);

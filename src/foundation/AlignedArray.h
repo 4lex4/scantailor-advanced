@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ALIGNED_ARRAY_H_
-#define ALIGNED_ARRAY_H_
+#ifndef SCANTAILOR_FOUNDATION_ALIGNEDARRAY_H_
+#define SCANTAILOR_FOUNDATION_ALIGNEDARRAY_H_
 
 #include <cstddef>
 #include <cstdint>
@@ -68,4 +68,4 @@ void AlignedArray<T, alignment_in_units>::swap(AlignedArray& other) {
   other.m_storage = temp;
 }
 
-#endif  // ifndef ALIGNED_ARRAY_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_ALIGNEDARRAY_H_

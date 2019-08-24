@@ -101,12 +101,12 @@ double PolygonUtils::roundValue(const double val) {
 std::vector<QLineF> PolygonUtils::extractAndNormalizeEdges(const QPolygonF& poly) {
   std::vector<QLineF> edges;
 
-  const int num_edges = poly.size();
-  if (num_edges > 1) {
-    for (int i = 1; i < num_edges; ++i) {
+  const int numEdges = poly.size();
+  if (numEdges > 1) {
+    for (int i = 1; i < numEdges; ++i) {
       maybeAddNormalizedEdge(edges, poly[i - 1], poly[i]);
     }
-    maybeAddNormalizedEdge(edges, poly[num_edges - 1], poly[0]);
+    maybeAddNormalizedEdge(edges, poly[numEdges - 1], poly[0]);
   }
 
   return edges;
@@ -166,30 +166,30 @@ double cross(const QPointF& O, const QPointF& A, const QPointF& B) {
 }
 }  // anonymous namespace
 
-QPolygonF PolygonUtils::convexHull(std::vector<QPointF> point_cloud) {
+QPolygonF PolygonUtils::convexHull(std::vector<QPointF> pointCloud) {
   // "Monotone chain" algorithm.
   // http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
 
-  const auto n = static_cast<int>(point_cloud.size());
+  const auto n = static_cast<int>(pointCloud.size());
   int k = 0;
   std::vector<QPointF> hull(n * 2);
 
   // Sort points by x, then y.
-  std::sort(point_cloud.begin(), point_cloud.end(), LexicographicPointComparator());
+  std::sort(pointCloud.begin(), pointCloud.end(), LexicographicPointComparator());
 
   // Build lower hull.
   for (int i = 0; i < n; ++i) {
-    while (k >= 2 && cross(hull[k - 2], hull[k - 1], point_cloud[i]) <= 0) {
+    while (k >= 2 && cross(hull[k - 2], hull[k - 1], pointCloud[i]) <= 0) {
       k--;
     }
-    hull[k++] = point_cloud[i];
+    hull[k++] = pointCloud[i];
   }
   // Build upper hull.
   for (int i = n - 2, t = k + 1; i >= 0; --i) {
-    while (k >= t && cross(hull[k - 2], hull[k - 1], point_cloud[i]) <= 0) {
+    while (k >= t && cross(hull[k - 2], hull[k - 1], pointCloud[i]) <= 0) {
       k--;
     }
-    hull[k++] = point_cloud[i];
+    hull[k++] = pointCloud[i];
   }
 
   hull.resize(k);

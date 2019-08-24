@@ -62,13 +62,13 @@ QRectF XmlUnmarshaller::rectF(const QDomElement& el) {
 QPolygonF XmlUnmarshaller::polygonF(const QDomElement& el) {
   QPolygonF poly;
 
-  const QString point_tag_name("point");
+  const QString pointTagName("point");
   QDomNode node(el.firstChild());
   for (; !node.isNull(); node = node.nextSibling()) {
     if (!node.isElement()) {
       continue;
     }
-    if (node.nodeName() != point_tag_name) {
+    if (node.nodeName() != pointTagName) {
       continue;
     }
     poly.push_back(pointF(node.toElement()));

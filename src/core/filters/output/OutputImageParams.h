@@ -1,9 +1,10 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_OUTPUT_IMAGE_PARAMS_H_
-#define OUTPUT_OUTPUT_IMAGE_PARAMS_H_
+#ifndef SCANTAILOR_OUTPUT_OUTPUTIMAGEPARAMS_H_
+#define SCANTAILOR_OUTPUT_OUTPUTIMAGEPARAMS_H_
 
+#include <DistortionModel.h>
 #include <ImageTransformation.h>
 #include <QRect>
 #include <QSize>
@@ -14,7 +15,6 @@
 #include "Dpi.h"
 #include "OutputProcessingParams.h"
 #include "Params.h"
-#include <DistortionModel.h>
 
 class ImageTransformation;
 class QDomDocument;
@@ -27,19 +27,19 @@ namespace output {
  */
 class OutputImageParams {
  public:
-  OutputImageParams(const QSize& out_image_size,
-                    const QRect& content_rect,
+  OutputImageParams(const QSize& outImageSize,
+                    const QRect& contentRect,
                     ImageTransformation xform,
                     const Dpi& dpi,
-                    const ColorParams& color_params,
+                    const ColorParams& colorParams,
                     const SplittingOptions& splittingOptions,
-                    const DewarpingOptions& dewarping_options,
-                    const dewarping::DistortionModel& distortion_model,
-                    const DepthPerception& depth_perception,
-                    double despeckle_level,
-                    const PictureShapeOptions& picture_shape_options,
-                    const OutputProcessingParams& output_processing_params,
-                    bool is_black_on_white);
+                    const DewarpingOptions& dewarpingOptions,
+                    const dewarping::DistortionModel& distortionModel,
+                    const DepthPerception& depthPerception,
+                    double despeckleLevel,
+                    const PictureShapeOptions& pictureShapeOptions,
+                    const OutputProcessingParams& outputProcessingParams,
+                    bool isBlackOnWhite);
 
   explicit OutputImageParams(const QDomElement& el);
 
@@ -145,4 +145,4 @@ class OutputImageParams {
   bool m_blackOnWhite;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_OUTPUT_IMAGE_PARAMS_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_OUTPUTIMAGEPARAMS_H_

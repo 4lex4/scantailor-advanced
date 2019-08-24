@@ -9,8 +9,8 @@
 #include <QTransform>
 
 void PixmapRenderer::drawPixmap(QPainter& painter, const QPixmap& pixmap) {
-  const QTransform inv_transform(painter.worldTransform().inverted());
-  const QRectF src_rect(inv_transform.map(QRectF(painter.viewport())).boundingRect());
-  const QRectF bounded_src_rect(src_rect.intersected(pixmap.rect()));
-  painter.drawPixmap(bounded_src_rect, pixmap, bounded_src_rect);
+  const QTransform invTransform(painter.worldTransform().inverted());
+  const QRectF srcRect(invTransform.map(QRectF(painter.viewport())).boundingRect());
+  const QRectF boundedSrcRect(srcRect.intersected(pixmap.rect()));
+  painter.drawPixmap(boundedSrcRect, pixmap, boundedSrcRect);
 }

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef RELINKABLE_PATH_VISUALIZATION_H_
-#define RELINKABLE_PATH_VISUALIZATION_H_
+#ifndef SCANTAILOR_APP_RELINKABLEPATHVISUALIZATION_H_
+#define SCANTAILOR_APP_RELINKABLEPATHVISUALIZATION_H_
 
 #include <QString>
 #include <QWidget>
@@ -23,7 +23,7 @@ class RelinkablePathVisualization : public QWidget {
  signals:
 
   /** \p type is either RelinkablePath::File or RelinkablePath::Dir */
-  void clicked(const QString& prefix_path, const QString& suffix_path, int type);
+  void clicked(const QString& prefixPath, const QString& suffixPath, int type);
 
  protected:
   void paintEvent(QPaintEvent* evt) override;
@@ -33,7 +33,7 @@ class RelinkablePathVisualization : public QWidget {
 
   class ComponentButton;
 
-  void onClicked(int component_idx, const QString& prefix_path, const QString& suffix_path, int type);
+  void onClicked(int componentIdx, const QString& prefixPath, const QString& suffixPath, int type);
 
   void stylePathComponentButton(QAbstractButton* btn, bool exists);
 
@@ -43,4 +43,4 @@ class RelinkablePathVisualization : public QWidget {
 };
 
 
-#endif  // ifndef RELINKABLE_PATH_VISUALIZATION_H_
+#endif  // ifndef SCANTAILOR_APP_RELINKABLEPATHVISUALIZATION_H_

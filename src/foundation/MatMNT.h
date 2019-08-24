@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef MAT_MNT_H_
-#define MAT_MNT_H_
+#ifndef SCANTAILOR_FOUNDATION_MATMNT_H_
+#define SCANTAILOR_FOUNDATION_MATMNT_H_
 
 #include <cstddef>
 
@@ -96,4 +96,4 @@ MatMNT<M, N, T>::MatMNT(const MatMNT<M, N, OT>& other) {
   }
 }
 
-#endif  // ifndef MAT_MNT_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_MATMNT_H_

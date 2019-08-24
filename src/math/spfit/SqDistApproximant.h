@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SQDIST_APPROXIMANT_H_
-#define SQDIST_APPROXIMANT_H_
+#ifndef SCANTAILOR_SPFIT_SQDISTAPPROXIMANT_H_
+#define SCANTAILOR_SPFIT_SQDISTAPPROXIMANT_H_
 
 #include <QLineF>
 #include "MatMNT.h"
@@ -62,16 +62,16 @@ struct SqDistApproximant {
 
   static SqDistApproximant weightedLineDistance(const QLineF& line, double weight);
 
-  static SqDistApproximant curveDistance(const Vec2d& reference_point,
-                                         const FrenetFrame& frenet_frame,
-                                         double signed_curvature);
+  static SqDistApproximant curveDistance(const Vec2d& referencePoint,
+                                         const FrenetFrame& frenetFrame,
+                                         double signedCurvature);
 
-  static SqDistApproximant weightedCurveDistance(const Vec2d& reference_point,
-                                                 const FrenetFrame& frenet_frame,
-                                                 double signed_curvature,
+  static SqDistApproximant weightedCurveDistance(const Vec2d& referencePoint,
+                                                 const FrenetFrame& frenetFrame,
+                                                 double signedCurvature,
                                                  double weight);
 
   double evaluate(const Vec2d& pt) const;
 };
 }  // namespace spfit
-#endif  // ifndef SQDIST_APPROXIMANT_H_
+#endif  // ifndef SCANTAILOR_SPFIT_SQDISTAPPROXIMANT_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef VEC_NT_H_
-#define VEC_NT_H_
+#ifndef SCANTAILOR_FOUNDATION_VECNT_H_
+#define SCANTAILOR_FOUNDATION_VECNT_H_
 
 #include <QPointF>
 #include <cstddef>
@@ -367,4 +367,4 @@ VecNT<N, T> operator*(T scalar, const VecNT<N, T>& vec) {
   return res;
 }
 
-#endif  // ifndef VEC_NT_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_VECNT_H_

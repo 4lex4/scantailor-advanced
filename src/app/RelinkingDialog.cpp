@@ -8,10 +8,8 @@
 #include <cassert>
 #include "RelinkingSortingModel.h"
 
-RelinkingDialog::RelinkingDialog(const QString& project_file_path, QWidget* parent)
-    : QDialog(parent),
-      m_sortingModel(new RelinkingSortingModel),
-      m_projectFileDir(QFileInfo(project_file_path).path()) {
+RelinkingDialog::RelinkingDialog(const QString& projectFilePath, QWidget* parent)
+    : QDialog(parent), m_sortingModel(new RelinkingSortingModel), m_projectFileDir(QFileInfo(projectFilePath).path()) {
   ui.setupUi(this);
   ui.undoButton->setIcon(IconProvider::getInstance().getIcon("undo"));
   m_sortingModel->setSourceModel(&m_model);
@@ -55,42 +53,42 @@ void RelinkingDialog::selectionChanged(const QItemSelection& selected, const QIt
   ui.errorLabel->setVisible(false);
 }
 
-void RelinkingDialog::pathButtonClicked(const QString& prefix_path, const QString& suffix_path, const int type) {
-  assert(!prefix_path.endsWith(QChar('/')) && !prefix_path.endsWith(QChar('\\')));
-  assert(!suffix_path.startsWith(QChar('/')) && !suffix_path.startsWith(QChar('\\')));
+void RelinkingDialog::pathButtonClicked(const QString& prefixPath, const QString& suffixPath, const int type) {
+  assert(!prefixPath.endsWith(QChar('/')) && !prefixPath.endsWith(QChar('\\')));
+  assert(!suffixPath.startsWith(QChar('/')) && !suffixPath.startsWith(QChar('\\')));
 
-  QString replacement_path;
+  QString replacementPath;
 
   if (type == RelinkablePath::File) {
-    const QDir dir(QFileInfo(prefix_path).dir());
-    replacement_path = QFileDialog::getOpenFileName(
-        this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefix_path)),
+    const QDir dir(QFileInfo(prefixPath).dir());
+    replacementPath = QFileDialog::getOpenFileName(
+        this, tr("Substitution File for %1").arg(QDir::toNativeSeparators(prefixPath)),
         dir.exists() ? dir.path() : m_projectFileDir, QString(), nullptr, QFileDialog::DontUseNativeDialog);
   } else {
-    const QDir dir(prefix_path);
-    replacement_path = QFileDialog::getExistingDirectory(
-        this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefix_path)),
-        dir.exists() ? prefix_path : m_projectFileDir, QFileDialog::DontUseNativeDialog);
+    const QDir dir(prefixPath);
+    replacementPath = QFileDialog::getExistingDirectory(
+        this, tr("Substitution Directory for %1").arg(QDir::toNativeSeparators(prefixPath)),
+        dir.exists() ? prefixPath : m_projectFileDir, QFileDialog::DontUseNativeDialog);
   }
   // So what's wrong with native dialogs? The one for directory selection won't show files
   // at all (if you ask it to, the non-native dialog will appear), which is inconvenient
   // in this situation. So, if one of them has to be non-native, the other was made
   // non-native as well, for consistency reasons.
-  replacement_path = RelinkablePath::normalize(replacement_path);
+  replacementPath = RelinkablePath::normalize(replacementPath);
 
-  if (replacement_path.isEmpty()) {
+  if (replacementPath.isEmpty()) {
     return;
   }
 
-  if (prefix_path == replacement_path) {
+  if (prefixPath == replacementPath) {
     return;
   }
 
-  QString new_path(replacement_path);
-  new_path += QChar('/');
-  new_path += suffix_path;
+  QString newPath(replacementPath);
+  newPath += QChar('/');
+  newPath += suffixPath;
 
-  m_model.replacePrefix(prefix_path, replacement_path, (RelinkablePath::Type) type);
+  m_model.replacePrefix(prefixPath, replacementPath, (RelinkablePath::Type) type);
 
   if (m_model.checkForMerges()) {
     ui.errorLabel->setText(tr("This change would merge several files into one."));
@@ -98,7 +96,7 @@ void RelinkingDialog::pathButtonClicked(const QString& prefix_path, const QStrin
     ui.pathVisualization->clear();
     ui.pathVisualization->setVisible(false);
   } else {
-    ui.pathVisualization->setPath(RelinkablePath(new_path, (RelinkablePath::Type) type), /*clickable=*/false);
+    ui.pathVisualization->setPath(RelinkablePath(newPath, (RelinkablePath::Type) type), /*clickable=*/false);
     ui.pathVisualization->setVisible(true);
   }
 

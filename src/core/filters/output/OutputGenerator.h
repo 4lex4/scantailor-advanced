@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_OUTPUTGENERATOR_H_
-#define OUTPUT_OUTPUTGENERATOR_H_
+#ifndef SCANTAILOR_OUTPUT_OUTPUTGENERATOR_H_
+#define SCANTAILOR_OUTPUT_OUTPUTGENERATOR_H_
 
 #include <QRect>
 #include <memory>
@@ -35,22 +35,22 @@ class DepthPerception;
 
 class OutputGenerator {
  public:
-  OutputGenerator(const ImageTransformation& xform, const QPolygonF& content_rect_phys);
+  OutputGenerator(const ImageTransformation& xform, const QPolygonF& contentRectPhys);
 
   /**
    * \brief Produce the output image.
    *
    * \param status For asynchronous task cancellation.
    * \param input The input image plus data produced by previous stages.
-   * \param picture_zones A set of manual picture zones.
-   * \param fill_zones A set of manual fill zones.
-   * \param distortion_model A curved rectangle.
-   * \param auto_picture_mask If provided, the auto-detected picture mask
+   * \param pictureZones A set of manual picture zones.
+   * \param fillZones A set of manual fill zones.
+   * \param distortionModel A curved rectangle.
+   * \param autoPictureMask If provided, the auto-detected picture mask
    *        will be written there.  It would only happen if automatic picture
    *        detection actually took place.  Otherwise, nothing will be
    *        written into the provided image.  Black areas on the mask
    *        indicate pictures.  The manual zones aren't represented in it.
-   * \param speckles_image If provided, the speckles removed from the
+   * \param specklesImage If provided, the speckles removed from the
    *        binarized image will be written there.  It would only happen
    *        if despeckling was required and actually took place.
    *        Otherwise, nothing will be written into the provided image.
@@ -63,12 +63,12 @@ class OutputGenerator {
    */
   std::unique_ptr<OutputImage> process(const TaskStatus& status,
                                        const FilterData& input,
-                                       ZoneSet& picture_zones,
-                                       const ZoneSet& fill_zones,
-                                       dewarping::DistortionModel& distortion_model,
-                                       const DepthPerception& depth_perception,
-                                       imageproc::BinaryImage* auto_picture_mask,
-                                       imageproc::BinaryImage* speckles_image,
+                                       ZoneSet& pictureZones,
+                                       const ZoneSet& fillZones,
+                                       dewarping::DistortionModel& distortionModel,
+                                       const DepthPerception& depthPerception,
+                                       imageproc::BinaryImage* autoPictureMask,
+                                       imageproc::BinaryImage* specklesImage,
                                        DebugImages* dbg,
                                        const PageId& pageId,
                                        const intrusive_ptr<Settings>& settings) const;
@@ -100,4 +100,4 @@ class OutputGenerator {
   QRect m_contentRect;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_OUTPUTGENERATOR_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_OUTPUTGENERATOR_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef TABBED_DEBUG_IMAGES_H_
-#define TABBED_DEBUG_IMAGES_H_
+#ifndef SCANTAILOR_CORE_TABBEDDEBUGIMAGES_H_
+#define SCANTAILOR_CORE_TABBEDDEBUGIMAGES_H_
 
 #include <QTabWidget>
 #include <boost/intrusive/list.hpp>
@@ -33,4 +33,4 @@ class TabbedDebugImages : public QTabWidget {
 };
 
 
-#endif  // ifndef TABBED_DEBUG_IMAGES_H_
+#endif  // ifndef SCANTAILOR_CORE_TABBEDDEBUGIMAGES_H_

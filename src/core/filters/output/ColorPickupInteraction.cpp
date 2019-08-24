@@ -70,51 +70,51 @@ void ColorPickupInteraction::takeColor() {
 
   const int width = rect.width();
   const int height = rect.height();
-  const int x_center = width / 2;
-  const int y_center = height / 2;
-  const int sqdist_threshold = x_center * y_center;
+  const int xCenter = width / 2;
+  const int yCenter = height / 2;
+  const int sqdistThreshold = xCenter * yCenter;
   const uint32_t* line = (uint32_t*) image.bits();
   const int stride = image.bytesPerLine() / 4;
 
   // We are going to take a median color using the bit-mixing technique.
-  std::vector<uint32_t> bitmixed_colors;
-  bitmixed_colors.reserve(width * height);
+  std::vector<uint32_t> bitmixedColors;
+  bitmixedColors.reserve(width * height);
   // Take colors from the circle.
   for (int y = 0; y < height; ++y, line += stride) {
-    const int dy = y - y_center;
-    const int dy_sq = dy * dy;
+    const int dy = y - yCenter;
+    const int dySq = dy * dy;
     for (int x = 0; x < width; ++x) {
-      const int dx = x - x_center;
-      const int dx_sq = dx * dx;
-      const int sqdist = dy_sq + dx_sq;
-      if (sqdist <= sqdist_threshold) {
+      const int dx = x - xCenter;
+      const int dxSq = dx * dx;
+      const int sqdist = dySq + dxSq;
+      if (sqdist <= sqdistThreshold) {
         const uint32_t color = line[x];
-        bitmixed_colors.push_back(bitMixColor(color));
+        bitmixedColors.push_back(bitMixColor(color));
       }
     }
   }
 
-  if (bitmixed_colors.empty()) {
+  if (bitmixedColors.empty()) {
     return;
   }
 
-  auto half_pos(bitmixed_colors.begin() + bitmixed_colors.size() / 2);
-  std::nth_element(bitmixed_colors.begin(), half_pos, bitmixed_colors.end());
-  const QColor color(bitUnmixColor(*half_pos));
+  auto halfPos(bitmixedColors.begin() + bitmixedColors.size() / 2);
+  std::nth_element(bitmixedColors.begin(), halfPos, bitmixedColors.end());
+  const QColor color(bitUnmixColor(*halfPos));
 
   m_fillColorProp->setColor(color);
 
   // Update default properties.
-  PropertySet default_props(m_zones.defaultProperties());
-  default_props.locateOrCreate<FillColorProperty>()->setColor(color);
-  m_zones.setDefaultProperties(default_props);
+  PropertySet defaultProps(m_zones.defaultProperties());
+  defaultProps.locateOrCreate<FillColorProperty>()->setColor(color);
+  m_zones.setDefaultProperties(defaultProps);
   m_zones.commit();
 }  // ColorPickupInteraction::takeColor
 
 QRect ColorPickupInteraction::targetBoundingRect() const {
-  const QPoint mouse_pos(m_context.imageView().mapFromGlobal(QCursor::pos()));
+  const QPoint mousePos(m_context.imageView().mapFromGlobal(QCursor::pos()));
   QRect rect(0, 0, 15, 15);  // Odd width and height are needed for symmetry.
-  rect.moveCenter(mouse_pos);
+  rect.moveCenter(mousePos);
 
   return rect;
 }

@@ -23,18 +23,18 @@ OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent) : QDialog(parent) {
   connect(ui.dontSaveBtn, SIGNAL(clicked()), SLOT(reject()));
 }
 
-void OutOfMemoryDialog::setParams(const QString& project_file,
+void OutOfMemoryDialog::setParams(const QString& projectFile,
                                   intrusive_ptr<StageSequence> stages,
                                   intrusive_ptr<ProjectPages> pages,
-                                  const SelectedPage& selected_page,
-                                  const OutputFileNameGenerator& out_file_name_gen) {
-  m_projectFile = project_file;
+                                  const SelectedPage& selectedPage,
+                                  const OutputFileNameGenerator& outFileNameGen) {
+  m_projectFile = projectFile;
   m_stages = std::move(stages);
   m_pages = std::move(pages);
-  m_selectedPage = selected_page;
-  m_outFileNameGen = out_file_name_gen;
+  m_selectedPage = selectedPage;
+  m_outFileNameGen = outFileNameGen;
 
-  ui.saveProjectBtn->setVisible(!project_file.isEmpty());
+  ui.saveProjectBtn->setVisible(!projectFile.isEmpty());
 }
 
 void OutOfMemoryDialog::saveProject() {
@@ -48,26 +48,26 @@ void OutOfMemoryDialog::saveProject() {
 void OutOfMemoryDialog::saveProjectAs() {
   // XXX: this function is duplicated MainWindow
 
-  QString project_dir;
+  QString projectDir;
   if (!m_projectFile.isEmpty()) {
-    project_dir = QFileInfo(m_projectFile).absolutePath();
+    projectDir = QFileInfo(m_projectFile).absolutePath();
   } else {
     QSettings settings;
-    project_dir = settings.value("project/lastDir").toString();
+    projectDir = settings.value("project/lastDir").toString();
   }
 
-  QString project_file(
-      QFileDialog::getSaveFileName(this, QString(), project_dir, tr("Scan Tailor Projects") + " (*.ScanTailor)"));
-  if (project_file.isEmpty()) {
+  QString projectFile(
+      QFileDialog::getSaveFileName(this, QString(), projectDir, tr("Scan Tailor Projects") + " (*.ScanTailor)"));
+  if (projectFile.isEmpty()) {
     return;
   }
 
-  if (!project_file.endsWith(".ScanTailor", Qt::CaseInsensitive)) {
-    project_file += ".ScanTailor";
+  if (!projectFile.endsWith(".ScanTailor", Qt::CaseInsensitive)) {
+    projectFile += ".ScanTailor";
   }
 
-  if (saveProjectWithFeedback(project_file)) {
-    m_projectFile = project_file;
+  if (saveProjectWithFeedback(projectFile)) {
+    m_projectFile = projectFile;
     showSaveSuccessScreen();
 
     QSettings settings;
@@ -80,10 +80,10 @@ void OutOfMemoryDialog::saveProjectAs() {
   }
 }  // OutOfMemoryDialog::saveProjectAs
 
-bool OutOfMemoryDialog::saveProjectWithFeedback(const QString& project_file) {
+bool OutOfMemoryDialog::saveProjectWithFeedback(const QString& projectFile) {
   ProjectWriter writer(m_pages, m_selectedPage, m_outFileNameGen);
 
-  if (!writer.write(project_file, m_stages->filters())) {
+  if (!writer.write(projectFile, m_stages->filters())) {
     QMessageBox::warning(this, tr("Error"), tr("Error saving the project file!"));
 
     return false;

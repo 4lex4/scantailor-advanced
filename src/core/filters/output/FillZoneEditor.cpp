@@ -22,7 +22,7 @@ class FillZoneEditor::MenuCustomizer {
  public:
   explicit MenuCustomizer(FillZoneEditor* editor) : m_editor(editor) {}
 
-  std::vector<ZoneContextMenuItem> operator()(const EditableZoneSet::Zone& zone, const StdMenuItems& std_items);
+  std::vector<ZoneContextMenuItem> operator()(const EditableZoneSet::Zone& zone, const StdMenuItems& stdItems);
 
  private:
   FillZoneEditor* m_editor;
@@ -30,20 +30,20 @@ class FillZoneEditor::MenuCustomizer {
 
 
 FillZoneEditor::FillZoneEditor(const QImage& image,
-                               const ImagePixmapUnion& downscaled_version,
-                               const boost::function<QPointF(const QPointF&)>& orig_to_image,
-                               const boost::function<QPointF(const QPointF&)>& image_to_orig,
-                               const PageId& page_id,
+                               const ImagePixmapUnion& downscaledVersion,
+                               const boost::function<QPointF(const QPointF&)>& origToImage,
+                               const boost::function<QPointF(const QPointF&)>& imageToOrig,
+                               const PageId& pageId,
                                intrusive_ptr<Settings> settings)
-    : ImageViewBase(image, downscaled_version, ImagePresentation(QTransform(), QRectF(image.rect())), OutputMargins()),
+    : ImageViewBase(image, downscaledVersion, ImagePresentation(QTransform(), QRectF(image.rect())), OutputMargins()),
       m_colorAdapter(colorAdapterFor(image)),
       m_context(*this, m_zones),
       m_colorPickupInteraction(m_zones, m_context),
       m_dragHandler(*this),
       m_zoomHandler(*this),
-      m_origToImage(orig_to_image),
-      m_imageToOrig(image_to_orig),
-      m_pageId(page_id),
+      m_origToImage(origToImage),
+      m_imageToOrig(imageToOrig),
+      m_pageId(pageId),
       m_settings(std::move(settings)) {
   m_zones.setDefaultProperties(m_settings->defaultFillZoneProperties());
 
@@ -63,7 +63,7 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
   rootInteractionHandler().makeLastFollower(m_dragHandler);
   rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
-  for (const Zone& zone : m_settings->fillZonesForPage(page_id)) {
+  for (const Zone& zone : m_settings->fillZonesForPage(pageId)) {
     auto spline = make_intrusive<EditableSpline>(zone.spline().transformed(m_origToImage));
     m_zones.addZone(spline, zone.properties());
   }
@@ -158,11 +158,11 @@ FillZoneEditor::ColorAdapter FillZoneEditor::colorAdapterFor(const QImage& image
 /*=========================== MenuCustomizer =========================*/
 
 std::vector<ZoneContextMenuItem> FillZoneEditor::MenuCustomizer::operator()(const EditableZoneSet::Zone& zone,
-                                                                            const StdMenuItems& std_items) {
+                                                                            const StdMenuItems& stdItems) {
   std::vector<ZoneContextMenuItem> items;
   items.reserve(2);
   items.emplace_back(tr("Pick color"), boost::bind(&FillZoneEditor::createColorPickupInteraction, m_editor, zone, _1));
-  items.push_back(std_items.deleteItem);
+  items.push_back(stdItems.deleteItem);
 
   return items;
 }

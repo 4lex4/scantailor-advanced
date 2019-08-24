@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef GRID_H_
-#define GRID_H_
+#ifndef SCANTAILOR_FOUNDATION_GRID_H_
+#define SCANTAILOR_FOUNDATION_GRID_H_
 
 #include <boost/scoped_array.hpp>
 
@@ -28,9 +28,9 @@ class Grid {
 
   bool isNull() const { return m_width <= 0 || m_height <= 0; }
 
-  void initPadding(const Node& padding_node);
+  void initPadding(const Node& paddingNode);
 
-  void initInterior(const Node& interior_node);
+  void initInterior(const Node& interiorNode);
 
   /**
    * \brief Returns a pointer to the beginning of unpadded data.
@@ -119,7 +119,7 @@ Grid<Node>::Grid(const Grid& other)
 }
 
 template <typename Node>
-void Grid<Node>::initPadding(const Node& padding_node) {
+void Grid<Node>::initPadding(const Node& paddingNode) {
   if (m_padding == 0) {
     // No padding.
     return;
@@ -128,35 +128,35 @@ void Grid<Node>::initPadding(const Node& padding_node) {
   Node* line = m_storage.get();
   for (int row = 0; row < m_padding; ++row) {
     for (int x = 0; x < m_stride; ++x) {
-      line[x] = padding_node;
+      line[x] = paddingNode;
     }
     line += m_stride;
   }
 
   for (int y = 0; y < m_height; ++y) {
     for (int col = 0; col < m_padding; ++col) {
-      line[col] = padding_node;
+      line[col] = paddingNode;
     }
     for (int col = m_stride - m_padding; col < m_stride; ++col) {
-      line[col] = padding_node;
+      line[col] = paddingNode;
     }
     line += m_stride;
   }
 
   for (int row = 0; row < m_padding; ++row) {
     for (int x = 0; x < m_stride; ++x) {
-      line[x] = padding_node;
+      line[x] = paddingNode;
     }
     line += m_stride;
   }
 }  // >::initPadding
 
 template <typename Node>
-void Grid<Node>::initInterior(const Node& interior_node) {
+void Grid<Node>::initInterior(const Node& interiorNode) {
   Node* line = m_data;
   for (int y = 0; y < m_height; ++y) {
     for (int x = 0; x < m_width; ++x) {
-      line[x] = interior_node;
+      line[x] = interiorNode;
     }
     line += m_stride;
   }
@@ -177,4 +177,4 @@ void swap(Grid<Node>& o1, Grid<Node>& o2) {
   o1.swap(o2);
 }
 
-#endif  // ifndef GRID_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_GRID_H_

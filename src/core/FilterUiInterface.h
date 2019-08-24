@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef FILTERUIINTERFACE_H_
-#define FILTERUIINTERFACE_H_
+#ifndef SCANTAILOR_CORE_FILTERUIINTERFACE_H_
+#define SCANTAILOR_CORE_FILTERUIINTERFACE_H_
 
 #include "AbstractCommand.h"
 #include "PageId.h"
@@ -25,11 +25,11 @@ class FilterUiInterface {
 
   virtual void setImageWidget(QWidget* widget,
                               Ownership ownership,
-                              DebugImages* debug_images = nullptr,
+                              DebugImages* debugImages = nullptr,
                               bool overlay = false)
       = 0;
 
-  virtual void invalidateThumbnail(const PageId& page_id) = 0;
+  virtual void invalidateThumbnail(const PageId& pageId) = 0;
 
   virtual void invalidateAllThumbnails() = 0;
 
@@ -40,4 +40,4 @@ class FilterUiInterface {
 };
 
 
-#endif  // ifndef FILTERUIINTERFACE_H_
+#endif  // ifndef SCANTAILOR_CORE_FILTERUIINTERFACE_H_

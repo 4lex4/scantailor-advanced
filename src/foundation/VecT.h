@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef VEC_T_H_
-#define VEC_T_H_
+#ifndef SCANTAILOR_FOUNDATION_VECT_H_
+#define SCANTAILOR_FOUNDATION_VECT_H_
 
 #include <boost/scoped_array.hpp>
 #include <cassert>
@@ -29,7 +29,7 @@ class VecT {
   /**
    * \brief Constructs a vector of specified size initializing to the provided value.
    */
-  VecT(size_t size, T initial_value);
+  VecT(size_t size, T initialValue);
 
   /**
    * \brief Construction from an array of elements of possibly different type.
@@ -109,9 +109,9 @@ VecT<T>::VecT(size_t size)
       m_size(size) {}
 
 template <typename T>
-VecT<T>::VecT(size_t size, T initial_value) : m_data(new T[size]), m_size(size) {
+VecT<T>::VecT(size_t size, T initialValue) : m_data(new T[size]), m_size(size) {
   for (size_t i = 0; i < size; ++i) {
-    m_data[i] = initial_value;
+    m_data[i] = initialValue;
   }
 }
 
@@ -125,18 +125,18 @@ VecT<T>::VecT(size_t size, const OT* data) : m_data(new T[size]), m_size(size) {
 
 template <typename T>
 VecT<T>::VecT(const VecT& other) : m_data(new T[other.m_size]), m_size(other.m_size) {
-  const T* other_data = other.data();
+  const T* otherData = other.data();
   for (size_t i = 0; i < m_size; ++i) {
-    m_data[i] = other_data[i];
+    m_data[i] = otherData[i];
   }
 }
 
 template <typename T>
 template <typename OT>
 VecT<T>::VecT(const VecT<OT>& other) : m_data(new T[other.m_size]), m_size(other.m_size) {
-  const T* other_data = other.data();
+  const T* otherData = other.data();
   for (size_t i = 0; i < m_size; ++i) {
-    m_data[i] = other_data[i];
+    m_data[i] = otherData[i];
   }
 }
 
@@ -220,4 +220,4 @@ VecT<T> operator*(double scalar, const VecT<T>& vec) {
   return res;
 }
 
-#endif  // ifndef VEC_T_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_VECT_H_

@@ -6,16 +6,16 @@
 #include <utility>
 
 namespace deskew {
-Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                     const QSizeF& max_size,
-                     const ImageId& image_id,
+Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                     const QSizeF& maxSize,
+                     const ImageId& imageId,
                      const ImageTransformation& xform,
                      bool deviant)
-    : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform), m_deviant(deviant) {}
+    : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, xform), m_deviant(deviant) {}
 
 void Thumbnail::prePaintOverImage(QPainter& painter,
-                                  const QTransform& image_to_display,
-                                  const QTransform& thumb_to_display) {
+                                  const QTransform& imageToDisplay,
+                                  const QTransform& thumbToDisplay) {
   painter.setRenderHint(QPainter::Antialiasing, false);
 
   QPen pen(QColor(0, 0, 0xd1, 70));
@@ -23,28 +23,28 @@ void Thumbnail::prePaintOverImage(QPainter& painter,
   pen.setCosmetic(true);
   painter.setPen(pen);
 
-  const QRectF bounding_rect(boundingRect());
+  const QRectF boundingRect(this->boundingRect());
 
-  const double cell_size = 8;
-  const double left = bounding_rect.left();
-  const double right = bounding_rect.right();
-  const double top = bounding_rect.top();
-  const double bottom = bounding_rect.bottom();
-  const double w = bounding_rect.width();
-  const double h = bounding_rect.height();
+  const double cellSize = 8;
+  const double left = boundingRect.left();
+  const double right = boundingRect.right();
+  const double top = boundingRect.top();
+  const double bottom = boundingRect.bottom();
+  const double w = boundingRect.width();
+  const double h = boundingRect.height();
 
-  const QPointF center(bounding_rect.center());
+  const QPointF center(boundingRect.center());
   QVector<QLineF> lines;
-  for (double y = center.y(); y > 0.0; y -= cell_size) {
+  for (double y = center.y(); y > 0.0; y -= cellSize) {
     lines.push_back(QLineF(left, y, right, y));
   }
-  for (double y = center.y(); (y += cell_size) < h;) {
+  for (double y = center.y(); (y += cellSize) < h;) {
     lines.push_back(QLineF(left, y, right, y));
   }
-  for (double x = center.x(); x > 0.0; x -= cell_size) {
+  for (double x = center.x(); x > 0.0; x -= cellSize) {
     lines.push_back(QLineF(x, top, x, bottom));
   }
-  for (double x = center.x(); (x += cell_size) < w;) {
+  for (double x = center.x(); (x += cellSize) < w;) {
     lines.push_back(QLineF(x, top, x, bottom));
   }
   painter.drawLines(lines);

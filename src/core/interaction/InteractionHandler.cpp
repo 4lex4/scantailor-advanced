@@ -71,15 +71,15 @@ void InteractionHandler::paint(QPainter& painter, const InteractionState& intera
   DISPATCH(followers, paint(painter, interaction));
 }
 
-void InteractionHandler::proximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
+void InteractionHandler::proximityUpdate(const QPointF& screenMousePos, InteractionState& interaction) {
   // Keep them alive in case this object gets destroyed.
   intrusive_ptr<HandlerList> preceeders(m_preceeders);
   intrusive_ptr<HandlerList> followers(m_followers);
 
-  DISPATCH(preceeders, proximityUpdate(screen_mouse_pos, interaction));
-  onProximityUpdate(screen_mouse_pos, interaction);
+  DISPATCH(preceeders, proximityUpdate(screenMousePos, interaction));
+  onProximityUpdate(screenMousePos, interaction);
   assert(!interaction.captured() && "onProximityUpdate() must not capture interaction");
-  DISPATCH(followers, proximityUpdate(screen_mouse_pos, interaction));
+  DISPATCH(followers, proximityUpdate(screenMousePos, interaction));
 }
 
 void InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& interaction) {

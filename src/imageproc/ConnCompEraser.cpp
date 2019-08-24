@@ -66,17 +66,17 @@ void ConnCompEraser::pushSegSameDir(const Segment& seg, int xleft, int xright, B
   bbox.ymin = std::min(bbox.ymin, seg.y);
   bbox.ymax = std::max(bbox.ymax, seg.y);
 
-  const int new_dy = seg.dy;
-  const int new_dy_wpl = seg.dy_wpl;
-  const int new_y = seg.y + new_dy;
-  if ((new_y >= 0) && (new_y < m_height)) {
+  const int newDy = seg.dy;
+  const int newDyWpl = seg.dyWpl;
+  const int newY = seg.y + newDy;
+  if ((newY >= 0) && (newY < m_height)) {
     Segment new_seg{};
-    new_seg.line = seg.line + new_dy_wpl;
+    new_seg.line = seg.line + newDyWpl;
     new_seg.xleft = xleft;
     new_seg.xright = xright;
-    new_seg.y = new_y;
-    new_seg.dy = new_dy;
-    new_seg.dy_wpl = new_dy_wpl;
+    new_seg.y = newY;
+    new_seg.dy = newDy;
+    new_seg.dyWpl = newDyWpl;
     m_segStack.push(new_seg);
   }
 }
@@ -87,17 +87,17 @@ void ConnCompEraser::pushSegInvDir(const Segment& seg, int xleft, int xright, BB
   bbox.ymin = std::min(bbox.ymin, seg.y);
   bbox.ymax = std::max(bbox.ymax, seg.y);
 
-  const int new_dy = -seg.dy;
-  const int new_dy_wpl = -seg.dy_wpl;
-  const int new_y = seg.y + new_dy;
-  if ((new_y >= 0) && (new_y < m_height)) {
+  const int newDy = -seg.dy;
+  const int newDyWpl = -seg.dyWpl;
+  const int newY = seg.y + newDy;
+  if ((newY >= 0) && (newY < m_height)) {
     Segment new_seg{};
-    new_seg.line = seg.line + new_dy_wpl;
+    new_seg.line = seg.line + newDyWpl;
     new_seg.xleft = xleft;
     new_seg.xright = xright;
-    new_seg.y = new_y;
-    new_seg.dy = new_dy;
-    new_seg.dy_wpl = new_dy_wpl;
+    new_seg.y = newY;
+    new_seg.dy = newDy;
+    new_seg.dyWpl = newDyWpl;
     m_segStack.push(new_seg);
   }
 }
@@ -113,7 +113,7 @@ void ConnCompEraser::pushInitialSegments() {
     seg1.xright = m_x;
     seg1.y = m_y + 1;
     seg1.dy = 1;
-    seg1.dy_wpl = m_wpl;
+    seg1.dyWpl = m_wpl;
     m_segStack.push(seg1);
   }
 
@@ -123,7 +123,7 @@ void ConnCompEraser::pushInitialSegments() {
   seg2.xright = m_x;
   seg2.y = m_y;
   seg2.dy = -1;
-  seg2.dy_wpl = -m_wpl;
+  seg2.dyWpl = -m_wpl;
   m_segStack.push(seg2);
 }
 
@@ -145,13 +145,13 @@ bool ConnCompEraser::moveToNextBlackPixel() {
   const uint32_t* pword = line + (m_x >> 5);
 
   // Stop word is a last word in line that holds data.
-  const int last_bit_idx = m_width - 1;
-  const uint32_t* p_stop_word = line + (last_bit_idx >> 5);
-  const uint32_t stop_word_mask = ~uint32_t(0) << (31 - (last_bit_idx & 31));
+  const int lastBitIdx = m_width - 1;
+  const uint32_t* pStopWord = line + (lastBitIdx >> 5);
+  const uint32_t stopWordMask = ~uint32_t(0) << (31 - (lastBitIdx & 31));
 
   uint32_t word = *pword;
-  if (pword == p_stop_word) {
-    word &= stop_word_mask;
+  if (pword == pStopWord) {
+    word &= stopWordMask;
   }
   word <<= (m_x & 31);
   if (word) {
@@ -163,17 +163,17 @@ bool ConnCompEraser::moveToNextBlackPixel() {
   }
 
   int y = m_y;
-  if (pword != p_stop_word) {
+  if (pword != pStopWord) {
     ++pword;
   } else {
     ++y;
     line += m_wpl;
-    p_stop_word += m_wpl;
+    pStopWord += m_wpl;
     pword = line;
   }
 
   for (; y < m_height; ++y) {
-    for (; pword != p_stop_word; ++pword) {
+    for (; pword != pStopWord; ++pword) {
       word = *pword;
       if (word) {
         const int shift = countMostSignificantZeroes(word);
@@ -186,8 +186,8 @@ bool ConnCompEraser::moveToNextBlackPixel() {
       }
     }
     // Handle the stop word (some bits need to be ignored).
-    assert(pword == p_stop_word);
-    word = *pword & stop_word_mask;
+    assert(pword == pStopWord);
+    word = *pword & stopWordMask;
     if (word) {
       const int shift = countMostSignificantZeroes(word);
       m_x = static_cast<int>(((pword - line) << 5) + shift);
@@ -199,7 +199,7 @@ bool ConnCompEraser::moveToNextBlackPixel() {
     }
 
     line += m_wpl;
-    p_stop_word += m_wpl;
+    pStopWord += m_wpl;
     pword = line;
   }
 
@@ -210,7 +210,7 @@ ConnComp ConnCompEraser::eraseConnComp4() {
   pushInitialSegments();
 
   BBox bbox(m_x, m_y);
-  int pix_count = 0;
+  int pixCount = 0;
 
   while (!m_segStack.empty()) {
     // Pop a segment off the stack.
@@ -222,7 +222,7 @@ ConnComp ConnCompEraser::eraseConnComp4() {
     int x = seg.xleft;
     for (; x >= 0 && getBit(seg.line, x); --x) {
       clearBit(seg.line, x);
-      ++pix_count;
+      ++pixCount;
     }
 
     int xstart = x + 1;
@@ -242,7 +242,7 @@ ConnComp ConnCompEraser::eraseConnComp4() {
     do {
       for (; x < m_width && getBit(seg.line, x); ++x) {
         clearBit(seg.line, x);
-        ++pix_count;
+        ++pixCount;
       }
       pushSegSameDir(seg, xstart, x - 1, bbox);
       if (x > seg.xright + 1) {
@@ -260,14 +260,14 @@ ConnComp ConnCompEraser::eraseConnComp4() {
 
   QRect rect(bbox.xmin, bbox.ymin, bbox.width(), bbox.height());
 
-  return ConnComp(QPoint(m_x, m_y), rect, pix_count);
+  return ConnComp(QPoint(m_x, m_y), rect, pixCount);
 }  // ConnCompEraser::eraseConnComp4
 
 ConnComp ConnCompEraser::eraseConnComp8() {
   pushInitialSegments();
 
   BBox bbox(m_x, m_y);
-  int pix_count = 0;
+  int pixCount = 0;
 
   while (!m_segStack.empty()) {
     // Pop a segment off the stack.
@@ -279,7 +279,7 @@ ConnComp ConnCompEraser::eraseConnComp8() {
     int x = seg.xleft - 1;
     for (; x >= 0 && getBit(seg.line, x); --x) {
       clearBit(seg.line, x);
-      ++pix_count;
+      ++pixCount;
     }
 
     int xstart = x + 1;
@@ -298,7 +298,7 @@ ConnComp ConnCompEraser::eraseConnComp8() {
     do {
       for (; x < m_width && getBit(seg.line, x); ++x) {
         clearBit(seg.line, x);
-        ++pix_count;
+        ++pixCount;
       }
       pushSegSameDir(seg, xstart, x - 1, bbox);
       if (x > seg.xright) {
@@ -316,6 +316,6 @@ ConnComp ConnCompEraser::eraseConnComp8() {
 
   QRect rect(bbox.xmin, bbox.ymin, bbox.width(), bbox.height());
 
-  return ConnComp(QPoint(m_x, m_y), rect, pix_count);
+  return ConnComp(QPoint(m_x, m_y), rect, pixCount);
 }  // ConnCompEraser::eraseConnComp8
 }  // namespace imageproc

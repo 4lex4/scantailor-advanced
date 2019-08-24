@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_DEWARPING_VIEW_H_
-#define OUTPUT_DEWARPING_VIEW_H_
+#ifndef SCANTAILOR_OUTPUT_DEWARPINGVIEW_H_
+#define SCANTAILOR_OUTPUT_DEWARPINGVIEW_H_
 
 #include <QPointF>
 #include <QPolygonF>
@@ -11,6 +11,7 @@
 #include <vector>
 #include "DepthPerception.h"
 #include "DewarpingOptions.h"
+#include "DistortionModel.h"
 #include "DragHandler.h"
 #include "ImagePixmapUnion.h"
 #include "ImageViewBase.h"
@@ -19,21 +20,20 @@
 #include "PageId.h"
 #include "Settings.h"
 #include "ZoomHandler.h"
-#include "DistortionModel.h"
 
 namespace output {
 class DewarpingView : public ImageViewBase, protected InteractionHandler {
   Q_OBJECT
  public:
   DewarpingView(const QImage& image,
-                const ImagePixmapUnion& downscaled_image,
-                const QTransform& source_to_virt,
-                const QPolygonF& virt_display_area,
-                const QRectF& virt_content_rect,
-                const PageId& page_id,
-                DewarpingOptions dewarping_options,
-                const dewarping::DistortionModel& distortion_model,
-                const DepthPerception& depth_perception);
+                const ImagePixmapUnion& downscaledImage,
+                const QTransform& sourceToVirt,
+                const QPolygonF& virtDisplayArea,
+                const QRectF& virtContentRect,
+                const PageId& pageId,
+                DewarpingOptions dewarpingOptions,
+                const dewarping::DistortionModel& distortionModel,
+                const DepthPerception& depthPerception);
 
   ~DewarpingView() override;
 
@@ -58,7 +58,7 @@ class DewarpingView : public ImageViewBase, protected InteractionHandler {
 
   void paintXSpline(QPainter& painter, const InteractionState& interaction, const InteractiveXSpline& ispline);
 
-  void curveModified(int curve_idx);
+  void curveModified(int curveIdx);
 
   void dragFinished();
 
@@ -66,7 +66,7 @@ class DewarpingView : public ImageViewBase, protected InteractionHandler {
 
   QPointF widgetToSource(const QPointF& pt) const;
 
-  QPolygonF virtMarginArea(int margin_idx) const;
+  QPolygonF virtMarginArea(int marginIdx) const;
 
   PageId m_pageId;
   QPolygonF m_virtDisplayArea;
@@ -79,4 +79,4 @@ class DewarpingView : public ImageViewBase, protected InteractionHandler {
   ZoomHandler m_zoomHandler;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_DEWARPING_VIEW_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_DEWARPINGVIEW_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_COLORPARAMS_H_
-#define OUTPUT_COLORPARAMS_H_
+#ifndef SCANTAILOR_OUTPUT_COLORPARAMS_H_
+#define SCANTAILOR_OUTPUT_COLORPARAMS_H_
 
 #include "BlackWhiteOptions.h"
 #include "ColorCommonOptions.h"
@@ -45,4 +45,4 @@ class ColorParams {
   BlackWhiteOptions m_bwOptions;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_COLORPARAMS_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_COLORPARAMS_H_

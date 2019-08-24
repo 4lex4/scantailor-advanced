@@ -102,12 +102,12 @@ static void deviceUnmap(thandle_t, tdata_t, toff_t) {
   // Not implemented.
 }
 
-bool TiffWriter::writeImage(const QString& file_path, const QImage& image) {
+bool TiffWriter::writeImage(const QString& filePath, const QImage& image) {
   if (image.isNull()) {
     return false;
   }
 
-  QFile file(file_path);
+  QFile file(filePath);
   if (!file.open(QFile::WriteOnly)) {
     return false;
   }
@@ -180,11 +180,11 @@ void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
   // write it as DPI rather than dots per cm.
   const double xdpi = dpm.horizontal() * DPM2DPI;
   const double ydpi = dpm.vertical() * DPM2DPI;
-  const double rounded_xdpi = std::floor(xdpi + 0.5);
-  const double rounded_ydpi = std::floor(ydpi + 0.5);
-  if ((std::fabs(xdpi - rounded_xdpi) < 0.02) && (std::fabs(ydpi - rounded_ydpi) < 0.02)) {
-    xres = (float) rounded_xdpi;
-    yres = (float) rounded_ydpi;
+  const double roundedXdpi = std::floor(xdpi + 0.5);
+  const double roundedYdpi = std::floor(ydpi + 0.5);
+  if ((std::fabs(xdpi - roundedXdpi) < 0.02) && (std::fabs(ydpi - roundedYdpi) < 0.02)) {
+    xres = (float) roundedXdpi;
+    yres = (float) roundedYdpi;
     unit = RESUNIT_INCH;
   }
 
@@ -196,7 +196,7 @@ void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
 bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage& image) {
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(1));
 
-  uint16 bits_per_sample = 8;
+  uint16 bitsPerSample = 8;
   uint16 photometric = PHOTOMETRIC_PALETTE;
   if (image.isGrayscale()) {
     photometric = PHOTOMETRIC_MINISBLACK;
@@ -205,7 +205,7 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
   switch (image.format()) {
     case QImage::Format_Mono:
     case QImage::Format_MonoLSB:
-      bits_per_sample = 1;
+      bitsPerSample = 1;
       if (image.colorCount() < 2) {
         photometric = PHOTOMETRIC_MINISWHITE;
       } else {
@@ -231,20 +231,20 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
     TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16(ApplicationSettings::getInstance().getTiffBwCompression()));
   }
 
-  TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, bits_per_sample);
+  TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, bitsPerSample);
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, photometric);
 
   if (photometric == PHOTOMETRIC_PALETTE) {
-    const int num_colors = 1 << bits_per_sample;
-    QVector<QRgb> color_table(image.colorTable());
-    if (color_table.size() > num_colors) {
-      color_table.resize(num_colors);
+    const int numColors = 1 << bitsPerSample;
+    QVector<QRgb> colorTable(image.colorTable());
+    if (colorTable.size() > numColors) {
+      colorTable.resize(numColors);
     }
-    std::vector<uint16> pr(num_colors, 0);
-    std::vector<uint16> pg(num_colors, 0);
-    std::vector<uint16> pb(num_colors, 0);
-    for (int i = 0; i < color_table.size(); ++i) {
-      const QRgb rgb = color_table[i];
+    std::vector<uint16> pr(numColors, 0);
+    std::vector<uint16> pg(numColors, 0);
+    std::vector<uint16> pb(numColors, 0);
+    for (int i = 0; i < colorTable.size(); ++i) {
+      const QRgb rgb = colorTable[i];
       pr[i] = static_cast<unsigned short>((0xFFFF * qRed(rgb) + 128) / 255);
       pg[i] = static_cast<unsigned short>((0xFFFF * qGreen(rgb) + 128) / 255);
       pb[i] = static_cast<unsigned short>((0xFFFF * qBlue(rgb) + 128) / 255);
@@ -274,22 +274,22 @@ bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
   const int width = image.width();
   const int height = image.height();
 
-  std::vector<uint8_t> tmp_line(width * 3);
+  std::vector<uint8_t> tmpLine(width * 3);
 
   // Libtiff expects "RR GG BB" sequences regardless of CPU byte order.
 
   for (int y = 0; y < height; ++y) {
-    const auto* p_src = (const uint32_t*) image.scanLine(y);
-    uint8_t* p_dst = &tmp_line[0];
+    const auto* pSrc = (const uint32_t*) image.scanLine(y);
+    uint8_t* pDst = &tmpLine[0];
     for (int x = 0; x < width; ++x) {
-      const uint32_t ARGB = *p_src;
-      p_dst[0] = static_cast<uint8_t>(ARGB >> 16);
-      p_dst[1] = static_cast<uint8_t>(ARGB >> 8);
-      p_dst[2] = static_cast<uint8_t>(ARGB);
-      ++p_src;
-      p_dst += 3;
+      const uint32_t ARGB = *pSrc;
+      pDst[0] = static_cast<uint8_t>(ARGB >> 16);
+      pDst[1] = static_cast<uint8_t>(ARGB >> 8);
+      pDst[2] = static_cast<uint8_t>(ARGB);
+      ++pSrc;
+      pDst += 3;
     }
-    if (TIFFWriteScanline(tif.handle(), &tmp_line[0], y) == -1) {
+    if (TIFFWriteScanline(tif.handle(), &tmpLine[0], y) == -1) {
       return false;
     }
   }
@@ -308,23 +308,23 @@ bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
   const int width = image.width();
   const int height = image.height();
 
-  std::vector<uint8_t> tmp_line(width * 4);
+  std::vector<uint8_t> tmpLine(width * 4);
 
   // Libtiff expects "RR GG BB AA" sequences regardless of CPU byte order.
 
   for (int y = 0; y < height; ++y) {
-    const auto* p_src = (const uint32_t*) image.scanLine(y);
-    uint8_t* p_dst = &tmp_line[0];
+    const auto* pSrc = (const uint32_t*) image.scanLine(y);
+    uint8_t* pDst = &tmpLine[0];
     for (int x = 0; x < width; ++x) {
-      const uint32_t ARGB = *p_src;
-      p_dst[0] = static_cast<uint8_t>(ARGB >> 16);
-      p_dst[1] = static_cast<uint8_t>(ARGB >> 8);
-      p_dst[2] = static_cast<uint8_t>(ARGB);
-      p_dst[3] = static_cast<uint8_t>(ARGB >> 24);
-      ++p_src;
-      p_dst += 4;
+      const uint32_t ARGB = *pSrc;
+      pDst[0] = static_cast<uint8_t>(ARGB >> 16);
+      pDst[1] = static_cast<uint8_t>(ARGB >> 8);
+      pDst[2] = static_cast<uint8_t>(ARGB);
+      pDst[3] = static_cast<uint8_t>(ARGB >> 24);
+      ++pSrc;
+      pDst += 4;
     }
-    if (TIFFWriteScanline(tif.handle(), &tmp_line[0], y) == -1) {
+    if (TIFFWriteScanline(tif.handle(), &tmpLine[0], y) == -1) {
       return false;
     }
   }
@@ -339,12 +339,12 @@ bool TiffWriter::write8bitLines(const TiffHandle& tif, const QImage& image) {
   // TIFFWriteScanline() can actually modify the data you pass it,
   // so we have to use a temporary buffer even when no coversion
   // is required.
-  std::vector<uint8_t> tmp_line(width, 0);
+  std::vector<uint8_t> tmpLine(width, 0);
 
   for (int y = 0; y < height; ++y) {
-    const uint8_t* src_line = image.scanLine(y);
-    memcpy(&tmp_line[0], src_line, tmp_line.size());
-    if (TIFFWriteScanline(tif.handle(), &tmp_line[0], y) == -1) {
+    const uint8_t* srcLine = image.scanLine(y);
+    memcpy(&tmpLine[0], srcLine, tmpLine.size());
+    if (TIFFWriteScanline(tif.handle(), &tmpLine[0], y) == -1) {
       return false;
     }
   }
@@ -359,12 +359,12 @@ bool TiffWriter::writeBinaryLinesAsIs(const TiffHandle& tif, const QImage& image
   // so we have to use a temporary buffer even when no coversion
   // is required.
   const int bpl = (width + 7) / 8;
-  std::vector<uint8_t> tmp_line(bpl, 0);
+  std::vector<uint8_t> tmpLine(bpl, 0);
 
   for (int y = 0; y < height; ++y) {
-    const uint8_t* src_line = image.scanLine(y);
-    memcpy(&tmp_line[0], src_line, bpl);
-    if (TIFFWriteScanline(tif.handle(), &tmp_line[0], y) == -1) {
+    const uint8_t* srcLine = image.scanLine(y);
+    memcpy(&tmpLine[0], srcLine, bpl);
+    if (TIFFWriteScanline(tif.handle(), &tmpLine[0], y) == -1) {
       return false;
     }
   }
@@ -377,14 +377,14 @@ bool TiffWriter::writeBinaryLinesReversed(const TiffHandle& tif, const QImage& i
   const int height = image.height();
 
   const int bpl = (width + 7) / 8;
-  std::vector<uint8_t> tmp_line(bpl, 0);
+  std::vector<uint8_t> tmpLine(bpl, 0);
 
   for (int y = 0; y < height; ++y) {
-    const uint8_t* src_line = image.scanLine(y);
+    const uint8_t* srcLine = image.scanLine(y);
     for (int i = 0; i < bpl; ++i) {
-      tmp_line[i] = m_reverseBitsLUT[src_line[i]];
+      tmpLine[i] = m_reverseBitsLUT[srcLine[i]];
     }
-    if (TIFFWriteScanline(tif.handle(), &tmp_line[0], y) == -1) {
+    if (TIFFWriteScanline(tif.handle(), &tmpLine[0], y) == -1) {
       return false;
     }
   }

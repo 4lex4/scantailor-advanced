@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef XSPLINE_H_
-#define XSPLINE_H_
+#ifndef SCANTAILOR_MATH_XSPLINE_H_
+#define SCANTAILOR_MATH_XSPLINE_H_
 
 #include <QLineF>
 #include <QPointF>
@@ -113,9 +113,9 @@ class XSpline : public spfit::FittableSpline {
 
   /**
    * Same as the above one, but you provide a range of segments to consider.
-   * The range is half-closed: [seg_begin, seg_end)
+   * The range is half-closed: [segBegin, segEnd)
    */
-  QuadraticFunction controlPointsAttractionForce(int seg_begin, int seg_end) const;
+  QuadraticFunction controlPointsAttractionForce(int segBegin, int segEnd) const;
 
   /**
    * Returns a function equivalent to:
@@ -130,9 +130,9 @@ class XSpline : public spfit::FittableSpline {
 
   /**
    * Same as the above one, but you provide a range of segments to consider.
-   * The range is half-closed: [seg_begin, seg_end)
+   * The range is half-closed: [segBegin, segEnd)
    */
-  QuadraticFunction junctionPointsAttractionForce(int seg_begin, int seg_end) const;
+  QuadraticFunction junctionPointsAttractionForce(int segBegin, int segEnd) const;
 
   /**
    * \brief Finds a point on the spline that's closest to a given point.
@@ -149,12 +149,12 @@ class XSpline : public spfit::FittableSpline {
   /** \see spfit::FittableSpline::sample() */
   void sample(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
               const SamplingParams& params = SamplingParams(),
-              double from_t = 0.0,
-              double to_t = 1.0) const override;
+              double fromT = 0.0,
+              double toT = 1.0) const override;
 
   std::vector<QPointF> toPolyline(const SamplingParams& params = SamplingParams(),
-                                  double from_t = 0.0,
-                                  double to_t = 1.0) const;
+                                  double fromT = 0.0,
+                                  double toT = 1.0) const;
 
   void swap(XSpline& other) { m_controlPoints.swap(other.m_controlPoints); }
 
@@ -189,14 +189,14 @@ class XSpline : public spfit::FittableSpline {
   DecomposedDerivs decomposedDerivsImpl(int segment, double t) const;
 
   void maybeAddMoreSamples(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
-                           double max_sqdist_to_spline,
-                           double max_sqdist_between_samples,
-                           double num_segments,
-                           double r_num_segments,
-                           double prev_t,
-                           const QPointF& prev_pt,
-                           double next_t,
-                           const QPointF& next_pt) const;
+                           double maxSqdistToSpline,
+                           double maxSqdistBetweenSamples,
+                           double numSegments,
+                           double rNumSegments,
+                           double prevT,
+                           const QPointF& prevPt,
+                           double nextT,
+                           const QPointF& nextPt) const;
 
   static double sqDistToLine(const QPointF& pt, const QLineF& line);
 
@@ -208,4 +208,4 @@ inline void swap(XSpline& o1, XSpline& o2) {
   o1.swap(o2);
 }
 
-#endif  // ifndef XSPLINE_H_
+#endif  // ifndef SCANTAILOR_MATH_XSPLINE_H_

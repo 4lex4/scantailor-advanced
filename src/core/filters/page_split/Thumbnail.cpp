@@ -7,35 +7,35 @@
 #include <utility>
 
 namespace page_split {
-Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                     const QSizeF& max_size,
-                     const ImageId& image_id,
+Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                     const QSizeF& maxSize,
+                     const ImageId& imageId,
                      const ImageTransformation& xform,
                      const PageLayout& layout,
-                     bool left_half_removed,
-                     bool right_half_removed)
-    : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform),
+                     bool leftHalfRemoved,
+                     bool rightHalfRemoved)
+    : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, xform),
       m_layout(layout),
-      m_leftHalfRemoved(left_half_removed),
-      m_rightHalfRemoved(right_half_removed) {
-  if (left_half_removed || right_half_removed) {
+      m_leftHalfRemoved(leftHalfRemoved),
+      m_rightHalfRemoved(rightHalfRemoved) {
+  if (leftHalfRemoved || rightHalfRemoved) {
     m_trashPixmap = IconProvider::getInstance().getIcon("trashed").pixmap(64, 64);
   }
 }
 
 void Thumbnail::prePaintOverImage(QPainter& painter,
-                                  const QTransform& image_to_display,
-                                  const QTransform& thumb_to_display) {
-  const QRectF canvas_rect(imageXform().resultingRect());
+                                  const QTransform& imageToDisplay,
+                                  const QTransform& thumbToDisplay) {
+  const QRectF canvasRect(imageXform().resultingRect());
 
   painter.setRenderHint(QPainter::Antialiasing, false);
-  painter.setWorldTransform(image_to_display);
+  painter.setWorldTransform(imageToDisplay);
 
   painter.setPen(Qt::NoPen);
   switch (m_layout.type()) {
     case PageLayout::SINGLE_PAGE_UNCUT:
       painter.setBrush(QColor(0, 0, 255, 50));
-      painter.drawRect(canvas_rect);
+      painter.drawRect(canvasRect);
 
       return;  // No split line will be drawn.
     case PageLayout::SINGLE_PAGE_CUT:
@@ -43,24 +43,24 @@ void Thumbnail::prePaintOverImage(QPainter& painter,
       painter.drawPolygon(m_layout.singlePageOutline());
       break;
     case PageLayout::TWO_PAGES: {
-      const QPolygonF left_poly(m_layout.leftPageOutline());
-      const QPolygonF right_poly(m_layout.rightPageOutline());
+      const QPolygonF leftPoly(m_layout.leftPageOutline());
+      const QPolygonF rightPoly(m_layout.rightPageOutline());
       painter.setBrush(m_leftHalfRemoved ? QColor(0, 0, 0, 80) : QColor(0, 0, 255, 50));
-      painter.drawPolygon(left_poly);
+      painter.drawPolygon(leftPoly);
       painter.setBrush(m_rightHalfRemoved ? QColor(0, 0, 0, 80) : QColor(255, 0, 0, 50));
-      painter.drawPolygon(right_poly);
+      painter.drawPolygon(rightPoly);
       // Draw the trash icon.
       if (m_leftHalfRemoved || m_rightHalfRemoved) {
         painter.setWorldTransform(QTransform());
 
-        const int subpage_idx = m_leftHalfRemoved ? 0 : 1;
-        const QPointF center(subPageCenter(left_poly, right_poly, image_to_display, subpage_idx));
+        const int subpageIdx = m_leftHalfRemoved ? 0 : 1;
+        const QPointF center(subPageCenter(leftPoly, rightPoly, imageToDisplay, subpageIdx));
 
         QRectF rect(m_trashPixmap.rect());
         rect.moveCenter(center);
         painter.drawPixmap(rect.topLeft(), m_trashPixmap);
 
-        painter.setWorldTransform(image_to_display);
+        painter.setWorldTransform(imageToDisplay);
       }
       break;
     }
@@ -85,18 +85,18 @@ void Thumbnail::prePaintOverImage(QPainter& painter,
   }
 }  // Thumbnail::paintOverImage
 
-QPointF Thumbnail::subPageCenter(const QPolygonF& left_page,
-                                 const QPolygonF& right_page,
-                                 const QTransform& image_to_display,
-                                 int subpage_idx) {
+QPointF Thumbnail::subPageCenter(const QPolygonF& leftPage,
+                                 const QPolygonF& rightPage,
+                                 const QTransform& imageToDisplay,
+                                 int subpageIdx) {
   QRectF rects[2];
-  rects[0] = left_page.boundingRect();
-  rects[1] = right_page.boundingRect();
+  rects[0] = leftPage.boundingRect();
+  rects[1] = rightPage.boundingRect();
 
-  const double x_mid = 0.5 * (rects[0].right() + rects[1].left());
-  rects[0].setRight(x_mid);
-  rects[1].setLeft(x_mid);
+  const double xMid = 0.5 * (rects[0].right() + rects[1].left());
+  rects[0].setRight(xMid);
+  rects[1].setLeft(xMid);
 
-  return image_to_display.map(rects[subpage_idx].center());
+  return imageToDisplay.map(rects[subpageIdx].center());
 }
 }  // namespace page_split

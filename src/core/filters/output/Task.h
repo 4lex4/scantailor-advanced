@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_TASK_H_
-#define OUTPUT_TASK_H_
+#ifndef SCANTAILOR_OUTPUT_TASK_H_
+#define SCANTAILOR_OUTPUT_TASK_H_
 
 #include <QColor>
 #include <QImage>
@@ -38,16 +38,16 @@ class Task : public ref_countable {
  public:
   Task(intrusive_ptr<Filter> filter,
        intrusive_ptr<Settings> settings,
-       intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-       const PageId& page_id,
-       const OutputFileNameGenerator& out_file_name_gen,
-       ImageViewTab last_tab,
+       intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+       const PageId& pageId,
+       const OutputFileNameGenerator& outFileNameGen,
+       ImageViewTab lastTab,
        bool batch,
        bool debug);
 
   ~Task() override;
 
-  FilterResultPtr process(const TaskStatus& status, const FilterData& data, const QPolygonF& content_rect_phys);
+  FilterResultPtr process(const TaskStatus& status, const FilterData& data, const QPolygonF& contentRectPhys);
 
  private:
   class UiUpdater;
@@ -65,4 +65,4 @@ class Task : public ref_countable {
   bool m_debug;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_TASK_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_TASK_H_

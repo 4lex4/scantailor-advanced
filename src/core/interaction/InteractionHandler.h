@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef INTERACTION_HANDLER_H_
-#define INTERACTION_HANDLER_H_
+#ifndef SCANTAILOR_INTERACTION_INTERACTIONHANDLER_H_
+#define SCANTAILOR_INTERACTION_INTERACTIONHANDLER_H_
 
 #include <boost/intrusive/list.hpp>
 #include "NonCopyable.h"
@@ -28,7 +28,7 @@ class InteractionHandler
 
   void paint(QPainter& painter, const InteractionState& interaction);
 
-  void proximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction);
+  void proximityUpdate(const QPointF& screenMousePos, InteractionState& interaction);
 
   void keyPressEvent(QKeyEvent* event, InteractionState& interaction);
 
@@ -61,7 +61,7 @@ class InteractionHandler
  protected:
   virtual void onPaint(QPainter& painter, const InteractionState& interaction) {}
 
-  virtual void onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {}
+  virtual void onProximityUpdate(const QPointF& screenMousePos, InteractionState& interaction) {}
 
   virtual void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {}
 
@@ -91,4 +91,4 @@ class InteractionHandler
 };
 
 
-#endif  // ifndef INTERACTION_HANDLER_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_INTERACTIONHANDLER_H_

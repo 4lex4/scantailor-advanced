@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_GRAYRASTEROP_H_
-#define IMAGEPROC_GRAYRASTEROP_H_
+#ifndef SCANTAILOR_IMAGEPROC_GRAYRASTEROP_H_
+#define SCANTAILOR_IMAGEPROC_GRAYRASTEROP_H_
 
 #include <QPoint>
 #include <QRect>
@@ -180,21 +180,21 @@ void grayRasterOp(GrayImage& dst, const GrayImage& src) {
     throw std::invalid_argument("grayRasterOp: images sizes are not the same");
   }
 
-  const uint8_t* src_line = src.data();
-  uint8_t* dst_line = dst.data();
-  const int src_stride = src.stride();
-  const int dst_stride = dst.stride();
+  const uint8_t* srcLine = src.data();
+  uint8_t* dstLine = dst.data();
+  const int srcStride = src.stride();
+  const int dstStride = dst.stride();
 
   const int width = src.width();
   const int height = src.height();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      dst_line[x] = GRop::transform(src_line[x], dst_line[x]);
+      dstLine[x] = GRop::transform(srcLine[x], dstLine[x]);
     }
-    src_line += src_stride;
-    dst_line += dst_stride;
+    srcLine += srcStride;
+    dstLine += dstStride;
   }
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_GRAYRASTEROP_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_GRAYRASTEROP_H_

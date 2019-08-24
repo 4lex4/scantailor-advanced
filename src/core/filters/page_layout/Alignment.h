@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_LAYOUT_ALIGNMENT_H_
-#define PAGE_LAYOUT_ALIGNMENT_H_
+#ifndef SCANTAILOR_PAGE_LAYOUT_ALIGNMENT_H_
+#define SCANTAILOR_PAGE_LAYOUT_ALIGNMENT_H_
 
 class QDomDocument;
 class QDomElement;
@@ -38,7 +38,7 @@ class Alignment {
 
   bool isNull() const;
 
-  void setNull(bool is_null);
+  void setNull(bool isNull);
 
   bool isAutoVertical() const;
 
@@ -60,4 +60,4 @@ class Alignment {
   bool m_isNull;
 };
 }  // namespace page_layout
-#endif  // ifndef PAGE_LAYOUT_ALIGNMENT_H_
+#endif  // ifndef SCANTAILOR_PAGE_LAYOUT_ALIGNMENT_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef CHANGEDSTATEITEMDELEGATE_H_
-#define CHANGEDSTATEITEMDELEGATE_H_
+#ifndef SCANTAILOR_CORE_CHANGEDSTATEITEMDELEGATE_H_
+#define SCANTAILOR_CORE_CHANGEDSTATEITEMDELEGATE_H_
 
 #include <QStyle>
 #include <QStyleOptionViewItem>
@@ -32,18 +32,18 @@ class ChangedStateItemDelegate : public T {
   void removeAllChanges() { m_changedMask = QStyle::State(); }
 
   virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
-    const QStyle::State orig_state = option.state;
+    const QStyle::State origState = option.state;
 
-    const QStyle::State new_state = (orig_state & ~m_changedMask) | (m_changedFlags & m_changedMask);
+    const QStyle::State newState = (origState & ~m_changedMask) | (m_changedFlags & m_changedMask);
 
     // Evil but necessary: the alternative solution of modifying
     // a copy doesn't work, as option doesn't really point to
     // QStyleOptionViewItem, but to one of its subclasses.
-    QStyleOptionViewItem& non_const_opt = const_cast<QStyleOptionViewItem&>(option);
+    QStyleOptionViewItem& nonConstOpt = const_cast<QStyleOptionViewItem&>(option);
 
-    non_const_opt.state = new_state;
-    T::paint(painter, non_const_opt, index);
-    non_const_opt.state = orig_state;
+    nonConstOpt.state = newState;
+    T::paint(painter, nonConstOpt, index);
+    nonConstOpt.state = origState;
   }
 
  private:
@@ -52,4 +52,4 @@ class ChangedStateItemDelegate : public T {
 };
 
 
-#endif  // ifndef CHANGEDSTATEITEMDELEGATE_H_
+#endif  // ifndef SCANTAILOR_CORE_CHANGEDSTATEITEMDELEGATE_H_

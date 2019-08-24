@@ -1,16 +1,16 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_PARAMS_H_
-#define OUTPUT_PARAMS_H_
+#ifndef SCANTAILOR_OUTPUT_PARAMS_H_
+#define SCANTAILOR_OUTPUT_PARAMS_H_
 
+#include <DistortionModel.h>
 #include "ColorParams.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
 #include "DewarpingOptions.h"
 #include "Dpi.h"
 #include "PictureShapeOptions.h"
-#include <DistortionModel.h>
 
 class QDomDocument;
 class QDomElement;
@@ -57,7 +57,7 @@ class Params {
 
   const DepthPerception& depthPerception() const;
 
-  void setDepthPerception(DepthPerception depth_perception);
+  void setDepthPerception(DepthPerception depthPerception);
 
   double despeckleLevel() const;
 
@@ -81,4 +81,4 @@ class Params {
   bool m_blackOnWhite;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_PARAMS_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_PARAMS_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_LAYOUT_UTILS_H_
-#define PAGE_LAYOUT_UTILS_H_
+#ifndef SCANTAILOR_PAGE_LAYOUT_UTILS_H_
+#define SCANTAILOR_PAGE_LAYOUT_UTILS_H_
 
 class QPolygonF;
 class QPointF;
@@ -25,7 +25,7 @@ class Utils {
    * non-empty rectangle centered in the page's crop area, which
    * is retrieved from the ImageTransformation.
    */
-  static QRectF adaptContentRect(const ImageTransformation& xform, const QRectF& content_rect);
+  static QRectF adaptContentRect(const ImageTransformation& xform, const QRectF& contentRect);
 
   /**
    * \brief Calculates the physical size of a rectangle in a transformed space.
@@ -40,46 +40,46 @@ class Utils {
    * (unclosed vs closed polygon).  It must have 90 degree angles and
    * must not be empty.
    */
-  static void extendPolyRectWithMargins(QPolygonF& poly_rect, const Margins& margins);
+  static void extendPolyRectWithMargins(QPolygonF& polyRect, const Margins& margins);
 
   /**
-   * \brief Calculates margins to extend hard_size_mm to aggregate_hard_size_mm.
+   * \brief Calculates margins to extend hardSizeMm to aggregateHardSizeMm.
    *
-   * \param hard_size_mm Source size in millimeters.
-   * \param aggregate_hard_size_mm Target size in millimeters.
+   * \param hardSizeMm Source size in millimeters.
+   * \param aggregateHardSizeMm Target size in millimeters.
    * \param alignment Determines how exactly to grow the size.
-   * \return Non-negative margins that extend \p hard_size_mm to
-   *         \p aggregate_hard_size_mm.
+   * \return Non-negative margins that extend \p hardSizeMm to
+   *         \p aggregateHardSizeMm.
    */
-  static Margins calcSoftMarginsMM(const QSizeF& hard_size_mm,
-                                   const QSizeF& aggregate_hard_size_mm,
+  static Margins calcSoftMarginsMM(const QSizeF& hardSizeMm,
+                                   const QSizeF& aggregateHardSizeMm,
                                    const Alignment& alignment,
-                                   const QRectF& content_rect,
-                                   const QSizeF& content_size_mm,
-                                   const QRectF& page_rect);
+                                   const QRectF& contentRect,
+                                   const QSizeF& contentSizeMm,
+                                   const QRectF& pageRect);
 
-  static Margins calcMarginsMM(const ImageTransformation& xform, const QRectF& page_rect, const QRectF& content_rect);
+  static Margins calcMarginsMM(const ImageTransformation& xform, const QRectF& pageRect, const QRectF& contentRect);
 
   /**
    * \brief Calculates the page rect (content + hard margins + soft margins)
    *
    * \param xform Transformations applied to image.
-   * \param content_rect_phys Content rectangle in transformed coordinates.
+   * \param contentRectPhys Content rectangle in transformed coordinates.
    * \param params Margins, aligment and other parameters.
-   * \param aggregate_hard_size_mm Maximum width and height across all pages.
+   * \param aggregateHardSizeMm Maximum width and height across all pages.
    * \return Page rectangle (as a polygon) in physical image coordinates.
    */
   static QPolygonF calcPageRectPhys(const ImageTransformation& xform,
-                                    const QPolygonF& content_rect_phys,
+                                    const QPolygonF& contentRectPhys,
                                     const Params& params,
-                                    const QSizeF& aggregate_hard_size_mm);
+                                    const QSizeF& aggregateHardSizeMm);
 
   static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
 
  private:
-  static QPointF getRightUnitVector(const QPolygonF& poly_rect);
+  static QPointF getRightUnitVector(const QPolygonF& polyRect);
 
-  static QPointF getDownUnitVector(const QPolygonF& poly_rect);
+  static QPointF getDownUnitVector(const QPolygonF& polyRect);
 };
 }  // namespace page_layout
-#endif  // ifndef PAGE_LAYOUT_UTILS_H_
+#endif  // ifndef SCANTAILOR_PAGE_LAYOUT_UTILS_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef QUADRATIC_FUNCTION_H_
-#define QUADRATIC_FUNCTION_H_
+#ifndef SCANTAILOR_MATH_QUADRATICFUNCTION_H_
+#define SCANTAILOR_MATH_QUADRATICFUNCTION_H_
 
 #include <cstddef>
 #include "MatT.h"
@@ -47,7 +47,7 @@ class QuadraticFunction {
    * Constructs a quadratic functiono of the given number of variables,
    * initializing everything to zero.
    */
-  explicit QuadraticFunction(size_t num_vars = 0);
+  explicit QuadraticFunction(size_t numVars = 0);
 
   /**
    * Resets everything to zero, so that F(x) = 0
@@ -81,4 +81,4 @@ inline void swap(QuadraticFunction& f1, QuadraticFunction& f2) {
   f1.swap(f2);
 }
 
-#endif  // ifndef QUADRATIC_FUNCTION_H_
+#endif  // ifndef SCANTAILOR_MATH_QUADRATICFUNCTION_H_

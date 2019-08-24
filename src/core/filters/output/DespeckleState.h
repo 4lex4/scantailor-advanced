@@ -2,13 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 
-#ifndef OUTPUT_DESPECKLE_STATE_H_
-#define OUTPUT_DESPECKLE_STATE_H_
+#ifndef SCANTAILOR_OUTPUT_DESPECKLESTATE_H_
+#define SCANTAILOR_OUTPUT_DESPECKLESTATE_H_
 
+#include <BinaryImage.h>
 #include <QImage>
 #include "DespeckleLevel.h"
 #include "Dpi.h"
-#include <BinaryImage.h>
 
 class TaskStatus;
 class DebugImages;
@@ -67,4 +67,4 @@ class DespeckleState {
   double m_despeckleLevel;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_DESPECKLE_STATE_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_DESPECKLESTATE_H_

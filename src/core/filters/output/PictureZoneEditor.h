@@ -2,9 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 
-#ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_
-#define OUTPUT_PICTURE_ZONE_EDITOR_H_
+#ifndef SCANTAILOR_OUTPUT_PICTUREZONEEDITOR_H_
+#define SCANTAILOR_OUTPUT_PICTUREZONEEDITOR_H_
 
+#include <BinaryImage.h>
 #include <QPixmap>
 #include <QPoint>
 #include <QTimer>
@@ -18,7 +19,6 @@
 #include "PageId.h"
 #include "ZoneInteractionContext.h"
 #include "ZoomHandler.h"
-#include <BinaryImage.h>
 #include "intrusive_ptr.h"
 #include "ref_countable.h"
 
@@ -35,18 +35,18 @@ class PictureZoneEditor : public ImageViewBase, private InteractionHandler {
   Q_OBJECT
  public:
   PictureZoneEditor(const QImage& image,
-                    const ImagePixmapUnion& downscaled_image,
-                    const imageproc::BinaryImage& picture_mask,
-                    const QTransform& image_to_virt,
-                    const QPolygonF& virt_display_area,
-                    const PageId& page_id,
+                    const ImagePixmapUnion& downscaledImage,
+                    const imageproc::BinaryImage& pictureMask,
+                    const QTransform& imageToVirt,
+                    const QPolygonF& virtDisplayArea,
+                    const PageId& pageId,
                     intrusive_ptr<Settings> settings);
 
   ~PictureZoneEditor() override;
 
  signals:
 
-  void invalidateThumbnail(const PageId& page_id);
+  void invalidateThumbnail(const PageId& pageId);
 
  protected:
   void onPaint(QPainter& painter, const InteractionState& interaction) override;
@@ -96,4 +96,4 @@ class PictureZoneEditor : public ImageViewBase, private InteractionHandler {
   intrusive_ptr<Settings> m_settings;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_PICTURE_ZONE_EDITOR_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_PICTUREZONEEDITOR_H_

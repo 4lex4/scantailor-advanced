@@ -18,35 +18,35 @@
 #include "VecT.h"
 
 namespace imageproc {
-PolynomialSurface::PolynomialSurface(const int hor_degree, const int vert_degree, const GrayImage& src)
-    : m_horDegree(hor_degree), m_vertDegree(vert_degree) {
+PolynomialSurface::PolynomialSurface(const int horDegree, const int vertDegree, const GrayImage& src)
+    : m_horDegree(horDegree), m_vertDegree(vertDegree) {
   // Note: m_horDegree and m_vertDegree may still change!
 
-  if (hor_degree < 0) {
+  if (horDegree < 0) {
     throw std::invalid_argument("PolynomialSurface: horizontal degree is invalid");
   }
-  if (vert_degree < 0) {
+  if (vertDegree < 0) {
     throw std::invalid_argument("PolynomialSurface: vertical degree is invalid");
   }
 
-  const int num_data_points = src.width() * src.height();
-  if (num_data_points == 0) {
+  const int numDataPoints = src.width() * src.height();
+  if (numDataPoints == 0) {
     m_horDegree = 0;
     m_vertDegree = 0;
     VecT<double>(1, 0.0).swap(m_coeffs);
     return;
   }
 
-  maybeReduceDegrees(num_data_points);
+  maybeReduceDegrees(numDataPoints);
 
-  const int num_terms = calcNumTerms();
-  VecT<double>(num_terms, 0.0).swap(m_coeffs);
+  const int numTerms = calcNumTerms();
+  VecT<double>(numTerms, 0.0).swap(m_coeffs);
 
   // The least squares equation is A^T*A*x = A^T*b
   // We will be building A^T*A and A^T*b incrementally.
   // This allows us not to build matrix A at all.
-  MatT<double> AtA(num_terms, num_terms);
-  VecT<double> Atb(num_terms);
+  MatT<double> AtA(numTerms, numTerms);
+  VecT<double> Atb(numTerms);
   prepareDataForLeastSquares(src, AtA, Atb, m_horDegree, m_vertDegree);
 
   fixSquareMatrixRankDeficiency(AtA);
@@ -58,41 +58,41 @@ PolynomialSurface::PolynomialSurface(const int hor_degree, const int vert_degree
   }
 }
 
-PolynomialSurface::PolynomialSurface(const int hor_degree,
-                                     const int vert_degree,
+PolynomialSurface::PolynomialSurface(const int horDegree,
+                                     const int vertDegree,
                                      const GrayImage& src,
                                      const BinaryImage& mask)
-    : m_horDegree(hor_degree), m_vertDegree(vert_degree) {
+    : m_horDegree(horDegree), m_vertDegree(vertDegree) {
   // Note: m_horDegree and m_vertDegree may still change!
 
-  if (hor_degree < 0) {
+  if (horDegree < 0) {
     throw std::invalid_argument("PolynomialSurface: horizontal degree is invalid");
   }
-  if (vert_degree < 0) {
+  if (vertDegree < 0) {
     throw std::invalid_argument("PolynomialSurface: vertical degree is invalid");
   }
   if (src.size() != mask.size()) {
     throw std::invalid_argument("PolynomialSurface: image and mask have different sizes");
   }
 
-  const int num_data_points = mask.countBlackPixels();
-  if (num_data_points == 0) {
+  const int numDataPoints = mask.countBlackPixels();
+  if (numDataPoints == 0) {
     m_horDegree = 0;
     m_vertDegree = 0;
     VecT<double>(1, 0.0).swap(m_coeffs);
     return;
   }
 
-  maybeReduceDegrees(num_data_points);
+  maybeReduceDegrees(numDataPoints);
 
-  const int num_terms = calcNumTerms();
-  VecT<double>(num_terms, 0.0).swap(m_coeffs);
+  const int numTerms = calcNumTerms();
+  VecT<double>(numTerms, 0.0).swap(m_coeffs);
 
   // The least squares equation is A^T*A*x = A^T*b
   // We will be building A^T*A and A^T*b incrementally.
   // This allows us not to build matrix A at all.
-  MatT<double> AtA(num_terms, num_terms);
-  VecT<double> Atb(num_terms);
+  MatT<double> AtA(numTerms, numTerms);
+  VecT<double> Atb(numTerms);
   prepareDataForLeastSquares(src, mask, AtA, Atb, m_horDegree, m_vertDegree);
 
   fixSquareMatrixRankDeficiency(AtA);
@@ -114,47 +114,47 @@ GrayImage PolynomialSurface::render(const QSize& size) const {
   const int height = size.height();
   unsigned char* line = image.data();
   const int bpl = image.stride();
-  const auto num_coeffs = static_cast<int>(m_coeffs.size());
+  const auto numCoeffs = static_cast<int>(m_coeffs.size());
 
   // Pretend that both x and y positions of pixels
   // lie in range of [0, 1].
   const double xscale = calcScale(width);
   const double yscale = calcScale(height);
 
-  AlignedArray<float, 4> vert_matrix(num_coeffs * height);
-  float* out = &vert_matrix[0];
+  AlignedArray<float, 4> vertMatrix(numCoeffs * height);
+  float* out = &vertMatrix[0];
   for (int y = 0; y < height; ++y) {
-    const double y_adjusted = y * yscale;
+    const double yAdjusted = y * yscale;
     double pow = 1.0;
     int pos = 0;
     for (int i = 0; i <= m_vertDegree; ++i) {
       for (int j = 0; j <= m_horDegree; ++j, ++pos, ++out) {
         *out = static_cast<float>(m_coeffs[pos] * pow);
       }
-      pow *= y_adjusted;
+      pow *= yAdjusted;
     }
   }
 
-  AlignedArray<float, 4> hor_matrix(num_coeffs * width);
-  out = &hor_matrix[0];
+  AlignedArray<float, 4> horMatrix(numCoeffs * width);
+  out = &horMatrix[0];
   for (int x = 0; x < width; ++x) {
-    const double x_adjusted = x * xscale;
+    const double xAdjusted = x * xscale;
     for (int i = 0; i <= m_vertDegree; ++i) {
       double pow = 1.0;
       for (int j = 0; j <= m_horDegree; ++j, ++out) {
         *out = static_cast<float>(pow);
-        pow *= x_adjusted;
+        pow *= xAdjusted;
       }
     }
   }
 
-  const float* vert_line = &vert_matrix[0];
-  for (int y = 0; y < height; ++y, line += bpl, vert_line += num_coeffs) {
-    const float* hor_line = &hor_matrix[0];
-    for (int x = 0; x < width; ++x, hor_line += num_coeffs) {
+  const float* vertLine = &vertMatrix[0];
+  for (int y = 0; y < height; ++y, line += bpl, vertLine += numCoeffs) {
+    const float* horLine = &horMatrix[0];
+    for (int x = 0; x < width; ++x, horLine += numCoeffs) {
       float sum = 0.5f / 255.0f;  // for rounding purposes.
-      for (int i = 0; i < num_coeffs; ++i) {
-        sum += hor_line[i] * vert_line[i];
+      for (int i = 0; i < numCoeffs; ++i) {
+        sum += horLine[i] * vertLine[i];
       }
       const auto isum = (int) (sum * 255.0);
       line[x] = static_cast<unsigned char>(qBound(0, isum, 255));
@@ -164,10 +164,10 @@ GrayImage PolynomialSurface::render(const QSize& size) const {
   return image;
 }  // PolynomialSurface::render
 
-void PolynomialSurface::maybeReduceDegrees(const int num_data_points) {
-  assert(num_data_points > 0);
+void PolynomialSurface::maybeReduceDegrees(const int numDataPoints) {
+  assert(numDataPoints > 0);
 
-  while (num_data_points < calcNumTerms()) {
+  while (numDataPoints < calcNumTerms()) {
     if (m_horDegree > m_vertDegree) {
       --m_horDegree;
     } else {
@@ -191,14 +191,14 @@ double PolynomialSurface::calcScale(const int dimension) {
 void PolynomialSurface::prepareDataForLeastSquares(const GrayImage& image,
                                                    MatT<double>& AtA,
                                                    VecT<double>& Atb,
-                                                   const int h_degree,
-                                                   const int v_degree) {
+                                                   const int hDegree,
+                                                   const int vDegree) {
   double* const AtA_data = AtA.data();
   double* const Atb_data = Atb.data();
 
   const int width = image.width();
   const int height = image.height();
-  const auto num_terms = static_cast<int>(Atb.size());
+  const auto numTerms = static_cast<int>(Atb.size());
 
   const uint8_t* line = image.data();
   const int stride = image.stride();
@@ -209,52 +209,52 @@ void PolynomialSurface::prepareDataForLeastSquares(const GrayImage& image,
   const double yscale = calcScale(height);
 
   // To force data samples into [0, 1] range.
-  const double data_scale = 1.0 / 255.0;
+  const double dataScale = 1.0 / 255.0;
 
   // 1, y, y^2, y^3, ...
-  VecT<double> y_powers(v_degree + 1);  // Initialized to 0.
+  VecT<double> yPowers(vDegree + 1);  // Initialized to 0.
 
-  // Same as y_powers, except y_powers correspond to a given y,
-  // while x_powers are computed for all possible x values.
-  MatT<double> x_powers(h_degree + 1, width);  // Initialized to 0.
+  // Same as yPowers, except yPowers correspond to a given y,
+  // while xPowers are computed for all possible x values.
+  MatT<double> xPowers(hDegree + 1, width);  // Initialized to 0.
   for (int x = 0; x < width; ++x) {
-    const double x_adjusted = xscale * x;
-    double x_power = 1.0;
-    for (int i = 0; i <= h_degree; ++i) {
-      x_powers(i, x) = x_power;
-      x_power *= x_adjusted;
+    const double xAdjusted = xscale * x;
+    double xPower = 1.0;
+    for (int i = 0; i <= hDegree; ++i) {
+      xPowers(i, x) = xPower;
+      xPower *= xAdjusted;
     }
   }
 
-  VecT<double> full_powers(num_terms);
+  VecT<double> fullPowers(numTerms);
 
   for (int y = 0; y < height; ++y, line += stride) {
-    const double y_adjusted = yscale * y;
+    const double yAdjusted = yscale * y;
 
-    double y_power = 1.0;
-    for (int i = 0; i <= v_degree; ++i) {
-      y_powers[i] = y_power;
-      y_power *= y_adjusted;
+    double yPower = 1.0;
+    for (int i = 0; i <= vDegree; ++i) {
+      yPowers[i] = yPower;
+      yPower *= yAdjusted;
     }
 
     for (int x = 0; x < width; ++x) {
-      const double data_point = data_scale * line[x];
+      const double dataPoint = dataScale * line[x];
 
       int pos = 0;
-      for (int i = 0; i <= v_degree; ++i) {
-        for (int j = 0; j <= h_degree; ++j, ++pos) {
-          full_powers[pos] = y_powers[i] * x_powers(j, x);
+      for (int i = 0; i <= vDegree; ++i) {
+        for (int j = 0; j <= hDegree; ++j, ++pos) {
+          fullPowers[pos] = yPowers[i] * xPowers(j, x);
         }
       }
 
       double* p_AtA = AtA_data;
-      for (int i = 0; i < num_terms; ++i) {
-        const double i_val = full_powers[i];
-        Atb_data[i] += i_val * data_point;
+      for (int i = 0; i < numTerms; ++i) {
+        const double iVal = fullPowers[i];
+        Atb_data[i] += iVal * dataPoint;
 
-        for (int j = 0; j < num_terms; ++j) {
-          const double j_val = full_powers[j];
-          *p_AtA += i_val * j_val;
+        for (int j = 0; j < numTerms; ++j) {
+          const double jVal = fullPowers[j];
+          *p_AtA += iVal * jVal;
           ++p_AtA;
         }
       }
@@ -266,20 +266,20 @@ void PolynomialSurface::prepareDataForLeastSquares(const GrayImage& image,
                                                    const BinaryImage& mask,
                                                    MatT<double>& AtA,
                                                    VecT<double>& Atb,
-                                                   const int h_degree,
-                                                   const int v_degree) {
+                                                   const int hDegree,
+                                                   const int vDegree) {
   double* const AtA_data = AtA.data();
   double* const Atb_data = Atb.data();
 
   const int width = image.width();
   const int height = image.height();
-  const auto num_terms = static_cast<int>(Atb.size());
+  const auto numTerms = static_cast<int>(Atb.size());
 
-  const uint8_t* image_line = image.data();
-  const int image_stride = image.stride();
+  const uint8_t* imageLine = image.data();
+  const int imageStride = image.stride();
 
-  const uint32_t* mask_line = mask.data();
-  const int mask_stride = mask.wordsPerLine();
+  const uint32_t* maskLine = mask.data();
+  const int maskStride = mask.wordsPerLine();
 
   // Pretend that both x and y positions of pixels
   // lie in range of [0, 1].
@@ -287,64 +287,64 @@ void PolynomialSurface::prepareDataForLeastSquares(const GrayImage& image,
   const double yscale = calcScale(height);
 
   // To force data samples into [0, 1] range.
-  const double data_scale = 1.0 / 255.0;
+  const double dataScale = 1.0 / 255.0;
 
   // 1, y, y^2, y^3, ...
-  VecT<double> y_powers(v_degree + 1);  // Initialized to 0.
+  VecT<double> yPowers(vDegree + 1);  // Initialized to 0.
 
-  // Same as y_powers, except y_powers correspond to a given y,
-  // while x_powers are computed for all possible x values.
-  MatT<double> x_powers(h_degree + 1, width);  // Initialized to 0.
+  // Same as yPowers, except yPowers correspond to a given y,
+  // while xPowers are computed for all possible x values.
+  MatT<double> xPowers(hDegree + 1, width);  // Initialized to 0.
   for (int x = 0; x < width; ++x) {
-    const double x_adjusted = xscale * x;
-    double x_power = 1.0;
-    for (int i = 0; i <= h_degree; ++i) {
-      x_powers(i, x) = x_power;
-      x_power *= x_adjusted;
+    const double xAdjusted = xscale * x;
+    double xPower = 1.0;
+    for (int i = 0; i <= hDegree; ++i) {
+      xPowers(i, x) = xPower;
+      xPower *= xAdjusted;
     }
   }
 
-  VecT<double> full_powers(num_terms);
+  VecT<double> fullPowers(numTerms);
 
   const uint32_t msb = uint32_t(1) << 31;
   for (int y = 0; y < height; ++y) {
-    const double y_adjusted = yscale * y;
+    const double yAdjusted = yscale * y;
 
-    double y_power = 1.0;
-    for (int i = 0; i <= v_degree; ++i) {
-      y_powers[i] = y_power;
-      y_power *= y_adjusted;
+    double yPower = 1.0;
+    for (int i = 0; i <= vDegree; ++i) {
+      yPowers[i] = yPower;
+      yPower *= yAdjusted;
     }
 
     for (int x = 0; x < width; ++x) {
-      if (!(mask_line[x >> 5] & (msb >> (x & 31)))) {
+      if (!(maskLine[x >> 5] & (msb >> (x & 31)))) {
         continue;
       }
 
-      const double data_point = data_scale * image_line[x];
+      const double dataPoint = dataScale * imageLine[x];
 
       int pos = 0;
-      for (int i = 0; i <= v_degree; ++i) {
-        for (int j = 0; j <= h_degree; ++j, ++pos) {
-          full_powers[pos] = y_powers[i] * x_powers(j, x);
+      for (int i = 0; i <= vDegree; ++i) {
+        for (int j = 0; j <= hDegree; ++j, ++pos) {
+          fullPowers[pos] = yPowers[i] * xPowers(j, x);
         }
       }
 
       double* p_AtA = AtA_data;
-      for (int i = 0; i < num_terms; ++i) {
-        const double i_val = full_powers[i];
-        Atb_data[i] += i_val * data_point;
+      for (int i = 0; i < numTerms; ++i) {
+        const double iVal = fullPowers[i];
+        Atb_data[i] += iVal * dataPoint;
 
-        for (int j = 0; j < num_terms; ++j) {
-          const double j_val = full_powers[j];
-          *p_AtA += i_val * j_val;
+        for (int j = 0; j < numTerms; ++j) {
+          const double jVal = fullPowers[j];
+          *p_AtA += iVal * jVal;
           ++p_AtA;
         }
       }
     }
 
-    image_line += image_stride;
-    mask_line += mask_stride;
+    imageLine += imageStride;
+    maskLine += maskStride;
   }
 }  // PolynomialSurface::prepareDataForLeastSquares
 

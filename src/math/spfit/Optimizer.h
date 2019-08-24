@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SPFIT_OPTIMIZER_H_
-#define SPFIT_OPTIMIZER_H_
+#ifndef SCANTAILOR_SPFIT_OPTIMIZER_H_
+#define SCANTAILOR_SPFIT_OPTIMIZER_H_
 
 #include <list>
 #include <vector>
@@ -20,7 +20,7 @@ namespace spfit {
 class Optimizer {
   // Member-wise copying is OK.
  public:
-  explicit Optimizer(size_t num_vars = 0);
+  explicit Optimizer(size_t numVars = 0);
 
   /**
    * Sets linear constraints in the form of b^T * x + c = 0
@@ -34,11 +34,11 @@ class Optimizer {
 
   void addExternalForce(const QuadraticFunction& force);
 
-  void addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map);
+  void addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparseMap);
 
   void addInternalForce(const QuadraticFunction& force);
 
-  void addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map);
+  void addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparseMap);
 
   size_t numVars() const { return m_numVars; }
 
@@ -54,7 +54,7 @@ class Optimizer {
    */
   double internalForce() const { return m_internalForce.c; }
 
-  OptimizationResult optimize(double internal_external_ratio);
+  OptimizationResult optimize(double internalExternalRatio);
 
   const double* displacementVector() const { return m_x.data(); }
 
@@ -82,4 +82,4 @@ inline void swap(Optimizer& o1, Optimizer& o2) {
   o1.swap(o2);
 }
 }  // namespace spfit
-#endif  // ifndef SPFIT_OPTIMIZER_H_
+#endif  // ifndef SCANTAILOR_SPFIT_OPTIMIZER_H_

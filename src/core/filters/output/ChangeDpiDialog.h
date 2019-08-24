@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_CHANGEDPIDIALOG_H_
-#define OUTPUT_CHANGEDPIDIALOG_H_
+#ifndef SCANTAILOR_OUTPUT_CHANGEDPIDIALOG_H_
+#define SCANTAILOR_OUTPUT_CHANGEDPIDIALOG_H_
 
 #include <QButtonGroup>
 #include <QDialog>
@@ -22,8 +22,8 @@ class ChangeDpiDialog : public QDialog, private Ui::ChangeDpiDialog {
  public:
   ChangeDpiDialog(QWidget* parent,
                   const Dpi& dpi,
-                  const PageId& cur_page,
-                  const PageSelectionAccessor& page_selection_accessor);
+                  const PageId& curPage,
+                  const PageSelectionAccessor& pageSelectionAccessor);
 
   ~ChangeDpiDialog() override;
 
@@ -48,4 +48,4 @@ class ChangeDpiDialog : public QDialog, private Ui::ChangeDpiDialog {
   QString m_customDpiString;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_CHANGEDPIDIALOG_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_CHANGEDPIDIALOG_H_

@@ -6,11 +6,11 @@
 #include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
 #include <UnitsConverter.h>
-#include <foundation/Utils.h>
 #include <XmlMarshaller.h>
 #include <XmlUnmarshaller.h>
 #include <filters/page_layout/CacheDrivenTask.h>
 #include <filters/page_layout/Task.h>
+#include <foundation/Utils.h>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <utility>
@@ -26,18 +26,17 @@
 using namespace foundation;
 
 namespace select_content {
-Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
-    : m_settings(new Settings), m_selectedPageOrder(0) {
-  m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
+Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor) : m_settings(new Settings), m_selectedPageOrder(0) {
+  m_optionsWidget.reset(new OptionsWidget(m_settings, pageSelectionAccessor));
 
-  const PageOrderOption::ProviderPtr default_order;
-  const auto order_by_width = make_intrusive<OrderByWidthProvider>(m_settings);
-  const auto order_by_height = make_intrusive<OrderByHeightProvider>(m_settings);
-  const auto order_by_deviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());
-  m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
-  m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
-  m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
-  m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
+  const PageOrderOption::ProviderPtr defaultOrder;
+  const auto orderByWidth = make_intrusive<OrderByWidthProvider>(m_settings);
+  const auto orderByHeight = make_intrusive<OrderByHeightProvider>(m_settings);
+  const auto orderByDeviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());
+  m_pageOrderOptions.emplace_back(tr("Natural order"), defaultOrder);
+  m_pageOrderOptions.emplace_back(tr("Order by increasing width"), orderByWidth);
+  m_pageOrderOptions.emplace_back(tr("Order by increasing height"), orderByHeight);
+  m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), orderByDeviation);
 }
 
 Filter::~Filter() = default;
@@ -67,51 +66,51 @@ void Filter::performRelinking(const AbstractRelinker& relinker) {
   m_settings->performRelinking(relinker);
 }
 
-void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
-  m_optionsWidget->preUpdateUI(page_info);
+void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& pageInfo) {
+  m_optionsWidget->preUpdateUI(pageInfo);
   ui->setOptionsWidget(m_optionsWidget.get(), ui->KEEP_OWNERSHIP);
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-  QDomElement filter_el(doc.createElement("select-content"));
+  QDomElement filterEl(doc.createElement("select-content"));
 
-  filter_el.appendChild(XmlMarshaller(doc).sizeF(m_settings->pageDetectionBox(), "page-detection-box"));
-  filter_el.setAttribute("pageDetectionTolerance", Utils::doubleToString(m_settings->pageDetectionTolerance()));
+  filterEl.appendChild(XmlMarshaller(doc).sizeF(m_settings->pageDetectionBox(), "page-detection-box"));
+  filterEl.setAttribute("pageDetectionTolerance", Utils::doubleToString(m_settings->pageDetectionTolerance()));
 
   writer.enumPages(
-      [&](const PageId& page_id, int numeric_id) { this->writePageSettings(doc, filter_el, page_id, numeric_id); });
+      [&](const PageId& pageId, int numericId) { this->writePageSettings(doc, filterEl, pageId, numericId); });
 
-  return filter_el;
+  return filterEl;
 }
 
-void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const {
-  const std::unique_ptr<Params> params(m_settings->getPageParams(page_id));
+void Filter::writePageSettings(QDomDocument& doc, QDomElement& filterEl, const PageId& pageId, int numericId) const {
+  const std::unique_ptr<Params> params(m_settings->getPageParams(pageId));
   if (!params) {
     return;
   }
 
-  QDomElement page_el(doc.createElement("page"));
-  page_el.setAttribute("id", numeric_id);
-  page_el.appendChild(params->toXml(doc, "params"));
+  QDomElement pageEl(doc.createElement("page"));
+  pageEl.setAttribute("id", numericId);
+  pageEl.appendChild(params->toXml(doc, "params"));
 
-  filter_el.appendChild(page_el);
+  filterEl.appendChild(pageEl);
 }
 
-void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filters_el) {
+void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filtersEl) {
   m_settings->clear();
 
-  const QDomElement filter_el(filters_el.namedItem("select-content").toElement());
+  const QDomElement filterEl(filtersEl.namedItem("select-content").toElement());
 
-  m_settings->setPageDetectionBox(XmlUnmarshaller::sizeF(filter_el.namedItem("page-detection-box").toElement()));
-  m_settings->setPageDetectionTolerance(filter_el.attribute("pageDetectionTolerance", "0.1").toDouble());
+  m_settings->setPageDetectionBox(XmlUnmarshaller::sizeF(filterEl.namedItem("page-detection-box").toElement()));
+  m_settings->setPageDetectionTolerance(filterEl.attribute("pageDetectionTolerance", "0.1").toDouble());
 
-  const QString page_tag_name("page");
-  QDomNode node(filter_el.firstChild());
+  const QString pageTagName("page");
+  QDomNode node(filterEl.firstChild());
   for (; !node.isNull(); node = node.nextSibling()) {
     if (!node.isElement()) {
       continue;
     }
-    if (node.nodeName() != page_tag_name) {
+    if (node.nodeName() != pageTagName) {
       continue;
     }
     const QDomElement el(node.toElement());
@@ -122,40 +121,40 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
       continue;
     }
 
-    const PageId page_id(reader.pageId(id));
-    if (page_id.isNull()) {
+    const PageId pageId(reader.pageId(id));
+    if (pageId.isNull()) {
       continue;
     }
 
-    const QDomElement params_el(el.namedItem("params").toElement());
-    if (params_el.isNull()) {
+    const QDomElement paramsEl(el.namedItem("params").toElement());
+    if (paramsEl.isNull()) {
       continue;
     }
 
-    const Params params(params_el);
-    m_settings->setPageParams(page_id, params);
+    const Params params(paramsEl);
+    m_settings->setPageParams(pageId, params);
   }
 }  // Filter::loadSettings
 
-intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
-                                       intrusive_ptr<page_layout::Task> next_task,
+intrusive_ptr<Task> Filter::createTask(const PageId& pageId,
+                                       intrusive_ptr<page_layout::Task> nextTask,
                                        bool batch,
                                        bool debug) {
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), std::move(next_task), m_settings, page_id, batch, debug);
+  return make_intrusive<Task>(intrusive_ptr<Filter>(this), std::move(nextTask), m_settings, pageId, batch, debug);
 }
 
-intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> next_task) {
-  return make_intrusive<CacheDrivenTask>(m_settings, std::move(next_task));
+intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> nextTask) {
+  return make_intrusive<CacheDrivenTask>(m_settings, std::move(nextTask));
 }
 
-void Filter::loadDefaultSettings(const PageInfo& page_info) {
-  if (!m_settings->isParamsNull(page_info.id())) {
+void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
+  if (!m_settings->isParamsNull(pageInfo.id())) {
     return;
   }
   const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
   const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
 
-  const UnitsConverter unitsConverter(page_info.metadata().dpi());
+  const UnitsConverter unitsConverter(pageInfo.metadata().dpi());
 
   const QSizeF& pageRectSize = selectContentParams.getPageRectSize();
   double pageRectWidth = pageRectSize.width();
@@ -163,9 +162,9 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
   unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getUnits(), PIXELS);
 
   m_settings->setPageParams(
-      page_info.id(), Params(QRectF(), QSizeF(), QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)),
-                             Dependencies(), selectContentParams.isContentDetectEnabled() ? MODE_AUTO : MODE_DISABLED,
-                             selectContentParams.getPageDetectMode(), selectContentParams.isFineTuneCorners()));
+      pageInfo.id(), Params(QRectF(), QSizeF(), QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)),
+                            Dependencies(), selectContentParams.isContentDetectEnabled() ? MODE_AUTO : MODE_DISABLED,
+                            selectContentParams.getPageDetectMode(), selectContentParams.isFineTuneCorners()));
 }
 
 OptionsWidget* Filter::optionsWidget() {

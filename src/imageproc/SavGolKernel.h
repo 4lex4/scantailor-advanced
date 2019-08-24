@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_SAVGOL_KERNEL_H_
-#define IMAGEPROC_SAVGOL_KERNEL_H_
+#ifndef SCANTAILOR_IMAGEPROC_SAVGOLKERNEL_H_
+#define SCANTAILOR_IMAGEPROC_SAVGOLKERNEL_H_
 
 #include <cstddef>
 #include <vector>
@@ -14,7 +14,7 @@ class QSize;
 namespace imageproc {
 class SavGolKernel {
  public:
-  SavGolKernel(const QSize& size, const QPoint& origin, int hor_degree, int vert_degree);
+  SavGolKernel(const QSize& size, const QPoint& origin, int horDegree, int vertDegree);
 
   void recalcForOrigin(const QPoint& origin);
 
@@ -99,4 +99,4 @@ class SavGolKernel {
   int m_numDataPoints;
 };
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_SAVGOL_KERNEL_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_SAVGOLKERNEL_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef FIX_ORIENTATION_FILTER_H_
-#define FIX_ORIENTATION_FILTER_H_
+#ifndef SCANTAILOR_FIX_ORIENTATION_FILTER_H_
+#define SCANTAILOR_FIX_ORIENTATION_FILTER_H_
 
 #include "AbstractFilter.h"
 #include "FilterResult.h"
@@ -37,7 +37,7 @@ class Filter : public AbstractFilter {
   DECLARE_NON_COPYABLE(Filter)
 
  public:
-  explicit Filter(const PageSelectionAccessor& page_selection_accessor);
+  explicit Filter(const PageSelectionAccessor& pageSelectionAccessor);
 
   ~Filter() override;
 
@@ -47,34 +47,32 @@ class Filter : public AbstractFilter {
 
   void performRelinking(const AbstractRelinker& relinker) override;
 
-  void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
+  void preUpdateUI(FilterUiInterface* ui, const PageInfo& pageInfo) override;
 
   QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
-  void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
+  void loadSettings(const ProjectReader& reader, const QDomElement& filtersEl) override;
 
-  void loadDefaultSettings(const PageInfo& page_info) override;
+  void loadDefaultSettings(const PageInfo& pageInfo) override;
 
-  intrusive_ptr<Task> createTask(const PageId& page_id,
-                                 intrusive_ptr<page_split::Task> next_task,
-                                 bool batch_processing);
+  intrusive_ptr<Task> createTask(const PageId& pageId, intrusive_ptr<page_split::Task> nextTask, bool batchProcessing);
 
-  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> next_task);
+  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> nextTask);
 
   OptionsWidget* optionsWidget();
 
  private:
-  void writeParams(QDomDocument& doc, QDomElement& filter_el, const ImageId& image_id, int numeric_id) const;
+  void writeParams(QDomDocument& doc, QDomElement& filterEl, const ImageId& imageId, int numericId) const;
 
-  void saveImageSettings(const ProjectWriter& writer, QDomDocument& doc, QDomElement& filter_el) const;
+  void saveImageSettings(const ProjectWriter& writer, QDomDocument& doc, QDomElement& filterEl) const;
 
-  void writeImageParams(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+  void writeImageParams(QDomDocument& doc, QDomElement& filterEl, const PageId& pageId, int numericId) const;
 
-  void loadImageSettings(const ProjectReader& reader, const QDomElement& image_settings_el);
+  void loadImageSettings(const ProjectReader& reader, const QDomElement& imageSettingsEl);
 
   intrusive_ptr<Settings> m_settings;
   intrusive_ptr<ImageSettings> m_imageSettings;
   SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
 };
 }  // namespace fix_orientation
-#endif  // ifndef FIX_ORIENTATION_FILTER_H_
+#endif  // ifndef SCANTAILOR_FIX_ORIENTATION_FILTER_H_

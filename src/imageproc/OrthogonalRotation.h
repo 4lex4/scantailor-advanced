@@ -2,8 +2,8 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 
-#ifndef IMAGEPROC_ORTHOGONAL_ROTATION_H_
-#define IMAGEPROC_ORTHOGONAL_ROTATION_H_
+#ifndef SCANTAILOR_IMAGEPROC_ORTHOGONALROTATION_H_
+#define SCANTAILOR_IMAGEPROC_ORTHOGONALROTATION_H_
 
 class QRect;
 
@@ -15,15 +15,15 @@ class BinaryImage;
  *
  * \param src The source image.  May be null, in which case
  *        a null rotated image will be returned.
- * \param src_rect The area that is to be rotated.
+ * \param srcRect The area that is to be rotated.
  * \param degrees The rotation angle in degrees.  The angle
  *        must be a multiple of 90.  Positive values indicate
  *        clockwise rotation.
  * \return The rotated area of the source image.  The dimensions
- *         of the returned image will correspond to \p src_rect,
+ *         of the returned image will correspond to \p srcRect,
  *         possibly with width and height swapped.
  */
-BinaryImage orthogonalRotation(const BinaryImage& src, const QRect& src_rect, int degrees);
+BinaryImage orthogonalRotation(const BinaryImage& src, const QRect& srcRect, int degrees);
 
 /**
  * \brief Rotation by 90, 180 or 270 degrees.

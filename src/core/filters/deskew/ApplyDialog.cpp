@@ -6,11 +6,11 @@
 #include "PageSelectionAccessor.h"
 
 namespace deskew {
-ApplyDialog::ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor)
+ApplyDialog::ApplyDialog(QWidget* parent, const PageId& curPage, const PageSelectionAccessor& pageSelectionAccessor)
     : QDialog(parent),
-      m_pages(page_selection_accessor.allPages()),
-      m_curPage(cur_page),
-      m_selectedPages(page_selection_accessor.selectedPages()),
+      m_pages(pageSelectionAccessor.allPages()),
+      m_curPage(curPage),
+      m_selectedPages(pageSelectionAccessor.selectedPages()),
       m_scopeGroup(new QButtonGroup(this)) {
   setupUi(this);
   m_scopeGroup->addButton(thisPageRB);

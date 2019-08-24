@@ -15,19 +15,19 @@ ConnComp ConnCompEraserExt::nextConnComp() {
     // the affected area, extending it to word boundries.
     const QRect& rect = m_lastCC.rect();
     const BinaryImage& src = m_eraser.image();
-    const size_t src_wpl = src.wordsPerLine();
-    const size_t dst_wpl = m_lastImage.wordsPerLine();
-    const size_t first_word_idx = rect.left() / 32;
+    const size_t srcWpl = src.wordsPerLine();
+    const size_t dstWpl = m_lastImage.wordsPerLine();
+    const size_t firstWordIdx = rect.left() / 32;
     // Note: rect.right() == rect.x() + rect.width() - 1
-    const size_t span_length = (rect.right() + 31) / 32 - first_word_idx;
-    const size_t src_initial_offset = rect.top() * src_wpl + first_word_idx;
-    const size_t dst_initial_offset = rect.top() * dst_wpl + first_word_idx;
-    const uint32_t* src_pos = src.data() + src_initial_offset;
-    uint32_t* dst_pos = m_lastImage.data() + dst_initial_offset;
+    const size_t spanLength = (rect.right() + 31) / 32 - firstWordIdx;
+    const size_t srcInitialOffset = rect.top() * srcWpl + firstWordIdx;
+    const size_t dstInitialOffset = rect.top() * dstWpl + firstWordIdx;
+    const uint32_t* srcPos = src.data() + srcInitialOffset;
+    uint32_t* dstPos = m_lastImage.data() + dstInitialOffset;
     for (int i = rect.height(); i > 0; --i) {
-      memcpy(dst_pos, src_pos, span_length * 4);
-      src_pos += src_wpl;
-      dst_pos += dst_wpl;
+      memcpy(dstPos, srcPos, spanLength * 4);
+      srcPos += srcWpl;
+      dstPos += dstWpl;
     }
   }
 

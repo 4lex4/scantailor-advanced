@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef THUMBNAILBASE_H_
-#define THUMBNAILBASE_H_
+#ifndef SCANTAILOR_CORE_THUMBNAILBASE_H_
+#define SCANTAILOR_CORE_THUMBNAILBASE_H_
 
 #include <QGraphicsItem>
 #include <QRectF>
@@ -20,15 +20,15 @@ class ThumbnailBase : public QGraphicsItem {
   DECLARE_NON_COPYABLE(ThumbnailBase)
 
  public:
-  ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                const QSizeF& max_size,
-                const ImageId& image_id,
-                const ImageTransformation& image_xform);
+  ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                const QSizeF& maxSize,
+                const ImageId& imageId,
+                const ImageTransformation& imageXform);
 
-  ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                const QSizeF& max_size,
-                const ImageId& image_id,
-                const ImageTransformation& image_xform,
+  ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                const QSizeF& maxSize,
+                const ImageId& imageId,
+                const ImageTransformation& imageXform,
                 QRectF displayArea);
 
   ~ThumbnailBase() override;
@@ -42,12 +42,12 @@ class ThumbnailBase : public QGraphicsItem {
    * \brief A hook to allow subclasses to draw over the thumbnail.
    *
    * \param painter The painter to be used for drawing.
-   * \param image_to_display Can be supplied to \p painter as a world
+   * \param imageToDisplay Can be supplied to \p painter as a world
    *        transformation in order to draw in virtual image coordinates,
    *        that is in coordinates we get after applying the
    *        ImageTransformation to the physical image coordinates.
    *        We are talking about full-sized images here.
-   * \param thumb_to_display Can be supplied to \p painter as a world
+   * \param thumbToDisplay Can be supplied to \p painter as a world
    *        transformation in order to draw in thumbnail coordinates.
    *        Valid thumbnail coordinates lie within this->boundingRect().
    *
@@ -56,17 +56,15 @@ class ThumbnailBase : public QGraphicsItem {
    * restricted to this->boundingRect().  Note that it's not necessary
    * for subclasses to restore the painter state.
    */
-  virtual void paintOverImage(QPainter& painter,
-                              const QTransform& image_to_display,
-                              const QTransform& thumb_to_display) {}
+  virtual void paintOverImage(QPainter& painter, const QTransform& imageToDisplay, const QTransform& thumbToDisplay) {}
 
   /**
    * \brief This is the same as paintOverImage().
    *        The only difference is that the painted content will be cropped with the image.
    */
   virtual void prePaintOverImage(QPainter& painter,
-                                 const QTransform& image_to_display,
-                                 const QTransform& thumb_to_display) {}
+                                 const QTransform& imageToDisplay,
+                                 const QTransform& thumbToDisplay) {}
 
   virtual void paintDeviant(QPainter& painter);
 
@@ -80,7 +78,7 @@ class ThumbnailBase : public QGraphicsItem {
    */
   void setExtendedClipArea(bool enabled) { m_extendedClipArea = enabled; }
 
-  void setImageXform(const ImageTransformation& image_xform);
+  void setImageXform(const ImageTransformation& imageXform);
 
   const ImageTransformation& imageXform() const { return m_imageXform; }
 
@@ -114,4 +112,4 @@ class ThumbnailBase : public QGraphicsItem {
 };
 
 
-#endif  // ifndef THUMBNAILBASE_H_
+#endif  // ifndef SCANTAILOR_CORE_THUMBNAILBASE_H_

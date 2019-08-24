@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_
-#define SPFIT_POLYLINE_MODEL_SHAPE_H_
+#ifndef SCANTAILOR_SPFIT_POLYLINEMODELSHAPE_H_
+#define SCANTAILOR_SPFIT_POLYLINEMODELSHAPE_H_
 
 #include <QPointF>
 #include <vector>
@@ -22,14 +22,14 @@ class PolylineModelShape : public ModelShape {
 
   explicit PolylineModelShape(const std::vector<QPointF>& polyline);
 
-  SqDistApproximant localSqDistApproximant(const QPointF& pt, FittableSpline::SampleFlags sample_flags) const override;
+  SqDistApproximant localSqDistApproximant(const QPointF& pt, FittableSpline::SampleFlags sampleFlags) const override;
 
  protected:
   virtual SqDistApproximant calcApproximant(const QPointF& pt,
-                                            FittableSpline::SampleFlags sample_flags,
-                                            Flags polyline_flags,
-                                            const FrenetFrame& frenet_frame,
-                                            double signed_curvature) const;
+                                            FittableSpline::SampleFlags sampleFlags,
+                                            Flags polylineFlags,
+                                            const FrenetFrame& frenetFrame,
+                                            double signedCurvature) const;
 
  private:
   std::vector<XSpline::PointAndDerivs> m_vertices;
@@ -38,4 +38,4 @@ class PolylineModelShape : public ModelShape {
 
 DEFINE_FLAG_OPS(PolylineModelShape::Flags)
 }  // namespace spfit
-#endif  // ifndef SPFIT_POLYLINE_MODEL_SHAPE_H_
+#endif  // ifndef SCANTAILOR_SPFIT_POLYLINEMODELSHAPE_H_

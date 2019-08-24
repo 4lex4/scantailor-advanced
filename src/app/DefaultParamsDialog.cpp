@@ -452,8 +452,8 @@ void DefaultParamsDialog::layoutModeChanged(const int idx) {
   pageLayoutGroup->setEnabled(mode == MODE_MANUAL);
 }
 
-void DefaultParamsDialog::deskewModeChanged(const bool auto_mode) {
-  angleSpinBox->setEnabled(!auto_mode);
+void DefaultParamsDialog::deskewModeChanged(const bool autoMode) {
+  angleSpinBox->setEnabled(!autoMode);
 }
 
 void DefaultParamsDialog::pageDetectAutoToggled() {
@@ -489,24 +489,24 @@ void DefaultParamsDialog::alignWithOthersToggled(const bool state) {
 
 void DefaultParamsDialog::colorModeChanged(const int idx) {
   const auto colorMode = static_cast<ColorMode>(colorModeSelector->itemData(idx).toInt());
-  bool threshold_options_visible = false;
-  bool picture_shape_visible = false;
-  bool splitting_options_visible = false;
+  bool thresholdOptionsVisible = false;
+  bool pictureShapeVisible = false;
+  bool splittingOptionsVisible = false;
   switch (colorMode) {
     case MIXED:
-      picture_shape_visible = true;
-      splitting_options_visible = true;
+      pictureShapeVisible = true;
+      splittingOptionsVisible = true;
       // fall through
     case BLACK_AND_WHITE:
-      threshold_options_visible = true;
+      thresholdOptionsVisible = true;
       // fall through
     case COLOR_GRAYSCALE:
       break;
   }
-  thresholdOptions->setEnabled(threshold_options_visible);
-  despecklePanel->setEnabled(threshold_options_visible);
-  pictureShapeOptions->setEnabled(picture_shape_visible);
-  splittingOptions->setEnabled(splitting_options_visible);
+  thresholdOptions->setEnabled(thresholdOptionsVisible);
+  despecklePanel->setEnabled(thresholdOptionsVisible);
+  pictureShapeOptions->setEnabled(pictureShapeVisible);
+  splittingOptions->setEnabled(splittingOptionsVisible);
 
   fillingOptions->setEnabled(colorMode != BLACK_AND_WHITE);
 
@@ -521,9 +521,9 @@ void DefaultParamsDialog::colorModeChanged(const int idx) {
   savitzkyGolaySmoothingCB->setEnabled(colorMode != COLOR_GRAYSCALE);
   morphologicalSmoothingCB->setEnabled(colorMode != COLOR_GRAYSCALE);
 
-  colorSegmentationCB->setEnabled(threshold_options_visible);
-  segmenterOptionsWidget->setEnabled(threshold_options_visible && colorSegmentationCB->isChecked());
-  if (threshold_options_visible) {
+  colorSegmentationCB->setEnabled(thresholdOptionsVisible);
+  segmenterOptionsWidget->setEnabled(thresholdOptionsVisible && colorSegmentationCB->isChecked());
+  if (thresholdOptionsVisible) {
     posterizeCB->setEnabled(colorSegmentationCB->isChecked());
     posterizeOptionsWidget->setEnabled(colorSegmentationCB->isChecked() && posterizeCB->isChecked());
   } else {
@@ -782,9 +782,9 @@ void DefaultParamsDialog::topBottomLinkClicked() {
   m_topBottomLinkEnabled = !m_topBottomLinkEnabled;
   setLinkButtonLinked(topBottomLink, m_topBottomLinkEnabled);
   if (m_topBottomLinkEnabled && (topMarginSpinBox->value() != bottomMarginSpinBox->value())) {
-    const double new_margin = std::min(topMarginSpinBox->value(), bottomMarginSpinBox->value());
-    topMarginSpinBox->setValue(new_margin);
-    bottomMarginSpinBox->setValue(new_margin);
+    const double newMargin = std::min(topMarginSpinBox->value(), bottomMarginSpinBox->value());
+    topMarginSpinBox->setValue(newMargin);
+    bottomMarginSpinBox->setValue(newMargin);
   }
 }
 
@@ -792,9 +792,9 @@ void DefaultParamsDialog::leftRightLinkClicked() {
   m_leftRightLinkEnabled = !m_leftRightLinkEnabled;
   setLinkButtonLinked(leftRightLink, m_leftRightLinkEnabled);
   if (m_leftRightLinkEnabled && (leftMarginSpinBox->value() != rightMarginSpinBox->value())) {
-    const double new_margin = std::min(leftMarginSpinBox->value(), rightMarginSpinBox->value());
-    leftMarginSpinBox->setValue(new_margin);
-    rightMarginSpinBox->setValue(new_margin);
+    const double newMargin = std::min(leftMarginSpinBox->value(), rightMarginSpinBox->value());
+    leftMarginSpinBox->setValue(newMargin);
+    rightMarginSpinBox->setValue(newMargin);
   }
 }
 
@@ -821,18 +821,18 @@ void DefaultParamsDialog::vertMarginsChanged(double val) {
 }
 
 void DefaultParamsDialog::thresholdSliderValueChanged(int value) {
-  const QString tooltip_text(QString::number(value));
-  thresholdSlider->setToolTip(tooltip_text);
+  const QString tooltipText(QString::number(value));
+  thresholdSlider->setToolTip(tooltipText);
 
   thresholLabel->setText(QString::number(value));
 
   // Show the tooltip immediately.
   const QPoint center(thresholdSlider->rect().center());
-  QPoint tooltip_pos(thresholdSlider->mapFromGlobal(QCursor::pos()));
-  tooltip_pos.setY(center.y());
-  tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
-  tooltip_pos = thresholdSlider->mapToGlobal(tooltip_pos);
-  QToolTip::showText(tooltip_pos, tooltip_text, thresholdSlider);
+  QPoint tooltipPos(thresholdSlider->mapFromGlobal(QCursor::pos()));
+  tooltipPos.setY(center.y());
+  tooltipPos.setX(qBound(0, tooltipPos.x(), thresholdSlider->width()));
+  tooltipPos = thresholdSlider->mapToGlobal(tooltipPos);
+  QToolTip::showText(tooltipPos, tooltipText, thresholdSlider);
 }
 
 void DefaultParamsDialog::setLighterThreshold() {
@@ -868,16 +868,16 @@ void DefaultParamsDialog::dpiEditTextChanged(const QString& text) {
 }
 
 void DefaultParamsDialog::depthPerceptionChangedSlot(const int val) {
-  const QString tooltip_text(QString::number(0.1 * val));
-  depthPerceptionSlider->setToolTip(tooltip_text);
+  const QString tooltipText(QString::number(0.1 * val));
+  depthPerceptionSlider->setToolTip(tooltipText);
 
   // Show the tooltip immediately.
   const QPoint center(depthPerceptionSlider->rect().center());
-  QPoint tooltip_pos(depthPerceptionSlider->mapFromGlobal(QCursor::pos()));
-  tooltip_pos.setY(center.y());
-  tooltip_pos.setX(qBound(0, tooltip_pos.x(), depthPerceptionSlider->width()));
-  tooltip_pos = depthPerceptionSlider->mapToGlobal(tooltip_pos);
-  QToolTip::showText(tooltip_pos, tooltip_text, depthPerceptionSlider);
+  QPoint tooltipPos(depthPerceptionSlider->mapFromGlobal(QCursor::pos()));
+  tooltipPos.setY(center.y());
+  tooltipPos.setX(qBound(0, tooltipPos.x(), depthPerceptionSlider->width()));
+  tooltipPos = depthPerceptionSlider->mapToGlobal(tooltipPos);
+  QToolTip::showText(tooltipPos, tooltipText, depthPerceptionSlider);
 }
 
 void DefaultParamsDialog::profileChanged(const int index) {
@@ -1110,25 +1110,25 @@ void DefaultParamsDialog::despeckleToggled(bool checked) {
 }
 
 void DefaultParamsDialog::despeckleSliderValueChanged(int value) {
-  const double new_value = 0.1 * value;
+  const double newValue = 0.1 * value;
 
-  const QString tooltip_text(QString::number(new_value));
-  despeckleSlider->setToolTip(tooltip_text);
+  const QString tooltipText(QString::number(newValue));
+  despeckleSlider->setToolTip(tooltipText);
 
   // Show the tooltip immediately.
   const QPoint center(despeckleSlider->rect().center());
-  QPoint tooltip_pos(despeckleSlider->mapFromGlobal(QCursor::pos()));
-  tooltip_pos.setY(center.y());
-  tooltip_pos.setX(qBound(0, tooltip_pos.x(), despeckleSlider->width()));
-  tooltip_pos = despeckleSlider->mapToGlobal(tooltip_pos);
-  QToolTip::showText(tooltip_pos, tooltip_text, despeckleSlider);
+  QPoint tooltipPos(despeckleSlider->mapFromGlobal(QCursor::pos()));
+  tooltipPos.setY(center.y());
+  tooltipPos.setX(qBound(0, tooltipPos.x(), despeckleSlider->width()));
+  tooltipPos = despeckleSlider->mapToGlobal(tooltipPos);
+  QToolTip::showText(tooltipPos, tooltipText, despeckleSlider);
 }
 
 void DefaultParamsDialog::updateAlignmentModeEnabled() {
-  const bool is_alignment_null = !alignWithOthersCB->isChecked();
+  const bool isAlignmentNull = !alignWithOthersCB->isChecked();
 
-  alignmentMode->setEnabled(!is_alignment_null);
-  autoAlignSettingsGroup->setEnabled(!is_alignment_null);
+  alignmentMode->setEnabled(!isAlignmentNull);
+  autoAlignSettingsGroup->setEnabled(!isAlignmentNull);
 }
 
 void DefaultParamsDialog::setupIcons() {

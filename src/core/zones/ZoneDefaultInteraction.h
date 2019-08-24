@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ZONE_DEFAULT_INTERACTION_H_
-#define ZONE_DEFAULT_INTERACTION_H_
+#ifndef SCANTAILOR_ZONES_ZONEDEFAULTINTERACTION_H_
+#define SCANTAILOR_ZONES_ZONEDEFAULTINTERACTION_H_
 
 #include <QCoreApplication>
 #include <QPointF>
@@ -27,7 +27,7 @@ class ZoneDefaultInteraction : public InteractionHandler {
 
   void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-  void onProximityUpdate(const QPointF& mouse_pos, InteractionState& interaction) override;
+  void onProximityUpdate(const QPointF& mousePos, InteractionState& interaction) override;
 
   void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
@@ -78,4 +78,4 @@ class ZoneDefaultInteraction : public InteractionHandler {
 };
 
 
-#endif  // ifndef ZONE_DEFAULT_INTERACTION_H_
+#endif  // ifndef SCANTAILOR_ZONES_ZONEDEFAULTINTERACTION_H_

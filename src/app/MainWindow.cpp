@@ -1,6 +1,7 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include "MainWindow.h"
 #include <core/ApplicationSettings.h>
 #include <core/IconProvider.h>
 #include <QDir>
@@ -12,6 +13,7 @@
 #include <QSortFilterProxyModel>
 #include <QStackedLayout>
 #include <boost/lambda/lambda.hpp>
+#include <memory>
 #include "AbstractRelinker.h"
 #include "Application.h"
 #include "AutoRemovingFile.h"
@@ -27,7 +29,6 @@
 #include "ImageMetadataLoader.h"
 #include "LoadFileTask.h"
 #include "LoadFilesStatusDialog.h"
-#include "MainWindow.h"
 #include "NewOpenProjectPanel.h"
 #include "OutOfMemoryDialog.h"
 #include "OutOfMemoryHandler.h"
@@ -67,7 +68,6 @@
 #include "filters/page_split/Task.h"
 #include "filters/select_content/CacheDrivenTask.h"
 #include "filters/select_content/Task.h"
-#include <memory>
 #include "ui_AboutDialog.h"
 #include "ui_BatchProcessingLowerPanel.h"
 #include "ui_RemovePagesDialog.h"
@@ -104,11 +104,11 @@ MainWindow::MainWindow()
   ApplicationSettings& settings = ApplicationSettings::getInstance();
 
   m_maxLogicalThumbSize = settings.getMaxLogicalThumbnailSize();
-  const ThumbnailSequence::ViewMode view_mode = settings.isSingleColumnThumbnailDisplayEnabled()
-                                                    ? ThumbnailSequence::SINGLE_COLUMN
-                                                    : ThumbnailSequence::MULTI_COLUMN;
+  const ThumbnailSequence::ViewMode viewMode = settings.isSingleColumnThumbnailDisplayEnabled()
+                                                   ? ThumbnailSequence::SINGLE_COLUMN
+                                                   : ThumbnailSequence::MULTI_COLUMN;
 
-  m_thumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize, view_mode);
+  m_thumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize, viewMode);
 
   m_autoSaveTimer.setSingleShot(true);
   connect(&m_autoSaveTimer, SIGNAL(timeout()), SLOT(autoSaveProject()));
@@ -142,10 +142,10 @@ MainWindow::MainWindow()
 
   m_statusBarPanel = std::make_unique<StatusBarPanel>();
   QMainWindow::statusBar()->addPermanentWidget(m_statusBarPanel.get());
-  connect(m_thumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](const PageInfo& page_info) {
+  connect(m_thumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](const PageInfo& pageInfo) {
     PageSequence pageSequence = m_thumbSequence->toPageSequence();
     if (pageSequence.numPages() > 0) {
-      m_statusBarPanel->updatePage(pageSequence.pageNo(page_info.id()) + 1, pageSequence.numPages(), page_info.id());
+      m_statusBarPanel->updatePage(pageSequence.pageNo(pageInfo.id()) + 1, pageSequence.numPages(), pageInfo.id());
     } else {
       m_statusBarPanel->clear();
     }
@@ -332,37 +332,37 @@ std::vector<PageRange> MainWindow::selectedRanges() const {
 }
 
 void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
-                                    const QString& out_dir,
-                                    const QString& project_file_path,
-                                    const ProjectReader* project_reader) {
+                                    const QString& outDir,
+                                    const QString& projectFilePath,
+                                    const ProjectReader* projectReader) {
   stopBatchProcessing(CLEAR_MAIN_AREA);
   m_interactiveQueue->cancelAndClear();
 
-  if (!out_dir.isEmpty()) {
-    Utils::maybeCreateCacheDir(out_dir);
+  if (!outDir.isEmpty()) {
+    Utils::maybeCreateCacheDir(outDir);
   }
   m_pages = pages;
-  m_projectFile = project_file_path;
+  m_projectFile = projectFilePath;
 
-  if (project_reader) {
-    m_selectedPage = project_reader->selectedPage();
+  if (projectReader) {
+    m_selectedPage = projectReader->selectedPage();
   }
 
   intrusive_ptr<FileNameDisambiguator> disambiguator;
-  if (project_reader) {
-    disambiguator = project_reader->namingDisambiguator();
+  if (projectReader) {
+    disambiguator = projectReader->namingDisambiguator();
   } else {
     disambiguator.reset(new FileNameDisambiguator);
   }
 
-  m_outFileNameGen = OutputFileNameGenerator(disambiguator, out_dir, pages->layoutDirection());
+  m_outFileNameGen = OutputFileNameGenerator(disambiguator, outDir, pages->layoutDirection());
   // These two need to go in this order.
   updateDisambiguationRecords(pages->toPageSequence(IMAGE_VIEW));
 
   // Recreate the stages and load their state.
   m_stages = make_intrusive<StageSequence>(pages, newPageSelectionAccessor());
-  if (project_reader) {
-    project_reader->readFilterSettings(m_stages->filters());
+  if (projectReader) {
+    projectReader->readFilterSettings(m_stages->filters());
   }
 
   // Connect the filter list model to the view and select
@@ -388,7 +388,7 @@ void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
 
   // Thumbnails are stored relative to the output directory,
   // so recreate the thumbnail cache.
-  if (out_dir.isEmpty()) {
+  if (outDir.isEmpty()) {
     m_thumbnailCache.reset();
   } else {
     m_thumbnailCache = Utils::createThumbnailCache(m_outFileNameGen.outDir());
@@ -400,17 +400,17 @@ void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
   updateWindowTitle();
   updateMainArea();
 
-  if (!QDir(out_dir).exists()) {
+  if (!QDir(outDir).exists()) {
     showRelinkingDialog();
   }
 }  // MainWindow::switchToNewProject
 
 void MainWindow::showNewOpenProjectPanel() {
-  auto outer_widget = std::make_unique<QWidget>();
-  QGridLayout* layout = new QGridLayout(outer_widget.get());
-  outer_widget->setLayout(layout);
+  auto outerWidget = std::make_unique<QWidget>();
+  QGridLayout* layout = new QGridLayout(outerWidget.get());
+  outerWidget->setLayout(layout);
 
-  NewOpenProjectPanel* nop = new NewOpenProjectPanel(outer_widget.get());
+  NewOpenProjectPanel* nop = new NewOpenProjectPanel(outerWidget.get());
   // We use asynchronous connections because otherwise we
   // would be deleting a widget from its event handler, which
   // Qt doesn't like.
@@ -424,7 +424,7 @@ void MainWindow::showNewOpenProjectPanel() {
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(0, 1);
   layout->setRowStretch(2, 1);
-  setImageWidget(outer_widget.release(), TRANSFER_OWNERSHIP);
+  setImageWidget(outerWidget.release(), TRANSFER_OWNERSHIP);
 
   filterList->setBatchProcessingPossible(false);
 }  // MainWindow::showNewOpenProjectPanel
@@ -435,10 +435,10 @@ void MainWindow::createBatchProcessingWidget() {
   m_batchProcessingWidget->setLayout(layout);
 
   const auto& iconProvider = IconProvider::getInstance();
-  auto* stop_btn = new SkinnedButton(iconProvider.getIcon("stop"), iconProvider.getIcon("stop-hovered"),
-                                     iconProvider.getIcon("stop-pressed"), m_batchProcessingWidget.get());
-  stop_btn->setIconSize({128, 128});
-  stop_btn->setStatusTip(tr("Stop batch processing"));
+  auto* stopBtn = new SkinnedButton(iconProvider.getIcon("stop"), iconProvider.getIcon("stop-hovered"),
+                                    iconProvider.getIcon("stop-pressed"), m_batchProcessingWidget.get());
+  stopBtn->setIconSize({128, 128});
+  stopBtn->setStatusTip(tr("Stop batch processing"));
 
   class LowerPanel : public QWidget {
    public:
@@ -448,28 +448,28 @@ void MainWindow::createBatchProcessingWidget() {
   };
 
 
-  LowerPanel* lower_panel = new LowerPanel(m_batchProcessingWidget.get());
-  m_checkBeepWhenFinished = [lower_panel]() { return lower_panel->ui.beepWhenFinished->isChecked(); };
+  LowerPanel* lowerPanel = new LowerPanel(m_batchProcessingWidget.get());
+  m_checkBeepWhenFinished = [lowerPanel]() { return lowerPanel->ui.beepWhenFinished->isChecked(); };
 
   int row = 0;  // Row 0 is reserved.
-  layout->addWidget(stop_btn, ++row, 1, Qt::AlignCenter);
-  layout->addWidget(lower_panel, ++row, 0, 1, 3, Qt::AlignHCenter | Qt::AlignTop);
+  layout->addWidget(stopBtn, ++row, 1, Qt::AlignCenter);
+  layout->addWidget(lowerPanel, ++row, 0, 1, 3, Qt::AlignHCenter | Qt::AlignTop);
   layout->setColumnStretch(0, 1);
   layout->setColumnStretch(2, 1);
   layout->setRowStretch(0, 1);
   layout->setRowStretch(row, 1);
 
-  connect(stop_btn, SIGNAL(clicked()), SLOT(stopBatchProcessing()));
+  connect(stopBtn, SIGNAL(clicked()), SLOT(stopBatchProcessing()));
 }  // MainWindow::createBatchProcessingWidget
 
 void MainWindow::updateThumbViewMinWidth() {
   const int sb = thumbView->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
-  int inner_width = thumbView->maximumViewportSize().width() - sb;
+  int innerWidth = thumbView->maximumViewportSize().width() - sb;
   if (thumbView->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents, 0, thumbView)) {
-    inner_width -= thumbView->frameWidth() * 2;
+    innerWidth -= thumbView->frameWidth() * 2;
   }
-  const int delta_x = thumbView->size().width() - inner_width;
-  thumbView->setMinimumWidth((int) std::ceil(m_maxLogicalThumbSize.width() + delta_x));
+  const int deltaX = thumbView->size().width() - innerWidth;
+  thumbView->setMinimumWidth((int) std::ceil(m_maxLogicalThumbSize.width() + deltaX));
 }
 
 void MainWindow::setupThumbView() {
@@ -486,10 +486,10 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* ev) {
   }
 
   if ((obj == thumbView || obj == thumbView->verticalScrollBar()) && (ev->type() == QEvent::Wheel)) {
-    QWheelEvent* wheel_event = static_cast<QWheelEvent*>(ev);
-    if (wheel_event->modifiers() == Qt::AltModifier) {
-      scaleThumbnails(wheel_event);
-      wheel_event->accept();
+    QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(ev);
+    if (wheelEvent->modifiers() == Qt::AltModifier) {
+      scaleThumbnails(wheelEvent);
+      wheelEvent->accept();
       return true;
     }
   }
@@ -552,10 +552,10 @@ bool MainWindow::compareFiles(const QString& fpath1, const QString& fpath2) {
     }
   }
 
-  const int chunk_size = 4096;
+  const int chunkSize = 4096;
   while (true) {
-    const QByteArray chunk1(file1.read(chunk_size));
-    const QByteArray chunk2(file2.read(chunk_size));
+    const QByteArray chunk1(file1.read(chunkSize));
+    const QByteArray chunk2(file2.read(chunkSize));
     if (chunk1.size() != chunk2.size()) {
       return false;
     } else if (chunk1.size() == 0) {
@@ -593,8 +593,8 @@ void MainWindow::updateSortOptions() {
   }
 }
 
-void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& page_order_provider,
-                                    const ThumbnailSequence::SelectionAction selection_action) {
+void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& pageOrderProvider,
+                                    const ThumbnailSequence::SelectionAction selectionAction) {
   if (m_thumbnailCache) {
     const intrusive_ptr<CompositeCacheDrivenTask> task(createCompositeCacheDrivenTask(m_curFilter));
 
@@ -602,7 +602,7 @@ void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>
         make_intrusive<ThumbnailFactory>(m_thumbnailCache, m_maxLogicalThumbSize, task));
   }
 
-  m_thumbSequence->reset(m_pages->toPageSequence(getCurrentView()), selection_action, page_order_provider);
+  m_thumbSequence->reset(m_pages->toPageSequence(getCurrentView()), selectionAction, pageOrderProvider);
 
   if (!m_thumbnailCache) {
     // Empty project.
@@ -610,7 +610,7 @@ void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>
     m_thumbSequence->setThumbnailFactory(nullptr);
   }
 
-  if (selection_action != ThumbnailSequence::KEEP_SELECTION) {
+  if (selectionAction != ThumbnailSequence::KEEP_SELECTION) {
     const PageId page(m_selectedPage.get(getCurrentView()));
     if (m_thumbSequence->setSelection(page)) {
       // OK
@@ -674,7 +674,7 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
   connect(widget, SIGNAL(goToPage(const PageId&)), this, SLOT(goToPage(const PageId&)));
 }  // MainWindow::setOptionsWidget
 
-void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, DebugImages* debug_images, bool overlay) {
+void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, DebugImages* debugImages, bool overlay) {
   if (isBatchProcessingInProgress() && (widget != m_batchProcessingWidget.get())) {
     if (ownership == TRANSFER_OWNERSHIP) {
       delete widget;
@@ -690,7 +690,7 @@ void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, Debu
     m_imageWidgetCleanup.add(widget);
   }
 
-  if (!debug_images || debug_images->empty()) {
+  if (!debugImages || debugImages->empty()) {
     if (widget != m_imageFrameLayout->currentWidget()) {
       m_imageFrameLayout->addWidget(widget);
       if (overlay) {
@@ -701,7 +701,7 @@ void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, Debu
     m_tabbedDebugImages->addTab(widget, "Main");
     AutoRemovingFile file;
     QString label;
-    while (!(file = debug_images->retrieveNext(&label)).get().isNull()) {
+    while (!(file = debugImages->retrieveNext(&label)).get().isNull()) {
       QWidget* view = new DebugImageView(file);
       m_imageWidgetCleanup.add(view);
       m_tabbedDebugImages->addTab(view, label);
@@ -718,12 +718,12 @@ void MainWindow::removeImageWidget() {
   m_imageWidgetCleanup.clear();
 }
 
-void MainWindow::invalidateThumbnail(const PageId& page_id) {
-  m_thumbSequence->invalidateThumbnail(page_id);
+void MainWindow::invalidateThumbnail(const PageId& pageId) {
+  m_thumbSequence->invalidateThumbnail(pageId);
 }
 
-void MainWindow::invalidateThumbnail(const PageInfo& page_info) {
-  m_thumbSequence->invalidateThumbnail(page_info);
+void MainWindow::invalidateThumbnail(const PageInfo& pageInfo) {
+  m_thumbSequence->invalidateThumbnail(pageInfo);
 }
 
 void MainWindow::invalidateAllThumbnails() {
@@ -791,9 +791,9 @@ void MainWindow::goFirstPage() {
     return;
   }
 
-  const PageInfo first_page(m_thumbSequence->firstPage());
-  if (!first_page.isNull()) {
-    goToPage(first_page.id());
+  const PageInfo firstPage(m_thumbSequence->firstPage());
+  if (!firstPage.isNull()) {
+    goToPage(firstPage.id());
   }
 }
 
@@ -802,9 +802,9 @@ void MainWindow::goLastPage() {
     return;
   }
 
-  const PageInfo last_page(m_thumbSequence->lastPage());
-  if (!last_page.isNull()) {
-    goToPage(last_page.id());
+  const PageInfo lastPage(m_thumbSequence->lastPage());
+  if (!lastPage.isNull()) {
+    goToPage(lastPage.id());
   }
 }
 
@@ -813,9 +813,9 @@ void MainWindow::goNextPage() {
     return;
   }
 
-  const PageInfo next_page(m_thumbSequence->nextPage(m_thumbSequence->selectionLeader().id()));
-  if (!next_page.isNull()) {
-    goToPage(next_page.id());
+  const PageInfo nextPage(m_thumbSequence->nextPage(m_thumbSequence->selectionLeader().id()));
+  if (!nextPage.isNull()) {
+    goToPage(nextPage.id());
   }
 }
 
@@ -824,9 +824,9 @@ void MainWindow::goPrevPage() {
     return;
   }
 
-  const PageInfo prev_page(m_thumbSequence->prevPage(m_thumbSequence->selectionLeader().id()));
-  if (!prev_page.isNull()) {
-    goToPage(prev_page.id());
+  const PageInfo prevPage(m_thumbSequence->prevPage(m_thumbSequence->selectionLeader().id()));
+  if (!prevPage.isNull()) {
+    goToPage(prevPage.id());
   }
 }
 
@@ -835,9 +835,9 @@ void MainWindow::goNextSelectedPage() {
     return;
   }
 
-  const PageInfo next_selected_page(m_thumbSequence->nextSelectedPage(m_thumbSequence->selectionLeader().id()));
-  if (!next_selected_page.isNull()) {
-    goToPage(next_selected_page.id(), ThumbnailSequence::KEEP_SELECTION);
+  const PageInfo nextSelectedPage(m_thumbSequence->nextSelectedPage(m_thumbSequence->selectionLeader().id()));
+  if (!nextSelectedPage.isNull()) {
+    goToPage(nextSelectedPage.id(), ThumbnailSequence::KEEP_SELECTION);
   }
 }
 
@@ -846,16 +846,16 @@ void MainWindow::goPrevSelectedPage() {
     return;
   }
 
-  const PageInfo prev_selected_page(m_thumbSequence->prevSelectedPage(m_thumbSequence->selectionLeader().id()));
-  if (!prev_selected_page.isNull()) {
-    goToPage(prev_selected_page.id(), ThumbnailSequence::KEEP_SELECTION);
+  const PageInfo prevSelectedPage(m_thumbSequence->prevSelectedPage(m_thumbSequence->selectionLeader().id()));
+  if (!prevSelectedPage.isNull()) {
+    goToPage(prevSelectedPage.id(), ThumbnailSequence::KEEP_SELECTION);
   }
 }
 
-void MainWindow::goToPage(const PageId& page_id, const ThumbnailSequence::SelectionAction selection_action) {
+void MainWindow::goToPage(const PageId& pageId, const ThumbnailSequence::SelectionAction selectionAction) {
   focusButton->setChecked(true);
 
-  m_thumbSequence->setSelection(page_id, selection_action);
+  m_thumbSequence->setSelection(pageId, selectionAction);
 
   // If the page was already selected, it will be reloaded.
   // That's by design.
@@ -866,14 +866,14 @@ void MainWindow::goToPage(const PageId& page_id, const ThumbnailSequence::Select
   }
 }
 
-void MainWindow::currentPageChanged(const PageInfo& page_info,
-                                    const QRectF& thumb_rect,
+void MainWindow::currentPageChanged(const PageInfo& pageInfo,
+                                    const QRectF& thumbRect,
                                     const ThumbnailSequence::SelectionFlags flags) {
-  m_selectedPage.set(page_info.id(), getCurrentView());
+  m_selectedPage.set(pageInfo.id(), getCurrentView());
 
   if ((flags & ThumbnailSequence::SELECTED_BY_USER) || focusButton->isChecked()) {
     if (!(flags & ThumbnailSequence::AVOID_SCROLLING_TO)) {
-      thumbView->ensureVisible(thumb_rect, 0, 0);
+      thumbView->ensureVisible(thumbRect, 0, 0);
     }
   }
 
@@ -905,38 +905,38 @@ void MainWindow::autoSaveProject() {
   saveProjectWithFeedback(m_projectFile);
 }
 
-void MainWindow::pageContextMenuRequested(const PageInfo& page_info_, const QPoint& screen_pos, bool selected) {
+void MainWindow::pageContextMenuRequested(const PageInfo& pageInfo_, const QPoint& screenPos, bool selected) {
   if (isBatchProcessingInProgress()) {
     return;
   }
   // Make a copy to prevent it from being invalidated.
-  const PageInfo page_info(page_info_);
+  const PageInfo pageInfo(pageInfo_);
 
   if (!selected) {
-    goToPage(page_info.id());
+    goToPage(pageInfo.id());
   }
 
   QMenu menu;
 
   auto& iconProvider = IconProvider::getInstance();
-  QAction* ins_before = menu.addAction(iconProvider.getIcon("insert-before"), tr("Insert before ..."));
-  QAction* ins_after = menu.addAction(iconProvider.getIcon("insert-after"), tr("Insert after ..."));
+  QAction* insBefore = menu.addAction(iconProvider.getIcon("insert-before"), tr("Insert before ..."));
+  QAction* insAfter = menu.addAction(iconProvider.getIcon("insert-after"), tr("Insert after ..."));
 
   menu.addSeparator();
 
   QAction* remove = menu.addAction(iconProvider.getIcon("user-trash"), tr("Remove from project ..."));
 
-  QAction* action = menu.exec(screen_pos);
-  if (action == ins_before) {
-    showInsertFileDialog(BEFORE, page_info.imageId());
-  } else if (action == ins_after) {
-    showInsertFileDialog(AFTER, page_info.imageId());
+  QAction* action = menu.exec(screenPos);
+  if (action == insBefore) {
+    showInsertFileDialog(BEFORE, pageInfo.imageId());
+  } else if (action == insAfter) {
+    showInsertFileDialog(AFTER, pageInfo.imageId());
   } else if (action == remove) {
     showRemovePagesDialog(m_thumbSequence->selectedItems());
   }
 }  // MainWindow::pageContextMenuRequested
 
-void MainWindow::pastLastPageContextMenuRequested(const QPoint& screen_pos) {
+void MainWindow::pastLastPageContextMenuRequested(const QPoint& screenPos) {
   if (!isProjectLoaded()) {
     return;
   }
@@ -944,7 +944,7 @@ void MainWindow::pastLastPageContextMenuRequested(const QPoint& screen_pos) {
   QMenu menu;
   menu.addAction(IconProvider::getInstance().getIcon("insert-here"), tr("Insert here ..."));
 
-  if (menu.exec(screen_pos)) {
+  if (menu.exec(screenPos)) {
     showInsertFileDialog(BEFORE, ImageId());
   }
 }
@@ -968,16 +968,15 @@ void MainWindow::thumbViewScrolled() {
     return;
   }
 
-  const QRectF viewport_rect(thumbView->viewport()->rect());
-  const QRectF viewport_item_rect(thumbView->viewportTransform().mapRect(rect));
+  const QRectF viewportRect(thumbView->viewport()->rect());
+  const QRectF viewportItemRect(thumbView->viewportTransform().mapRect(rect));
 
-  const double intersection_threshold = 0.5;
-  if ((viewport_item_rect.top() >= viewport_rect.top())
-      && (viewport_item_rect.top() + viewport_item_rect.height() * intersection_threshold <= viewport_rect.bottom())) {
+  const double intersectionThreshold = 0.5;
+  if ((viewportItemRect.top() >= viewportRect.top())
+      && (viewportItemRect.top() + viewportItemRect.height() * intersectionThreshold <= viewportRect.bottom())) {
     // Item is visible.
-  } else if ((viewport_item_rect.bottom() <= viewport_rect.bottom())
-             && (viewport_item_rect.bottom() - viewport_item_rect.height() * intersection_threshold
-                 >= viewport_rect.top())) {
+  } else if ((viewportItemRect.bottom() <= viewportRect.bottom())
+             && (viewportItemRect.bottom() - viewportItemRect.height() * intersectionThreshold >= viewportRect.top())) {
     // Item is visible.
   } else {
     focusButton->setChecked(false);
@@ -999,18 +998,18 @@ void MainWindow::filterSelectionChanged(const QItemSelection& selected) {
     m_batchQueue->cancelAndClear();
   }
 
-  const bool was_below_fix_orientation = isBelowFixOrientation(m_curFilter);
-  const bool was_below_select_content = isBelowSelectContent(m_curFilter);
+  const bool wasBelowFixOrientation = isBelowFixOrientation(m_curFilter);
+  const bool wasBelowSelectContent = isBelowSelectContent(m_curFilter);
   m_curFilter = selected.front().top();
-  const bool now_below_fix_orientation = isBelowFixOrientation(m_curFilter);
-  const bool now_below_select_content = isBelowSelectContent(m_curFilter);
+  const bool nowBelowFixOrientation = isBelowFixOrientation(m_curFilter);
+  const bool nowBelowSelectContent = isBelowSelectContent(m_curFilter);
 
   m_stages->filterAt(m_curFilter)->selected();
 
   updateSortOptions();
 
   // Propagate context boxes down the stage list, if necessary.
-  if (!was_below_select_content && now_below_select_content) {
+  if (!wasBelowSelectContent && nowBelowSelectContent) {
     // IMPORTANT: this needs to go before resetting thumbnails,
     // because it may affect them.
     if (m_contentBoxPropagator) {
@@ -1018,7 +1017,7 @@ void MainWindow::filterSelectionChanged(const QItemSelection& selected) {
     }  // Otherwise probably no project is loaded.
   }
   // Propagate page orientations (that might have changed) to the "Split Pages" stage.
-  if (!was_below_fix_orientation && now_below_fix_orientation) {
+  if (!wasBelowFixOrientation && nowBelowFixOrientation) {
     // IMPORTANT: this needs to go before resetting thumbnails,
     // because it may affect them.
     if (m_pageOrientationPropagator) {
@@ -1026,14 +1025,14 @@ void MainWindow::filterSelectionChanged(const QItemSelection& selected) {
     }  // Otherwise probably no project is loaded.
   }
 
-  const int hor_scroll_bar_pos = thumbView->horizontalScrollBar()->value();
-  const int ver_scroll_bar_pos = thumbView->verticalScrollBar()->value();
+  const int horScrollBarPos = thumbView->horizontalScrollBar()->value();
+  const int verScrollBarPos = thumbView->verticalScrollBar()->value();
 
   resetThumbSequence(currentPageOrderProvider(), ThumbnailSequence::KEEP_SELECTION);
 
   if (!focusButton->isChecked()) {
-    thumbView->horizontalScrollBar()->setValue(hor_scroll_bar_pos);
-    thumbView->verticalScrollBar()->setValue(ver_scroll_bar_pos);
+    thumbView->horizontalScrollBar()->setValue(horScrollBarPos);
+    thumbView->verticalScrollBar()->setValue(verScrollBarPos);
   }
 
   // load default settings for all the pages
@@ -1075,8 +1074,8 @@ void MainWindow::pageOrderingChanged(int idx) {
     return;
   }
 
-  const int hor_scroll_bar_pos = thumbView->horizontalScrollBar()->value();
-  const int ver_scroll_bar_pos = thumbView->verticalScrollBar()->value();
+  const int horScrollBarPos = thumbView->horizontalScrollBar()->value();
+  const int verScrollBarPos = thumbView->verticalScrollBar()->value();
 
   m_stages->filterAt(m_curFilter)->selectPageOrder(idx);
 
@@ -1084,8 +1083,8 @@ void MainWindow::pageOrderingChanged(int idx) {
                          currentPageOrderProvider());
 
   if (!focusButton->isChecked()) {
-    thumbView->horizontalScrollBar()->setValue(hor_scroll_bar_pos);
-    thumbView->verticalScrollBar()->setValue(ver_scroll_bar_pos);
+    thumbView->horizontalScrollBar()->setValue(horScrollBarPos);
+    thumbView->verticalScrollBar()->setValue(verScrollBarPos);
   }
 }
 
@@ -1136,7 +1135,7 @@ void MainWindow::startBatchProcessing() {
   updateMainArea();
 }  // MainWindow::startBatchProcessing
 
-void MainWindow::stopBatchProcessing(MainAreaAction main_area) {
+void MainWindow::stopBatchProcessing(MainAreaAction mainArea) {
   if (!isBatchProcessingInProgress()) {
     return;
   }
@@ -1152,7 +1151,7 @@ void MainWindow::stopBatchProcessing(MainAreaAction main_area) {
   filterList->setBatchProcessingInProgress(false);
   filterList->setEnabled(true);
 
-  switch (main_area) {
+  switch (mainArea) {
     case UPDATE_MAIN_AREA:
       updateMainArea();
       break;
@@ -1184,7 +1183,7 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
       assert(idx >= 0);
       m_curFilter = idx;
 
-      ScopedIncDec<int> selection_guard(m_ignoreSelectionChanges);
+      ScopedIncDec<int> selectionGuard(m_ignoreSelectionChanges);
       filterList->selectRow(idx);
     }
   }
@@ -1200,12 +1199,12 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
       QApplication::alert(this);  // Flash the taskbar entry.
       if (m_checkBeepWhenFinished()) {
 #if defined(Q_OS_UNIX)
-        QString ext_play_cmd("play /usr/share/sounds/freedesktop/stereo/bell.oga");
+        QString extPlayCmd("play /usr/share/sounds/freedesktop/stereo/bell.oga");
 #else
-        QString ext_play_cmd;
+        QString extPlayCmd;
 #endif
         QSettings settings;
-        QString cmd = settings.value("main_window/external_alarm_cmd", ext_play_cmd).toString();
+        QString cmd = settings.value("main_window/external_alarm_cmd", extPlayCmd).toString();
         if (cmd.isEmpty()) {
           QApplication::beep();
         } else {
@@ -1260,7 +1259,7 @@ void MainWindow::fixedDpiSubmitted() {
   assert(m_pages);
   assert(m_thumbSequence);
 
-  const PageInfo selected_page_before(m_thumbSequence->selectionLeader());
+  const PageInfo selectedPageBefore(m_thumbSequence->selectionLeader());
 
   m_pages->updateMetadataFrom(m_fixDpiDialog->files());
 
@@ -1268,12 +1267,12 @@ void MainWindow::fixedDpiSubmitted() {
   m_thumbSequence->reset(m_pages->toPageSequence(getCurrentView()), ThumbnailSequence::KEEP_SELECTION,
                          m_thumbSequence->pageOrderProvider());
 
-  const PageInfo selected_page_after(m_thumbSequence->selectionLeader());
+  const PageInfo selectedPageAfter(m_thumbSequence->selectionLeader());
 
   // Reload if the current page was affected.
   // Note that imageId() isn't supposed to change - we check just in case.
-  if ((selected_page_before.imageId() != selected_page_after.imageId())
-      || (selected_page_before.metadata() != selected_page_after.metadata())) {
+  if ((selectedPageBefore.imageId() != selectedPageAfter.imageId())
+      || (selectedPageBefore.metadata() != selectedPageAfter.metadata())) {
     reloadRequested();
   }
 }
@@ -1293,26 +1292,26 @@ void MainWindow::saveProjectTriggered() {
 void MainWindow::saveProjectAsTriggered() {
   // XXX: this function is duplicated in OutOfMemoryDialog.
 
-  QString project_dir;
+  QString projectDir;
   if (!m_projectFile.isEmpty()) {
-    project_dir = QFileInfo(m_projectFile).absolutePath();
+    projectDir = QFileInfo(m_projectFile).absolutePath();
   } else {
     QSettings settings;
-    project_dir = settings.value("project/lastDir").toString();
+    projectDir = settings.value("project/lastDir").toString();
   }
 
-  QString project_file(
-      QFileDialog::getSaveFileName(this, QString(), project_dir, tr("Scan Tailor Projects") + " (*.ScanTailor)"));
-  if (project_file.isEmpty()) {
+  QString projectFile(
+      QFileDialog::getSaveFileName(this, QString(), projectDir, tr("Scan Tailor Projects") + " (*.ScanTailor)"));
+  if (projectFile.isEmpty()) {
     return;
   }
 
-  if (!project_file.endsWith(".ScanTailor", Qt::CaseInsensitive)) {
-    project_file += ".ScanTailor";
+  if (!projectFile.endsWith(".ScanTailor", Qt::CaseInsensitive)) {
+    projectFile += ".ScanTailor";
   }
 
-  if (saveProjectWithFeedback(project_file)) {
-    m_projectFile = project_file;
+  if (saveProjectWithFeedback(projectFile)) {
+    m_projectFile = projectFile;
     updateWindowTitle();
 
     QSettings settings;
@@ -1345,20 +1344,20 @@ void MainWindow::openProject() {
     return;
   }
 
-  const QString project_dir(QSettings().value("project/lastDir").toString());
+  const QString projectDir(QSettings().value("project/lastDir").toString());
 
-  const QString project_file(QFileDialog::getOpenFileName(this, tr("Open Project"), project_dir,
-                                                          tr("Scan Tailor Projects") + " (*.ScanTailor)"));
-  if (project_file.isEmpty()) {
+  const QString projectFile(QFileDialog::getOpenFileName(this, tr("Open Project"), projectDir,
+                                                         tr("Scan Tailor Projects") + " (*.ScanTailor)"));
+  if (projectFile.isEmpty()) {
     // Cancelled by user.
     return;
   }
 
-  openProject(project_file);
+  openProject(projectFile);
 }
 
-void MainWindow::openProject(const QString& project_file) {
-  QFile file(project_file);
+void MainWindow::openProject(const QString& projectFile) {
+  QFile file(projectFile);
   if (!file.open(QIODevice::ReadOnly)) {
     QMessageBox::warning(this, tr("Error"), tr("Unable to open the project file."));
 
@@ -1374,7 +1373,7 @@ void MainWindow::openProject(const QString& project_file) {
 
   file.close();
 
-  auto* context = new ProjectOpeningContext(this, project_file, doc);
+  auto* context = new ProjectOpeningContext(this, projectFile, doc);
   connect(context, SIGNAL(done(ProjectOpeningContext*)), SLOT(projectOpened(ProjectOpeningContext*)));
   context->proceed();
 }
@@ -1412,37 +1411,37 @@ void MainWindow::openDefaultParamsDialog() {
 
 void MainWindow::onSettingsChanged() {
   ApplicationSettings& settings = ApplicationSettings::getInstance();
-  bool need_invalidate = true;
+  bool needInvalidate = true;
 
   m_autoSaveProject = ApplicationSettings::getInstance().isAutoSaveProjectEnabled();
 
   static_cast<Application*>(qApp)->installLanguage(settings.getLanguage());
 
   if (m_thumbnailCache) {
-    const QSize max_thumb_size = settings.getThumbnailQuality();
-    if (m_thumbnailCache->getMaxThumbSize() != max_thumb_size) {
-      m_thumbnailCache->setMaxThumbSize(max_thumb_size);
+    const QSize maxThumbSize = settings.getThumbnailQuality();
+    if (m_thumbnailCache->getMaxThumbSize() != maxThumbSize) {
+      m_thumbnailCache->setMaxThumbSize(maxThumbSize);
     }
   }
 
   {
-    const ThumbnailSequence::ViewMode view_mode
+    const ThumbnailSequence::ViewMode viewMode
         = (ApplicationSettings::getInstance().isSingleColumnThumbnailDisplayEnabled())
               ? ThumbnailSequence::SINGLE_COLUMN
               : ThumbnailSequence::MULTI_COLUMN;
-    if (m_thumbSequence->getViewMode() != view_mode) {
-      m_thumbSequence->setViewMode(view_mode);
+    if (m_thumbSequence->getViewMode() != viewMode) {
+      m_thumbSequence->setViewMode(viewMode);
     }
   }
 
-  const QSizeF max_logical_thumb_size = settings.getMaxLogicalThumbnailSize();
-  if (m_maxLogicalThumbSize != max_logical_thumb_size) {
-    m_maxLogicalThumbSize = max_logical_thumb_size;
+  const QSizeF maxLogicalThumbSize = settings.getMaxLogicalThumbnailSize();
+  if (m_maxLogicalThumbSize != maxLogicalThumbSize) {
+    m_maxLogicalThumbSize = maxLogicalThumbSize;
     updateMaxLogicalThumbSize();
-    need_invalidate = false;
+    needInvalidate = false;
   }
 
-  if (need_invalidate) {
+  if (needInvalidate) {
     m_thumbSequence->invalidateAllThumbnails();
   }
 }
@@ -1513,20 +1512,20 @@ bool MainWindow::isBelowSelectContent() const {
   return isBelowSelectContent(m_curFilter);
 }
 
-bool MainWindow::isBelowSelectContent(const int filter_idx) const {
-  return filter_idx > m_stages->selectContentFilterIdx();
+bool MainWindow::isBelowSelectContent(const int filterIdx) const {
+  return filterIdx > m_stages->selectContentFilterIdx();
 }
 
-bool MainWindow::isBelowFixOrientation(int filter_idx) const {
-  return filter_idx > m_stages->fixOrientationFilterIdx();
+bool MainWindow::isBelowFixOrientation(int filterIdx) const {
+  return filterIdx > m_stages->fixOrientationFilterIdx();
 }
 
 bool MainWindow::isOutputFilter() const {
   return isOutputFilter(m_curFilter);
 }
 
-bool MainWindow::isOutputFilter(const int filter_idx) const {
-  return filter_idx == m_stages->outputFilterIdx();
+bool MainWindow::isOutputFilter(const int filterIdx) const {
+  return filterIdx == m_stages->outputFilterIdx();
 }
 
 PageView MainWindow::getCurrentView() const {
@@ -1573,14 +1572,14 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
   if (isOutputFilter() && !checkReadyForOutput(&page.id())) {
     filterList->setBatchProcessingPossible(false);
 
-    const QString err_text(
+    const QString errText(
         tr("Output is not yet possible, as the final size"
            " of pages is not yet known.\nTo determine it,"
            " run batch processing at \"Select Content\" or"
            " \"Margins\"."));
 
     removeFilterOptionsWidget();
-    setImageWidget(new ErrorWidget(err_text), TRANSFER_OWNERSHIP);
+    setImageWidget(new ErrorWidget(errText), TRANSFER_OWNERSHIP);
 
     return;
   }
@@ -1593,8 +1592,8 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
     if (m_imageFrameLayout->indexOf(m_processingIndicationWidget.get()) != -1) {
       m_processingIndicationWidget->processingRestartedEffect();
     }
-    bool current_widget_is_image = (Utils::castOrFindChild<ImageViewBase*>(m_imageFrameLayout->widget(0)) != nullptr);
-    setImageWidget(m_processingIndicationWidget.get(), KEEP_OWNERSHIP, nullptr, current_widget_is_image);
+    bool currentWidgetIsImage = (Utils::castOrFindChild<ImageViewBase*>(m_imageFrameLayout->widget(0)) != nullptr);
+    setImageWidget(m_processingIndicationWidget.get(), KEEP_OWNERSHIP, nullptr, currentWidgetIsImage);
     m_stages->filterAt(m_curFilter)->preUpdateUI(this, page);
   }
 
@@ -1606,15 +1605,15 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
 }  // MainWindow::loadPageInteractive
 
 void MainWindow::updateWindowTitle() {
-  QString project_name;
+  QString projectName;
 
   if (m_projectFile.isEmpty()) {
-    project_name = tr("Unnamed");
+    projectName = tr("Unnamed");
   } else {
-    project_name = QFileInfo(m_projectFile).completeBaseName();
+    projectName = QFileInfo(m_projectFile).completeBaseName();
   }
   const QString version(QString::fromUtf8(VERSION));
-  setWindowTitle(tr("%2 - ScanTailor Advanced [%1bit]").arg(sizeof(void*) * 8).arg(project_name));
+  setWindowTitle(tr("%2 - ScanTailor Advanced [%1bit]").arg(sizeof(void*) * 8).arg(projectName));
 }
 
 /**
@@ -1642,15 +1641,15 @@ bool MainWindow::closeProjectInteractive() {
     return true;
   }
 
-  const QFileInfo project_file(m_projectFile);
-  const QFileInfo backup_file(project_file.absoluteDir(), QString::fromLatin1("Backup.") + project_file.fileName());
-  const QString backup_file_path(backup_file.absoluteFilePath());
+  const QFileInfo projectFile(m_projectFile);
+  const QFileInfo backupFile(projectFile.absoluteDir(), QString::fromLatin1("Backup.") + projectFile.fileName());
+  const QString backupFilePath(backupFile.absoluteFilePath());
 
   ProjectWriter writer(m_pages, m_selectedPage, m_outFileNameGen);
 
-  if (!writer.write(backup_file_path, m_stages->filters())) {
+  if (!writer.write(backupFilePath, m_stages->filters())) {
     // Backup file could not be written???
-    QFile::remove(backup_file_path);
+    QFile::remove(backupFilePath);
     switch (promptProjectSave()) {
       case SAVE:
         saveProjectTriggered();
@@ -1665,9 +1664,9 @@ bool MainWindow::closeProjectInteractive() {
     return true;
   }
 
-  if (compareFiles(m_projectFile, backup_file_path)) {
+  if (compareFiles(m_projectFile, backupFilePath)) {
     // The project hasn't really changed.
-    QFile::remove(backup_file_path);
+    QFile::remove(backupFilePath);
     closeProjectWithoutSaving();
 
     return true;
@@ -1675,14 +1674,14 @@ bool MainWindow::closeProjectInteractive() {
 
   switch (promptProjectSave()) {
     case SAVE:
-      if (!Utils::overwritingRename(backup_file_path, m_projectFile)) {
+      if (!Utils::overwritingRename(backupFilePath, m_projectFile)) {
         QMessageBox::warning(this, tr("Error"), tr("Error saving the project file!"));
 
         return false;
       }
       // fall through
     case DONT_SAVE:
-      QFile::remove(backup_file_path);
+      QFile::remove(backupFilePath);
       break;
     case CANCEL:
       return false;
@@ -1698,10 +1697,10 @@ void MainWindow::closeProjectWithoutSaving() {
   switchToNewProject(pages, QString());
 }
 
-bool MainWindow::saveProjectWithFeedback(const QString& project_file) {
+bool MainWindow::saveProjectWithFeedback(const QString& projectFile) {
   ProjectWriter writer(m_pages, m_selectedPage, m_outFileNameGen);
 
-  if (!writer.write(project_file, m_stages->filters())) {
+  if (!writer.write(projectFile, m_stages->filters())) {
     QMessageBox::warning(this, tr("Error"), tr("Error saving the project file!"));
 
     return false;
@@ -1713,7 +1712,7 @@ bool MainWindow::saveProjectWithFeedback(const QString& project_file) {
 /**
  * Note: showInsertFileDialog(BEFORE, ImageId()) is legal and means inserting at the end.
  */
-void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, const ImageId& existing) {
+void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId& existing) {
   if (isBatchProcessingInProgress() || !isProjectLoaded()) {
     return;
   }
@@ -1730,8 +1729,8 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, const Image
     }
 
    protected:
-    virtual bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const {
-      const QModelIndex idx = sourceModel()->index(source_row, 0, source_parent);
+    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
+      const QModelIndex idx = sourceModel()->index(sourceRow, 0, sourceParent);
       const QVariant data(idx.data(QFileSystemModel::FilePathRole));
       if (data.isNull()) {
         return true;
@@ -1772,56 +1771,56 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter before_or_after, const Image
   files.erase(std::unique(files.begin(), files.end()), files.end());
 
 
-  std::vector<ImageFileInfo> new_files;
-  std::vector<QString> loaded_files;
-  std::vector<QString> failed_files;  // Those we failed to read metadata from.
+  std::vector<ImageFileInfo> newFiles;
+  std::vector<QString> loadedFiles;
+  std::vector<QString> failedFiles;  // Those we failed to read metadata from.
   // dialog->selectedFiles() returns file list in reverse order.
   for (int i = files.size() - 1; i >= 0; --i) {
-    const QFileInfo file_info(files[i]);
-    ImageFileInfo image_file_info(file_info, std::vector<ImageMetadata>());
+    const QFileInfo fileInfo(files[i]);
+    ImageFileInfo imageFileInfo(fileInfo, std::vector<ImageMetadata>());
 
     const ImageMetadataLoader::Status status = ImageMetadataLoader::load(
-        files.at(i), [&](const ImageMetadata& metadata) { image_file_info.imageInfo().push_back(metadata); });
+        files.at(i), [&](const ImageMetadata& metadata) { imageFileInfo.imageInfo().push_back(metadata); });
 
     if (status == ImageMetadataLoader::LOADED) {
-      new_files.push_back(image_file_info);
-      loaded_files.push_back(file_info.absoluteFilePath());
+      newFiles.push_back(imageFileInfo);
+      loadedFiles.push_back(fileInfo.absoluteFilePath());
     } else {
-      failed_files.push_back(file_info.absoluteFilePath());
+      failedFiles.push_back(fileInfo.absoluteFilePath());
     }
   }
 
-  if (!failed_files.empty()) {
-    auto err_dialog = std::make_unique<LoadFilesStatusDialog>(this);
-    err_dialog->setLoadedFiles(loaded_files);
-    err_dialog->setFailedFiles(failed_files);
-    err_dialog->setOkButtonName(QString(" %1 ").arg(tr("Skip failed files")));
-    if ((err_dialog->exec() != QDialog::Accepted) || loaded_files.empty()) {
+  if (!failedFiles.empty()) {
+    auto errDialog = std::make_unique<LoadFilesStatusDialog>(this);
+    errDialog->setLoadedFiles(loadedFiles);
+    errDialog->setFailedFiles(failedFiles);
+    errDialog->setOkButtonName(QString(" %1 ").arg(tr("Skip failed files")));
+    if ((errDialog->exec() != QDialog::Accepted) || loadedFiles.empty()) {
       return;
     }
   }
 
   // Check if there is at least one DPI that's not OK.
-  if (std::find_if(new_files.begin(), new_files.end(), [&](ImageFileInfo p) -> bool { return !p.isDpiOK(); })
-      != new_files.end()) {
-    auto dpi_dialog = std::make_unique<FixDpiDialog>(new_files, this);
-    dpi_dialog->setWindowModality(Qt::WindowModal);
-    if (dpi_dialog->exec() != QDialog::Accepted) {
+  if (std::find_if(newFiles.begin(), newFiles.end(), [&](ImageFileInfo p) -> bool { return !p.isDpiOK(); })
+      != newFiles.end()) {
+    auto dpiDialog = std::make_unique<FixDpiDialog>(newFiles, this);
+    dpiDialog->setWindowModality(Qt::WindowModal);
+    if (dpiDialog->exec() != QDialog::Accepted) {
       return;
     }
 
-    new_files = dpi_dialog->files();
+    newFiles = dpiDialog->files();
   }
 
   // Actually insert the new pages.
-  for (const ImageFileInfo& file : new_files) {
-    int image_num = -1;  // Zero-based image number in a multi-page TIFF.
+  for (const ImageFileInfo& file : newFiles) {
+    int imageNum = -1;  // Zero-based image number in a multi-page TIFF.
     for (const ImageMetadata& metadata : file.imageInfo()) {
-      ++image_num;
+      ++imageNum;
 
-      const int num_sub_pages = ProjectPages::adviseNumberOfLogicalPages(metadata, OrthogonalRotation());
-      const ImageInfo image_info(ImageId(file.fileInfo(), image_num), metadata, num_sub_pages, false, false);
-      insertImage(image_info, before_or_after, existing);
+      const int numSubPages = ProjectPages::adviseNumberOfLogicalPages(metadata, OrthogonalRotation());
+      const ImageInfo imageInfo(ImageId(file.fileInfo(), imageNum), metadata, numSubPages, false, false);
+      insertImage(imageInfo, beforeOrAfter, existing);
     }
   }
 }  // MainWindow::showInsertFileDialog
@@ -1834,8 +1833,8 @@ void MainWindow::showRemovePagesDialog(const std::set<PageId>& pages) {
 
   ui.text->setText(ui.text->text().arg(pages.size()));
 
-  QPushButton* remove_btn = ui.buttonBox->button(QDialogButtonBox::Ok);
-  remove_btn->setText(tr("Remove"));
+  QPushButton* removeBtn = ui.buttonBox->button(QDialogButtonBox::Ok);
+  removeBtn->setText(tr("Remove"));
 
   dialog->setWindowModality(Qt::WindowModal);
   if (dialog->exec() == QDialog::Accepted) {
@@ -1847,19 +1846,19 @@ void MainWindow::showRemovePagesDialog(const std::set<PageId>& pages) {
 /**
  * Note: insertImage(..., BEFORE, ImageId()) is legal and means inserting at the end.
  */
-void MainWindow::insertImage(const ImageInfo& new_image, BeforeOrAfter before_or_after, ImageId existing) {
-  std::vector<PageInfo> pages(m_pages->insertImage(new_image, before_or_after, existing, getCurrentView()));
+void MainWindow::insertImage(const ImageInfo& newImage, BeforeOrAfter beforeOrAfter, ImageId existing) {
+  std::vector<PageInfo> pages(m_pages->insertImage(newImage, beforeOrAfter, existing, getCurrentView()));
 
-  if (before_or_after == BEFORE) {
+  if (beforeOrAfter == BEFORE) {
     // The second one will be inserted first, then the first
     // one will be inserted BEFORE the second one.
     std::reverse(pages.begin(), pages.end());
   }
 
-  for (const PageInfo& page_info : pages) {
-    m_outFileNameGen.disambiguator()->registerFile(page_info.imageId().filePath());
-    m_thumbSequence->insert(page_info, before_or_after, existing);
-    existing = page_info.imageId();
+  for (const PageInfo& pageInfo : pages) {
+    m_outFileNameGen.disambiguator()->registerFile(pageInfo.imageId().filePath());
+    m_thumbSequence->insert(pageInfo, beforeOrAfter, existing);
+    existing = pageInfo.imageId();
   }
 }
 
@@ -1873,37 +1872,37 @@ void MainWindow::removeFromProject(const std::set<PageId>& pages) {
 
 
   const PageSequence itemsInOrder = m_thumbSequence->toPageSequence();
-  std::set<PageId> new_selection;
+  std::set<PageId> newSelection;
 
-  bool select_first_non_deleted = false;
+  bool selectFirstNonDeleted = false;
   if (itemsInOrder.numPages() > 0) {
     // if first page was deleted select first not deleted page
     // otherwise select last not deleted page from beginning
-    select_first_non_deleted = pages.find(itemsInOrder.pageAt(0).id()) != pages.end();
+    selectFirstNonDeleted = pages.find(itemsInOrder.pageAt(0).id()) != pages.end();
 
-    PageId last_non_deleted;
+    PageId lastNonDeleted;
     for (const PageInfo& page : itemsInOrder) {
       const PageId& id = page.id();
-      const bool was_deleted = (pages.find(id) != pages.end());
+      const bool wasDeleted = (pages.find(id) != pages.end());
 
-      if (!was_deleted) {
-        if (select_first_non_deleted) {
+      if (!wasDeleted) {
+        if (selectFirstNonDeleted) {
           m_thumbSequence->setSelection(id);
-          new_selection.insert(id);
+          newSelection.insert(id);
           break;
         } else {
-          last_non_deleted = id;
+          lastNonDeleted = id;
         }
-      } else if (!select_first_non_deleted && !last_non_deleted.isNull()) {
-        m_thumbSequence->setSelection(last_non_deleted);
-        new_selection.insert(last_non_deleted);
+      } else if (!selectFirstNonDeleted && !lastNonDeleted.isNull()) {
+        m_thumbSequence->setSelection(lastNonDeleted);
+        newSelection.insert(lastNonDeleted);
         break;
       }
     }
 
     m_thumbSequence->removePages(pages);
 
-    if (new_selection.empty()) {
+    if (newSelection.empty()) {
       // fallback to old behaviour
       if (m_thumbSequence->selectionLeader().isNull()) {
         m_thumbSequence->setSelection(m_thumbSequence->firstPage().id());
@@ -1915,108 +1914,108 @@ void MainWindow::removeFromProject(const std::set<PageId>& pages) {
 }  // MainWindow::removeFromProject
 
 void MainWindow::eraseOutputFiles(const std::set<PageId>& pages) {
-  std::vector<PageId::SubPage> erase_variations;
-  erase_variations.reserve(3);
+  std::vector<PageId::SubPage> eraseVariations;
+  eraseVariations.reserve(3);
 
-  for (const PageId& page_id : pages) {
-    erase_variations.clear();
-    switch (page_id.subPage()) {
+  for (const PageId& pageId : pages) {
+    eraseVariations.clear();
+    switch (pageId.subPage()) {
       case PageId::SINGLE_PAGE:
-        erase_variations.push_back(PageId::SINGLE_PAGE);
-        erase_variations.push_back(PageId::LEFT_PAGE);
-        erase_variations.push_back(PageId::RIGHT_PAGE);
+        eraseVariations.push_back(PageId::SINGLE_PAGE);
+        eraseVariations.push_back(PageId::LEFT_PAGE);
+        eraseVariations.push_back(PageId::RIGHT_PAGE);
         break;
       case PageId::LEFT_PAGE:
-        erase_variations.push_back(PageId::SINGLE_PAGE);
-        erase_variations.push_back(PageId::LEFT_PAGE);
+        eraseVariations.push_back(PageId::SINGLE_PAGE);
+        eraseVariations.push_back(PageId::LEFT_PAGE);
         break;
       case PageId::RIGHT_PAGE:
-        erase_variations.push_back(PageId::SINGLE_PAGE);
-        erase_variations.push_back(PageId::RIGHT_PAGE);
+        eraseVariations.push_back(PageId::SINGLE_PAGE);
+        eraseVariations.push_back(PageId::RIGHT_PAGE);
         break;
     }
 
-    for (PageId::SubPage subpage : erase_variations) {
-      QFile::remove(m_outFileNameGen.filePathFor(PageId(page_id.imageId(), subpage)));
+    for (PageId::SubPage subpage : eraseVariations) {
+      QFile::remove(m_outFileNameGen.filePathFor(PageId(pageId.imageId(), subpage)));
     }
   }
 }
 
 BackgroundTaskPtr MainWindow::createCompositeTask(const PageInfo& page,
-                                                  const int last_filter_idx,
+                                                  const int lastFilterIdx,
                                                   const bool batch,
                                                   bool debug) {
-  intrusive_ptr<fix_orientation::Task> fix_orientation_task;
-  intrusive_ptr<page_split::Task> page_split_task;
-  intrusive_ptr<deskew::Task> deskew_task;
-  intrusive_ptr<select_content::Task> select_content_task;
-  intrusive_ptr<page_layout::Task> page_layout_task;
-  intrusive_ptr<output::Task> output_task;
+  intrusive_ptr<fix_orientation::Task> fixOrientationTask;
+  intrusive_ptr<page_split::Task> pageSplitTask;
+  intrusive_ptr<deskew::Task> deskewTask;
+  intrusive_ptr<select_content::Task> selectContentTask;
+  intrusive_ptr<page_layout::Task> pageLayoutTask;
+  intrusive_ptr<output::Task> outputTask;
 
   if (batch) {
     debug = false;
   }
 
-  if (last_filter_idx >= m_stages->outputFilterIdx()) {
-    output_task = m_stages->outputFilter()->createTask(page.id(), m_thumbnailCache, m_outFileNameGen, batch, debug);
+  if (lastFilterIdx >= m_stages->outputFilterIdx()) {
+    outputTask = m_stages->outputFilter()->createTask(page.id(), m_thumbnailCache, m_outFileNameGen, batch, debug);
     debug = false;
   }
-  if (last_filter_idx >= m_stages->pageLayoutFilterIdx()) {
-    page_layout_task = m_stages->pageLayoutFilter()->createTask(page.id(), output_task, batch, debug);
+  if (lastFilterIdx >= m_stages->pageLayoutFilterIdx()) {
+    pageLayoutTask = m_stages->pageLayoutFilter()->createTask(page.id(), outputTask, batch, debug);
     debug = false;
   }
-  if (last_filter_idx >= m_stages->selectContentFilterIdx()) {
-    select_content_task = m_stages->selectContentFilter()->createTask(page.id(), page_layout_task, batch, debug);
+  if (lastFilterIdx >= m_stages->selectContentFilterIdx()) {
+    selectContentTask = m_stages->selectContentFilter()->createTask(page.id(), pageLayoutTask, batch, debug);
     debug = false;
   }
-  if (last_filter_idx >= m_stages->deskewFilterIdx()) {
-    deskew_task = m_stages->deskewFilter()->createTask(page.id(), select_content_task, batch, debug);
+  if (lastFilterIdx >= m_stages->deskewFilterIdx()) {
+    deskewTask = m_stages->deskewFilter()->createTask(page.id(), selectContentTask, batch, debug);
     debug = false;
   }
-  if (last_filter_idx >= m_stages->pageSplitFilterIdx()) {
-    page_split_task = m_stages->pageSplitFilter()->createTask(page, deskew_task, batch, debug);
+  if (lastFilterIdx >= m_stages->pageSplitFilterIdx()) {
+    pageSplitTask = m_stages->pageSplitFilter()->createTask(page, deskewTask, batch, debug);
     debug = false;
   }
-  if (last_filter_idx >= m_stages->fixOrientationFilterIdx()) {
-    fix_orientation_task = m_stages->fixOrientationFilter()->createTask(page.id(), page_split_task, batch);
+  if (lastFilterIdx >= m_stages->fixOrientationFilterIdx()) {
+    fixOrientationTask = m_stages->fixOrientationFilter()->createTask(page.id(), pageSplitTask, batch);
     debug = false;
   }
-  assert(fix_orientation_task);
+  assert(fixOrientationTask);
 
   return make_intrusive<LoadFileTask>(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
-                                      m_thumbnailCache, m_pages, fix_orientation_task);
+                                      m_thumbnailCache, m_pages, fixOrientationTask);
 }  // MainWindow::createCompositeTask
 
-intrusive_ptr<CompositeCacheDrivenTask> MainWindow::createCompositeCacheDrivenTask(const int last_filter_idx) {
-  intrusive_ptr<fix_orientation::CacheDrivenTask> fix_orientation_task;
-  intrusive_ptr<page_split::CacheDrivenTask> page_split_task;
-  intrusive_ptr<deskew::CacheDrivenTask> deskew_task;
-  intrusive_ptr<select_content::CacheDrivenTask> select_content_task;
-  intrusive_ptr<page_layout::CacheDrivenTask> page_layout_task;
-  intrusive_ptr<output::CacheDrivenTask> output_task;
+intrusive_ptr<CompositeCacheDrivenTask> MainWindow::createCompositeCacheDrivenTask(const int lastFilterIdx) {
+  intrusive_ptr<fix_orientation::CacheDrivenTask> fixOrientationTask;
+  intrusive_ptr<page_split::CacheDrivenTask> pageSplitTask;
+  intrusive_ptr<deskew::CacheDrivenTask> deskewTask;
+  intrusive_ptr<select_content::CacheDrivenTask> selectContentTask;
+  intrusive_ptr<page_layout::CacheDrivenTask> pageLayoutTask;
+  intrusive_ptr<output::CacheDrivenTask> outputTask;
 
-  if (last_filter_idx >= m_stages->outputFilterIdx()) {
-    output_task = m_stages->outputFilter()->createCacheDrivenTask(m_outFileNameGen);
+  if (lastFilterIdx >= m_stages->outputFilterIdx()) {
+    outputTask = m_stages->outputFilter()->createCacheDrivenTask(m_outFileNameGen);
   }
-  if (last_filter_idx >= m_stages->pageLayoutFilterIdx()) {
-    page_layout_task = m_stages->pageLayoutFilter()->createCacheDrivenTask(output_task);
+  if (lastFilterIdx >= m_stages->pageLayoutFilterIdx()) {
+    pageLayoutTask = m_stages->pageLayoutFilter()->createCacheDrivenTask(outputTask);
   }
-  if (last_filter_idx >= m_stages->selectContentFilterIdx()) {
-    select_content_task = m_stages->selectContentFilter()->createCacheDrivenTask(page_layout_task);
+  if (lastFilterIdx >= m_stages->selectContentFilterIdx()) {
+    selectContentTask = m_stages->selectContentFilter()->createCacheDrivenTask(pageLayoutTask);
   }
-  if (last_filter_idx >= m_stages->deskewFilterIdx()) {
-    deskew_task = m_stages->deskewFilter()->createCacheDrivenTask(select_content_task);
+  if (lastFilterIdx >= m_stages->deskewFilterIdx()) {
+    deskewTask = m_stages->deskewFilter()->createCacheDrivenTask(selectContentTask);
   }
-  if (last_filter_idx >= m_stages->pageSplitFilterIdx()) {
-    page_split_task = m_stages->pageSplitFilter()->createCacheDrivenTask(deskew_task);
+  if (lastFilterIdx >= m_stages->pageSplitFilterIdx()) {
+    pageSplitTask = m_stages->pageSplitFilter()->createCacheDrivenTask(deskewTask);
   }
-  if (last_filter_idx >= m_stages->fixOrientationFilterIdx()) {
-    fix_orientation_task = m_stages->fixOrientationFilter()->createCacheDrivenTask(page_split_task);
+  if (lastFilterIdx >= m_stages->fixOrientationFilterIdx()) {
+    fixOrientationTask = m_stages->fixOrientationFilter()->createCacheDrivenTask(pageSplitTask);
   }
 
-  assert(fix_orientation_task);
+  assert(fixOrientationTask);
 
-  return fix_orientation_task;
+  return fixOrientationTask;
 }  // MainWindow::createCompositeCacheDrivenTask
 
 void MainWindow::updateDisambiguationRecords(const PageSequence& pages) {
@@ -2050,13 +2049,13 @@ void MainWindow::setDockWidgetsVisible(bool state) {
   thumbnailsDockWidget->setVisible(state);
 }
 
-void MainWindow::scaleThumbnails(const QWheelEvent* wheel_event) {
-  const QPoint& angle_delta = wheel_event->angleDelta();
-  const int wheel_dist = angle_delta.x() + angle_delta.y();
+void MainWindow::scaleThumbnails(const QWheelEvent* wheelEvent) {
+  const QPoint& angleDelta = wheelEvent->angleDelta();
+  const int wheelDist = angleDelta.x() + angleDelta.y();
 
-  if (std::abs(wheel_dist) >= 30) {
-    const double dx = std::copysign(25.0, wheel_dist);
-    const double dy = std::copysign(16.0, wheel_dist);
+  if (std::abs(wheelDist) >= 30) {
+    const double dx = std::copysign(25.0, wheelDist);
+    const double dy = std::copysign(16.0, wheelDist);
     const double width = qBound(100.0, m_maxLogicalThumbSize.width() + dx, 1000.0);
     const double height = qBound(64.0, m_maxLogicalThumbSize.height() + dy, 640.0);
     m_maxLogicalThumbSize = QSizeF(width, height);

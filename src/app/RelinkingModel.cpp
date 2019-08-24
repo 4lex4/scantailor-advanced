@@ -131,7 +131,7 @@ QVariant RelinkingModel::data(const QModelIndex& index, int role) const {
 }
 
 void RelinkingModel::addPath(const RelinkablePath& path) {
-  const QString& normalized_path(path.normalizedPath());
+  const QString& normalizedPath(path.normalizedPath());
 
   const std::pair<std::set<QString>::iterator, bool> ins(m_origPathSet.insert(path.normalizedPath()));
   if (!ins.second) {
@@ -147,10 +147,10 @@ void RelinkingModel::addPath(const RelinkablePath& path) {
 }
 
 void RelinkingModel::replacePrefix(const QString& prefix, const QString& replacement, RelinkablePath::Type type) {
-  QString slash_terminated_prefix(prefix);
-  ensureEndsWithSlash(slash_terminated_prefix);
+  QString slashTerminatedPrefix(prefix);
+  ensureEndsWithSlash(slashTerminatedPrefix);
 
-  int modified_rowspan_begin = -1;
+  int modifiedRowspanBegin = -1;
 
   int row = -1;
   for (Item& item : m_items) {
@@ -164,9 +164,9 @@ void RelinkingModel::replacePrefix(const QString& prefix, const QString& replace
       }
     } else {
       assert(type == RelinkablePath::Dir);
-      if (item.uncommittedPath.startsWith(slash_terminated_prefix)) {
-        const int suffix_len = item.uncommittedPath.length() - slash_terminated_prefix.length() + 1;
-        item.uncommittedPath = replacement + item.uncommittedPath.right(suffix_len);
+      if (item.uncommittedPath.startsWith(slashTerminatedPrefix)) {
+        const int suffixLen = item.uncommittedPath.length() - slashTerminatedPrefix.length() + 1;
+        item.uncommittedPath = replacement + item.uncommittedPath.right(suffixLen);
         modified = true;
       } else if (item.uncommittedPath == prefix) {
         item.uncommittedPath = replacement;
@@ -176,35 +176,35 @@ void RelinkingModel::replacePrefix(const QString& prefix, const QString& replace
 
     if (modified) {
       m_haveUncommittedChanges = true;
-      if (modified_rowspan_begin == -1) {
-        modified_rowspan_begin = row;
+      if (modifiedRowspanBegin == -1) {
+        modifiedRowspanBegin = row;
       }
-      emit dataChanged(index(modified_rowspan_begin), index(row));
+      emit dataChanged(index(modifiedRowspanBegin), index(row));
       requestStatusUpdate(index(row));  // This sets item.changedStatus to StatusUpdatePending.
     } else {
-      if (modified_rowspan_begin != -1) {
-        emit dataChanged(index(modified_rowspan_begin), index(row));
-        modified_rowspan_begin = -1;
+      if (modifiedRowspanBegin != -1) {
+        emit dataChanged(index(modifiedRowspanBegin), index(row));
+        modifiedRowspanBegin = -1;
       }
     }
   }
 
-  if (modified_rowspan_begin != -1) {
-    emit dataChanged(index(modified_rowspan_begin), index(row));
+  if (modifiedRowspanBegin != -1) {
+    emit dataChanged(index(modifiedRowspanBegin), index(row));
   }
 }  // RelinkingModel::replacePrefix
 
 bool RelinkingModel::checkForMerges() const {
-  std::vector<QString> new_paths;
-  new_paths.reserve(m_items.size());
+  std::vector<QString> newPaths;
+  newPaths.reserve(m_items.size());
 
   for (const Item& item : m_items) {
-    new_paths.push_back(item.uncommittedPath);
+    newPaths.push_back(item.uncommittedPath);
   }
 
-  std::sort(new_paths.begin(), new_paths.end());
+  std::sort(newPaths.begin(), newPaths.end());
 
-  return std::adjacent_find(new_paths.begin(), new_paths.end()) != new_paths.end();
+  return std::adjacent_find(newPaths.begin(), newPaths.end()) != newPaths.end();
 }
 
 void RelinkingModel::commitChanges() {
@@ -212,8 +212,8 @@ void RelinkingModel::commitChanges() {
     return;
   }
 
-  Relinker new_relinker;
-  int modified_rowspan_begin = -1;
+  Relinker newRelinker;
+  int modifiedRowspanBegin = -1;
 
   int row = -1;
   for (Item& item : m_items) {
@@ -222,23 +222,23 @@ void RelinkingModel::commitChanges() {
     if (item.committedPath != item.uncommittedPath) {
       item.committedPath = item.uncommittedPath;
       item.committedStatus = item.uncommittedStatus;
-      new_relinker.addMapping(item.origPath, item.committedPath);
-      if (modified_rowspan_begin == -1) {
-        modified_rowspan_begin = row;
+      newRelinker.addMapping(item.origPath, item.committedPath);
+      if (modifiedRowspanBegin == -1) {
+        modifiedRowspanBegin = row;
       }
     } else {
-      if (modified_rowspan_begin != -1) {
-        emit dataChanged(index(modified_rowspan_begin), index(row));
-        modified_rowspan_begin = -1;
+      if (modifiedRowspanBegin != -1) {
+        emit dataChanged(index(modifiedRowspanBegin), index(row));
+        modifiedRowspanBegin = -1;
       }
     }
   }
 
-  if (modified_rowspan_begin != -1) {
-    emit dataChanged(index(modified_rowspan_begin), index(row));
+  if (modifiedRowspanBegin != -1) {
+    emit dataChanged(index(modifiedRowspanBegin), index(row));
   }
 
-  m_relinker->swap(new_relinker);
+  m_relinker->swap(newRelinker);
   m_haveUncommittedChanges = false;
 }  // RelinkingModel::commitChanges
 
@@ -247,7 +247,7 @@ void RelinkingModel::rollbackChanges() {
     return;
   }
 
-  int modified_rowspan_begin = -1;
+  int modifiedRowspanBegin = -1;
 
   int row = -1;
   for (Item& item : m_items) {
@@ -256,19 +256,19 @@ void RelinkingModel::rollbackChanges() {
     if (item.uncommittedPath != item.committedPath) {
       item.uncommittedPath = item.committedPath;
       item.uncommittedStatus = item.committedStatus;
-      if (modified_rowspan_begin == -1) {
-        modified_rowspan_begin = row;
+      if (modifiedRowspanBegin == -1) {
+        modifiedRowspanBegin = row;
       }
     } else {
-      if (modified_rowspan_begin != -1) {
-        emit dataChanged(index(modified_rowspan_begin), index(row));
-        modified_rowspan_begin = -1;
+      if (modifiedRowspanBegin != -1) {
+        emit dataChanged(index(modifiedRowspanBegin), index(row));
+        modifiedRowspanBegin = -1;
       }
     }
   }
 
-  if (modified_rowspan_begin != -1) {
-    emit dataChanged(index(modified_rowspan_begin), index(row));
+  if (modifiedRowspanBegin != -1) {
+    emit dataChanged(index(modifiedRowspanBegin), index(row));
   }
 
   m_haveUncommittedChanges = false;

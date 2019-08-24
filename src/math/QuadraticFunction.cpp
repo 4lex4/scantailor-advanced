@@ -4,7 +4,7 @@
 #include "QuadraticFunction.h"
 #include <algorithm>
 
-QuadraticFunction::QuadraticFunction(size_t num_vars) : A(num_vars, num_vars), b(num_vars), c(0) {}
+QuadraticFunction::QuadraticFunction(size_t numVars) : A(numVars, numVars), b(numVars), c(0) {}
 
 void QuadraticFunction::reset() {
   A.fill(0);
@@ -13,12 +13,12 @@ void QuadraticFunction::reset() {
 }
 
 double QuadraticFunction::evaluate(const double* x) const {
-  const size_t num_vars = numVars();
+  const size_t numVars = this->numVars();
 
   double sum = c;
-  for (size_t i = 0; i < num_vars; ++i) {
+  for (size_t i = 0; i < numVars; ++i) {
     sum += b[i] * x[i];
-    for (size_t j = 0; j < num_vars; ++j) {
+    for (size_t j = 0; j < numVars; ++j) {
       sum += x[i] * x[j] * A(i, j);
     }
   }
@@ -27,12 +27,12 @@ double QuadraticFunction::evaluate(const double* x) const {
 }
 
 QuadraticFunction::Gradient QuadraticFunction::gradient() const {
-  const size_t num_vars = numVars();
+  const size_t numVars = this->numVars();
   Gradient grad;
 
-  MatT<double>(num_vars, num_vars).swap(grad.A);
-  for (size_t i = 0; i < num_vars; ++i) {
-    for (size_t j = 0; j < num_vars; ++j) {
+  MatT<double>(numVars, numVars).swap(grad.A);
+  for (size_t i = 0; i < numVars; ++i) {
+    for (size_t j = 0; j < numVars; ++j) {
       grad.A(i, j) = A(i, j) + A(j, i);
     }
   }
@@ -43,15 +43,15 @@ QuadraticFunction::Gradient QuadraticFunction::gradient() const {
 }
 
 void QuadraticFunction::recalcForTranslatedArguments(const double* translation) {
-  const size_t num_vars = numVars();
+  const size_t numVars = this->numVars();
 
-  for (size_t i = 0; i < num_vars; ++i) {
+  for (size_t i = 0; i < numVars; ++i) {
     // Bi * (Xi + Ti) = Bi * Xi + Bi * Ti
     c += b[i] * translation[i];
   }
 
-  for (size_t i = 0; i < num_vars; ++i) {
-    for (size_t j = 0; j < num_vars; ++j) {
+  for (size_t i = 0; i < numVars; ++i) {
+    for (size_t j = 0; j < numVars; ++j) {
       // (Xi + Ti)*Aij*(Xj + Tj) = Xi*Aij*Xj + Aij*Tj*Xi + Aij*Ti*Xj + Aij*Ti*Tj
       const double a = A(i, j);
       b[i] += a * translation[j];

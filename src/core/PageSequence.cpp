@@ -3,8 +3,8 @@
 
 #include "PageSequence.h"
 
-void PageSequence::append(const PageInfo& page_info) {
-  m_pages.push_back(page_info);
+void PageSequence::append(const PageInfo& pageInfo) {
+  m_pages.push_back(pageInfo);
 }
 
 const PageInfo& PageSequence::pageAt(const size_t idx) const {
@@ -31,8 +31,8 @@ int PageSequence::pageNo(const PageId& page) const {
 std::set<PageId> PageSequence::selectAll() const {
   std::set<PageId> selection;
 
-  for (const PageInfo& page_info : m_pages) {
-    selection.insert(page_info.id());
+  for (const PageInfo& pageInfo : m_pages) {
+    selection.insert(pageInfo.id());
   }
 
   return selection;
@@ -65,11 +65,11 @@ std::set<PageId> PageSequence::selectEveryOther(const PageId& base) const {
     return selection;
   }
 
-  const int base_idx = static_cast<int>(it - m_pages.begin());
+  const int baseIdx = static_cast<int>(it - m_pages.begin());
   int idx = 0;
-  for (const PageInfo& page_info : m_pages) {
-    if (((idx - base_idx) & 1) == 0) {
-      selection.insert(page_info.id());
+  for (const PageInfo& pageInfo : m_pages) {
+    if (((idx - baseIdx) & 1) == 0) {
+      selection.insert(pageInfo.id());
     }
     ++idx;
   }

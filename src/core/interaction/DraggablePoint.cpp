@@ -17,14 +17,14 @@ int DraggablePoint::proximityPriority() const {
   return m_proximityPriority;
 }
 
-Proximity DraggablePoint::proximity(const QPointF& mouse_pos) {
-  return Proximity(pointPosition(), mouse_pos);
+Proximity DraggablePoint::proximity(const QPointF& mousePos) {
+  return Proximity(pointPosition(), mousePos);
 }
 
-void DraggablePoint::dragInitiated(const QPointF& mouse_pos) {
-  m_pointRelativeToMouse = pointPosition() - mouse_pos;
+void DraggablePoint::dragInitiated(const QPointF& mousePos) {
+  m_pointRelativeToMouse = pointPosition() - mousePos;
 }
 
-void DraggablePoint::dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
-  pointMoveRequest(mouse_pos + m_pointRelativeToMouse, mask);
+void DraggablePoint::dragContinuation(const QPointF& mousePos, Qt::KeyboardModifiers mask) {
+  pointMoveRequest(mousePos + m_pointRelativeToMouse, mask);
 }

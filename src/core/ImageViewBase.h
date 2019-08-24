@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEVIEWBASE_H_
-#define IMAGEVIEWBASE_H_
+#ifndef SCANTAILOR_CORE_IMAGEVIEWBASE_H_
+#define SCANTAILOR_CORE_IMAGEVIEWBASE_H_
 
 #include <QAbstractScrollArea>
 #include <QImage>
@@ -52,7 +52,7 @@ class ImageViewBase : public QAbstractScrollArea {
    * \brief ImageViewBase constructor.
    *
    * \param image The image to display.
-   * \param downscaled_version The downscaled version of \p image.
+   * \param downscaledVersion The downscaled version of \p image.
    *        If it's null, it will be created automatically.
    *        The exact scale doesn't matter.
    *        The whole idea of having a downscaled version is
@@ -67,7 +67,7 @@ class ImageViewBase : public QAbstractScrollArea {
    *        be used for custom drawing or custom controls.
    */
   ImageViewBase(const QImage& image,
-                const ImagePixmapUnion& downscaled_version,
+                const ImagePixmapUnion& downscaledVersion,
                 const ImagePresentation& presentation,
                 const Margins& margins = Margins());
 
@@ -132,7 +132,7 @@ class ImageViewBase : public QAbstractScrollArea {
    * Unlike setStatusTip(), this method will display the tooltip
    * immediately, not when the mouse enters the widget next time.
    */
-  void ensureStatusTip(const QString& status_tip);
+  void ensureStatusTip(const QString& statusTip);
 
   /**
    * \brief Get the focal point in widget coordinates.
@@ -153,7 +153,7 @@ class ImageViewBase : public QAbstractScrollArea {
    *
    * \see getWidgetFocalPoint()
    */
-  void setWidgetFocalPoint(const QPointF& widget_fp);
+  void setWidgetFocalPoint(const QPointF& widgetFp);
 
   /**
    * \brief Set the focal point in widget coordinates, after adjustring
@@ -164,13 +164,13 @@ class ImageViewBase : public QAbstractScrollArea {
    * \see getWidgetFocalPoint()
    * \see setWidgetFocalPoint()
    */
-  void adjustAndSetWidgetFocalPoint(const QPointF& widget_fp);
+  void adjustAndSetWidgetFocalPoint(const QPointF& widgetFp);
 
   /**
    * \brief Sets the widget focal point and recalculates the pixmap focal
    *        focal point so that the image is not moved on screen.
    */
-  void setWidgetFocalPointWithoutMoving(QPointF new_widget_fp);
+  void setWidgetFocalPointWithoutMoving(QPointF newWidgetFp);
 
   /**
    * \brief Updates image-to-virtual and recalculates
@@ -209,10 +209,10 @@ class ImageViewBase : public QAbstractScrollArea {
    * The image is considered ideally positioned when as little as possible
    * screen space is wasted.
    *
-   * \param pixel_length The euclidean distance in widget pixels to move the image.
+   * \param pixelLength The euclidean distance in widget pixels to move the image.
    *        Will be clipped if it's more than required to reach the ideal position.
    */
-  void moveTowardsIdealPosition(double pixel_length);
+  void moveTowardsIdealPosition(double pixelLength);
 
   static BackgroundExecutor& backgroundExecutor();
 
@@ -279,9 +279,9 @@ class ImageViewBase : public QAbstractScrollArea {
 
   QPointF getIdealWidgetFocalPoint(FocalPointMode mode) const;
 
-  void setNewWidgetFP(QPointF widget_fp, bool update = false);
+  void setNewWidgetFP(QPointF widgetFp, bool update = false);
 
-  void adjustAndSetNewWidgetFP(QPointF proposed_widget_fp, bool update = false);
+  void adjustAndSetNewWidgetFP(QPointF proposedWidgetFp, bool update = false);
 
   QPointF centeredWidgetFocalPoint() const;
 
@@ -453,4 +453,4 @@ class ImageViewBase : public QAbstractScrollArea {
 };
 
 
-#endif  // ifndef IMAGEVIEWBASE_H_
+#endif  // ifndef SCANTAILOR_CORE_IMAGEVIEWBASE_H_

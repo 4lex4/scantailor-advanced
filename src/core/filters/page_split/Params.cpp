@@ -5,8 +5,8 @@
 #include <QDomDocument>
 
 namespace page_split {
-Params::Params(const PageLayout& layout, const Dependencies& deps, const AutoManualMode split_line_mode)
-    : m_layout(layout), m_deps(deps), m_splitLineMode(split_line_mode) {}
+Params::Params(const PageLayout& layout, const Dependencies& deps, const AutoManualMode splitLineMode)
+    : m_layout(layout), m_deps(deps), m_splitLineMode(splitLineMode) {}
 
 Params::Params(const QDomElement& el)
     : m_layout(el.namedItem("pages").toElement()),

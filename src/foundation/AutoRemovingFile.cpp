@@ -6,7 +6,7 @@
 
 AutoRemovingFile::AutoRemovingFile() = default;
 
-AutoRemovingFile::AutoRemovingFile(const QString& file_path) : m_file(file_path) {}
+AutoRemovingFile::AutoRemovingFile(const QString& filePath) : m_file(filePath) {}
 
 AutoRemovingFile::AutoRemovingFile(AutoRemovingFile& other) : m_file(other.release()) {}
 
@@ -31,12 +31,12 @@ AutoRemovingFile& AutoRemovingFile::operator=(CopyHelper other) {
 }
 
 void AutoRemovingFile::reset(const QString& file) {
-  const QString& old_file(file);
+  const QString& oldFile(file);
 
   m_file = file;
 
-  if (!old_file.isEmpty()) {
-    QFile::remove(old_file);
+  if (!oldFile.isEmpty()) {
+    QFile::remove(oldFile);
   }
 }
 

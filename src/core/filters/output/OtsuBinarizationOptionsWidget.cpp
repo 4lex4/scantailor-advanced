@@ -28,11 +28,11 @@ OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Setti
   setupUiConnections();
 }
 
-void OtsuBinarizationOptionsWidget::updateUi(const PageId& page_id) {
+void OtsuBinarizationOptionsWidget::updateUi(const PageId& pageId) {
   removeUiConnections();
 
-  const Params params(m_settings->getParams(page_id));
-  m_pageId = page_id;
+  const Params params(m_settings->getParams(pageId));
+  m_pageId = pageId;
   m_colorParams = params.colorParams();
 
   updateView();
@@ -54,16 +54,16 @@ void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
 
   thresholLabel->setText(QString::number(value));
 
-  const QString tooltip_text(QString::number(value));
-  thresholdSlider->setToolTip(tooltip_text);
+  const QString tooltipText(QString::number(value));
+  thresholdSlider->setToolTip(tooltipText);
 
   // Show the tooltip immediately.
   const QPoint center(thresholdSlider->rect().center());
-  QPoint tooltip_pos(thresholdSlider->mapFromGlobal(QCursor::pos()));
-  tooltip_pos.setY(center.y());
-  tooltip_pos.setX(qBound(0, tooltip_pos.x(), thresholdSlider->width()));
-  tooltip_pos = thresholdSlider->mapToGlobal(tooltip_pos);
-  QToolTip::showText(tooltip_pos, tooltip_text, thresholdSlider);
+  QPoint tooltipPos(thresholdSlider->mapFromGlobal(QCursor::pos()));
+  tooltipPos.setY(center.y());
+  tooltipPos.setX(qBound(0, tooltipPos.x(), thresholdSlider->width()));
+  tooltipPos = thresholdSlider->mapToGlobal(tooltipPos);
+  QToolTip::showText(tooltipPos, tooltipText, thresholdSlider);
 
   if (thresholdSlider->isSliderDown()) {
     return;

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DRAGGABLE_OBJECT_H_
-#define DRAGGABLE_OBJECT_H_
+#ifndef SCANTAILOR_INTERACTION_DRAGGABLEOBJECT_H_
+#define SCANTAILOR_INTERACTION_DRAGGABLEOBJECT_H_
 
 #include <boost/function.hpp>
 #include "InteractionState.h"
@@ -21,13 +21,13 @@ class DraggableObject {
 
   typedef boost::function<int()> ProximityPriorityCallback;
 
-  typedef boost::function<Proximity(const QPointF& mouse_pos)> ProximityCallback;
+  typedef boost::function<Proximity(const QPointF& mousePos)> ProximityCallback;
 
-  typedef boost::function<void(const QPointF& mouse_pos)> DragInitiatedCallback;
+  typedef boost::function<void(const QPointF& mousePos)> DragInitiatedCallback;
 
-  typedef boost::function<void(const QPointF& mouse_pos, Qt::KeyboardModifiers mask)> DragContinuationCallback;
+  typedef boost::function<void(const QPointF& mousePos, Qt::KeyboardModifiers mask)> DragContinuationCallback;
 
-  typedef boost::function<void(const QPointF& mouse_pos)> DragFinishedCallback;
+  typedef boost::function<void(const QPointF& mousePos)> DragFinishedCallback;
 
   DraggableObject()
       : m_paintCallback(&DraggableObject::defaultPaint),
@@ -71,22 +71,22 @@ class DraggableObject {
    * \return The proximity from the mouse position in widget coordinates to
    *         any draggable part of the object.
    */
-  virtual Proximity proximity(const QPointF& widget_mouse_pos) { return m_proximityCallback(widget_mouse_pos); }
+  virtual Proximity proximity(const QPointF& widgetMousePos) { return m_proximityCallback(widgetMousePos); }
 
   void setProximityCallback(const ProximityCallback& callback) { m_proximityCallback = callback; }
 
   /**
    * \brief Called when dragging is initiated, that is when the mouse button is pressed.
    */
-  virtual void dragInitiated(const QPointF& mouse_pos) { m_dragInitiatedCallback(mouse_pos); }
+  virtual void dragInitiated(const QPointF& mousePos) { m_dragInitiatedCallback(mousePos); }
 
   void setDragInitiatedCallback(const DragInitiatedCallback& callback) { m_dragInitiatedCallback = callback; }
 
   /**
    * \brief Handles a request to move to a particular position in widget coordinates.
    */
-  virtual void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
-    m_dragContinuationCallback(mouse_pos, mask);
+  virtual void dragContinuation(const QPointF& mousePos, Qt::KeyboardModifiers mask) {
+    m_dragContinuationCallback(mousePos, mask);
   }
 
   void setDragContinuationCallback(const DragContinuationCallback& callback) { m_dragContinuationCallback = callback; }
@@ -94,7 +94,7 @@ class DraggableObject {
   /**
    * \brief Called when dragging is finished, that is when the mouse button is released.
    */
-  virtual void dragFinished(const QPointF& mouse_pos) { m_dragFinishedCallback(mouse_pos); }
+  virtual void dragFinished(const QPointF& mousePos) { m_dragFinishedCallback(mousePos); }
 
   void setDragFinishedCallback(const DragFinishedCallback& callback) { m_dragFinishedCallback = callback; }
 
@@ -119,4 +119,4 @@ class DraggableObject {
 };
 
 
-#endif  // ifndef DRAGGABLE_OBJECT_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_DRAGGABLEOBJECT_H_

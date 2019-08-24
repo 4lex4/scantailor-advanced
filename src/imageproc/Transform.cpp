@@ -21,17 +21,17 @@ struct YLess {
 QSizeF calcSrcUnitSize(const QTransform& xform, const QSizeF& min) {
   // Imagine a rectangle of (0, 0, 1, 1), except we take
   // centers of its edges instead of its vertices.
-  QPolygonF dst_poly;
-  dst_poly.push_back(QPointF(0.5, 0.0));
-  dst_poly.push_back(QPointF(1.0, 0.5));
-  dst_poly.push_back(QPointF(0.5, 1.0));
-  dst_poly.push_back(QPointF(0.0, 0.5));
+  QPolygonF dstPoly;
+  dstPoly.push_back(QPointF(0.5, 0.0));
+  dstPoly.push_back(QPointF(1.0, 0.5));
+  dstPoly.push_back(QPointF(0.5, 1.0));
+  dstPoly.push_back(QPointF(0.0, 0.5));
 
-  QPolygonF src_poly(xform.map(dst_poly));
-  std::sort(src_poly.begin(), src_poly.end(), XLess());
-  const double width = src_poly.back().x() - src_poly.front().x();
-  std::sort(src_poly.begin(), src_poly.end(), YLess());
-  const double height = src_poly.back().y() - src_poly.front().y();
+  QPolygonF srcPoly(xform.map(dstPoly));
+  std::sort(srcPoly.begin(), srcPoly.end(), XLess());
+  const double width = srcPoly.back().x() - srcPoly.front().x();
+  std::sort(srcPoly.begin(), srcPoly.end(), YLess());
+  const double height = srcPoly.back().y() - srcPoly.front().y();
 
   const QSizeF min32(min * 32.0);
 
@@ -39,63 +39,63 @@ QSizeF calcSrcUnitSize(const QTransform& xform, const QSizeF& min) {
 }
 
 template <typename StorageUnit, typename Mixer>
-static void transformGeneric(const StorageUnit* const src_data,
-                             const int src_stride,
-                             const QSize src_size,
-                             StorageUnit* const dst_data,
-                             const int dst_stride,
+static void transformGeneric(const StorageUnit* const srcData,
+                             const int srcStride,
+                             const QSize srcSize,
+                             StorageUnit* const dstData,
+                             const int dstStride,
                              const QTransform& xform,
-                             const QRect& dst_rect,
-                             const StorageUnit outside_color,
-                             const int outside_flags,
-                             const QSizeF& min_mapping_area) {
-  const int sw = src_size.width();
-  const int sh = src_size.height();
-  const int dw = dst_rect.width();
-  const int dh = dst_rect.height();
+                             const QRect& dstRect,
+                             const StorageUnit outsideColor,
+                             const int outsideFlags,
+                             const QSizeF& minMappingArea) {
+  const int sw = srcSize.width();
+  const int sh = srcSize.height();
+  const int dw = dstRect.width();
+  const int dh = dstRect.height();
 
-  StorageUnit* dst_line = dst_data;
+  StorageUnit* dstLine = dstData;
 
-  QTransform inv_xform;
-  inv_xform.translate(dst_rect.x(), dst_rect.y());
-  inv_xform *= xform.inverted();
-  inv_xform *= QTransform().scale(32.0, 32.0);
+  QTransform invXform;
+  invXform.translate(dstRect.x(), dstRect.y());
+  invXform *= xform.inverted();
+  invXform *= QTransform().scale(32.0, 32.0);
 
-  // sx32 = dx*inv_xform.m11() + dy*inv_xform.m21() + inv_xform.dx();
-  // sy32 = dy*inv_xform.m22() + dx*inv_xform.m12() + inv_xform.dy();
+  // sx32 = dx*invXform.m11() + dy*invXform.m21() + invXform.dx();
+  // sy32 = dy*invXform.m22() + dx*invXform.m12() + invXform.dy();
 
-  const QSizeF src32_unit_size(calcSrcUnitSize(inv_xform, min_mapping_area));
-  const int src32_unit_w = std::max<int>(1, qRound(src32_unit_size.width()));
-  const int src32_unit_h = std::max<int>(1, qRound(src32_unit_size.height()));
+  const QSizeF src32UnitSize(calcSrcUnitSize(invXform, minMappingArea));
+  const int src32UnitW = std::max<int>(1, qRound(src32UnitSize.width()));
+  const int src32UnitH = std::max<int>(1, qRound(src32UnitSize.height()));
 
-  for (int dy = 0; dy < dh; ++dy, dst_line += dst_stride) {
-    const double f_dy_center = dy + 0.5;
-    const double f_sx32_base = f_dy_center * inv_xform.m21() + inv_xform.dx();
-    const double f_sy32_base = f_dy_center * inv_xform.m22() + inv_xform.dy();
+  for (int dy = 0; dy < dh; ++dy, dstLine += dstStride) {
+    const double fDyCenter = dy + 0.5;
+    const double fSx32Base = fDyCenter * invXform.m21() + invXform.dx();
+    const double fSy32Base = fDyCenter * invXform.m22() + invXform.dy();
 
     for (int dx = 0; dx < dw; ++dx) {
-      const double f_dx_center = dx + 0.5;
-      const double f_sx32_center = f_sx32_base + f_dx_center * inv_xform.m11();
-      const double f_sy32_center = f_sy32_base + f_dx_center * inv_xform.m12();
-      int src32_left = (int) f_sx32_center - (src32_unit_w >> 1);
-      int src32_top = (int) f_sy32_center - (src32_unit_h >> 1);
-      int src32_right = src32_left + src32_unit_w;
-      int src32_bottom = src32_top + src32_unit_h;
-      int src_left = src32_left >> 5;
-      int src_right = (src32_right - 1) >> 5;  // inclusive
-      int src_top = src32_top >> 5;
-      int src_bottom = (src32_bottom - 1) >> 5;  // inclusive
-      assert(src_bottom >= src_top);
-      assert(src_right >= src_left);
+      const double fDxCenter = dx + 0.5;
+      const double fSx32Center = fSx32Base + fDxCenter * invXform.m11();
+      const double fSy32Center = fSy32Base + fDxCenter * invXform.m12();
+      int src32Left = (int) fSx32Center - (src32UnitW >> 1);
+      int src32Top = (int) fSy32Center - (src32UnitH >> 1);
+      int src32Right = src32Left + src32UnitW;
+      int src32Bottom = src32Top + src32UnitH;
+      int srcLeft = src32Left >> 5;
+      int srcRight = (src32Right - 1) >> 5;  // inclusive
+      int srcTop = src32Top >> 5;
+      int srcBottom = (src32Bottom - 1) >> 5;  // inclusive
+      assert(srcBottom >= srcTop);
+      assert(srcRight >= srcLeft);
 
-      if ((src_bottom < 0) || (src_right < 0) || (src_left >= sw) || (src_top >= sh)) {
+      if ((srcBottom < 0) || (srcRight < 0) || (srcLeft >= sw) || (srcTop >= sh)) {
         // Completely outside of src image.
-        if (outside_flags & OutsidePixels::COLOR) {
-          dst_line[dx] = outside_color;
+        if (outsideFlags & OutsidePixels::COLOR) {
+          dstLine[dx] = outsideColor;
         } else {
-          const int src_x = qBound<int>(0, (src_left + src_right) >> 1, sw - 1);
-          const int src_y = qBound<int>(0, (src_top + src_bottom) >> 1, sh - 1);
-          dst_line[dx] = src_data[src_y * src_stride + src_x];
+          const int srcX = qBound<int>(0, (srcLeft + srcRight) >> 1, sw - 1);
+          const int srcY = qBound<int>(0, (srcTop + srcBottom) >> 1, sh - 1);
+          dstLine[dx] = srcData[srcY * srcStride + srcX];
         }
         continue;
       }
@@ -106,175 +106,175 @@ static void transformGeneric(const StorageUnit* const src_data,
        * negative infinity.
        * Likewise, (intval % 32) is not the same as (intval & 31).
        * The following expression:
-       * top_fraction = 32 - (src32_top & 31);
-       * works correctly with both positive and negative src32_top.
+       * topFraction = 32 - (src32Top & 31);
+       * works correctly with both positive and negative src32Top.
        */
 
-      unsigned background_area = 0;
+      unsigned backgroundArea = 0;
 
-      if (src_top < 0) {
-        const unsigned top_fraction = 32 - (src32_top & 31);
-        const unsigned hor_fraction = src32_right - src32_left;
-        background_area += top_fraction * hor_fraction;
-        const unsigned full_pixels_ver = -1 - src_top;
-        background_area += hor_fraction * (full_pixels_ver << 5);
-        src_top = 0;
-        src32_top = 0;
+      if (srcTop < 0) {
+        const unsigned topFraction = 32 - (src32Top & 31);
+        const unsigned horFraction = src32Right - src32Left;
+        backgroundArea += topFraction * horFraction;
+        const unsigned fullPixelsVer = -1 - srcTop;
+        backgroundArea += horFraction * (fullPixelsVer << 5);
+        srcTop = 0;
+        src32Top = 0;
       }
-      if (src_bottom >= sh) {
-        const unsigned bottom_fraction = src32_bottom - (src_bottom << 5);
-        const unsigned hor_fraction = src32_right - src32_left;
-        background_area += bottom_fraction * hor_fraction;
-        const unsigned full_pixels_ver = src_bottom - sh;
-        background_area += hor_fraction * (full_pixels_ver << 5);
-        src_bottom = sh - 1;     // inclusive
-        src32_bottom = sh << 5;  // exclusive
+      if (srcBottom >= sh) {
+        const unsigned bottomFraction = src32Bottom - (srcBottom << 5);
+        const unsigned horFraction = src32Right - src32Left;
+        backgroundArea += bottomFraction * horFraction;
+        const unsigned fullPixelsVer = srcBottom - sh;
+        backgroundArea += horFraction * (fullPixelsVer << 5);
+        srcBottom = sh - 1;     // inclusive
+        src32Bottom = sh << 5;  // exclusive
       }
-      if (src_left < 0) {
-        const unsigned left_fraction = 32 - (src32_left & 31);
-        const unsigned vert_fraction = src32_bottom - src32_top;
-        background_area += left_fraction * vert_fraction;
-        const unsigned full_pixels_hor = -1 - src_left;
-        background_area += vert_fraction * (full_pixels_hor << 5);
-        src_left = 0;
-        src32_left = 0;
+      if (srcLeft < 0) {
+        const unsigned leftFraction = 32 - (src32Left & 31);
+        const unsigned vertFraction = src32Bottom - src32Top;
+        backgroundArea += leftFraction * vertFraction;
+        const unsigned fullPixelsHor = -1 - srcLeft;
+        backgroundArea += vertFraction * (fullPixelsHor << 5);
+        srcLeft = 0;
+        src32Left = 0;
       }
-      if (src_right >= sw) {
-        const unsigned right_fraction = src32_right - (src_right << 5);
-        const unsigned vert_fraction = src32_bottom - src32_top;
-        background_area += right_fraction * vert_fraction;
-        const unsigned full_pixels_hor = src_right - sw;
-        background_area += vert_fraction * (full_pixels_hor << 5);
-        src_right = sw - 1;     // inclusive
-        src32_right = sw << 5;  // exclusive
+      if (srcRight >= sw) {
+        const unsigned rightFraction = src32Right - (srcRight << 5);
+        const unsigned vertFraction = src32Bottom - src32Top;
+        backgroundArea += rightFraction * vertFraction;
+        const unsigned fullPixelsHor = srcRight - sw;
+        backgroundArea += vertFraction * (fullPixelsHor << 5);
+        srcRight = sw - 1;     // inclusive
+        src32Right = sw << 5;  // exclusive
       }
-      assert(src_bottom >= src_top);
-      assert(src_right >= src_left);
+      assert(srcBottom >= srcTop);
+      assert(srcRight >= srcLeft);
 
       Mixer mixer;
-      if (outside_flags & OutsidePixels::WEAK) {
-        background_area = 0;
+      if (outsideFlags & OutsidePixels::WEAK) {
+        backgroundArea = 0;
       } else {
-        assert(outside_flags & OutsidePixels::COLOR);
-        mixer.add(outside_color, background_area);
+        assert(outsideFlags & OutsidePixels::COLOR);
+        mixer.add(outsideColor, backgroundArea);
       }
 
-      const unsigned left_fraction = 32 - (src32_left & 31);
-      const unsigned top_fraction = 32 - (src32_top & 31);
-      const unsigned right_fraction = src32_right - (src_right << 5);
-      const unsigned bottom_fraction = src32_bottom - (src_bottom << 5);
+      const unsigned leftFraction = 32 - (src32Left & 31);
+      const unsigned topFraction = 32 - (src32Top & 31);
+      const unsigned rightFraction = src32Right - (srcRight << 5);
+      const unsigned bottomFraction = src32Bottom - (srcBottom << 5);
 
-      assert(left_fraction + right_fraction + (src_right - src_left - 1) * 32
-             == static_cast<unsigned>(src32_right - src32_left));
-      assert(top_fraction + bottom_fraction + (src_bottom - src_top - 1) * 32
-             == static_cast<unsigned>(src32_bottom - src32_top));
+      assert(leftFraction + rightFraction + (srcRight - srcLeft - 1) * 32
+             == static_cast<unsigned>(src32Right - src32Left));
+      assert(topFraction + bottomFraction + (srcBottom - srcTop - 1) * 32
+             == static_cast<unsigned>(src32Bottom - src32Top));
 
-      const unsigned src_area = (src32_bottom - src32_top) * (src32_right - src32_left);
-      if (src_area == 0) {
-        if ((outside_flags & OutsidePixels::COLOR)) {
-          dst_line[dx] = outside_color;
+      const unsigned srcArea = (src32Bottom - src32Top) * (src32Right - src32Left);
+      if (srcArea == 0) {
+        if ((outsideFlags & OutsidePixels::COLOR)) {
+          dstLine[dx] = outsideColor;
         } else {
-          const int src_x = qBound<int>(0, (src_left + src_right) >> 1, sw - 1);
-          const int src_y = qBound<int>(0, (src_top + src_bottom) >> 1, sh - 1);
-          dst_line[dx] = src_data[src_y * src_stride + src_x];
+          const int srcX = qBound<int>(0, (srcLeft + srcRight) >> 1, sw - 1);
+          const int srcY = qBound<int>(0, (srcTop + srcBottom) >> 1, sh - 1);
+          dstLine[dx] = srcData[srcY * srcStride + srcX];
         }
         continue;
       }
 
-      const StorageUnit* src_line = &src_data[src_top * src_stride];
+      const StorageUnit* srcLine = &srcData[srcTop * srcStride];
 
-      if (src_top == src_bottom) {
-        if (src_left == src_right) {
+      if (srcTop == srcBottom) {
+        if (srcLeft == srcRight) {
           // dst pixel maps to a single src pixel
-          const StorageUnit c = src_line[src_left];
-          if (background_area == 0) {
+          const StorageUnit c = srcLine[srcLeft];
+          if (backgroundArea == 0) {
             // common case optimization
-            dst_line[dx] = c;
+            dstLine[dx] = c;
             continue;
           }
-          mixer.add(c, src_area);
+          mixer.add(c, srcArea);
         } else {
           // dst pixel maps to a horizontal line of src pixels
-          const unsigned vert_fraction = src32_bottom - src32_top;
-          const unsigned left_area = vert_fraction * left_fraction;
-          const unsigned middle_area = vert_fraction << 5;
-          const unsigned right_area = vert_fraction * right_fraction;
+          const unsigned vertFraction = src32Bottom - src32Top;
+          const unsigned leftArea = vertFraction * leftFraction;
+          const unsigned middleArea = vertFraction << 5;
+          const unsigned rightArea = vertFraction * rightFraction;
 
-          mixer.add(src_line[src_left], left_area);
+          mixer.add(srcLine[srcLeft], leftArea);
 
-          for (int sx = src_left + 1; sx < src_right; ++sx) {
-            mixer.add(src_line[sx], middle_area);
+          for (int sx = srcLeft + 1; sx < srcRight; ++sx) {
+            mixer.add(srcLine[sx], middleArea);
           }
 
-          mixer.add(src_line[src_right], right_area);
+          mixer.add(srcLine[srcRight], rightArea);
         }
-      } else if (src_left == src_right) {
+      } else if (srcLeft == srcRight) {
         // dst pixel maps to a vertical line of src pixels
-        const unsigned hor_fraction = src32_right - src32_left;
-        const unsigned top_area = hor_fraction * top_fraction;
-        const unsigned middle_area = hor_fraction << 5;
-        const unsigned bottom_area = hor_fraction * bottom_fraction;
+        const unsigned horFraction = src32Right - src32Left;
+        const unsigned topArea = horFraction * topFraction;
+        const unsigned middleArea = horFraction << 5;
+        const unsigned bottomArea = horFraction * bottomFraction;
 
-        src_line += src_left;
-        mixer.add(*src_line, top_area);
+        srcLine += srcLeft;
+        mixer.add(*srcLine, topArea);
 
-        src_line += src_stride;
+        srcLine += srcStride;
 
-        for (int sy = src_top + 1; sy < src_bottom; ++sy) {
-          mixer.add(*src_line, middle_area);
-          src_line += src_stride;
+        for (int sy = srcTop + 1; sy < srcBottom; ++sy) {
+          mixer.add(*srcLine, middleArea);
+          srcLine += srcStride;
         }
 
-        mixer.add(*src_line, bottom_area);
+        mixer.add(*srcLine, bottomArea);
       } else {
         // dst pixel maps to a block of src pixels
-        const unsigned top_area = top_fraction << 5;
-        const unsigned bottom_area = bottom_fraction << 5;
-        const unsigned left_area = left_fraction << 5;
-        const unsigned right_area = right_fraction << 5;
-        const unsigned topleft_area = top_fraction * left_fraction;
-        const unsigned topright_area = top_fraction * right_fraction;
-        const unsigned bottomleft_area = bottom_fraction * left_fraction;
-        const unsigned bottomright_area = bottom_fraction * right_fraction;
+        const unsigned topArea = topFraction << 5;
+        const unsigned bottomArea = bottomFraction << 5;
+        const unsigned leftArea = leftFraction << 5;
+        const unsigned rightArea = rightFraction << 5;
+        const unsigned topleftArea = topFraction * leftFraction;
+        const unsigned toprightArea = topFraction * rightFraction;
+        const unsigned bottomleftArea = bottomFraction * leftFraction;
+        const unsigned bottomrightArea = bottomFraction * rightFraction;
 
         // process the top-left corner
-        mixer.add(src_line[src_left], topleft_area);
+        mixer.add(srcLine[srcLeft], topleftArea);
 
         // process the top line (without corners)
-        for (int sx = src_left + 1; sx < src_right; ++sx) {
-          mixer.add(src_line[sx], top_area);
+        for (int sx = srcLeft + 1; sx < srcRight; ++sx) {
+          mixer.add(srcLine[sx], topArea);
         }
 
         // process the top-right corner
-        mixer.add(src_line[src_right], topright_area);
+        mixer.add(srcLine[srcRight], toprightArea);
 
-        src_line += src_stride;
+        srcLine += srcStride;
         // process middle lines
-        for (int sy = src_top + 1; sy < src_bottom; ++sy) {
-          mixer.add(src_line[src_left], left_area);
+        for (int sy = srcTop + 1; sy < srcBottom; ++sy) {
+          mixer.add(srcLine[srcLeft], leftArea);
 
-          for (int sx = src_left + 1; sx < src_right; ++sx) {
-            mixer.add(src_line[sx], 32 * 32);
+          for (int sx = srcLeft + 1; sx < srcRight; ++sx) {
+            mixer.add(srcLine[sx], 32 * 32);
           }
 
-          mixer.add(src_line[src_right], right_area);
+          mixer.add(srcLine[srcRight], rightArea);
 
-          src_line += src_stride;
+          srcLine += srcStride;
         }
 
         // process bottom-left corner
-        mixer.add(src_line[src_left], bottomleft_area);
+        mixer.add(srcLine[srcLeft], bottomleftArea);
 
         // process the bottom line (without corners)
-        for (int sx = src_left + 1; sx < src_right; ++sx) {
-          mixer.add(src_line[sx], bottom_area);
+        for (int sx = srcLeft + 1; sx < srcRight; ++sx) {
+          mixer.add(srcLine[sx], bottomArea);
         }
 
         // process the bottom-right corner
-        mixer.add(src_line[src_right], bottomright_area);
+        mixer.add(srcLine[srcRight], bottomrightArea);
       }
 
-      dst_line[dx] = mixer.mix(src_area + background_area);
+      dstLine[dx] = mixer.mix(srcArea + backgroundArea);
     }
   }
 }  // transformGeneric
@@ -288,17 +288,17 @@ void fixDpiInPlace(ImageT& dst, const QImage& src, const QTransform& xform) {
 
 QImage transform(const QImage& src,
                  const QTransform& xform,
-                 const QRect& dst_rect,
-                 const OutsidePixels outside_pixels,
-                 const QSizeF& min_mapping_area) {
-  if (src.isNull() || dst_rect.isEmpty()) {
+                 const QRect& dstRect,
+                 const OutsidePixels outsidePixels,
+                 const QSizeF& minMappingArea) {
+  if (src.isNull() || dstRect.isEmpty()) {
     return QImage();
   }
   if (!xform.isAffine()) {
     throw std::invalid_argument("transform: only affine transformations are supported");
   }
-  if (!dst_rect.isValid()) {
-    throw std::invalid_argument("transform: dst_rect is invalid");
+  if (!dstRect.isValid()) {
+    throw std::invalid_argument("transform: dstRect is invalid");
   }
 
   auto is_opaque_gray
@@ -309,47 +309,46 @@ QImage transform(const QImage& src,
     case QImage::Format_Indexed8:
     case QImage::Format_Mono:
     case QImage::Format_MonoLSB:
-      if (src.allGray() && is_opaque_gray(outside_pixels.rgba())) {
+      if (src.allGray() && is_opaque_gray(outsidePixels.rgba())) {
         // The palette of src may be non-standard, so we create a GrayImage,
         // which is guaranteed to have a standard palette.
-        GrayImage gray_src(src);
-        GrayImage gray_dst(dst_rect.size());
+        GrayImage graySrc(src);
+        GrayImage grayDst(dstRect.size());
         typedef uint32_t AccumType;
         transformGeneric<uint8_t, GrayColorMixer<AccumType>>(
-            gray_src.data(), gray_src.stride(), src.size(), gray_dst.data(), gray_dst.stride(), xform, dst_rect,
-            outside_pixels.grayLevel(), outside_pixels.flags(), min_mapping_area);
+            graySrc.data(), graySrc.stride(), src.size(), grayDst.data(), grayDst.stride(), xform, dstRect,
+            outsidePixels.grayLevel(), outsidePixels.flags(), minMappingArea);
 
-        fixDpiInPlace(gray_dst, src, xform);
+        fixDpiInPlace(grayDst, src, xform);
 
-        return gray_dst;
+        return grayDst;
       }
       // fall through
     default:
-      if (!src.hasAlphaChannel() && (qAlpha(outside_pixels.rgba()) == 0xff)) {
-        const QImage src_rgb32(src.convertToFormat(QImage::Format_RGB32));
-        badAllocIfNull(src_rgb32);
-        QImage dst(dst_rect.size(), QImage::Format_RGB32);
+      if (!src.hasAlphaChannel() && (qAlpha(outsidePixels.rgba()) == 0xff)) {
+        const QImage srcRgb32(src.convertToFormat(QImage::Format_RGB32));
+        badAllocIfNull(srcRgb32);
+        QImage dst(dstRect.size(), QImage::Format_RGB32);
         badAllocIfNull(dst);
 
         typedef uint32_t AccumType;
         transformGeneric<uint32_t, RgbColorMixer<AccumType>>(
-            (const uint32_t*) src_rgb32.bits(), src_rgb32.bytesPerLine() / 4, src_rgb32.size(), (uint32_t*) dst.bits(),
-            dst.bytesPerLine() / 4, xform, dst_rect, outside_pixels.rgb(), outside_pixels.flags(), min_mapping_area);
+            (const uint32_t*) srcRgb32.bits(), srcRgb32.bytesPerLine() / 4, srcRgb32.size(), (uint32_t*) dst.bits(),
+            dst.bytesPerLine() / 4, xform, dstRect, outsidePixels.rgb(), outsidePixels.flags(), minMappingArea);
 
         fixDpiInPlace(dst, src, xform);
 
         return dst;
       } else {
-        const QImage src_argb32(src.convertToFormat(QImage::Format_ARGB32));
-        badAllocIfNull(src_argb32);
-        QImage dst(dst_rect.size(), QImage::Format_ARGB32);
+        const QImage srcArgb32(src.convertToFormat(QImage::Format_ARGB32));
+        badAllocIfNull(srcArgb32);
+        QImage dst(dstRect.size(), QImage::Format_ARGB32);
         badAllocIfNull(dst);
 
         typedef float AccumType;
         transformGeneric<uint32_t, ArgbColorMixer<AccumType>>(
-            (const uint32_t*) src_argb32.bits(), src_argb32.bytesPerLine() / 4, src_argb32.size(),
-            (uint32_t*) dst.bits(), dst.bytesPerLine() / 4, xform, dst_rect, outside_pixels.rgba(),
-            outside_pixels.flags(), min_mapping_area);
+            (const uint32_t*) srcArgb32.bits(), srcArgb32.bytesPerLine() / 4, srcArgb32.size(), (uint32_t*) dst.bits(),
+            dst.bytesPerLine() / 4, xform, dstRect, outsidePixels.rgba(), outsidePixels.flags(), minMappingArea);
 
         fixDpiInPlace(dst, src, xform);
 
@@ -360,26 +359,26 @@ QImage transform(const QImage& src,
 
 GrayImage transformToGray(const QImage& src,
                           const QTransform& xform,
-                          const QRect& dst_rect,
-                          const OutsidePixels outside_pixels,
-                          const QSizeF& min_mapping_area) {
-  if (src.isNull() || dst_rect.isEmpty()) {
+                          const QRect& dstRect,
+                          const OutsidePixels outsidePixels,
+                          const QSizeF& minMappingArea) {
+  if (src.isNull() || dstRect.isEmpty()) {
     return GrayImage();
   }
   if (!xform.isAffine()) {
     throw std::invalid_argument("transformToGray: only affine transformations are supported");
   }
-  if (!dst_rect.isValid()) {
-    throw std::invalid_argument("transformToGray: dst_rect is invalid");
+  if (!dstRect.isValid()) {
+    throw std::invalid_argument("transformToGray: dstRect is invalid");
   }
 
-  const GrayImage gray_src(src);
-  GrayImage dst(dst_rect.size());
+  const GrayImage graySrc(src);
+  GrayImage dst(dstRect.size());
 
   typedef unsigned AccumType;
-  transformGeneric<uint8_t, GrayColorMixer<AccumType>>(gray_src.data(), gray_src.stride(), gray_src.size(), dst.data(),
-                                                       dst.stride(), xform, dst_rect, outside_pixels.grayLevel(),
-                                                       outside_pixels.flags(), min_mapping_area);
+  transformGeneric<uint8_t, GrayColorMixer<AccumType>>(graySrc.data(), graySrc.stride(), graySrc.size(), dst.data(),
+                                                       dst.stride(), xform, dstRect, outsidePixels.grayLevel(),
+                                                       outsidePixels.flags(), minMappingArea);
 
   fixDpiInPlace(dst, src, xform);
 

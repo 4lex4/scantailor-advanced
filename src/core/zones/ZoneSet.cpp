@@ -4,19 +4,19 @@
 #include "ZoneSet.h"
 #include <QDomNode>
 
-ZoneSet::ZoneSet(const QDomElement& el, const PropertyFactory& prop_factory) {
-  const QString zone_str("zone");
+ZoneSet::ZoneSet(const QDomElement& el, const PropertyFactory& propFactory) {
+  const QString zoneStr("zone");
 
   QDomNode node(el.firstChild());
   for (; !node.isNull(); node = node.nextSibling()) {
     if (!node.isElement()) {
       continue;
     }
-    if (node.nodeName() != zone_str) {
+    if (node.nodeName() != zoneStr) {
       continue;
     }
 
-    const Zone zone(node.toElement(), prop_factory);
+    const Zone zone(node.toElement(), propFactory);
     if (zone.isValid()) {
       m_zones.push_back(zone);
     }
@@ -24,11 +24,11 @@ ZoneSet::ZoneSet(const QDomElement& el, const PropertyFactory& prop_factory) {
 }
 
 QDomElement ZoneSet::toXml(QDomDocument& doc, const QString& name) const {
-  const QString zone_str("zone");
+  const QString zoneStr("zone");
 
   QDomElement el(doc.createElement(name));
   for (const Zone& zone : m_zones) {
-    el.appendChild(zone.toXml(doc, zone_str));
+    el.appendChild(zone.toXml(doc, zoneStr));
   }
 
   return el;

@@ -1,13 +1,13 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DEBUG_IMAGES_IMPL_H_
-#define DEBUG_IMAGES_IMPL_H_
+#ifndef SCANTAILOR_CORE_DEBUGIMAGESIMPL_H_
+#define SCANTAILOR_CORE_DEBUGIMAGESIMPL_H_
 
+#include <imageproc/DebugImages.h>
 #include <QString>
 #include <boost/function.hpp>
 #include <deque>
-#include <imageproc/DebugImages.h>
 #include "AutoRemovingFile.h"
 #include "intrusive_ptr.h"
 #include "ref_countable.h"
@@ -19,12 +19,12 @@ class DebugImagesImpl : public DebugImages {
  public:
   void add(const QImage& image,
            const QString& label,
-           const boost::function<QWidget*(const QImage&)>& image_view_factory
+           const boost::function<QWidget*(const QImage&)>& imageViewFactory
            = boost::function<QWidget*(const QImage&)>()) override;
 
   void add(const imageproc::BinaryImage& image,
            const QString& label,
-           const boost::function<QWidget*(const QImage&)>& image_view_factory
+           const boost::function<QWidget*(const QImage&)>& imageViewFactory
            = boost::function<QWidget*(const QImage&)>()) override;
 
   bool empty() const override { return m_sequence.empty(); }
@@ -37,7 +37,7 @@ class DebugImagesImpl : public DebugImages {
    * Returns a null AutoRemovingFile if image sequence is empty.
    */
   AutoRemovingFile retrieveNext(QString* label = nullptr,
-                                boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr) override;
+                                boost::function<QWidget*(const QImage&)>* imageViewFactory = nullptr) override;
 
  private:
   struct Item : public ref_countable {
@@ -53,4 +53,4 @@ class DebugImagesImpl : public DebugImages {
 };
 
 
-#endif  // ifndef DEBUG_IMAGES_IMPL_H_
+#endif  // ifndef SCANTAILOR_CORE_DEBUGIMAGESIMPL_H_

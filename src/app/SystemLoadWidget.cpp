@@ -20,10 +20,10 @@ SystemLoadWidget::SystemLoadWidget(QWidget* parent) : QWidget(parent), m_maxThre
       m_maxThreads = 2;
     }
   }
-  int num_threads = std::min<int>(m_maxThreads, QSettings().value(key, m_maxThreads).toInt());
+  int numThreads = std::min<int>(m_maxThreads, QSettings().value(key, m_maxThreads).toInt());
 
   ui.slider->setRange(1, m_maxThreads);
-  ui.slider->setValue(num_threads);
+  ui.slider->setValue(numThreads);
 
   connect(ui.slider, SIGNAL(sliderPressed()), SLOT(sliderPressed()));
   connect(ui.slider, SIGNAL(sliderMoved(int)), SLOT(sliderMoved(int)));
@@ -62,15 +62,15 @@ void SystemLoadWidget::increaseLoad() {
 void SystemLoadWidget::showHideToolTip(int threads) {
   // Show the tooltip immediately.
   const QPoint center(ui.slider->rect().center());
-  QPoint tooltip_pos(ui.slider->mapFromGlobal(QCursor::pos()));
-  if ((tooltip_pos.x() < 0) || (tooltip_pos.x() >= ui.slider->width())) {
-    tooltip_pos.setX(center.x());
+  QPoint tooltipPos(ui.slider->mapFromGlobal(QCursor::pos()));
+  if ((tooltipPos.x() < 0) || (tooltipPos.x() >= ui.slider->width())) {
+    tooltipPos.setX(center.x());
   }
-  if ((tooltip_pos.y() < 0) || (tooltip_pos.y() >= ui.slider->height())) {
-    tooltip_pos.setY(center.y());
+  if ((tooltipPos.y() < 0) || (tooltipPos.y() >= ui.slider->height())) {
+    tooltipPos.setY(center.y());
   }
-  tooltip_pos = ui.slider->mapToGlobal(tooltip_pos);
-  QToolTip::showText(tooltip_pos, QString("%1/%2").arg(threads).arg(m_maxThreads), ui.slider);
+  tooltipPos = ui.slider->mapToGlobal(tooltipPos);
+  QToolTip::showText(tooltipPos, QString("%1/%2").arg(threads).arg(m_maxThreads), ui.slider);
 }
 
 void SystemLoadWidget::setupIcons() {

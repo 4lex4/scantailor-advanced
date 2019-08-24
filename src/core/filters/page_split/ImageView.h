@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_IMAGEVIEW_H_
-#define PAGE_SPLIT_IMAGEVIEW_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_IMAGEVIEW_H_
+#define SCANTAILOR_PAGE_SPLIT_IMAGEVIEW_H_
 
 #include <QPixmap>
 #include "DragHandler.h"
@@ -28,19 +28,19 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   Q_OBJECT
  public:
   ImageView(const QImage& image,
-            const QImage& downscaled_image,
+            const QImage& downscaledImage,
             const ImageTransformation& xform,
             const PageLayout& layout,
             intrusive_ptr<ProjectPages> pages,
-            const ImageId& image_id,
-            bool left_half_removed,
-            bool right_half_removed);
+            const ImageId& imageId,
+            bool leftHalfRemoved,
+            bool rightHalfRemoved);
 
   ~ImageView() override;
 
  signals:
 
-  void invalidateThumbnail(const PageInfo& page_info);
+  void invalidateThumbnail(const PageInfo& pageInfo);
 
   void pageLayoutSetLocally(const PageLayout& layout);
 
@@ -54,13 +54,13 @@ class ImageView : public ImageViewBase, private InteractionHandler {
  private:
   void setupCuttersInteraction();
 
-  QPointF handlePosition(int line_idx, int handle_idx) const;
+  QPointF handlePosition(int lineIdx, int handleIdx) const;
 
-  void handleMoveRequest(int line_idx, int handle_idx, const QPointF& pos);
+  void handleMoveRequest(int lineIdx, int handleIdx, const QPointF& pos);
 
-  QLineF linePosition(int line_idx) const;
+  QLineF linePosition(int lineIdx) const;
 
-  void lineMoveRequest(int line_idx, QLineF line);
+  void lineMoveRequest(int lineIdx, QLineF line);
 
   void dragFinished();
 
@@ -84,7 +84,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
    * may end either shortly before the widget boundaries, or shortly
    * before the image boundaries.
    */
-  QLineF widgetCutterLine(int line_idx) const;
+  QLineF widgetCutterLine(int lineIdx) const;
 
   /**
    * \return A Cutter line in virtual image coordinates.
@@ -92,7 +92,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
    * Unlike widgetCutterLine(), this one always ends shortly before
    * the image boundaries.
    */
-  QLineF virtualCutterLine(int line_idx) const;
+  QLineF virtualCutterLine(int lineIdx) const;
 
   /**
    * Same as ImageViewBase::getVisibleWidgetRect(), except reduced
@@ -124,4 +124,4 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   bool m_rightPageRemoved;
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_IMAGEVIEW_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_IMAGEVIEW_H_

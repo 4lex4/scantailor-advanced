@@ -10,15 +10,15 @@ int DraggableLineSegment::proximityPriority() const {
   return m_proximityPriority;
 }
 
-Proximity DraggableLineSegment::proximity(const QPointF& mouse_pos) {
-  return Proximity::pointAndLineSegment(mouse_pos, lineSegmentPosition());
+Proximity DraggableLineSegment::proximity(const QPointF& mousePos) {
+  return Proximity::pointAndLineSegment(mousePos, lineSegmentPosition());
 }
 
-void DraggableLineSegment::dragInitiated(const QPointF& mouse_pos) {
-  m_initialMousePos = mouse_pos;
+void DraggableLineSegment::dragInitiated(const QPointF& mousePos) {
+  m_initialMousePos = mousePos;
   m_initialLinePos = lineSegmentPosition();
 }
 
-void DraggableLineSegment::dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) {
-  lineSegmentMoveRequest(m_initialLinePos.translated(mouse_pos - m_initialMousePos), mask);
+void DraggableLineSegment::dragContinuation(const QPointF& mousePos, Qt::KeyboardModifiers mask) {
+  lineSegmentMoveRequest(m_initialLinePos.translated(mousePos - m_initialMousePos), mask);
 }

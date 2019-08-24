@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DESKEW_IMAGEVIEW_H_
-#define DESKEW_IMAGEVIEW_H_
+#ifndef SCANTAILOR_DESKEW_IMAGEVIEW_H_
+#define SCANTAILOR_DESKEW_IMAGEVIEW_H_
 
 #include <QPixmap>
 #include <QPoint>
@@ -24,7 +24,7 @@ namespace deskew {
 class ImageView : public ImageViewBase, private InteractionHandler {
   Q_OBJECT
  public:
-  ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform);
+  ImageView(const QImage& image, const QImage& downscaledImage, const ImageTransformation& xform);
 
   ~ImageView() override;
 
@@ -58,7 +58,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   QRectF getRotationArcSquare() const;
 
-  std::pair<QPointF, QPointF> getRotationHandles(const QRectF& arc_square) const;
+  std::pair<QPointF, QPointF> getRotationHandles(const QRectF& arcSquare) const;
 
   static const int m_cellSize;
   static const double m_maxRotationDeg;
@@ -72,4 +72,4 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   ImageTransformation m_xform;
 };
 }  // namespace deskew
-#endif  // ifndef DESKEW_IMAGEVIEW_H_
+#endif  // ifndef SCANTAILOR_DESKEW_IMAGEVIEW_H_

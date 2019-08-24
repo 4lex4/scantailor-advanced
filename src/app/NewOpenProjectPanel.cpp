@@ -27,24 +27,24 @@ NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent) : QWidget(parent) {
   if (rp.isEmpty()) {
     recentProjectsGroup->setVisible(false);
   } else {
-    rp.enumerate([this](const QString& file_path) { addRecentProject(file_path); });
+    rp.enumerate([this](const QString& filePath) { addRecentProject(filePath); });
   }
 
   connect(newProjectLabel, SIGNAL(linkActivated(const QString&)), this, SIGNAL(newProject()));
   connect(openProjectLabel, SIGNAL(linkActivated(const QString&)), this, SIGNAL(openProject()));
 }
 
-void NewOpenProjectPanel::addRecentProject(const QString& file_path) {
-  const QFileInfo file_info(file_path);
-  QString base_name(file_info.completeBaseName());
-  if (base_name.isEmpty()) {
-    base_name = QChar('_');
+void NewOpenProjectPanel::addRecentProject(const QString& filePath) {
+  const QFileInfo fileInfo(filePath);
+  QString baseName(fileInfo.completeBaseName());
+  if (baseName.isEmpty()) {
+    baseName = QChar('_');
   }
   auto* label = new QLabel(recentProjectsGroup);
   label->setWordWrap(true);
   label->setTextFormat(Qt::RichText);
-  label->setText(Utils::richTextForLink(base_name, file_path));
-  label->setToolTip(file_path);
+  label->setText(Utils::richTextForLink(baseName, filePath));
+  label->setToolTip(filePath);
 
   int fontSize = recentProjectsGroup->font().pointSize();
   QFont widgetFont = label->font();
@@ -64,8 +64,8 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
   int left = 0, top = 0, right = 0, bottom = 0;
   layout()->getContentsMargins(&left, &top, &right, &bottom);
 
-  const QRect widget_rect(rect());
-  const QRect except_margins(widget_rect.adjusted(left, top, -right, -bottom));
+  const QRect widgetRect(rect());
+  const QRect exceptMargins(widgetRect.adjusted(left, top, -right, -bottom));
 
   const int border = 1;  // Solid line border width.
 
@@ -75,5 +75,5 @@ void NewOpenProjectPanel::paintEvent(QPaintEvent*) {
       = ColorSchemeManager::instance().getColorParam(ColorScheme::OpenNewProjectBorder, palette().windowText());
   painter.setPen(QPen(border_brush, border));
 
-  painter.drawRect(except_margins);
+  painter.drawRect(exceptMargins);
 }  // NewOpenProjectPanel::paintEvent

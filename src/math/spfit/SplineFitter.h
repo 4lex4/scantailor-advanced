@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SPFIT_SPLINE_FITTER_H_
-#define SPFIT_SPLINE_FITTER_H_
+#ifndef SCANTAILOR_SPFIT_SPLINEFITTER_H_
+#define SCANTAILOR_SPFIT_SPLINEFITTER_H_
 
 #include <vector>
 #include "FittableSpline.h"
@@ -33,21 +33,21 @@ class SplineFitter {
 
   void setConstraints(const ConstraintSet& constraints);
 
-  void setSamplingParams(const FittableSpline::SamplingParams& sampling_params);
+  void setSamplingParams(const FittableSpline::SamplingParams& samplingParams);
 
-  void addAttractionForce(const Vec2d& spline_point,
+  void addAttractionForce(const Vec2d& splinePoint,
                           const std::vector<FittableSpline::LinearCoefficient>& coeffs,
-                          const SqDistApproximant& sqdist_approx);
+                          const SqDistApproximant& sqdistApprox);
 
-  void addAttractionForces(const ModelShape& model_shape, double from_t = 0.0, double to_t = 1.0);
+  void addAttractionForces(const ModelShape& modelShape, double fromT = 0.0, double toT = 1.0);
 
   void addExternalForce(const QuadraticFunction& force);
 
-  void addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map);
+  void addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparseMap);
 
   void addInternalForce(const QuadraticFunction& force);
 
-  void addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparce_map);
+  void addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparceMap);
 
   /** \see Optimizer::externalForce() */
   double externalForce() const { return m_optimizer.externalForce(); }
@@ -55,7 +55,7 @@ class SplineFitter {
   /** \see Optimizer::internalForce() */
   double internalForce() const { return m_optimizer.internalForce(); }
 
-  OptimizationResult optimize(double internal_force_weight);
+  OptimizationResult optimize(double internalForceWeight);
 
   void undoLastStep();
 
@@ -68,4 +68,4 @@ class SplineFitter {
   std::vector<FittableSpline::LinearCoefficient> m_tempCoeffs;
 };
 }  // namespace spfit
-#endif  // ifndef SPFIT_SPLINE_FITTER_H_
+#endif  // ifndef SCANTAILOR_SPFIT_SPLINEFITTER_H_

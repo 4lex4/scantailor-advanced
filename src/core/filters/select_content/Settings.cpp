@@ -3,9 +3,9 @@
 
 #include "Settings.h"
 #include <iostream>
+#include "../../Utils.h"
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
-#include "../../Utils.h"
 
 using namespace core;
 
@@ -34,16 +34,16 @@ void Settings::clear() {
 
 void Settings::performRelinking(const AbstractRelinker& relinker) {
   QMutexLocker locker(&m_mutex);
-  PageParams new_params;
+  PageParams newParams;
 
   for (const PageParams::value_type& kv : m_pageParams) {
-    const RelinkablePath old_path(kv.first.imageId().filePath(), RelinkablePath::File);
-    PageId new_page_id(kv.first);
-    new_page_id.imageId().setFilePath(relinker.substitutionPathFor(old_path));
-    new_params.insert(PageParams::value_type(new_page_id, kv.second));
+    const RelinkablePath oldPath(kv.first.imageId().filePath(), RelinkablePath::File);
+    PageId newPageId(kv.first);
+    newPageId.imageId().setFilePath(relinker.substitutionPathFor(oldPath));
+    newParams.insert(PageParams::value_type(newPageId, kv.second));
   }
 
-  m_pageParams.swap(new_params);
+  m_pageParams.swap(newParams);
 
   m_deviationProvider.clear();
   for (const PageParams::value_type& kv : m_pageParams) {
@@ -51,22 +51,22 @@ void Settings::performRelinking(const AbstractRelinker& relinker) {
   }
 }
 
-void Settings::setPageParams(const PageId& page_id, const Params& params) {
+void Settings::setPageParams(const PageId& pageId, const Params& params) {
   QMutexLocker locker(&m_mutex);
-  Utils::mapSetValue(m_pageParams, page_id, params);
-  m_deviationProvider.addOrUpdate(page_id);
+  Utils::mapSetValue(m_pageParams, pageId, params);
+  m_deviationProvider.addOrUpdate(pageId);
 }
 
-void Settings::clearPageParams(const PageId& page_id) {
+void Settings::clearPageParams(const PageId& pageId) {
   QMutexLocker locker(&m_mutex);
-  m_pageParams.erase(page_id);
-  m_deviationProvider.remove(page_id);
+  m_pageParams.erase(pageId);
+  m_deviationProvider.remove(pageId);
 }
 
-std::unique_ptr<Params> Settings::getPageParams(const PageId& page_id) const {
+std::unique_ptr<Params> Settings::getPageParams(const PageId& pageId) const {
   QMutexLocker locker(&m_mutex);
 
-  const auto it(m_pageParams.find(page_id));
+  const auto it(m_pageParams.find(pageId));
   if (it != m_pageParams.end()) {
     return std::make_unique<Params>(it->second);
   } else {
@@ -74,10 +74,10 @@ std::unique_ptr<Params> Settings::getPageParams(const PageId& page_id) const {
   }
 }
 
-bool Settings::isParamsNull(const PageId& page_id) const {
+bool Settings::isParamsNull(const PageId& pageId) const {
   QMutexLocker locker(&m_mutex);
 
-  return (m_pageParams.find(page_id) == m_pageParams.end());
+  return (m_pageParams.find(pageId) == m_pageParams.end());
 }
 
 QSizeF Settings::pageDetectionBox() const {

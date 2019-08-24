@@ -14,7 +14,7 @@ class ContentBoxPropagator::Collector : public ContentBoxCollector {
  public:
   Collector();
 
-  void process(const ImageTransformation& xform, const QRectF& content_rect) override;
+  void process(const ImageTransformation& xform, const QRectF& contentRect) override;
 
   bool collected() const { return m_collected; }
 
@@ -29,9 +29,9 @@ class ContentBoxPropagator::Collector : public ContentBoxCollector {
 };
 
 
-ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> page_layout_filter,
+ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> pageLayoutFilter,
                                            intrusive_ptr<CompositeCacheDrivenTask> task)
-    : m_pageLayoutFilter(std::move(page_layout_filter)), m_task(std::move(task)) {}
+    : m_pageLayoutFilter(std::move(pageLayoutFilter)), m_task(std::move(task)) {}
 
 ContentBoxPropagator::~ContentBoxPropagator() = default;
 
@@ -53,8 +53,8 @@ void ContentBoxPropagator::propagate(const ProjectPages& pages) {
 
 ContentBoxPropagator::Collector::Collector() : m_xform(QRectF(0, 0, 1, 1), Dpi(300, 300)), m_collected(false) {}
 
-void ContentBoxPropagator::Collector::process(const ImageTransformation& xform, const QRectF& content_rect) {
+void ContentBoxPropagator::Collector::process(const ImageTransformation& xform, const QRectF& contentRect) {
   m_xform = xform;
-  m_contentRect = content_rect;
+  m_contentRect = contentRect;
   m_collected = true;
 }

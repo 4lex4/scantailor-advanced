@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef POLYLINE_INTERSECTOR_H_
-#define POLYLINE_INTERSECTOR_H_
+#ifndef SCANTAILOR_MATH_POLYLINEINTERSECTOR_H_
+#define SCANTAILOR_MATH_POLYLINEINTERSECTOR_H_
 
 #include <QLineF>
 #include <QPointF>
@@ -18,7 +18,7 @@ class PolylineIntersector {
     Hint();
 
    private:
-    void update(int new_segment);
+    void update(int newSegment);
 
     int m_lastSegment;
     int m_direction;
@@ -43,4 +43,4 @@ class PolylineIntersector {
 };
 
 
-#endif  // ifndef POLYLINE_INTERSECTOR_H_
+#endif  // ifndef SCANTAILOR_MATH_POLYLINEINTERSECTOR_H_

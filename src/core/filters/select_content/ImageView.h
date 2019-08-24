@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SELECT_CONTENT_IMAGEVIEW_H_
-#define SELECT_CONTENT_IMAGEVIEW_H_
+#ifndef SCANTAILOR_SELECT_CONTENT_IMAGEVIEW_H_
+#define SCANTAILOR_SELECT_CONTENT_IMAGEVIEW_H_
 
 #include <imageproc/BinaryImage.h>
 #include <interaction/DraggablePolygon.h>
@@ -28,23 +28,23 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   Q_OBJECT
  public:
   /**
-   * \p content_rect is in virtual image coordinates.
+   * \p contentRect is in virtual image coordinates.
    */
   ImageView(const QImage& image,
-            const QImage& downscaled_image,
-            const imageproc::GrayImage& gray_image,
+            const QImage& downscaledImage,
+            const imageproc::GrayImage& grayImage,
             const ImageTransformation& xform,
-            const QRectF& content_rect,
-            const QRectF& page_rect,
-            bool page_rect_enabled);
+            const QRectF& contentRect,
+            const QRectF& pageRect,
+            bool pageRectEnabled);
 
   ~ImageView() override;
 
  signals:
 
-  void manualContentRectSet(const QRectF& content_rect);
+  void manualContentRectSet(const QRectF& contentRect);
 
-  void manualPageRectSet(const QRectF& page_rect);
+  void manualPageRectSet(const QRectF& pageRect);
 
   void pageRectSizeChanged(const QSizeF& size);
 
@@ -69,9 +69,9 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-  QPointF contentRectCornerPosition(int edge_mask) const;
+  QPointF contentRectCornerPosition(int edgeMask) const;
 
-  void contentRectCornerMoveRequest(int edge_mask, const QPointF& pos);
+  void contentRectCornerMoveRequest(int edgeMask, const QPointF& pos);
 
   QLineF contentRectEdgePosition(int edge) const;
 
@@ -79,9 +79,9 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   void contentRectDragFinished();
 
-  QPointF pageRectCornerPosition(int edge_mask) const;
+  QPointF pageRectCornerPosition(int edgeMask) const;
 
-  void pageRectCornerMoveRequest(int edge_mask, const QPointF& pos);
+  void pageRectCornerMoveRequest(int edgeMask, const QPointF& pos);
 
   QLineF pageRectEdgePosition(int edge) const;
 
@@ -89,19 +89,19 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   void pageRectDragFinished();
 
-  void forceInsideImage(QRectF& widget_rect, int edge_mask) const;
+  void forceInsideImage(QRectF& widgetRect, int edgeMask) const;
 
   void forcePageRectDescribeContent();
 
   QRectF contentRectPosition() const;
 
-  void contentRectMoveRequest(const QPolygonF& poly_moved);
+  void contentRectMoveRequest(const QPolygonF& polyMoved);
 
   QRectF pageRectPosition() const;
 
-  void pageRectMoveRequest(const QPolygonF& poly_moved);
+  void pageRectMoveRequest(const QPolygonF& polyMoved);
 
-  void buildContentImage(const imageproc::GrayImage& gray_image, const ImageTransformation& xform);
+  void buildContentImage(const imageproc::GrayImage& grayImage, const ImageTransformation& xform);
 
   void correctContentBox(const QPointF& pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
 
@@ -162,4 +162,4 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   Qt::KeyboardModifier m_adjustmentHorizontalModifier;
 };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_IMAGEVIEW_H_
+#endif  // ifndef SCANTAILOR_SELECT_CONTENT_IMAGEVIEW_H_

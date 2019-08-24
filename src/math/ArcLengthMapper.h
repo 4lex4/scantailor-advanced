@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ARC_LENGTH_MAPPER_H_
-#define ARC_LENGTH_MAPPER_H_
+#ifndef SCANTAILOR_MATH_ARCLENGTHMAPPER_H_
+#define SCANTAILOR_MATH_ARCLENGTHMAPPER_H_
 
 #include <vector>
 
@@ -27,7 +27,7 @@ class ArcLengthMapper {
     Hint();
 
    private:
-    void update(int new_segment);
+    void update(int newSegment);
 
     int m_lastSegment;
     int m_direction;
@@ -57,7 +57,7 @@ class ArcLengthMapper {
    * After calling this function, totalArcLength() will be returning
    * the new value.
    */
-  void normalizeRange(double total_arc_len);
+  void normalizeRange(double totalArcLen);
 
   /**
    * \brief Maps from arc length to the corresponding function argument.
@@ -67,7 +67,7 @@ class ArcLengthMapper {
    * If no samples are present, zero is returned.  Providing the same
    * hint on consecutive calls to this function improves performance.
    */
-  double arcLenToX(double arc_len, Hint& hint) const;
+  double arcLenToX(double arcLen, Hint& hint) const;
 
   double xToArcLen(double x, Hint& hint) const;
 
@@ -76,14 +76,14 @@ class ArcLengthMapper {
     double x;
     double arcLen;
 
-    Sample(double x, double arc_len) : x(x), arcLen(arc_len) {}
+    Sample(double x, double arcLen) : x(x), arcLen(arcLen) {}
   };
 
-  bool checkSegmentForArcLen(double arc_len, int segment) const;
+  bool checkSegmentForArcLen(double arcLen, int segment) const;
 
   bool checkSegmentForX(double x, int segment) const;
 
-  double interpolateArcLenInSegment(double arc_len, int segment) const;
+  double interpolateArcLenInSegment(double arcLen, int segment) const;
 
   double interpolateXInSegment(double x, int segment) const;
 
@@ -92,4 +92,4 @@ class ArcLengthMapper {
 };
 
 
-#endif  // ifndef ARC_LENGTH_MAPPER_H_
+#endif  // ifndef SCANTAILOR_MATH_ARCLENGTHMAPPER_H_

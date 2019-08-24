@@ -1,14 +1,14 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include <GrayImage.h>
+#include <Scale.h>
 #include <QImage>
 #include <QSize>
 #include <boost/test/auto_unit_test.hpp>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
-#include <GrayImage.h>
-#include <Scale.h>
 #include "Utils.h"
 
 namespace imageproc {
@@ -18,8 +18,8 @@ using namespace utils;
 BOOST_AUTO_TEST_SUITE(ScaleTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
-  const GrayImage null_img;
-  BOOST_CHECK(scaleToGray(null_img, QSize(1, 1)).isNull());
+  const GrayImage nullImg;
+  BOOST_CHECK(scaleToGray(nullImg, QSize(1, 1)).isNull());
 }
 
 static bool fuzzyCompare(const QImage& img1, const QImage& img2) {
@@ -29,8 +29,8 @@ static bool fuzzyCompare(const QImage& img1, const QImage& img2) {
   const int height = img1.height();
   const uint8_t* line1 = img1.bits();
   const uint8_t* line2 = img2.bits();
-  const int line1_bpl = img1.bytesPerLine();
-  const int line2_bpl = img2.bytesPerLine();
+  const int line1Bpl = img1.bytesPerLine();
+  const int line2Bpl = img2.bytesPerLine();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -38,16 +38,16 @@ static bool fuzzyCompare(const QImage& img1, const QImage& img2) {
         return false;
       }
     }
-    line1 += line1_bpl;
-    line2 += line2_bpl;
+    line1 += line1Bpl;
+    line2 += line2Bpl;
   }
 
   return true;
 }
 
-static bool checkScale(const GrayImage& img, const QSize& new_size) {
-  const GrayImage scaled1(scaleToGray(img, new_size));
-  const GrayImage scaled2(img.toQImage().scaled(new_size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+static bool checkScale(const GrayImage& img, const QSize& newSize) {
+  const GrayImage scaled1(scaleToGray(img, newSize));
+  const GrayImage scaled2(img.toQImage().scaled(newSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
   return fuzzyCompare(scaled1, scaled2);
 }

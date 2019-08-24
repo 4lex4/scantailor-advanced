@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_TASK_H_
-#define PAGE_SPLIT_TASK_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_TASK_H_
+#define SCANTAILOR_PAGE_SPLIT_TASK_H_
 
 #include <memory>
 #include "FilterResult.h"
@@ -34,9 +34,9 @@ class Task : public ref_countable {
   Task(intrusive_ptr<Filter> filter,
        intrusive_ptr<Settings> settings,
        intrusive_ptr<ProjectPages> pages,
-       intrusive_ptr<deskew::Task> next_task,
-       const PageInfo& page_info,
-       bool batch_processing,
+       intrusive_ptr<deskew::Task> nextTask,
+       const PageInfo& pageInfo,
+       bool batchProcessing,
        bool debug);
 
   ~Task() override;
@@ -55,4 +55,4 @@ class Task : public ref_countable {
   bool m_batchProcessing;
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_TASK_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_TASK_H_

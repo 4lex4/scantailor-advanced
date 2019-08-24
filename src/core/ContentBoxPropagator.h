@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef CONTENTBOXPROPAGATOR_H_
-#define CONTENTBOXPROPAGATOR_H_
+#ifndef SCANTAILOR_CORE_CONTENTBOXPROPAGATOR_H_
+#define SCANTAILOR_CORE_CONTENTBOXPROPAGATOR_H_
 
 #include <QSizeF>
 #include "intrusive_ptr.h"
@@ -25,7 +25,7 @@ class Filter;
  */
 class ContentBoxPropagator {
  public:
-  ContentBoxPropagator(intrusive_ptr<page_layout::Filter> page_layout_filter,
+  ContentBoxPropagator(intrusive_ptr<page_layout::Filter> pageLayoutFilter,
                        intrusive_ptr<CompositeCacheDrivenTask> task);
 
   ~ContentBoxPropagator();
@@ -40,4 +40,4 @@ class ContentBoxPropagator {
 };
 
 
-#endif  // ifndef CONTENTBOXPROPAGATOR_H_
+#endif  // ifndef SCANTAILOR_CORE_CONTENTBOXPROPAGATOR_H_

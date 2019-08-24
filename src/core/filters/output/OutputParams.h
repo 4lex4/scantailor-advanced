@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_OUTPUT_PARAMS_H_
-#define OUTPUT_OUTPUT_PARAMS_H_
+#ifndef SCANTAILOR_OUTPUT_OUTPUTPARAMS_H_
+#define SCANTAILOR_OUTPUT_OUTPUTPARAMS_H_
 
 #include "OutputFileParams.h"
 #include "OutputImageParams.h"
@@ -15,15 +15,15 @@ class QString;
 namespace output {
 class OutputParams {
  public:
-  OutputParams(const OutputImageParams& output_image_params,
-               const OutputFileParams& output_file_params,
-               const OutputFileParams& foreground_file_params,
-               const OutputFileParams& background_file_params,
-               const OutputFileParams& original_background_file_params,
-               const OutputFileParams& automask_file_params,
-               const OutputFileParams& speckles_file_params,
-               const ZoneSet& picture_zones,
-               const ZoneSet& fill_zones);
+  OutputParams(const OutputImageParams& outputImageParams,
+               const OutputFileParams& outputFileParams,
+               const OutputFileParams& foregroundFileParams,
+               const OutputFileParams& backgroundFileParams,
+               const OutputFileParams& originalBackgroundFileParams,
+               const OutputFileParams& automaskFileParams,
+               const OutputFileParams& specklesFileParams,
+               const ZoneSet& pictureZones,
+               const ZoneSet& fillZones);
 
   explicit OutputParams(const QDomElement& el);
 
@@ -59,4 +59,4 @@ class OutputParams {
   ZoneSet m_fillZones;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_OUTPUT_PARAMS_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_OUTPUTPARAMS_H_

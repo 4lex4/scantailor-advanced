@@ -2,40 +2,40 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputImageParams.h"
-#include <cmath>
 #include <foundation/Utils.h>
+#include <cmath>
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
 using namespace foundation;
 
 namespace output {
-OutputImageParams::OutputImageParams(const QSize& out_image_size,
-                                     const QRect& content_rect,
+OutputImageParams::OutputImageParams(const QSize& outImageSize,
+                                     const QRect& contentRect,
                                      ImageTransformation xform,
                                      const Dpi& dpi,
-                                     const ColorParams& color_params,
-                                     const SplittingOptions& splitting_options,
-                                     const DewarpingOptions& dewarping_options,
-                                     const dewarping::DistortionModel& distortion_model,
-                                     const DepthPerception& depth_perception,
-                                     const double despeckle_level,
-                                     const PictureShapeOptions& picture_shape_options,
-                                     const OutputProcessingParams& output_processing_params,
-                                     bool is_black_on_white)
-    : m_size(out_image_size),
-      m_contentRect(content_rect),
+                                     const ColorParams& colorParams,
+                                     const SplittingOptions& splittingOptions,
+                                     const DewarpingOptions& dewarpingOptions,
+                                     const dewarping::DistortionModel& distortionModel,
+                                     const DepthPerception& depthPerception,
+                                     const double despeckleLevel,
+                                     const PictureShapeOptions& pictureShapeOptions,
+                                     const OutputProcessingParams& outputProcessingParams,
+                                     bool isBlackOnWhite)
+    : m_size(outImageSize),
+      m_contentRect(contentRect),
       m_cropArea(xform.resultingPreCropArea()),
       m_dpi(dpi),
-      m_colorParams(color_params),
-      m_splittingOptions(splitting_options),
-      m_pictureShapeOptions(picture_shape_options),
-      m_distortionModel(distortion_model),
-      m_depthPerception(depth_perception),
-      m_dewarpingOptions(dewarping_options),
-      m_despeckleLevel(despeckle_level),
-      m_outputProcessingParams(output_processing_params),
-      m_blackOnWhite(is_black_on_white) {
+      m_colorParams(colorParams),
+      m_splittingOptions(splittingOptions),
+      m_pictureShapeOptions(pictureShapeOptions),
+      m_distortionModel(distortionModel),
+      m_depthPerception(depthPerception),
+      m_dewarpingOptions(dewarpingOptions),
+      m_despeckleLevel(despeckleLevel),
+      m_outputProcessingParams(outputProcessingParams),
+      m_blackOnWhite(isBlackOnWhite) {
   // For historical reasons, we disregard post-cropping and post-scaling here.
   xform.setPostCropArea(QPolygonF());  // Resets post-scale as well.
   m_partialXform = xform.transform();

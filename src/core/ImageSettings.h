@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_IMAGESETTINGS_H
-#define SCANTAILOR_IMAGESETTINGS_H
+#ifndef SCANTAILOR_CORE_IMAGESETTINGS_H_
+#define SCANTAILOR_CORE_IMAGESETTINGS_H_
 
 #include <foundation/NonCopyable.h>
 #include <foundation/ref_countable.h>
@@ -49,9 +49,9 @@ class ImageSettings : public ref_countable {
 
   void performRelinking(const AbstractRelinker& relinker);
 
-  void setPageParams(const PageId& page_id, const PageParams& params);
+  void setPageParams(const PageId& pageId, const PageParams& params);
 
-  std::unique_ptr<PageParams> getPageParams(const PageId& page_id) const;
+  std::unique_ptr<PageParams> getPageParams(const PageId& pageId) const;
 
  private:
   typedef std::unordered_map<PageId, PageParams> PerPageParams;
@@ -61,4 +61,4 @@ class ImageSettings : public ref_countable {
 };
 
 
-#endif  // SCANTAILOR_IMAGESETTINGS_H
+#endif  // SCANTAILOR_CORE_IMAGESETTINGS_H_

@@ -1,14 +1,14 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include <BinaryImage.h>
+#include <RasterOp.h>
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
 #include <vector>
-#include <BinaryImage.h>
-#include <RasterOp.h>
 #include "Utils.h"
 
 namespace imageproc {
@@ -18,17 +18,17 @@ using namespace utils;
 BOOST_AUTO_TEST_SUITE(RasterOpTestSuite)
 
 template <typename Rop>
-static bool check_subimage_rop(const QImage& dst, const QRect& dst_rect, const QImage& src, const QPoint& src_pt) {
-  BinaryImage dst_bi(dst);
-  const BinaryImage src_bi(src);
-  rasterOp<Rop>(dst_bi, dst_rect, src_bi, src_pt);
+static bool checkSubimageRop(const QImage& dst, const QRect& dstRect, const QImage& src, const QPoint& srcPt) {
+  BinaryImage dstBi(dst);
+  const BinaryImage srcBi(src);
+  rasterOp<Rop>(dstBi, dstRect, srcBi, srcPt);
   // Here we assume that full-image raster operations work correctly.
-  BinaryImage dst_subimage(dst.copy(dst_rect));
-  const QRect src_rect(src_pt, dst_rect.size());
-  const BinaryImage src_subimage(src.copy(src_rect));
-  rasterOp<Rop>(dst_subimage, dst_subimage.rect(), src_subimage, QPoint(0, 0));
+  BinaryImage dstSubimage(dst.copy(dstRect));
+  const QRect srcRect(srcPt, dstRect.size());
+  const BinaryImage srcSubimage(src.copy(srcRect));
+  rasterOp<Rop>(dstSubimage, dstSubimage.rect(), srcSubimage, QPoint(0, 0));
 
-  return dst_subimage.toQImage() == dst_bi.toQImage().copy(dst_rect);
+  return dstSubimage.toQImage() == dstBi.toQImage().copy(dstRect);
 }
 
 BOOST_AUTO_TEST_CASE(test_small_image) {
@@ -45,11 +45,11 @@ BOOST_AUTO_TEST_CASE(test_small_image) {
          0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0};
 
   BinaryImage img(makeBinaryImage(inp, 9, 8));
-  const BinaryImage mask_img(makeBinaryImage(mask, 9, 8));
+  const BinaryImage maskImg(makeBinaryImage(mask, 9, 8));
 
   typedef RopAnd<RopDst, RopSrc> Rop;
 
-  rasterOp<Rop>(img, img.rect(), mask_img, QPoint(0, 0));
+  rasterOp<Rop>(img, img.rect(), maskImg, QPoint(0, 0));
   BOOST_CHECK(img == makeBinaryImage(out, 9, 8));
 }
 
@@ -60,7 +60,7 @@ class Tester1 {
 
   bool testFullImage() const;
 
-  bool testSubImage(const QRect& dst_rect, const QPoint& src_pt) const;
+  bool testSubImage(const QRect& dstRect, const QPoint& srcPt) const;
 
  private:
   typedef RopXor<RopDst, RopSrc> Rop;
@@ -102,16 +102,16 @@ bool Tester1::testFullImage() const {
   return dst == m_dstAfter;
 }
 
-bool Tester1::testSubImage(const QRect& dst_rect, const QPoint& src_pt) const {
-  const QImage dst_before(m_dstBefore.toQImage());
-  const QImage& dst(dst_before);
+bool Tester1::testSubImage(const QRect& dstRect, const QPoint& srcPt) const {
+  const QImage dstBefore(m_dstBefore.toQImage());
+  const QImage& dst(dstBefore);
   const QImage src(m_src.toQImage());
 
-  if (!check_subimage_rop<Rop>(dst, dst_rect, src, src_pt)) {
+  if (!checkSubimageRop<Rop>(dst, dstRect, src, srcPt)) {
     return false;
   }
 
-  return surroundingsIntact(dst, dst_before, dst_rect);
+  return surroundingsIntact(dst, dstBefore, dstRect);
 }
 }  // namespace
 BOOST_AUTO_TEST_CASE(test_large_image) {
@@ -140,15 +140,15 @@ Tester2::Tester2() {
 
 bool Tester2::testBlockMove(const QRect& rect, const int dx, const int dy) {
   BinaryImage dst(m_image);
-  const QRect dst_rect(rect.translated(dx, dy));
-  rasterOp<RopSrc>(dst, dst_rect, dst, rect.topLeft());
-  QImage q_src(m_image.toQImage());
-  QImage q_dst(dst.toQImage());
-  if (q_src.copy(rect) != q_dst.copy(dst_rect)) {
+  const QRect dstRect(rect.translated(dx, dy));
+  rasterOp<RopSrc>(dst, dstRect, dst, rect.topLeft());
+  QImage qSrc(m_image.toQImage());
+  QImage qDst(dst.toQImage());
+  if (qSrc.copy(rect) != qDst.copy(dstRect)) {
     return false;
   }
 
-  return surroundingsIntact(q_dst, q_src, dst_rect);
+  return surroundingsIntact(qDst, qSrc, dstRect);
 }
 }  // namespace
 BOOST_AUTO_TEST_CASE(test_move_blocks) {

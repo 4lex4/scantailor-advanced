@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PROJECTWRITER_H_
-#define PROJECTWRITER_H_
+#ifndef SCANTAILOR_CORE_PROJECTWRITER_H_
+#define SCANTAILOR_CORE_PROJECTWRITER_H_
 
 #include <foundation/Hashes.h>
 #include <QString>
@@ -33,13 +33,13 @@ class ProjectWriter {
  public:
   typedef intrusive_ptr<AbstractFilter> FilterPtr;
 
-  ProjectWriter(const intrusive_ptr<ProjectPages>& page_sequence,
-                const SelectedPage& selected_page,
-                const OutputFileNameGenerator& out_file_name_gen);
+  ProjectWriter(const intrusive_ptr<ProjectPages>& pageSequence,
+                const SelectedPage& selectedPage,
+                const OutputFileNameGenerator& outFileNameGen);
 
   ~ProjectWriter();
 
-  bool write(const QString& file_path, const std::vector<FilterPtr>& filters) const;
+  bool write(const QString& filePath, const std::vector<FilterPtr>& filters) const;
 
   /**
    * \p out will be called like this: out(ImageId, numeric_image_id)
@@ -58,14 +58,14 @@ class ProjectWriter {
     QString path;
     int numericId;
 
-    Directory(const QString& path, int numeric_id) : path(path), numericId(numeric_id) {}
+    Directory(const QString& path, int numericId) : path(path), numericId(numericId) {}
   };
 
   struct File {
     QString path;
     int numericId;
 
-    File(const QString& path, int numeric_id) : path(path), numericId(numeric_id) {}
+    File(const QString& path, int numericId) : path(path), numericId(numericId) {}
   };
 
   struct Image {
@@ -75,14 +75,14 @@ class ProjectWriter {
     bool leftHalfRemoved;
     bool rightHalfRemoved;
 
-    Image(const PageInfo& page_info, int numeric_id);
+    Image(const PageInfo& pageInfo, int numericId);
   };
 
   struct Page {
     PageId id;
     int numericId;
 
-    Page(const PageId& id, int numeric_id) : id(id), numericId(numeric_id) {}
+    Page(const PageId& id, int numericId) : id(id), numericId(numericId) {}
   };
 
   class Sequenced;
@@ -127,17 +127,17 @@ class ProjectWriter {
 
   QDomElement processPages(QDomDocument& doc) const;
 
-  void writeImageMetadata(QDomDocument& doc, QDomElement& image_el, const ImageId& image_id) const;
+  void writeImageMetadata(QDomDocument& doc, QDomElement& imageEl, const ImageId& imageId) const;
 
-  int dirId(const QString& dir_path) const;
+  int dirId(const QString& dirPath) const;
 
-  int fileId(const QString& file_path) const;
+  int fileId(const QString& filePath) const;
 
-  QString packFilePath(const QString& file_path) const;
+  QString packFilePath(const QString& filePath) const;
 
-  int imageId(const ImageId& image_id) const;
+  int imageId(const ImageId& imageId) const;
 
-  int pageId(const PageId& page_id) const;
+  int pageId(const PageId& pageId) const;
 
   void enumImagesImpl(const VirtualFunction<void, const ImageId&, int>& out) const;
 
@@ -165,4 +165,4 @@ void ProjectWriter::enumPages(Callable out) const {
   enumPagesImpl(ProxyFunction<Callable, void, const PageId&, int>(out));
 }
 
-#endif  // ifndef PROJECTWRITER_H_
+#endif  // ifndef SCANTAILOR_CORE_PROJECTWRITER_H_

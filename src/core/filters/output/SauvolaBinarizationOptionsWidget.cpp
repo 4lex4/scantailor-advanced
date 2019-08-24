@@ -17,13 +17,13 @@ SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr
   setupUiConnections();
 }
 
-void SauvolaBinarizationOptionsWidget::updateUi(const PageId& page_id) {
+void SauvolaBinarizationOptionsWidget::updateUi(const PageId& pageId) {
   removeUiConnections();
 
-  const Params params(m_settings->getParams(page_id));
-  m_pageId = page_id;
+  const Params params(m_settings->getParams(pageId));
+  m_pageId = pageId;
   m_colorParams = params.colorParams();
-  m_outputProcessingParams = m_settings->getOutputProcessingParams(page_id);
+  m_outputProcessingParams = m_settings->getOutputProcessingParams(pageId);
 
   updateView();
 

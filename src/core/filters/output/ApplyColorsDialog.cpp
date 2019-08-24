@@ -6,12 +6,12 @@
 
 namespace output {
 ApplyColorsDialog::ApplyColorsDialog(QWidget* parent,
-                                     const PageId& cur_page,
-                                     const PageSelectionAccessor& page_selection_accessor)
+                                     const PageId& curPage,
+                                     const PageSelectionAccessor& pageSelectionAccessor)
     : QDialog(parent),
-      m_pages(page_selection_accessor.allPages()),
-      m_selectedPages(page_selection_accessor.selectedPages()),
-      m_curPage(cur_page),
+      m_pages(pageSelectionAccessor.allPages()),
+      m_selectedPages(pageSelectionAccessor.selectedPages()),
+      m_curPage(curPage),
       m_scopeGroup(new QButtonGroup(this)) {
   setupUi(this);
   m_scopeGroup->addButton(thisPageRB);

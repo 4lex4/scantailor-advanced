@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef THUMBNAILPIXMAPCACHE_H_
-#define THUMBNAILPIXMAPCACHE_H_
+#ifndef SCANTAILOR_CORE_THUMBNAILPIXMAPCACHE_H_
+#define SCANTAILOR_CORE_THUMBNAILPIXMAPCACHE_H_
 
 #include <boost/weak_ptr.hpp>
 #include <memory>
@@ -28,36 +28,33 @@ class ThumbnailPixmapCache : public ref_countable {
   /**
    * \brief Constructor.  To be called from the GUI thread only.
    *
-   * \param thumb_dir The directory to store thumbnails in.  If the
+   * \param thumbDir The directory to store thumbnails in.  If the
    *        provided directory doesn't exist, it will be created.
-   * \param max_size The maximum width and height for thumbnails.
+   * \param maxSize The maximum width and height for thumbnails.
    *        The actual thumbnail size is going to depend on its aspect
    *        ratio, but it won't exceed the provided maximum.
-   * \param max_cached_pixmaps The maximum number of pixmaps to store
+   * \param maxCachedPixmaps The maximum number of pixmaps to store
    *        in memory.
-   * \param expiration_threshold Requests are served from newest to
+   * \param expirationThreshold Requests are served from newest to
    *        oldest ones. If a request is still not served after a certain
    *        number of newer requests have been served, that request is
-   *        expired.  \p expiration_threshold specifies the exact number
+   *        expired.  \p expirationThreshold specifies the exact number
    *        of requests that cause older requests to expire.
    *
    * \see ThumbnailLoadResult::REQUEST_EXPIRED
    */
-  ThumbnailPixmapCache(const QString& thumb_dir,
-                       const QSize& max_size,
-                       int max_cached_pixmaps,
-                       int expiration_threshold);
+  ThumbnailPixmapCache(const QString& thumbDir, const QSize& maxSize, int maxCachedPixmaps, int expirationThreshold);
 
   /**
    * \brief Destructor.  To be called from the GUI thread only.
    */
   ~ThumbnailPixmapCache() override;
 
-  void setThumbDir(const QString& thumb_dir);
+  void setThumbDir(const QString& thumbDir);
 
   const QSize& getMaxThumbSize() const;
 
-  void setMaxThumbSize(const QSize& max_size);
+  void setMaxThumbSize(const QSize& maxSize);
 
   /**
    * \brief Take the pixmap from cache, if it's there.
@@ -66,14 +63,14 @@ class ThumbnailPixmapCache : public ref_countable {
    *
    * \note This function is to be called from the GUI thread only.
    */
-  Status loadFromCache(const ImageId& image_id, QPixmap& pixmap);
+  Status loadFromCache(const ImageId& imageId, QPixmap& pixmap);
 
   /**
    * \brief Take the pixmap from cache or from disk, blocking if necessary.
    *
    * \note This function is to be called from the GUI thread only.
    */
-  Status loadNow(const ImageId& image_id, QPixmap& pixmap);
+  Status loadNow(const ImageId& imageId, QPixmap& pixmap);
 
   /**
    * \brief Take the pixmap from cache or schedule a load request.
@@ -84,9 +81,9 @@ class ThumbnailPixmapCache : public ref_countable {
    *
    * \note This function is to be called from the GUI thread only.
    *
-   * \param image_id The identifier of the full size image and its thumbnail.
+   * \param imageId The identifier of the full size image and its thumbnail.
    * \param[out] pixmap If the pixmap is cached, store it here.
-   * \param completion_handler A functor that will be called on request
+   * \param completionHandler A functor that will be called on request
    * completion.  The best way to construct such a functor would be:
    * \code
    * class X : public boost::signals::trackable
@@ -96,7 +93,7 @@ class ThumbnailPixmapCache : public ref_countable {
    * };
    *
    * X x;
-   * cache->loadRequest(image_id, pixmap, boost::bind(&X::handleCompletion, x, _1));
+   * cache->loadRequest(imageId, pixmap, boost::bind(&X::handleCompletion, x, _1));
    * \endcode
    * Note that deriving X from boost::signals::trackable (with public inheritance)
    * allows to safely delete the x object without worrying about callbacks
@@ -105,9 +102,9 @@ class ThumbnailPixmapCache : public ref_countable {
    * keep in mind is that only boost::bind() can handle trackable binds.
    * Other methods, for example boost::lambda::bind() can't do that.
    */
-  Status loadRequest(const ImageId& image_id,
+  Status loadRequest(const ImageId& imageId,
                      QPixmap& pixmap,
-                     const std::weak_ptr<CompletionHandler>& completion_handler);
+                     const std::weak_ptr<CompletionHandler>& completionHandler);
 
   /**
    * \brief If no thumbnail exists for this image, create it.
@@ -116,22 +113,22 @@ class ThumbnailPixmapCache : public ref_countable {
    * opportunity.  Suppose you have the full size image already loaded,
    * and want to avoid a second load when its thumbnail is requested.
    *
-   * \param image_id The identifier of the full size image and its thumbnail.
+   * \param imageId The identifier of the full size image and its thumbnail.
    * \param image The full-size image.
    *
    * \note This function may be called from any thread, even concurrently.
    */
-  void ensureThumbnailExists(const ImageId& image_id, const QImage& image);
+  void ensureThumbnailExists(const ImageId& imageId, const QImage& image);
 
   /**
    * \brief Re-create and replace the existing thumnail.
    *
-   * \param image_id The identifier of the full size image and its thumbnail.
+   * \param imageId The identifier of the full size image and its thumbnail.
    * \param image The full-size image or a thumbnail.
    *
    * \note This function may be called from any thread, even concurrently.
    */
-  void recreateThumbnail(const ImageId& image_id, const QImage& image);
+  void recreateThumbnail(const ImageId& imageId, const QImage& image);
 
  private:
   class Item;
@@ -141,4 +138,4 @@ class ThumbnailPixmapCache : public ref_countable {
 };
 
 
-#endif  // ifndef THUMBNAILPIXMAPCACHE_H_
+#endif  // ifndef SCANTAILOR_CORE_THUMBNAILPIXMAPCACHE_H_

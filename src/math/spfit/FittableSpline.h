@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SPFIT_FITTABLE_SPLINE_H_
-#define SPFIT_FITTABLE_SPLINE_H_
+#ifndef SCANTAILOR_SPFIT_FITTABLESPLINE_H_
+#define SCANTAILOR_SPFIT_FITTABLESPLINE_H_
 
 #include <QPointF>
 #include <vector>
@@ -38,7 +38,7 @@ class FittableSpline {
 
     LinearCoefficient() : coeff(0), controlPointIdx(-1) {}
 
-    LinearCoefficient(int cp_idx, double cf) : coeff(cf), controlPointIdx(cp_idx) {}
+    LinearCoefficient(int cpIdx, double cf) : coeff(cf), controlPointIdx(cpIdx) {}
   };
 
   struct SamplingParams {
@@ -53,9 +53,8 @@ class FittableSpline {
      */
     double maxDistBetweenSamples;
 
-    explicit SamplingParams(double max_dist_from_spline = 0.2,
-                            double max_dist_between_samples = NumericTraits<double>::max())
-        : maxDistFromSpline(max_dist_from_spline), maxDistBetweenSamples(max_dist_between_samples) {}
+    explicit SamplingParams(double maxDistFromSpline = 0.2, double maxDistBetweenSamples = NumericTraits<double>::max())
+        : maxDistFromSpline(maxDistFromSpline), maxDistBetweenSamples(maxDistBetweenSamples) {}
   };
 
   virtual ~FittableSpline() = default;
@@ -85,17 +84,17 @@ class FittableSpline {
    * -# t value corresponding to that point.
    * -# SampleFlags for the point.
    *
-   * \note No matter the values of from_t and to_t, samples
+   * \note No matter the values of fromT and toT, samples
    *       corresponding to them will be marked with HEAD_SAMPLE
    *       and TAIL_SAMPLE respectably.
    */
   virtual void sample(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
                       const SamplingParams& params,
-                      double from_t = 0.0,
-                      double to_t = 1.0) const = 0;
+                      double fromT = 0.0,
+                      double toT = 1.0) const = 0;
 };
 
 
 DEFINE_FLAG_OPS(FittableSpline::SampleFlags)
 }  // namespace spfit
-#endif  // ifndef SPFIT_FITTABLE_SPLINE_H_
+#endif  // ifndef SCANTAILOR_SPFIT_FITTABLESPLINE_H_

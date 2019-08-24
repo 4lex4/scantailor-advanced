@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef RECENT_PROJECTS_H_
-#define RECENT_PROJECTS_H_
+#ifndef SCANTAILOR_CORE_RECENTPROJECTS_H_
+#define SCANTAILOR_CORE_RECENTPROJECTS_H_
 
 #include <QString>
 #include <limits>
@@ -11,7 +11,7 @@
 class RecentProjects {
  public:
   /**
-   * \brief The default value for max_items parameters of
+   * \brief The default value for maxItems parameters of
    *        write() and enumerate().
    */
   enum { DEFAULT_MAX_ITEMS = 7 };
@@ -35,19 +35,19 @@ class RecentProjects {
    * \brief Appends a project to the list or moves it to the
    *        top of the list, if it was already there.
    */
-  void setMostRecent(const QString& file_path);
+  void setMostRecent(const QString& filePath);
 
-  void write(int max_items = DEFAULT_MAX_ITEMS) const;
+  void write(int maxItems = DEFAULT_MAX_ITEMS) const;
 
   bool isEmpty() const { return m_projectFiles.empty(); }
 
   /**
-   * \brief Calls out((const QString&)file_path) for every entry.
+   * \brief Calls out((const QString&)filePath) for every entry.
    *
    * Modifying this object from the callback is not allowed.
    */
   template <typename Out>
-  void enumerate(Out out, int max_items = DEFAULT_MAX_ITEMS) const;
+  void enumerate(Out out, int maxItems = DEFAULT_MAX_ITEMS) const;
 
  private:
   std::list<QString> m_projectFiles;
@@ -55,12 +55,12 @@ class RecentProjects {
 
 
 template <typename Out>
-void RecentProjects::enumerate(Out out, int max_items) const {
+void RecentProjects::enumerate(Out out, int maxItems) const {
   std::list<QString>::const_iterator it(m_projectFiles.begin());
   const std::list<QString>::const_iterator end(m_projectFiles.end());
-  for (; it != end && max_items > 0; ++it, --max_items) {
+  for (; it != end && maxItems > 0; ++it, --maxItems) {
     out(*it);
   }
 }
 
-#endif  // ifndef RECENT_PROJECTS_H_
+#endif  // ifndef SCANTAILOR_CORE_RECENTPROJECTS_H_

@@ -9,29 +9,29 @@ namespace select_content {
 Params::Params(const Dependencies& deps)
     : m_deps(deps), m_contentDetectionMode(MODE_AUTO), m_pageDetectionMode(MODE_DISABLED), m_fineTuneCorners(false) {}
 
-Params::Params(const QRectF& content_rect,
-               const QSizeF& content_size_mm,
-               const QRectF& page_rect,
+Params::Params(const QRectF& contentRect,
+               const QSizeF& contentSizeMm,
+               const QRectF& pageRect,
                const Dependencies& deps,
-               const AutoManualMode content_detection_mode,
-               const AutoManualMode page_detection_mode,
-               const bool fine_tune_corners)
-    : m_contentRect(content_rect),
-      m_pageRect(page_rect),
-      m_contentSizeMM(content_size_mm),
+               const AutoManualMode contentDetectionMode,
+               const AutoManualMode pageDetectionMode,
+               const bool fineTuneCorners)
+    : m_contentRect(contentRect),
+      m_pageRect(pageRect),
+      m_contentSizeMM(contentSizeMm),
       m_deps(deps),
-      m_contentDetectionMode(content_detection_mode),
-      m_pageDetectionMode(page_detection_mode),
-      m_fineTuneCorners(fine_tune_corners) {}
+      m_contentDetectionMode(contentDetectionMode),
+      m_pageDetectionMode(pageDetectionMode),
+      m_fineTuneCorners(fineTuneCorners) {}
 
-Params::Params(const QDomElement& filter_el)
-    : m_contentRect(XmlUnmarshaller::rectF(filter_el.namedItem("content-rect").toElement())),
-      m_pageRect(XmlUnmarshaller::rectF(filter_el.namedItem("page-rect").toElement())),
-      m_contentSizeMM(XmlUnmarshaller::sizeF(filter_el.namedItem("content-size-mm").toElement())),
-      m_deps(filter_el.namedItem("dependencies").toElement()),
-      m_contentDetectionMode(stringToAutoManualMode(filter_el.attribute("contentDetectionMode"))),
-      m_pageDetectionMode(stringToAutoManualMode(filter_el.attribute("pageDetectionMode"))),
-      m_fineTuneCorners(filter_el.attribute("fineTuneCorners") == "1") {}
+Params::Params(const QDomElement& filterEl)
+    : m_contentRect(XmlUnmarshaller::rectF(filterEl.namedItem("content-rect").toElement())),
+      m_pageRect(XmlUnmarshaller::rectF(filterEl.namedItem("page-rect").toElement())),
+      m_contentSizeMM(XmlUnmarshaller::sizeF(filterEl.namedItem("content-size-mm").toElement())),
+      m_deps(filterEl.namedItem("dependencies").toElement()),
+      m_contentDetectionMode(stringToAutoManualMode(filterEl.attribute("contentDetectionMode"))),
+      m_pageDetectionMode(stringToAutoManualMode(filterEl.attribute("pageDetectionMode"))),
+      m_fineTuneCorners(filterEl.attribute("fineTuneCorners") == "1") {}
 
 Params::~Params() = default;
 
@@ -102,7 +102,7 @@ void Params::setDependencies(const Dependencies& deps) {
   m_deps = deps;
 }
 
-void Params::setFineTuneCornersEnabled(bool fine_tune_corners) {
-  m_fineTuneCorners = fine_tune_corners;
+void Params::setFineTuneCornersEnabled(bool fineTuneCorners) {
+  m_fineTuneCorners = fineTuneCorners;
 }
 }  // namespace select_content

@@ -6,25 +6,23 @@
 #include <utility>
 
 namespace select_content {
-Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                     const QSizeF& max_size,
-                     const ImageId& image_id,
+Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                     const QSizeF& maxSize,
+                     const ImageId& imageId,
                      const ImageTransformation& xform,
-                     const QRectF& content_rect,
-                     const QRectF& page_rect,
-                     bool page_rect_enabled,
+                     const QRectF& contentRect,
+                     const QRectF& pageRect,
+                     bool pageRectEnabled,
                      bool deviant)
-    : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform),
-      m_contentRect(content_rect),
-      m_pageRect(page_rect),
-      m_pageRectEnabled(page_rect_enabled),
+    : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, xform),
+      m_contentRect(contentRect),
+      m_pageRect(pageRect),
+      m_pageRectEnabled(pageRectEnabled),
       m_deviant(deviant) {}
 
-void Thumbnail::paintOverImage(QPainter& painter,
-                               const QTransform& image_to_display,
-                               const QTransform& thumb_to_display) {
+void Thumbnail::paintOverImage(QPainter& painter, const QTransform& imageToDisplay, const QTransform& thumbToDisplay) {
   if (!m_contentRect.isNull()) {
-    QRectF page_rect(virtToThumb().mapRect(m_pageRect));
+    QRectF pageRect(virtToThumb().mapRect(m_pageRect));
 
     painter.setRenderHint(QPainter::Antialiasing, false);
 
@@ -36,7 +34,7 @@ void Thumbnail::paintOverImage(QPainter& painter,
 
       painter.setBrush(Qt::NoBrush);
 
-      painter.drawRect(page_rect);
+      painter.drawRect(pageRect);
     }
 
     QPen pen(QColor(0x00, 0x00, 0xff));
@@ -46,13 +44,13 @@ void Thumbnail::paintOverImage(QPainter& painter,
 
     painter.setBrush(QColor(0x00, 0x00, 0xff, 50));
 
-    QRectF content_rect(virtToThumb().mapRect(m_contentRect));
+    QRectF contentRect(virtToThumb().mapRect(m_contentRect));
 
     // Adjust to compensate for pen width.
-    content_rect.adjust(-1, -1, 1, 1);
-    content_rect = content_rect.intersected(page_rect);
+    contentRect.adjust(-1, -1, 1, 1);
+    contentRect = contentRect.intersected(pageRect);
 
-    painter.drawRect(content_rect);
+    painter.drawRect(contentRect);
   }
 
   if (m_deviant) {

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef HOMOGRAPHIC_TRANSFORM_H_
-#define HOMOGRAPHIC_TRANSFORM_H_
+#ifndef SCANTAILOR_MATH_HOMOGRAPHICTRANSFORM_H_
+#define SCANTAILOR_MATH_HOMOGRAPHICTRANSFORM_H_
 
 #include <cstddef>
 #include "MatrixCalc.h"
@@ -55,10 +55,10 @@ class HomographicTransform<1, T> : public HomographicTransformBase<1, T> {
 template <size_t N, typename T>
 HomographicTransform<N, T> HomographicTransformBase<N, T>::inv() const {
   StaticMatrixCalc<T, 4 * (N + 1) * (N + 1), N + 1> mc;
-  Mat inv_mat;
-  mc(m_mat, static_cast<int>(N + 1), static_cast<int>(N + 1)).inv().write(inv_mat);
+  Mat invMat;
+  mc(m_mat, static_cast<int>(N + 1), static_cast<int>(N + 1)).inv().write(invMat);
 
-  return HomographicTransform<N, T>(inv_mat);
+  return HomographicTransform<N, T>(invMat);
 }
 
 template <size_t N, typename T>
@@ -81,4 +81,4 @@ T HomographicTransform<1, T>::operator()(T from) const {
   return (from * m[0] + m[2]) / (from * m[1] + m[3]);
 }
 
-#endif  // ifndef HOMOGRAPHIC_TRANSFORM_H_
+#endif  // ifndef SCANTAILOR_MATH_HOMOGRAPHICTRANSFORM_H_

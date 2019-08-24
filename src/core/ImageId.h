@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEID_H_
-#define IMAGEID_H_
+#ifndef SCANTAILOR_CORE_IMAGEID_H_
+#define SCANTAILOR_CORE_IMAGEID_H_
 
 #include <foundation/Hashes.h>
 #include <QString>
@@ -14,9 +14,9 @@ class ImageId {
  public:
   ImageId() : m_filePath(), m_page(0) {}
 
-  explicit ImageId(const QString& file_path, int page = 0);
+  explicit ImageId(const QString& filePath, int page = 0);
 
-  explicit ImageId(const QFileInfo& file_info, int page = 0);
+  explicit ImageId(const QFileInfo& fileInfo, int page = 0);
 
   bool isNull() const { return m_filePath.isNull(); }
 
@@ -58,4 +58,4 @@ struct hash<ImageId> {
 };
 }  // namespace std
 
-#endif  // ifndef IMAGEID_H_
+#endif  // ifndef SCANTAILOR_CORE_IMAGEID_H_

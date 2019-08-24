@@ -12,8 +12,8 @@
 #include <utility>
 
 namespace select_content {
-OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
-    : m_settings(std::move(settings)), m_pageSelectionAccessor(page_selection_accessor), m_ignorePageSizeChanges(0) {
+OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor)
+    : m_settings(std::move(settings)), m_pageSelectionAccessor(pageSelectionAccessor), m_ignorePageSizeChanges(0) {
   setupUi(this);
 
   setupUiConnections();
@@ -21,11 +21,11 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
 
 OptionsWidget::~OptionsWidget() = default;
 
-void OptionsWidget::preUpdateUI(const PageInfo& page_info) {
+void OptionsWidget::preUpdateUI(const PageInfo& pageInfo) {
   removeUiConnections();
 
-  m_pageId = page_info.id();
-  m_dpi = page_info.metadata().dpi();
+  m_pageId = pageInfo.id();
+  m_dpi = pageInfo.metadata().dpi();
 
   contentBoxGroup->setEnabled(false);
   pageBoxGroup->setEnabled(false);
@@ -39,13 +39,13 @@ void OptionsWidget::preUpdateUI(const PageInfo& page_info) {
   setupUiConnections();
 }
 
-void OptionsWidget::postUpdateUI(const UiData& ui_data) {
+void OptionsWidget::postUpdateUI(const UiData& uiData) {
   removeUiConnections();
 
-  m_uiData = ui_data;
+  m_uiData = uiData;
 
-  updateContentModeIndication(ui_data.contentDetectionMode());
-  updatePageModeIndication(ui_data.pageDetectionMode());
+  updateContentModeIndication(uiData.contentDetectionMode());
+  updatePageModeIndication(uiData.pageDetectionMode());
 
   contentBoxGroup->setEnabled(true);
   pageBoxGroup->setEnabled(true);
@@ -56,8 +56,8 @@ void OptionsWidget::postUpdateUI(const UiData& ui_data) {
   setupUiConnections();
 }
 
-void OptionsWidget::manualContentRectSet(const QRectF& content_rect) {
-  m_uiData.setContentRect(content_rect);
+void OptionsWidget::manualContentRectSet(const QRectF& contentRect) {
+  m_uiData.setContentRect(contentRect);
   m_uiData.setContentDetectionMode(MODE_MANUAL);
   updateContentModeIndication(MODE_MANUAL);
 
@@ -66,12 +66,12 @@ void OptionsWidget::manualContentRectSet(const QRectF& content_rect) {
   emit invalidateThumbnail(m_pageId);
 }
 
-void OptionsWidget::manualPageRectSet(const QRectF& page_rect) {
-  m_uiData.setPageRect(page_rect);
+void OptionsWidget::manualPageRectSet(const QRectF& pageRect) {
+  m_uiData.setPageRect(pageRect);
   m_uiData.setPageDetectionMode(MODE_MANUAL);
   updatePageModeIndication(MODE_MANUAL);
   updatePageDetectOptionsDisplay();
-  updatePageRectSize(page_rect.size());
+  updatePageRectSize(pageRect.size());
 
   commitCurrentParams();
 
@@ -79,7 +79,7 @@ void OptionsWidget::manualPageRectSet(const QRectF& page_rect) {
 }
 
 void OptionsWidget::updatePageRectSize(const QSizeF& size) {
-  const ScopedIncDec<int> ignore_scope(m_ignorePageSizeChanges);
+  const ScopedIncDec<int> ignoreScope(m_ignorePageSizeChanges);
 
   double width = size.width();
   double height = size.height();
@@ -99,7 +99,7 @@ void OptionsWidget::contentDetectToggled(const AutoManualMode mode) {
 }
 
 void OptionsWidget::pageDetectToggled(const AutoManualMode mode) {
-  const bool need_update_state = ((mode == MODE_MANUAL) && (m_uiData.pageDetectionMode() == MODE_DISABLED));
+  const bool needUpdateState = ((mode == MODE_MANUAL) && (m_uiData.pageDetectionMode() == MODE_DISABLED));
 
   m_uiData.setPageDetectionMode(mode);
   updatePageDetectOptionsDisplay();
@@ -107,7 +107,7 @@ void OptionsWidget::pageDetectToggled(const AutoManualMode mode) {
 
   if (mode != MODE_MANUAL) {
     emit reloadRequested();
-  } else if (need_update_state) {
+  } else if (needUpdateState) {
     emit pageRectStateChanged(true);
     emit invalidateThumbnail(m_pageId);
   }
@@ -204,9 +204,7 @@ void OptionsWidget::showApplyToDialog() {
   dialog->show();
 }
 
-void OptionsWidget::applySelection(const std::set<PageId>& pages,
-                                   const bool apply_content_box,
-                                   const bool apply_page_box) {
+void OptionsWidget::applySelection(const std::set<PageId>& pages, const bool applyContentBox, const bool applyPageBox) {
   if (pages.empty()) {
     return;
   }
@@ -220,38 +218,37 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages,
       continue;
     }
 
-    Params new_params(params);
-    std::unique_ptr<Params> old_params = m_settings->getPageParams(page_id);
-    if (old_params) {
-      if (new_params.pageDetectionMode() == MODE_MANUAL) {
-        if (!apply_page_box) {
-          new_params.setPageRect(old_params->pageRect());
+    Params newParams(params);
+    std::unique_ptr<Params> oldParams = m_settings->getPageParams(page_id);
+    if (oldParams) {
+      if (newParams.pageDetectionMode() == MODE_MANUAL) {
+        if (!applyPageBox) {
+          newParams.setPageRect(oldParams->pageRect());
         } else {
-          QRectF corrected_page_rect = new_params.pageRect();
-          const QRectF source_image_rect = new_params.dependencies().rotatedPageOutline().boundingRect();
-          const QRectF current_image_rect = old_params->dependencies().rotatedPageOutline().boundingRect();
-          if (source_image_rect.isValid() && current_image_rect.isValid()) {
-            corrected_page_rect.translate((current_image_rect.width() - source_image_rect.width()) / 2,
-                                          (current_image_rect.height() - source_image_rect.height()) / 2);
-            new_params.setPageRect(corrected_page_rect);
+          QRectF correctedPageRect = newParams.pageRect();
+          const QRectF sourceImageRect = newParams.dependencies().rotatedPageOutline().boundingRect();
+          const QRectF currentImageRect = oldParams->dependencies().rotatedPageOutline().boundingRect();
+          if (sourceImageRect.isValid() && currentImageRect.isValid()) {
+            correctedPageRect.translate((currentImageRect.width() - sourceImageRect.width()) / 2,
+                                        (currentImageRect.height() - sourceImageRect.height()) / 2);
+            newParams.setPageRect(correctedPageRect);
           }
         }
       }
-      if (new_params.contentDetectionMode() == MODE_MANUAL) {
-        if (!apply_content_box) {
-          new_params.setContentRect(old_params->contentRect());
-        } else if (!new_params.contentRect().isEmpty()) {
-          QRectF corrected_content_rect = new_params.contentRect();
-          const QRectF& source_page_rect = m_uiData.pageRect();
-          const QRectF& new_page_rect = new_params.pageRect();
-          corrected_content_rect.translate(new_page_rect.x() - source_page_rect.x(),
-                                           new_page_rect.y() - source_page_rect.y());
-          new_params.setContentRect(corrected_content_rect);
+      if (newParams.contentDetectionMode() == MODE_MANUAL) {
+        if (!applyContentBox) {
+          newParams.setContentRect(oldParams->contentRect());
+        } else if (!newParams.contentRect().isEmpty()) {
+          QRectF correctedContentRect = newParams.contentRect();
+          const QRectF& sourcePageRect = m_uiData.pageRect();
+          const QRectF& newPageRect = newParams.pageRect();
+          correctedContentRect.translate(newPageRect.x() - sourcePageRect.x(), newPageRect.y() - sourcePageRect.y());
+          newParams.setContentRect(correctedContentRect);
         }
       }
     }
 
-    m_settings->setPageParams(page_id, new_params);
+    m_settings->setPageParams(page_id, newParams);
   }
 
   if (pages.size() > 1) {
@@ -335,16 +332,16 @@ void OptionsWidget::UiData::setSizeCalc(const PhysSizeCalc& calc) {
   m_sizeCalc = calc;
 }
 
-void OptionsWidget::UiData::setContentRect(const QRectF& content_rect) {
-  m_contentRect = content_rect;
+void OptionsWidget::UiData::setContentRect(const QRectF& contentRect) {
+  m_contentRect = contentRect;
 }
 
 const QRectF& OptionsWidget::UiData::contentRect() const {
   return m_contentRect;
 }
 
-void OptionsWidget::UiData::setPageRect(const QRectF& page_rect) {
-  m_pageRect = page_rect;
+void OptionsWidget::UiData::setPageRect(const QRectF& pageRect) {
+  m_pageRect = pageRect;
 }
 
 const QRectF& OptionsWidget::UiData::pageRect() const {
@@ -378,8 +375,8 @@ void OptionsWidget::UiData::setPageDetectionMode(AutoManualMode mode) {
 AutoManualMode OptionsWidget::UiData::pageDetectionMode() const {
   return m_pageDetectionMode;
 }
-void OptionsWidget::UiData::setFineTuneCornersEnabled(bool fine_tune) {
-  m_fineTuneCornersEnabled = fine_tune;
+void OptionsWidget::UiData::setFineTuneCornersEnabled(bool fineTune) {
+  m_fineTuneCornersEnabled = fineTune;
 }
 
 bool OptionsWidget::UiData::isFineTuningCornersEnabled() const {

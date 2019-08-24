@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ABSTRACTFILTER_H_
-#define ABSTRACTFILTER_H_
+#ifndef SCANTAILOR_CORE_ABSTRACTFILTER_H_
+#define SCANTAILOR_CORE_ABSTRACTFILTER_H_
 
 #include <vector>
 #include "PageOrderOption.h"
@@ -39,14 +39,14 @@ class AbstractFilter : public ref_countable {
 
   virtual void performRelinking(const AbstractRelinker& relinker) = 0;
 
-  virtual void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) = 0;
+  virtual void preUpdateUI(FilterUiInterface* ui, const PageInfo& pageInfo) = 0;
 
   virtual QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const = 0;
 
-  virtual void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) = 0;
+  virtual void loadSettings(const ProjectReader& reader, const QDomElement& filtersEl) = 0;
 
-  virtual void loadDefaultSettings(const PageInfo& page_info) = 0;
+  virtual void loadDefaultSettings(const PageInfo& pageInfo) = 0;
 };
 
 
-#endif  // ifndef ABSTRACTFILTER_H_
+#endif  // ifndef SCANTAILOR_CORE_ABSTRACTFILTER_H_

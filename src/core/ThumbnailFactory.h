@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef THUMBNAILFACTORY_H_
-#define THUMBNAILFACTORY_H_
+#ifndef SCANTAILOR_CORE_THUMBNAILFACTORY_H_
+#define SCANTAILOR_CORE_THUMBNAILFACTORY_H_
 
 #include <QSizeF>
 #include <memory>
@@ -19,13 +19,13 @@ class ThumbnailFactory : public ref_countable {
   DECLARE_NON_COPYABLE(ThumbnailFactory)
 
  public:
-  ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmap_cache,
-                   const QSizeF& max_size,
+  ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmapCache,
+                   const QSizeF& maxSize,
                    intrusive_ptr<CompositeCacheDrivenTask> task);
 
   ~ThumbnailFactory() override;
 
-  std::unique_ptr<QGraphicsItem> get(const PageInfo& page_info);
+  std::unique_ptr<QGraphicsItem> get(const PageInfo& pageInfo);
 
  private:
   class Collector;
@@ -36,4 +36,4 @@ class ThumbnailFactory : public ref_countable {
 };
 
 
-#endif  // ifndef THUMBNAILFACTORY_H_
+#endif  // ifndef SCANTAILOR_CORE_THUMBNAILFACTORY_H_

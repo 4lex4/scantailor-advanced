@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SPFIT_LINEAR_FORCE_BALANCER_H_
-#define SPFIT_LINEAR_FORCE_BALANCER_H_
+#ifndef SCANTAILOR_SPFIT_LINEARFORCEBALANCER_H_
+#define SCANTAILOR_SPFIT_LINEARFORCEBALANCER_H_
 
 namespace spfit {
 /**
@@ -17,15 +17,15 @@ class LinearForceBalancer {
   /**
    * Sets both the current and the target ratio, so that it doesn't change over time.
    */
-  explicit LinearForceBalancer(double internal_external_ratio);
+  explicit LinearForceBalancer(double internalExternalRatio);
 
   double currentRatio() const { return m_currentRatio; }
 
-  void setCurrentRatio(double internal_external_ratio);
+  void setCurrentRatio(double internalExternalRatio);
 
   double targetRatio() const { return m_targetRatio; }
 
-  void setTargetRatio(double internal_external_ratio);
+  void setTargetRatio(double internalExternalRatio);
 
   /**
    * Sets the number of iterations after which the internal / external force
@@ -34,7 +34,7 @@ class LinearForceBalancer {
    */
   void setIterationsToTarget(int iterations);
 
-  double calcInternalForceWeight(double internal_force, double external_force) const;
+  double calcInternalForceWeight(double internalForce, double externalForce) const;
 
   /**
    * Returns the current internal / external force ratio, then moves
@@ -52,4 +52,4 @@ class LinearForceBalancer {
   int m_iterationsToTarget;
 };
 }  // namespace spfit
-#endif  // ifndef SPFIT_LINEAR_FORCE_BALANCER_H_
+#endif  // ifndef SCANTAILOR_SPFIT_LINEARFORCEBALANCER_H_

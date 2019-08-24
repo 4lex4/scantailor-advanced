@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PRIORITY_QUEUE_H_
-#define PRIORITY_QUEUE_H_
+#ifndef SCANTAILOR_FOUNDATION_PRIORITYQUEUE_H_
+#define SCANTAILOR_FOUNDATION_PRIORITYQUEUE_H_
 
 #include <algorithm>
 #include <cassert>
@@ -172,14 +172,14 @@ size_t PriorityQueue<T, SubClass>::bubbleUp(size_t idx) {
   assert(idx < m_index.size());
 
   while (idx > 0) {
-    const size_t parent_idx = parent(idx);
-    if (!subClass()->higherThan(m_index[idx], m_index[parent_idx])) {
+    const size_t parentIdx = parent(idx);
+    if (!subClass()->higherThan(m_index[idx], m_index[parentIdx])) {
       break;
     }
-    swap(m_index[idx], m_index[parent_idx]);
+    swap(m_index[idx], m_index[parentIdx]);
     subClass()->setIndex(m_index[idx], idx);
-    subClass()->setIndex(m_index[parent_idx], parent_idx);
-    idx = parent_idx;
+    subClass()->setIndex(m_index[parentIdx], parentIdx);
+    idx = parentIdx;
   }
 
   return idx;
@@ -198,21 +198,21 @@ size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
   while (true) {
     const size_t lft = left(idx);
     const size_t rgt = right(idx);
-    size_t best_child;
+    size_t bestChild;
 
     if (rgt < len) {
-      best_child = subClass()->higherThan(m_index[lft], m_index[rgt]) ? lft : rgt;
+      bestChild = subClass()->higherThan(m_index[lft], m_index[rgt]) ? lft : rgt;
     } else if (lft < len) {
-      best_child = lft;
+      bestChild = lft;
     } else {
       break;
     }
 
-    if (subClass()->higherThan(m_index[best_child], m_index[idx])) {
-      swap(m_index[idx], m_index[best_child]);
+    if (subClass()->higherThan(m_index[bestChild], m_index[idx])) {
+      swap(m_index[idx], m_index[bestChild]);
       subClass()->setIndex(m_index[idx], idx);
-      subClass()->setIndex(m_index[best_child], best_child);
-      idx = best_child;
+      subClass()->setIndex(m_index[bestChild], bestChild);
+      idx = bestChild;
     } else {
       break;
     }
@@ -221,4 +221,4 @@ size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
   return idx;
 }  // >::bubbleDown
 
-#endif  // ifndef PRIORITY_QUEUE_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_PRIORITYQUEUE_H_

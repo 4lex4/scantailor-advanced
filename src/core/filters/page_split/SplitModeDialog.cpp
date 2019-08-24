@@ -2,24 +2,24 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SplitModeDialog.h"
+#include <core/IconProvider.h>
 #include <cassert>
 #include <iostream>
-#include <core/IconProvider.h>
 #include "PageSelectionAccessor.h"
 
 namespace page_split {
 SplitModeDialog::SplitModeDialog(QWidget* const parent,
-                                 const PageId& cur_page,
-                                 const PageSelectionAccessor& page_selection_accessor,
-                                 const LayoutType layout_type,
-                                 const PageLayout::Type auto_detected_layout_type)
+                                 const PageId& curPage,
+                                 const PageSelectionAccessor& pageSelectionAccessor,
+                                 const LayoutType layoutType,
+                                 const PageLayout::Type autoDetectedLayoutType)
     : QDialog(parent),
-      m_pages(page_selection_accessor.allPages()),
-      m_selectedPages(page_selection_accessor.selectedPages()),
-      m_curPage(cur_page),
+      m_pages(pageSelectionAccessor.allPages()),
+      m_selectedPages(pageSelectionAccessor.selectedPages()),
+      m_curPage(curPage),
       m_scopeGroup(new QButtonGroup(this)),
-      m_layoutType(layout_type),
-      m_autoDetectedLayoutType(auto_detected_layout_type) {
+      m_layoutType(layoutType),
+      m_autoDetectedLayoutType(autoDetectedLayoutType) {
   setupUi(this);
   m_scopeGroup->addButton(thisPageRB);
   m_scopeGroup->addButton(allPagesRB);
@@ -63,9 +63,9 @@ void SplitModeDialog::manualModeSelected() {
 }
 
 void SplitModeDialog::onSubmit() {
-  LayoutType layout_type = AUTO_LAYOUT_TYPE;
+  LayoutType layoutType = AUTO_LAYOUT_TYPE;
   if (modeManual->isChecked()) {
-    layout_type = combinedLayoutType();
+    layoutType = combinedLayoutType();
   }
 
   std::set<PageId> pages;
@@ -77,7 +77,7 @@ void SplitModeDialog::onSubmit() {
   } else if (thisPageAndFollowersRB->isChecked()) {
     m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
   } else if (selectedPagesRB->isChecked()) {
-    emit accepted(m_selectedPages, layout_type, applyCutOption->isChecked());
+    emit accepted(m_selectedPages, layoutType, applyCutOption->isChecked());
     accept();
 
     return;
@@ -101,7 +101,7 @@ void SplitModeDialog::onSubmit() {
     }
   }
 
-  emit accepted(pages, layout_type, applyCutOption->isChecked());
+  emit accepted(pages, layoutType, applyCutOption->isChecked());
   // We assume the default connection from accepted() to accept()
   // was removed.
   accept();
@@ -126,9 +126,9 @@ LayoutType SplitModeDialog::combinedLayoutType() const {
   return AUTO_LAYOUT_TYPE;
 }
 
-QIcon SplitModeDialog::iconFor(const LayoutType layout_type) {
+QIcon SplitModeDialog::iconFor(const LayoutType layoutType) {
   QIcon icon;
-  switch (layout_type) {
+  switch (layoutType) {
     case AUTO_LAYOUT_TYPE:
       icon = IconProvider::getInstance().getIcon("layout_type_auto");
       break;

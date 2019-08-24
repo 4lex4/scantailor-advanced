@@ -14,11 +14,11 @@
 
 namespace page_split {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
-                             intrusive_ptr<ProjectPages> page_sequence,
-                             const PageSelectionAccessor& page_selection_accessor)
+                             intrusive_ptr<ProjectPages> pageSequence,
+                             const PageSelectionAccessor& pageSelectionAccessor)
     : m_settings(std::move(settings)),
-      m_pages(std::move(page_sequence)),
-      m_pageSelectionAccessor(page_selection_accessor),
+      m_pages(std::move(pageSequence)),
+      m_pageSelectionAccessor(pageSelectionAccessor),
       m_ignoreAutoManualToggle(0),
       m_ignoreLayoutTypeToggle(0) {
   setupUi(this);
@@ -34,17 +34,17 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
 
 OptionsWidget::~OptionsWidget() = default;
 
-void OptionsWidget::preUpdateUI(const PageId& page_id) {
+void OptionsWidget::preUpdateUI(const PageId& pageId) {
   removeUiConnections();
 
   ScopedIncDec<int> guard1(m_ignoreAutoManualToggle);
   ScopedIncDec<int> guard2(m_ignoreLayoutTypeToggle);
 
-  m_pageId = page_id;
-  const Settings::Record record(m_settings->getPageRecord(page_id.imageId()));
-  const LayoutType layout_type(record.combinedLayoutType());
+  m_pageId = pageId;
+  const Settings::Record record(m_settings->getPageRecord(pageId.imageId()));
+  const LayoutType layoutType(record.combinedLayoutType());
 
-  switch (layout_type) {
+  switch (layoutType) {
     case AUTO_LAYOUT_TYPE:
       // Uncheck all buttons.  Can only be done
       // by playing with exclusiveness.
@@ -64,9 +64,9 @@ void OptionsWidget::preUpdateUI(const PageId& page_id) {
       break;
   }
 
-  splitLineGroup->setVisible(layout_type != SINGLE_PAGE_UNCUT);
+  splitLineGroup->setVisible(layoutType != SINGLE_PAGE_UNCUT);
 
-  if (layout_type == AUTO_LAYOUT_TYPE) {
+  if (layoutType == AUTO_LAYOUT_TYPE) {
     changeBtn->setEnabled(false);
     scopeLabel->setText("?");
   } else {
@@ -86,27 +86,27 @@ void OptionsWidget::preUpdateUI(const PageId& page_id) {
   setupUiConnections();
 }  // OptionsWidget::preUpdateUI
 
-void OptionsWidget::postUpdateUI(const UiData& ui_data) {
+void OptionsWidget::postUpdateUI(const UiData& uiData) {
   removeUiConnections();
 
   ScopedIncDec<int> guard1(m_ignoreAutoManualToggle);
   ScopedIncDec<int> guard2(m_ignoreLayoutTypeToggle);
 
-  m_uiData = ui_data;
+  m_uiData = uiData;
 
   changeBtn->setEnabled(true);
   autoBtn->setEnabled(true);
   manualBtn->setEnabled(true);
 
-  if (ui_data.splitLineMode() == MODE_AUTO) {
+  if (uiData.splitLineMode() == MODE_AUTO) {
     autoBtn->setChecked(true);
   } else {
     manualBtn->setChecked(true);
   }
 
-  const PageLayout::Type layout_type = ui_data.pageLayout().type();
+  const PageLayout::Type layoutType = uiData.pageLayout().type();
 
-  switch (layout_type) {
+  switch (layoutType) {
     case PageLayout::SINGLE_PAGE_UNCUT:
       singlePageUncutBtn->setChecked(true);
       break;
@@ -118,19 +118,19 @@ void OptionsWidget::postUpdateUI(const UiData& ui_data) {
       break;
   }
 
-  splitLineGroup->setVisible(layout_type != PageLayout::SINGLE_PAGE_UNCUT);
+  splitLineGroup->setVisible(layoutType != PageLayout::SINGLE_PAGE_UNCUT);
 
-  if (ui_data.layoutTypeAutoDetected()) {
+  if (uiData.layoutTypeAutoDetected()) {
     scopeLabel->setText(tr("Auto detected"));
   }
 
   setupUiConnections();
 }  // OptionsWidget::postUpdateUI
 
-void OptionsWidget::pageLayoutSetExternally(const PageLayout& page_layout) {
+void OptionsWidget::pageLayoutSetExternally(const PageLayout& pageLayout) {
   ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
 
-  m_uiData.setPageLayout(page_layout);
+  m_uiData.setPageLayout(pageLayout);
   m_uiData.setSplitLineMode(MODE_MANUAL);
   commitCurrentParams();
 
@@ -178,16 +178,16 @@ void OptionsWidget::layoutTypeButtonToggled(const bool checked) {
       plt = PageLayout::TWO_PAGES;
     }
 
-    PageLayout new_layout(m_uiData.pageLayout());
-    new_layout.setType(plt);
-    const Params new_params(new_layout, m_uiData.dependencies(), m_uiData.splitLineMode());
+    PageLayout newLayout(m_uiData.pageLayout());
+    newLayout.setType(plt);
+    const Params newParams(newLayout, m_uiData.dependencies(), m_uiData.splitLineMode());
 
-    update.setParams(new_params);
+    update.setParams(newParams);
     m_settings->updatePage(m_pageId.imageId(), update);
 
-    m_uiData.setPageLayout(new_layout);
+    m_uiData.setPageLayout(newLayout);
 
-    emit pageLayoutSetLocally(new_layout);
+    emit pageLayoutSetLocally(newLayout);
     emit invalidateThumbnail(m_pageId);
   }
 }  // OptionsWidget::layoutTypeButtonToggled
@@ -207,52 +207,52 @@ void OptionsWidget::showChangeDialog() {
   dialog->show();
 }
 
-void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutType layout_type, bool apply_cut) {
+void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutType layoutType, bool applyCut) {
   if (pages.empty()) {
     return;
   }
 
   const Params params = *(m_settings->getPageRecord(m_pageId.imageId()).params());
 
-  if (layout_type != AUTO_LAYOUT_TYPE) {
-    for (const PageId& page_id : pages) {
-      Settings::UpdateAction update_action;
-      update_action.setLayoutType(layout_type);
-      if (apply_cut && (layout_type != SINGLE_PAGE_UNCUT)) {
-        Params new_page_params(params);
-        const Params* old_page_params = m_settings->getPageRecord(page_id.imageId()).params();
-        if (old_page_params) {
-          PageLayout new_page_layout = PageLayoutAdapter::adaptPageLayout(
-              params.pageLayout(), old_page_params->pageLayout().uncutOutline().boundingRect());
+  if (layoutType != AUTO_LAYOUT_TYPE) {
+    for (const PageId& pageId : pages) {
+      Settings::UpdateAction updateAction;
+      updateAction.setLayoutType(layoutType);
+      if (applyCut && (layoutType != SINGLE_PAGE_UNCUT)) {
+        Params newPageParams(params);
+        const Params* oldPageParams = m_settings->getPageRecord(pageId.imageId()).params();
+        if (oldPageParams) {
+          PageLayout newPageLayout = PageLayoutAdapter::adaptPageLayout(
+              params.pageLayout(), oldPageParams->pageLayout().uncutOutline().boundingRect());
 
-          update_action.setLayoutType(new_page_layout.toLayoutType());
-          new_page_params.setPageLayout(new_page_layout);
+          updateAction.setLayoutType(newPageLayout.toLayoutType());
+          newPageParams.setPageLayout(newPageLayout);
 
-          Dependencies deps = old_page_params->dependencies();
-          deps.setLayoutType(new_page_layout.toLayoutType());
-          new_page_params.setDependencies(deps);
+          Dependencies deps = oldPageParams->dependencies();
+          deps.setLayoutType(newPageLayout.toLayoutType());
+          newPageParams.setDependencies(deps);
         }
-        update_action.setParams(new_page_params);
+        updateAction.setParams(newPageParams);
       }
-      m_settings->updatePage(page_id.imageId(), update_action);
+      m_settings->updatePage(pageId.imageId(), updateAction);
     }
   } else {
-    for (const PageId& page_id : pages) {
-      Settings::UpdateAction update_params;
-      update_params.setLayoutType(layout_type);
-      m_settings->updatePage(page_id.imageId(), update_params);
+    for (const PageId& pageId : pages) {
+      Settings::UpdateAction updateParams;
+      updateParams.setLayoutType(layoutType);
+      m_settings->updatePage(pageId.imageId(), updateParams);
     }
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 
-  if (layout_type == AUTO_LAYOUT_TYPE) {
+  if (layoutType == AUTO_LAYOUT_TYPE) {
     scopeLabel->setText(tr("Auto detected"));
     emit reloadRequested();
   } else {
@@ -260,12 +260,12 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
   }
 }  // OptionsWidget::layoutTypeSet
 
-void OptionsWidget::splitLineModeChanged(const bool auto_mode) {
+void OptionsWidget::splitLineModeChanged(const bool autoMode) {
   if (m_ignoreAutoManualToggle) {
     return;
   }
 
-  if (auto_mode) {
+  if (autoMode) {
     Settings::UpdateAction update;
     update.clearParams();
     m_settings->updatePage(m_pageId.imageId(), update);

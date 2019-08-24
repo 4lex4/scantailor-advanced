@@ -21,9 +21,9 @@ class Task::UiUpdater : public FilterResult {
  public:
   UiUpdater(intrusive_ptr<Filter> filter,
             const QImage& image,
-            const ImageId& image_id,
+            const ImageId& imageId,
             const ImageTransformation& xform,
-            bool batch_processing);
+            bool batchProcessing);
 
   void updateUI(FilterUiInterface* ui) override;
 
@@ -39,19 +39,19 @@ class Task::UiUpdater : public FilterResult {
 };
 
 
-Task::Task(const PageId& page_id,
+Task::Task(const PageId& pageId,
            intrusive_ptr<Filter> filter,
            intrusive_ptr<Settings> settings,
-           intrusive_ptr<ImageSettings> image_settings,
-           intrusive_ptr<page_split::Task> next_task,
-           const bool batch_processing)
+           intrusive_ptr<ImageSettings> imageSettings,
+           intrusive_ptr<page_split::Task> nextTask,
+           const bool batchProcessing)
     : m_filter(std::move(filter)),
-      m_nextTask(std::move(next_task)),
+      m_nextTask(std::move(nextTask)),
       m_settings(std::move(settings)),
-      m_imageSettings(std::move(image_settings)),
-      m_pageId(page_id),
+      m_imageSettings(std::move(imageSettings)),
+      m_pageId(pageId),
       m_imageId(m_pageId.imageId()),
-      m_batchProcessing(batch_processing) {}
+      m_batchProcessing(batchProcessing) {}
 
 Task::~Task() = default;
 
@@ -76,10 +76,10 @@ void Task::updateFilterData(FilterData& data) {
   if (const std::unique_ptr<ImageSettings::PageParams> params = m_imageSettings->getPageParams(m_pageId)) {
     data.updateImageParams(*params);
   } else {
-    ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(data.grayImage()), true);
+    ImageSettings::PageParams newParams(BinaryThreshold::otsuThreshold(data.grayImage()), true);
 
-    m_imageSettings->setPageParams(m_pageId, new_params);
-    data.updateImageParams(new_params);
+    m_imageSettings->setPageParams(m_pageId, newParams);
+    data.updateImageParams(newParams);
   }
 }
 
@@ -87,21 +87,21 @@ void Task::updateFilterData(FilterData& data) {
 
 Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            const QImage& image,
-                           const ImageId& image_id,
+                           const ImageId& imageId,
                            const ImageTransformation& xform,
-                           const bool batch_processing)
+                           const bool batchProcessing)
     : m_filter(std::move(filter)),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
-      m_imageId(image_id),
+      m_imageId(imageId),
       m_xform(xform),
-      m_batchProcessing(batch_processing) {}
+      m_batchProcessing(batchProcessing) {}
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_filter->optionsWidget();
-  opt_widget->postUpdateUI(m_xform.preRotation());
-  ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI(m_xform.preRotation());
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   ui->invalidateThumbnail(PageId(m_imageId));
 
@@ -111,6 +111,6 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
 
   auto* view = new ImageView(m_image, m_downscaledImage, m_xform);
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);
-  QObject::connect(opt_widget, SIGNAL(rotated(OrthogonalRotation)), view, SLOT(setPreRotation(OrthogonalRotation)));
+  QObject::connect(optWidget, SIGNAL(rotated(OrthogonalRotation)), view, SLOT(setPreRotation(OrthogonalRotation)));
 }
 }  // namespace fix_orientation

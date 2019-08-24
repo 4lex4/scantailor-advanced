@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SELECT_CONTENT_TASK_H_
-#define SELECT_CONTENT_TASK_H_
+#ifndef SCANTAILOR_SELECT_CONTENT_TASK_H_
+#define SCANTAILOR_SELECT_CONTENT_TASK_H_
 
 #include <QRectF>
 #include <QSizeF>
@@ -31,9 +31,9 @@ class Task : public ref_countable {
 
  public:
   Task(intrusive_ptr<Filter> filter,
-       intrusive_ptr<page_layout::Task> next_task,
+       intrusive_ptr<page_layout::Task> nextTask,
        intrusive_ptr<Settings> settings,
-       const PageId& page_id,
+       const PageId& pageId,
        bool batch,
        bool debug);
 
@@ -52,4 +52,4 @@ class Task : public ref_countable {
   bool m_batchProcessing;
 };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_TASK_H_
+#endif  // ifndef SCANTAILOR_SELECT_CONTENT_TASK_H_

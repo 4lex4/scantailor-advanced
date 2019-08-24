@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef RELINKING_LIST_VIEW_H_
-#define RELINKING_LIST_VIEW_H_
+#ifndef SCANTAILOR_APP_RELINKINGLISTVIEW_H_
+#define SCANTAILOR_APP_RELINKINGLISTVIEW_H_
 
 #include <QListView>
 
@@ -23,7 +23,7 @@ class RelinkingListView : public QListView {
 
   class GroupAggregator;
 
-  void maybeDrawStatusLayer(QPainter* painter, const QModelIndex& item_index, const QRect& item_paint_rect);
+  void maybeDrawStatusLayer(QPainter* painter, const QModelIndex& itemIndex, const QRect& itemPaintRect);
 
   void drawStatusLayer(QPainter* painter);
 
@@ -31,4 +31,4 @@ class RelinkingListView : public QListView {
 };
 
 
-#endif  // ifndef RELINKING_LIST_VIEW_H_
+#endif  // ifndef SCANTAILOR_APP_RELINKINGLISTVIEW_H_

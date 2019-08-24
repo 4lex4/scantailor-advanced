@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_MORPHOLOGY_H_
-#define IMAGEPROC_MORPHOLOGY_H_
+#ifndef SCANTAILOR_IMAGEPROC_MORPHOLOGY_H_
+#define SCANTAILOR_IMAGEPROC_MORPHOLOGY_H_
 
 #include <vector>
 #include "BWColor.h"
@@ -40,7 +40,7 @@ class Brick {
    * Note that all bounds are inclusive.  The order of the arguments
    * is the same as for QRect::adjust().
    */
-  Brick(int min_x, int min_y, int max_x, int max_y);
+  Brick(int minX, int minY, int maxX, int maxY);
 
   /**
    * \brief Get the minimum (inclusive) X offset from the origin.
@@ -91,166 +91,166 @@ class Brick {
  *
  * \param src The source image.
  * \param brick The brick to turn each black pixel into.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It doesn't have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.
  */
 BinaryImage dilateBrick(const BinaryImage& src,
                         const Brick& brick,
-                        const QRect& dst_area,
-                        BWColor src_surroundings = WHITE);
+                        const QRect& dstArea,
+                        BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-BinaryImage dilateBrick(const BinaryImage& src, const Brick& brick, BWColor src_surroundings = WHITE);
+BinaryImage dilateBrick(const BinaryImage& src, const Brick& brick, BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Spreads darker pixels over the brick's area.
  *
  * \param src The source image.
  * \param brick The area to spread darker pixels into.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It doesn't have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.
  */
 GrayImage dilateGray(const GrayImage& src,
                      const Brick& brick,
-                     const QRect& dst_area,
-                     unsigned char src_surroundings = 0xff);
+                     const QRect& dstArea,
+                     unsigned char srcSurroundings = 0xff);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-GrayImage dilateGray(const GrayImage& src, const Brick& brick, unsigned char src_surroundings = 0xff);
+GrayImage dilateGray(const GrayImage& src, const Brick& brick, unsigned char srcSurroundings = 0xff);
 
 /**
  * \brief Turn every white pixel into a brick of white pixels.
  *
  * \param src The source image.
  * \param brick The brick to turn each white pixel into.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It doesn't have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.
  */
 BinaryImage erodeBrick(const BinaryImage& src,
                        const Brick& brick,
-                       const QRect& dst_area,
-                       BWColor src_surroundings = BLACK);
+                       const QRect& dstArea,
+                       BWColor srcSurroundings = BLACK);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-BinaryImage erodeBrick(const BinaryImage& src, const Brick& brick, BWColor src_surroundings = BLACK);
+BinaryImage erodeBrick(const BinaryImage& src, const Brick& brick, BWColor srcSurroundings = BLACK);
 
 /**
  * \brief Spreads lighter pixels over the brick's area.
  *
  * \param src The source image.
  * \param brick The area to spread lighter pixels into.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It doesn't have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.
  */
 GrayImage erodeGray(const GrayImage& src,
                     const Brick& brick,
-                    const QRect& dst_area,
-                    unsigned char src_surroundings = 0x00);
+                    const QRect& dstArea,
+                    unsigned char srcSurroundings = 0x00);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-GrayImage erodeGray(const GrayImage& src, const Brick& brick, unsigned char src_surroundings = 0x00);
+GrayImage erodeGray(const GrayImage& src, const Brick& brick, unsigned char srcSurroundings = 0x00);
 
 /**
  * \brief Turn the black areas where the brick doesn't fit, into white.
  *
  * \param src The source image.
  * \param brick The brick to fit into black areas.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It doesn't have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.  If set to BLACK, a brick will be able
  *        to fit by going partially off-screen (off the source
  *        image area actually).
  */
 BinaryImage openBrick(const BinaryImage& src,
                       const QSize& brick,
-                      const QRect& dst_area,
-                      BWColor src_surroundings = WHITE);
+                      const QRect& dstArea,
+                      BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-BinaryImage openBrick(const BinaryImage& src, const QSize& brick, BWColor src_surroundings = WHITE);
+BinaryImage openBrick(const BinaryImage& src, const QSize& brick, BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Remove dark areas smaller than the structuring element.
  *
  * \param src The source image.
  * \param brick The structuring element.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It doesn't have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.
  */
-GrayImage openGray(const GrayImage& src, const QSize& brick, const QRect& dst_area, unsigned char src_surroundings);
+GrayImage openGray(const GrayImage& src, const QSize& brick, const QRect& dstArea, unsigned char srcSurroundings);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-GrayImage openGray(const GrayImage& src, const QSize& brick, unsigned char src_surroundings);
+GrayImage openGray(const GrayImage& src, const QSize& brick, unsigned char srcSurroundings);
 
 /**
  * \brief Turn the white areas where the brick doesn't fit, into black.
  *
  * \param src The source image.
  * \param brick The brick to fit into white areas.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It doesn't have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.  If set to WHITE, a brick will be able
  *        to fit by going partially off-screen (off the source
  *        image area actually).
  */
 BinaryImage closeBrick(const BinaryImage& src,
                        const QSize& brick,
-                       const QRect& dst_area,
-                       BWColor src_surroundings = WHITE);
+                       const QRect& dstArea,
+                       BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-BinaryImage closeBrick(const BinaryImage& src, const QSize& brick, BWColor src_surroundings = WHITE);
+BinaryImage closeBrick(const BinaryImage& src, const QSize& brick, BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Remove light areas smaller than the structuring element.
  *
  * \param src The source image.
  * \param brick The structuring element.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It doesn't have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.
  */
-GrayImage closeGray(const GrayImage& src, const QSize& brick, const QRect& dst_area, unsigned char src_surroundings);
+GrayImage closeGray(const GrayImage& src, const QSize& brick, const QRect& dstArea, unsigned char srcSurroundings);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-GrayImage closeGray(const GrayImage& src, const QSize& brick, unsigned char src_surroundings);
+GrayImage closeGray(const GrayImage& src, const QSize& brick, unsigned char srcSurroundings);
 
 /**
  * \brief Extracts small elements and details from given image,
@@ -259,21 +259,21 @@ GrayImage closeGray(const GrayImage& src, const QSize& brick, unsigned char src_
  *
  * \param src The source image.
  * \param brick The brick to fit into black areas.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.
  */
 BinaryImage whiteTopHatTransform(const BinaryImage& src,
                                  const QSize& brick,
-                                 const QRect& dst_area,
-                                 BWColor src_surroundings = WHITE);
+                                 const QRect& dstArea,
+                                 BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-BinaryImage whiteTopHatTransform(const BinaryImage& src, const QSize& brick, BWColor src_surroundings = WHITE);
+BinaryImage whiteTopHatTransform(const BinaryImage& src, const QSize& brick, BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Extracts small elements and details from given image,
@@ -282,34 +282,34 @@ BinaryImage whiteTopHatTransform(const BinaryImage& src, const QSize& brick, BWC
  *
  * \param src The source image.
  * \param brick The brick to fit into white areas.
- * \param dst_area The area in source image coordinates that
+ * \param dstArea The area in source image coordinates that
  *        will be returned as a destination image. It have
  *        to fit into the source image area.
- * \param src_surroundings The color of pixels that are assumed to
+ * \param srcSurroundings The color of pixels that are assumed to
  *        surround the source image.
  */
 BinaryImage blackTopHatTransform(const BinaryImage& src,
                                  const QSize& brick,
-                                 const QRect& dst_area,
-                                 BWColor src_surroundings = WHITE);
+                                 const QRect& dstArea,
+                                 BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Same as above, but assumes dst_rect == src.rect()
  */
-BinaryImage blackTopHatTransform(const BinaryImage& src, const QSize& brick, BWColor src_surroundings = WHITE);
+BinaryImage blackTopHatTransform(const BinaryImage& src, const QSize& brick, BWColor srcSurroundings = WHITE);
 
 /**
  * \brief Performs a hit-miss matching operation.
  *
  * \param src The input image.
- * \param src_surroundings The color that is assumed to be outside of the
+ * \param srcSurroundings The color that is assumed to be outside of the
  *        input image.
  * \param hits Offsets to hit positions relative to the origin point.
  * \param misses Offsets to miss positions relative to the origin point.
  * \return A binary image where black pixels indicate a successful pattern match.
  */
 BinaryImage hitMissMatch(const BinaryImage& src,
-                         BWColor src_surroundings,
+                         BWColor srcSurroundings,
                          const std::vector<QPoint>& hits,
                          const std::vector<QPoint>& misses);
 
@@ -317,7 +317,7 @@ BinaryImage hitMissMatch(const BinaryImage& src,
  * \brief A more user-friendly version of a hit-miss match operation.
  *
  * \param src The input image.
- * \param src_surroundings The color that is assumed to be outside of the
+ * \param srcSurroundings The color that is assumed to be outside of the
  *        input image.
  * \param pattern A string representing a pattern.  Example:
  * \code
@@ -328,24 +328,24 @@ BinaryImage hitMissMatch(const BinaryImage& src,
  * \endcode
  * Here X stads for a hit (black pixel) and [space] stands for a miss
  * (white pixel).  Question marks indicate pixels that we are not interested in.
- * \param pattern_width The width of the pattern.
- * \param pattern_height The height of the pattern.
- * \param pattern_origin A point usually within the pattern indicating where
+ * \param patternWidth The width of the pattern.
+ * \param patternHeight The height of the pattern.
+ * \param patternOrigin A point usually within the pattern indicating where
  *        to place a mark if the pattern matches.
  * \return A binary image where black pixels indicate a successful pattern match.
  */
 BinaryImage hitMissMatch(const BinaryImage& src,
-                         BWColor src_surroundings,
+                         BWColor srcSurroundings,
                          const char* pattern,
-                         int pattern_width,
-                         int pattern_height,
-                         const QPoint& pattern_origin);
+                         int patternWidth,
+                         int patternHeight,
+                         const QPoint& patternOrigin);
 
 /**
  * \brief Does a hit-miss match and modifies user-specified pixels.
  *
  * \param src The input image.
- * \param src_surroundings The color that is assumed to be outside of the
+ * \param srcSurroundings The color that is assumed to be outside of the
  *        input image.
  * \param pattern A string representing a pattern.  Example:
  * \code
@@ -360,21 +360,21 @@ BinaryImage hitMissMatch(const BinaryImage& src,
  * '-': A black pixel we want to turn into white.\n
  * '+': A white pixel we want to turn into black.\n
  * '?': Any pixel, we don't care which.\n
- * \param pattern_width The width of the pattern.
- * \param pattern_height The height of the pattern.
+ * \param patternWidth The width of the pattern.
+ * \param patternHeight The height of the pattern.
  * \return The result of a match-and-replace operation.
  */
 BinaryImage hitMissReplace(const BinaryImage& src,
-                           BWColor src_surroundings,
+                           BWColor srcSurroundings,
                            const char* pattern,
-                           int pattern_width,
-                           int pattern_height);
+                           int patternWidth,
+                           int patternHeight);
 
 /**
  * \brief Does a hit-miss match and modifies user-specified pixels.
  *
  * \param[in,out] img The image to make replacements in.
- * \param src_surroundings The color that is assumed to be outside of the
+ * \param srcSurroundings The color that is assumed to be outside of the
  *        input image.
  * \param pattern A string representing a pattern.  Example:
  * \code
@@ -389,13 +389,13 @@ BinaryImage hitMissReplace(const BinaryImage& src,
  * '-': A black pixel we want to turn into white.\n
  * '+': A white pixel we want to turn into black.\n
  * '?': Any pixel, we don't care which.\n
- * \param pattern_width The width of the pattern.
- * \param pattern_height The height of the pattern.
+ * \param patternWidth The width of the pattern.
+ * \param patternHeight The height of the pattern.
  */
 void hitMissReplaceInPlace(BinaryImage& img,
-                           BWColor src_surroundings,
+                           BWColor srcSurroundings,
                            const char* pattern,
-                           int pattern_width,
-                           int pattern_height);
+                           int patternWidth,
+                           int patternHeight);
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_MORPHOLOGY_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_MORPHOLOGY_H_

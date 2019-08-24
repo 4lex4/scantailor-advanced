@@ -52,11 +52,11 @@ std::vector<QPointF> Curve::deserializePolyline(const QDomElement& el) {
   strm.setVersion(QDataStream::Qt_4_4);
   strm.setByteOrder(QDataStream::LittleEndian);
 
-  const auto num_points = static_cast<unsigned int>(ba.size() / 8);
+  const auto numPoints = static_cast<unsigned int>(ba.size() / 8);
   std::vector<QPointF> points;
-  points.reserve(num_points);
+  points.reserve(numPoints);
 
-  for (unsigned i = 0; i < num_points; ++i) {
+  for (unsigned i = 0; i < numPoints; ++i) {
     float x = 0, y = 0;
     strm >> x >> y;
     points.emplace_back(x, y);
@@ -102,8 +102,8 @@ QDomElement Curve::serializeXSpline(const XSpline& xspline, QDomDocument& doc, c
   QDomElement el(doc.createElement(name));
   XmlMarshaller marshaller(doc);
 
-  const int num_control_points = xspline.numControlPoints();
-  for (int i = 0; i < num_control_points; ++i) {
+  const int numControlPoints = xspline.numControlPoints();
+  for (int i = 0; i < numControlPoints; ++i) {
     const QPointF pt(xspline.controlPointPosition(i));
     el.appendChild(marshaller.pointF(pt, "point"));
   }
@@ -114,13 +114,13 @@ QDomElement Curve::serializeXSpline(const XSpline& xspline, QDomDocument& doc, c
 XSpline Curve::deserializeXSpline(const QDomElement& el) {
   XSpline xspline;
 
-  const QString point_tag_name("point");
+  const QString pointTagName("point");
   QDomNode node(el.firstChild());
   for (; !node.isNull(); node = node.nextSibling()) {
     if (!node.isElement()) {
       continue;
     }
-    if (node.nodeName() != point_tag_name) {
+    if (node.nodeName() != pointTagName) {
       continue;
     }
     xspline.appendControlPoint(XmlUnmarshaller::pointF(node.toElement()), 1);
@@ -135,19 +135,19 @@ XSpline Curve::deserializeXSpline(const QDomElement& el) {
 }
 
 bool Curve::splineHasLoops(const XSpline& spline) {
-  const int num_control_points = spline.numControlPoints();
-  const Vec2d main_direction(spline.pointAt(1) - spline.pointAt(0));
+  const int numControlPoints = spline.numControlPoints();
+  const Vec2d mainDirection(spline.pointAt(1) - spline.pointAt(0));
 
-  for (int i = 1; i < num_control_points; ++i) {
+  for (int i = 1; i < numControlPoints; ++i) {
     const QPointF cp1(spline.controlPointPosition(i - 1));
     const QPointF cp2(spline.controlPointPosition(i));
-    if (Vec2d(cp2 - cp1).dot(main_direction) < 0) {
+    if (Vec2d(cp2 - cp1).dot(mainDirection) < 0) {
       return true;
     }
 #if 0
             const double t1 = spline.controlPointIndexToT(i - 1);
             const double t2 = spline.controlPointIndexToT(i);
-            if (Vec2d(spline.pointAt(t2) - spline.pointAt(t1)).dot(main_direction)) < 0) {
+            if (Vec2d(spline.pointAt(t2) - spline.pointAt(t1)).dot(mainDirection)) < 0) {
                     return true;
                 }
 #endif

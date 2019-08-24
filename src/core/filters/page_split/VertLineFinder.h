@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_VERTLINEFINDER_H_
-#define PAGE_SPLIT_VERTLINEFINDER_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_VERTLINEFINDER_H_
+#define SCANTAILOR_PAGE_SPLIT_VERTLINEFINDER_H_
 
 #include <QImage>
 #include <QPointF>
@@ -23,10 +23,10 @@ class VertLineFinder {
  public:
   static std::vector<QLineF> findLines(const QImage& image,
                                        const ImageTransformation& xform,
-                                       int max_lines,
+                                       int maxLines,
                                        DebugImages* dbg = nullptr,
-                                       imageproc::GrayImage* gray_downscaled = nullptr,
-                                       QTransform* out_to_downscaled = nullptr);
+                                       imageproc::GrayImage* grayDownscaled = nullptr,
+                                       QTransform* outToDownscaled = nullptr);
 
  private:
   class QualityLine {
@@ -74,4 +74,4 @@ class VertLineFinder {
   static void buildWeightTable(unsigned weight_table[]);
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_VERTLINEFINDER_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_VERTLINEFINDER_H_

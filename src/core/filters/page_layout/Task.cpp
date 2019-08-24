@@ -23,12 +23,12 @@ class Task::UiUpdater : public FilterResult {
  public:
   UiUpdater(intrusive_ptr<Filter> filter,
             intrusive_ptr<Settings> settings,
-            const PageId& page_id,
+            const PageId& pageId,
             const QImage& image,
             const ImageTransformation& xform,
-            const GrayImage& gray_image,
-            const QRectF& adapted_content_rect,
-            bool agg_size_changed,
+            const GrayImage& grayImage,
+            const QRectF& adaptedContentRect,
+            bool aggSizeChanged,
             bool batch);
 
   void updateUI(FilterUiInterface* ui) override;
@@ -50,52 +50,51 @@ class Task::UiUpdater : public FilterResult {
 
 
 Task::Task(intrusive_ptr<Filter> filter,
-           intrusive_ptr<output::Task> next_task,
+           intrusive_ptr<output::Task> nextTask,
            intrusive_ptr<Settings> settings,
-           const PageId& page_id,
+           const PageId& pageId,
            bool batch,
            bool debug)
     : m_filter(std::move(filter)),
-      m_nextTask(std::move(next_task)),
+      m_nextTask(std::move(nextTask)),
       m_settings(std::move(settings)),
-      m_pageId(page_id),
+      m_pageId(pageId),
       m_batchProcessing(batch) {}
 
 Task::~Task() = default;
 
 FilterResultPtr Task::process(const TaskStatus& status,
                               const FilterData& data,
-                              const QRectF& page_rect,
-                              const QRectF& content_rect) {
+                              const QRectF& pageRect,
+                              const QRectF& contentRect) {
   status.throwIfCancelled();
 
-  const QSizeF content_size_mm(Utils::calcRectSizeMM(data.xform(), content_rect));
+  const QSizeF contentSizeMm(Utils::calcRectSizeMM(data.xform(), contentRect));
 
   if (m_settings->isPageAutoMarginsEnabled(m_pageId)) {
-    const Margins& margins_mm = Utils::calcMarginsMM(data.xform(), page_rect, content_rect);
-    m_settings->setHardMarginsMM(m_pageId, margins_mm);
+    const Margins& marginsMm = Utils::calcMarginsMM(data.xform(), pageRect, contentRect);
+    m_settings->setHardMarginsMM(m_pageId, marginsMm);
   }
 
-  QSizeF agg_hard_size_before;
-  QSizeF agg_hard_size_after;
-  const Params params(m_settings->updateContentSizeAndGetParams(m_pageId, page_rect, content_rect, content_size_mm,
-                                                                &agg_hard_size_before, &agg_hard_size_after));
+  QSizeF aggHardSizeBefore;
+  QSizeF aggHardSizeAfter;
+  const Params params(m_settings->updateContentSizeAndGetParams(m_pageId, pageRect, contentRect, contentSizeMm,
+                                                                &aggHardSizeBefore, &aggHardSizeAfter));
 
-  const QRectF adapted_content_rect(Utils::adaptContentRect(data.xform(), content_rect));
+  const QRectF adaptedContentRect(Utils::adaptContentRect(data.xform(), contentRect));
 
   if (m_nextTask) {
-    const QPolygonF content_rect_phys(data.xform().transformBack().map(adapted_content_rect));
-    const QPolygonF page_rect_phys(
-        Utils::calcPageRectPhys(data.xform(), content_rect_phys, params, agg_hard_size_after));
+    const QPolygonF contentRectPhys(data.xform().transformBack().map(adaptedContentRect));
+    const QPolygonF pageRectPhys(Utils::calcPageRectPhys(data.xform(), contentRectPhys, params, aggHardSizeAfter));
 
-    ImageTransformation new_xform(data.xform());
-    new_xform.setPostCropArea(Utils::shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));
+    ImageTransformation newXform(data.xform());
+    newXform.setPostCropArea(Utils::shiftToRoundedOrigin(newXform.transform().map(pageRectPhys)));
 
-    return m_nextTask->process(status, FilterData(data, new_xform), content_rect_phys);
+    return m_nextTask->process(status, FilterData(data, newXform), contentRectPhys);
   } else {
     return make_intrusive<UiUpdater>(m_filter, m_settings, m_pageId, data.origImage(), data.xform(),
-                                     data.grayImageBlackOnWhite(), adapted_content_rect,
-                                     agg_hard_size_before != agg_hard_size_after, m_batchProcessing);
+                                     data.grayImageBlackOnWhite(), adaptedContentRect,
+                                     aggHardSizeBefore != aggHardSizeAfter, m_batchProcessing);
   }
 }
 
@@ -103,29 +102,29 @@ FilterResultPtr Task::process(const TaskStatus& status,
 
 Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            intrusive_ptr<Settings> settings,
-                           const PageId& page_id,
+                           const PageId& pageId,
                            const QImage& image,
                            const ImageTransformation& xform,
-                           const GrayImage& gray_image,
-                           const QRectF& adapted_content_rect,
-                           const bool agg_size_changed,
+                           const GrayImage& grayImage,
+                           const QRectF& adaptedContentRect,
+                           const bool aggSizeChanged,
                            const bool batch)
     : m_filter(std::move(filter)),
       m_settings(std::move(settings)),
-      m_pageId(page_id),
+      m_pageId(pageId),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
-      m_grayImage(gray_image),
+      m_grayImage(grayImage),
       m_xform(xform),
-      m_adaptedContentRect(adapted_content_rect),
-      m_aggSizeChanged(agg_size_changed),
+      m_adaptedContentRect(adaptedContentRect),
+      m_aggSizeChanged(aggSizeChanged),
       m_batchProcessing(batch) {}
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_filter->optionsWidget();
-  opt_widget->postUpdateUI();
-  ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI();
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   if (m_aggSizeChanged) {
     ui->invalidateAllThumbnails();
@@ -138,20 +137,20 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   }
 
   auto* view = new ImageView(m_settings, m_pageId, m_image, m_downscaledImage, m_grayImage, m_xform,
-                             m_adaptedContentRect, *opt_widget);
+                             m_adaptedContentRect, *optWidget);
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);
 
-  QObject::connect(view, SIGNAL(invalidateThumbnail(const PageId&)), opt_widget,
+  QObject::connect(view, SIGNAL(invalidateThumbnail(const PageId&)), optWidget,
                    SIGNAL(invalidateThumbnail(const PageId&)));
-  QObject::connect(view, SIGNAL(invalidateAllThumbnails()), opt_widget, SIGNAL(invalidateAllThumbnails()));
-  QObject::connect(view, SIGNAL(marginsSetLocally(const Margins&)), opt_widget,
+  QObject::connect(view, SIGNAL(invalidateAllThumbnails()), optWidget, SIGNAL(invalidateAllThumbnails()));
+  QObject::connect(view, SIGNAL(marginsSetLocally(const Margins&)), optWidget,
                    SLOT(marginsSetExternally(const Margins&)));
-  QObject::connect(opt_widget, SIGNAL(marginsSetLocally(const Margins&)), view,
+  QObject::connect(optWidget, SIGNAL(marginsSetLocally(const Margins&)), view,
                    SLOT(marginsSetExternally(const Margins&)));
-  QObject::connect(opt_widget, SIGNAL(topBottomLinkToggled(bool)), view, SLOT(topBottomLinkToggled(bool)));
-  QObject::connect(opt_widget, SIGNAL(leftRightLinkToggled(bool)), view, SLOT(leftRightLinkToggled(bool)));
-  QObject::connect(opt_widget, SIGNAL(alignmentChanged(const Alignment&)), view,
+  QObject::connect(optWidget, SIGNAL(topBottomLinkToggled(bool)), view, SLOT(topBottomLinkToggled(bool)));
+  QObject::connect(optWidget, SIGNAL(leftRightLinkToggled(bool)), view, SLOT(leftRightLinkToggled(bool)));
+  QObject::connect(optWidget, SIGNAL(alignmentChanged(const Alignment&)), view,
                    SLOT(alignmentChanged(const Alignment&)));
-  QObject::connect(opt_widget, SIGNAL(aggregateHardSizeChanged()), view, SLOT(aggregateHardSizeChanged()));
+  QObject::connect(optWidget, SIGNAL(aggregateHardSizeChanged()), view, SLOT(aggregateHardSizeChanged()));
 }  // Task::UiUpdater::updateUI
 }  // namespace page_layout

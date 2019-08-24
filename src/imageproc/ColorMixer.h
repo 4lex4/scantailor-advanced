@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_COLOR_MIXER_H_
-#define IMAGEPROC_COLOR_MIXER_H_
+#ifndef SCANTAILOR_IMAGEPROC_COLORMIXER_H_
+#define SCANTAILOR_IMAGEPROC_COLORMIXER_H_
 
 #include <cassert>
 #include <cstdint>
@@ -12,18 +12,18 @@ namespace imageproc {
 namespace color_mixer_impl {
 template <typename Mixer, bool IntegerAccum>
 struct Switcher {
-  typedef typename Mixer::accum_type accum_type;
-  typedef typename Mixer::result_type result_type;
+  typedef typename Mixer::accumType accumType;
+  typedef typename Mixer::resultType resultType;
 
-  static result_type mix(const Mixer* mixer, accum_type total_weight) { return mixer->nonIntegerMix(total_weight); }
+  static resultType mix(const Mixer* mixer, accumType totalWeight) { return mixer->nonIntegerMix(totalWeight); }
 };
 
 template <typename Mixer>
 struct Switcher<Mixer, true> {
-  typedef typename Mixer::accum_type accum_type;
-  typedef typename Mixer::result_type result_type;
+  typedef typename Mixer::accumType accumType;
+  typedef typename Mixer::resultType resultType;
 
-  static result_type mix(const Mixer* mixer, accum_type total_weight) { return mixer->integerMix(total_weight); }
+  static resultType mix(const Mixer* mixer, accumType totalWeight) { return mixer->integerMix(totalWeight); }
 };
 }  // namespace color_mixer_impl
 
@@ -39,8 +39,8 @@ class GrayColorMixer {
   friend struct color_mixer_impl::Switcher;
 
  public:
-  typedef AccumType accum_type;
-  typedef uint8_t result_type;
+  typedef AccumType accumType;
+  typedef uint8_t resultType;
 
   GrayColorMixer() : m_accum() {}
 
@@ -49,33 +49,33 @@ class GrayColorMixer {
    *
    * The weight must be non-negative.
    */
-  void add(uint8_t gray_level, AccumType weight) { m_accum += AccumType(gray_level) * weight; }
+  void add(uint8_t grayLevel, AccumType weight) { m_accum += AccumType(grayLevel) * weight; }
 
   /**
    * @brief Returns a color intepolated from previously added ones.
    *
-   * @param total_weight The sum of individual weights passed to add().
+   * @param totalWeight The sum of individual weights passed to add().
    *        While an individual weight can be zero, the sum has to be above zero.
    * @return Interpolated color.
    */
-  result_type mix(AccumType total_weight) const {
-    assert(total_weight > 0);
+  resultType mix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
 
     using namespace color_mixer_impl;
     typedef std::numeric_limits<AccumType> traits;
-    return Switcher<GrayColorMixer<AccumType>, traits::is_integer>::mix(this, total_weight);
+    return Switcher<GrayColorMixer<AccumType>, traits::is_integer>::mix(this, totalWeight);
   }
 
  private:
-  uint8_t nonIntegerMix(AccumType total_weight) const {
-    assert(total_weight > 0);
-    return static_cast<uint8_t>(m_accum / total_weight + AccumType(0.5));
+  uint8_t nonIntegerMix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
+    return static_cast<uint8_t>(m_accum / totalWeight + AccumType(0.5));
   }
 
-  uint8_t integerMix(AccumType total_weight) const {
-    assert(total_weight > 0);
-    const AccumType half_weight = total_weight >> 1;
-    const AccumType mixed = (m_accum + half_weight) / total_weight;
+  uint8_t integerMix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
+    const AccumType halfWeight = totalWeight >> 1;
+    const AccumType mixed = (m_accum + halfWeight) / totalWeight;
     return static_cast<uint8_t>(mixed);
   }
 
@@ -95,8 +95,8 @@ class RgbColorMixer {
   friend struct color_mixer_impl::Switcher;
 
  public:
-  typedef AccumType accum_type;
-  typedef uint32_t result_type;
+  typedef AccumType accumType;
+  typedef uint32_t resultType;
 
   RgbColorMixer() : m_redAccum(), m_greenAccum(), m_blueAccum() {}
 
@@ -108,30 +108,30 @@ class RgbColorMixer {
   }
 
   /** @see GrayColorMixer::mix() */
-  result_type mix(AccumType total_weight) const {
-    assert(total_weight > 0);
+  resultType mix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
 
     using namespace color_mixer_impl;
     typedef std::numeric_limits<AccumType> traits;
-    return Switcher<RgbColorMixer<AccumType>, traits::is_integer>::mix(this, total_weight);
+    return Switcher<RgbColorMixer<AccumType>, traits::is_integer>::mix(this, totalWeight);
   }
 
  private:
-  uint32_t nonIntegerMix(AccumType total_weight) const {
-    assert(total_weight > 0);
-    const AccumType scale = AccumType(1) / total_weight;
+  uint32_t nonIntegerMix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
+    const AccumType scale = AccumType(1) / totalWeight;
     const uint32_t r = uint32_t(AccumType(0.5) + m_redAccum * scale);
     const uint32_t g = uint32_t(AccumType(0.5) + m_greenAccum * scale);
     const uint32_t b = uint32_t(AccumType(0.5) + m_blueAccum * scale);
     return uint32_t(0xff000000) | (r << 16) | (g << 8) | b;
   }
 
-  uint32_t integerMix(AccumType total_weight) const {
-    assert(total_weight > 0);
-    const AccumType half_weight = total_weight >> 1;
-    const uint32_t r = uint32_t((m_redAccum + half_weight) / total_weight);
-    const uint32_t g = uint32_t((m_greenAccum + half_weight) / total_weight);
-    const uint32_t b = uint32_t((m_blueAccum + half_weight) / total_weight);
+  uint32_t integerMix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
+    const AccumType halfWeight = totalWeight >> 1;
+    const uint32_t r = uint32_t((m_redAccum + halfWeight) / totalWeight);
+    const uint32_t g = uint32_t((m_greenAccum + halfWeight) / totalWeight);
+    const uint32_t b = uint32_t((m_blueAccum + halfWeight) / totalWeight);
     return uint32_t(0xff000000) | (r << 16) | (g << 8) | b;
   }
 
@@ -157,24 +157,24 @@ class ArgbColorMixer {
   friend struct color_mixer_impl::Switcher;
 
  public:
-  typedef AccumType accum_type;
-  typedef uint32_t result_type;
+  typedef AccumType accumType;
+  typedef uint32_t resultType;
 
   ArgbColorMixer() : m_alphaAccum(), m_redAccum(), m_greenAccum(), m_blueAccum() {}
 
   /** @see GrayColorMixer:add() */
   void add(const uint32_t argb, const AccumType weight) {
     const AccumType alpha = AccumType((argb >> 24) & 0xFF);
-    const AccumType alpha_weight = alpha * weight;
-    m_alphaAccum += alpha_weight;
-    m_redAccum += AccumType((argb >> 16) & 0xFF) * alpha_weight;
-    m_greenAccum += AccumType((argb >> 8) & 0xFF) * alpha_weight;
-    m_blueAccum += AccumType(argb & 0xFF) * alpha_weight;
+    const AccumType alphaWeight = alpha * weight;
+    m_alphaAccum += alphaWeight;
+    m_redAccum += AccumType((argb >> 16) & 0xFF) * alphaWeight;
+    m_greenAccum += AccumType((argb >> 8) & 0xFF) * alphaWeight;
+    m_blueAccum += AccumType(argb & 0xFF) * alphaWeight;
   }
 
   /** @see GrayColorMixer::mix() */
-  result_type mix(AccumType total_weight) const {
-    assert(total_weight > 0);
+  resultType mix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
     if (m_alphaAccum == AccumType(0)) {
       // A totally transparent color. This can happen when mixing
       // a bunch of (possibly different) colors with alpha == 0.
@@ -184,14 +184,14 @@ class ArgbColorMixer {
 
     using namespace color_mixer_impl;
     typedef std::numeric_limits<AccumType> traits;
-    return Switcher<ArgbColorMixer<AccumType>, traits::is_integer>::mix(this, total_weight);
+    return Switcher<ArgbColorMixer<AccumType>, traits::is_integer>::mix(this, totalWeight);
   }
 
  private:
-  uint32_t nonIntegerMix(AccumType total_weight) const {
-    assert(total_weight > 0);
+  uint32_t nonIntegerMix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
     assert(m_alphaAccum > 0);
-    const AccumType scale1 = AccumType(1) / total_weight;
+    const AccumType scale1 = AccumType(1) / totalWeight;
     const AccumType scale2 = AccumType(1) / m_alphaAccum;
     const uint32_t a = uint32_t(AccumType(0.5) + m_alphaAccum * scale1);
     const uint32_t r = uint32_t(AccumType(0.5) + m_redAccum * scale2);
@@ -200,15 +200,15 @@ class ArgbColorMixer {
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
-  uint32_t integerMix(AccumType total_weight) const {
-    assert(total_weight > 0);
+  uint32_t integerMix(AccumType totalWeight) const {
+    assert(totalWeight > 0);
     assert(m_alphaAccum > 0);
-    const AccumType half_weight1 = total_weight >> 1;
-    const AccumType half_weight2 = m_alphaAccum >> 1;
-    const uint32_t a = uint32_t((m_alphaAccum + half_weight1) / total_weight);
-    const uint32_t r = uint32_t((m_redAccum + half_weight2) / m_alphaAccum);
-    const uint32_t g = uint32_t((m_greenAccum + half_weight2) / m_alphaAccum);
-    const uint32_t b = uint32_t((m_blueAccum + half_weight2) / m_alphaAccum);
+    const AccumType halfWeight1 = totalWeight >> 1;
+    const AccumType halfWeight2 = m_alphaAccum >> 1;
+    const uint32_t a = uint32_t((m_alphaAccum + halfWeight1) / totalWeight);
+    const uint32_t r = uint32_t((m_redAccum + halfWeight2) / m_alphaAccum);
+    const uint32_t g = uint32_t((m_greenAccum + halfWeight2) / m_alphaAccum);
+    const uint32_t b = uint32_t((m_blueAccum + halfWeight2) / m_alphaAccum);
     return (a << 24) | (r << 16) | (g << 8) | b;
   }
 
@@ -219,4 +219,4 @@ class ArgbColorMixer {
 };
 }  // namespace imageproc
 
-#endif  // ifndef IMAGEPROC_COLOR_MIXER_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_COLORMIXER_H_

@@ -20,112 +20,111 @@
 #include "core/ThumbnailCollector.h"
 
 namespace output {
-CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings, const OutputFileNameGenerator& out_file_name_gen)
-    : m_settings(std::move(settings)), m_outFileNameGen(out_file_name_gen) {}
+CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings, const OutputFileNameGenerator& outFileNameGen)
+    : m_settings(std::move(settings)), m_outFileNameGen(outFileNameGen) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;
 
-void CacheDrivenTask::process(const PageInfo& page_info,
+void CacheDrivenTask::process(const PageInfo& pageInfo,
                               AbstractFilterDataCollector* collector,
                               const ImageTransformation& xform,
-                              const QPolygonF& content_rect_phys) {
-  if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-    const QString out_file_path(m_outFileNameGen.filePathFor(page_info.id()));
-    const QFileInfo out_file_info(out_file_path);
-    const QString foreground_dir(Utils::foregroundDir(m_outFileNameGen.outDir()));
-    const QString background_dir(Utils::backgroundDir(m_outFileNameGen.outDir()));
-    const QString original_background_dir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
-    const QString foreground_file_path(QDir(foreground_dir).absoluteFilePath(out_file_info.fileName()));
-    const QString background_file_path(QDir(background_dir).absoluteFilePath(out_file_info.fileName()));
-    const QString original_background_file_path(
-        QDir(original_background_dir).absoluteFilePath(out_file_info.fileName()));
-    const QFileInfo foreground_file_info(foreground_file_path);
-    const QFileInfo background_file_info(background_file_path);
-    const QFileInfo original_background_file_info(original_background_file_path);
+                              const QPolygonF& contentRectPhys) {
+  if (auto* thumbCol = dynamic_cast<ThumbnailCollector*>(collector)) {
+    const QString outFilePath(m_outFileNameGen.filePathFor(pageInfo.id()));
+    const QFileInfo outFileInfo(outFilePath);
+    const QString foregroundDir(Utils::foregroundDir(m_outFileNameGen.outDir()));
+    const QString backgroundDir(Utils::backgroundDir(m_outFileNameGen.outDir()));
+    const QString originalBackgroundDir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
+    const QString foregroundFilePath(QDir(foregroundDir).absoluteFilePath(outFileInfo.fileName()));
+    const QString backgroundFilePath(QDir(backgroundDir).absoluteFilePath(outFileInfo.fileName()));
+    const QString originalBackgroundFilePath(QDir(originalBackgroundDir).absoluteFilePath(outFileInfo.fileName()));
+    const QFileInfo foregroundFileInfo(foregroundFilePath);
+    const QFileInfo backgroundFileInfo(backgroundFilePath);
+    const QFileInfo originalBackgroundFileInfo(originalBackgroundFilePath);
 
-    const Params params(m_settings->getParams(page_info.id()));
-    RenderParams render_params(params.colorParams(), params.splittingOptions());
+    const Params params(m_settings->getParams(pageInfo.id()));
+    RenderParams renderParams(params.colorParams(), params.splittingOptions());
 
-    ImageTransformation new_xform(xform);
-    new_xform.postScaleToDpi(params.outputDpi());
+    ImageTransformation newXform(xform);
+    newXform.postScaleToDpi(params.outputDpi());
 
-    bool need_reprocess = false;
+    bool needReprocess = false;
 
     do {  // Just to be able to break from it.
-      std::unique_ptr<OutputParams> stored_output_params(m_settings->getOutputParams(page_info.id()));
+      std::unique_ptr<OutputParams> storedOutputParams(m_settings->getOutputParams(pageInfo.id()));
 
-      if (!stored_output_params) {
-        need_reprocess = true;
+      if (!storedOutputParams) {
+        needReprocess = true;
         break;
       }
 
-      const OutputGenerator generator(new_xform, content_rect_phys);
-      const OutputImageParams new_output_image_params(
-          generator.outputImageSize(), generator.outputContentRect(), new_xform, params.outputDpi(),
+      const OutputGenerator generator(newXform, contentRectPhys);
+      const OutputImageParams newOutputImageParams(
+          generator.outputImageSize(), generator.outputContentRect(), newXform, params.outputDpi(),
           params.colorParams(), params.splittingOptions(), params.dewarpingOptions(), params.distortionModel(),
           params.depthPerception(), params.despeckleLevel(), params.pictureShapeOptions(),
-          m_settings->getOutputProcessingParams(page_info.id()), params.isBlackOnWhite());
+          m_settings->getOutputProcessingParams(pageInfo.id()), params.isBlackOnWhite());
 
-      if (!stored_output_params->outputImageParams().matches(new_output_image_params)) {
-        need_reprocess = true;
+      if (!storedOutputParams->outputImageParams().matches(newOutputImageParams)) {
+        needReprocess = true;
         break;
       }
 
-      const ZoneSet new_picture_zones(m_settings->pictureZonesForPage(page_info.id()));
-      if (!PictureZoneComparator::equal(stored_output_params->pictureZones(), new_picture_zones)) {
-        need_reprocess = true;
+      const ZoneSet newPictureZones(m_settings->pictureZonesForPage(pageInfo.id()));
+      if (!PictureZoneComparator::equal(storedOutputParams->pictureZones(), newPictureZones)) {
+        needReprocess = true;
         break;
       }
 
-      const ZoneSet new_fill_zones(m_settings->fillZonesForPage(page_info.id()));
-      if (!FillZoneComparator::equal(stored_output_params->fillZones(), new_fill_zones)) {
-        need_reprocess = true;
+      const ZoneSet newFillZones(m_settings->fillZonesForPage(pageInfo.id()));
+      if (!FillZoneComparator::equal(storedOutputParams->fillZones(), newFillZones)) {
+        needReprocess = true;
         break;
       }
 
-      if (!render_params.splitOutput()) {
-        if (!out_file_info.exists()) {
-          need_reprocess = true;
+      if (!renderParams.splitOutput()) {
+        if (!outFileInfo.exists()) {
+          needReprocess = true;
           break;
         }
 
-        if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
-          need_reprocess = true;
+        if (!storedOutputParams->outputFileParams().matches(OutputFileParams(outFileInfo))) {
+          needReprocess = true;
           break;
         }
       } else {
-        if (!foreground_file_info.exists() || !background_file_info.exists()) {
-          need_reprocess = true;
+        if (!foregroundFileInfo.exists() || !backgroundFileInfo.exists()) {
+          needReprocess = true;
           break;
         }
-        if (!(stored_output_params->foregroundFileParams().matches(OutputFileParams(foreground_file_info)))
-            || !(stored_output_params->backgroundFileParams().matches(OutputFileParams(background_file_info)))) {
-          need_reprocess = true;
+        if (!(storedOutputParams->foregroundFileParams().matches(OutputFileParams(foregroundFileInfo)))
+            || !(storedOutputParams->backgroundFileParams().matches(OutputFileParams(backgroundFileInfo)))) {
+          needReprocess = true;
           break;
         }
 
-        if (render_params.originalBackground()) {
-          if (!original_background_file_info.exists()) {
-            need_reprocess = true;
+        if (renderParams.originalBackground()) {
+          if (!originalBackgroundFileInfo.exists()) {
+            needReprocess = true;
             break;
           }
-          if (!(stored_output_params->originalBackgroundFileParams().matches(
-                  OutputFileParams(original_background_file_info)))) {
-            need_reprocess = true;
+          if (!(storedOutputParams->originalBackgroundFileParams().matches(
+                  OutputFileParams(originalBackgroundFileInfo)))) {
+            needReprocess = true;
             break;
           }
         }
       }
     } while (false);
 
-    if (need_reprocess) {
-      thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
-          thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), new_xform)));
+    if (needReprocess) {
+      thumbCol->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
+          thumbCol->thumbnailCache(), thumbCol->maxLogicalThumbSize(), pageInfo.imageId(), newXform)));
     } else {
-      const ImageTransformation out_xform(new_xform.resultingRect(), params.outputDpi());
+      const ImageTransformation outXform(newXform.resultingRect(), params.outputDpi());
 
-      thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new Thumbnail(
-          thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), ImageId(out_file_path), out_xform)));
+      thumbCol->processThumbnail(std::unique_ptr<QGraphicsItem>(
+          new Thumbnail(thumbCol->thumbnailCache(), thumbCol->maxLogicalThumbSize(), ImageId(outFilePath), outXform)));
     }
   }
 }  // CacheDrivenTask::process

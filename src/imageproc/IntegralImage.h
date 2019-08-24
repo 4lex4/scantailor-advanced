@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_INTEGRALIMAGE_H_
-#define IMAGEPROC_INTEGRALIMAGE_H_
+#ifndef SCANTAILOR_IMAGEPROC_INTEGRALIMAGE_H_
+#define SCANTAILOR_IMAGEPROC_INTEGRALIMAGE_H_
 
 #include <QRect>
 #include <QSize>
@@ -127,16 +127,16 @@ void IntegralImage<T>::beginRow() {
 template <typename T>
 inline T IntegralImage<T>::sum(const QRect& rect) const {
   // Keep in mind that row 0 and column 0 are fake.
-  const int pre_left = rect.left();
-  const int pre_right = rect.right() + 1;  // QRect::right() is inclusive.
-  const int pre_top = rect.top();
-  const int pre_bottom = rect.bottom() + 1;  // QRect::bottom() is inclusive.
-  T sum(m_data[pre_bottom * m_width + pre_right]);
-  sum -= m_data[pre_top * m_width + pre_right];
-  sum += m_data[pre_top * m_width + pre_left];
-  sum -= m_data[pre_bottom * m_width + pre_left];
+  const int preLeft = rect.left();
+  const int preRight = rect.right() + 1;  // QRect::right() is inclusive.
+  const int preTop = rect.top();
+  const int preBottom = rect.bottom() + 1;  // QRect::bottom() is inclusive.
+  T sum(m_data[preBottom * m_width + preRight]);
+  sum -= m_data[preTop * m_width + preRight];
+  sum += m_data[preTop * m_width + preLeft];
+  sum -= m_data[preBottom * m_width + preLeft];
 
   return sum;
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_INTEGRALIMAGE_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_INTEGRALIMAGE_H_

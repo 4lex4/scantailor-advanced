@@ -3,8 +3,9 @@
 
 #include "ImageView.h"
 #include <Despeckle.h>
-#include <NullTaskStatus.h>
 #include <ImageViewInfoProvider.h>
+#include <NullTaskStatus.h>
+#include <PolygonUtils.h>
 #include <UnitsConverter.h>
 #include <imageproc/Binarize.h>
 #include <imageproc/GrayImage.h>
@@ -19,36 +20,35 @@
 #include "Params.h"
 #include "Settings.h"
 #include "Utils.h"
-#include <PolygonUtils.h>
 
 using namespace imageproc;
 
 namespace page_layout {
 ImageView::ImageView(const intrusive_ptr<Settings>& settings,
-                     const PageId& page_id,
+                     const PageId& pageId,
                      const QImage& image,
-                     const QImage& downscaled_image,
-                     const imageproc::GrayImage& gray_image,
+                     const QImage& downscaledImage,
+                     const imageproc::GrayImage& grayImage,
                      const ImageTransformation& xform,
-                     const QRectF& adapted_content_rect,
-                     const OptionsWidget& opt_widget)
+                     const QRectF& adaptedContentRect,
+                     const OptionsWidget& optWidget)
     : ImageViewBase(image,
-                    downscaled_image,
+                    downscaledImage,
                     ImagePresentation(xform.transform(), xform.resultingPreCropArea()),
                     Margins(5, 5, 5, 5)),
       m_dragHandler(*this),
       m_zoomHandler(*this),
       m_settings(settings),
-      m_pageId(page_id),
+      m_pageId(pageId),
       m_pixelsToMmXform(UnitsConverter(xform.origDpi()).transform(PIXELS, MILLIMETRES)),
       m_mmToPixelsXform(m_pixelsToMmXform.inverted()),
       m_xform(xform),
-      m_innerRect(adapted_content_rect),
+      m_innerRect(adaptedContentRect),
       m_aggregateHardSizeMM(settings->getAggregateHardSizeMM()),
       m_committedAggregateHardSizeMM(m_aggregateHardSizeMM),
-      m_alignment(opt_widget.alignment()),
-      m_leftRightLinked(opt_widget.leftRightLinked()),
-      m_topBottomLinked(opt_widget.topBottomLinked()),
+      m_alignment(optWidget.alignment()),
+      m_leftRightLinked(optWidget.leftRightLinked()),
+      m_topBottomLinked(optWidget.topBottomLinked()),
       m_guidesFreeIndex(0),
       m_contextMenu(new QMenu(this)),
       m_guideUnderMouse(-1),
@@ -104,17 +104,17 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
     m_innerEdgeHandlers[i].setObject(&m_innerEdges[i]);
     m_middleEdgeHandlers[i].setObject(&m_middleEdges[i]);
 
-    Qt::CursorShape corner_cursor = (i & 1) ? Qt::SizeBDiagCursor : Qt::SizeFDiagCursor;
-    m_innerCornerHandlers[i].setProximityCursor(corner_cursor);
-    m_innerCornerHandlers[i].setInteractionCursor(corner_cursor);
-    m_middleCornerHandlers[i].setProximityCursor(corner_cursor);
-    m_middleCornerHandlers[i].setInteractionCursor(corner_cursor);
+    Qt::CursorShape cornerCursor = (i & 1) ? Qt::SizeBDiagCursor : Qt::SizeFDiagCursor;
+    m_innerCornerHandlers[i].setProximityCursor(cornerCursor);
+    m_innerCornerHandlers[i].setInteractionCursor(cornerCursor);
+    m_middleCornerHandlers[i].setProximityCursor(cornerCursor);
+    m_middleCornerHandlers[i].setInteractionCursor(cornerCursor);
 
-    Qt::CursorShape edge_cursor = (i & 1) ? Qt::SizeHorCursor : Qt::SizeVerCursor;
-    m_innerEdgeHandlers[i].setProximityCursor(edge_cursor);
-    m_innerEdgeHandlers[i].setInteractionCursor(edge_cursor);
-    m_middleEdgeHandlers[i].setProximityCursor(edge_cursor);
-    m_middleEdgeHandlers[i].setInteractionCursor(edge_cursor);
+    Qt::CursorShape edgeCursor = (i & 1) ? Qt::SizeHorCursor : Qt::SizeVerCursor;
+    m_innerEdgeHandlers[i].setProximityCursor(edgeCursor);
+    m_innerEdgeHandlers[i].setInteractionCursor(edgeCursor);
+    m_middleEdgeHandlers[i].setProximityCursor(edgeCursor);
+    m_middleEdgeHandlers[i].setInteractionCursor(edgeCursor);
 
     if (isShowingMiddleRectEnabled()) {
       makeLastFollower(m_middleCornerHandlers[i]);
@@ -149,17 +149,17 @@ ImageView::ImageView(const intrusive_ptr<Settings>& settings,
   setupContextMenuInteraction();
   setupGuides();
 
-  recalcBoxesAndFit(opt_widget.marginsMM());
+  recalcBoxesAndFit(optWidget.marginsMM());
 
-  buildContentImage(gray_image, xform);
+  buildContentImage(grayImage, xform);
 }
 
 ImageView::~ImageView() = default;
 
-void ImageView::marginsSetExternally(const Margins& margins_mm) {
-  const AggregateSizeChanged changed = commitHardMargins(margins_mm);
+void ImageView::marginsSetExternally(const Margins& marginsMm) {
+  const AggregateSizeChanged changed = commitHardMargins(marginsMm);
 
-  recalcBoxesAndFit(margins_mm);
+  recalcBoxesAndFit(marginsMm);
 
   invalidateThumbnails(changed);
 }
@@ -167,16 +167,16 @@ void ImageView::marginsSetExternally(const Margins& margins_mm) {
 void ImageView::leftRightLinkToggled(const bool linked) {
   m_leftRightLinked = linked;
   if (linked) {
-    Margins margins_mm(calcHardMarginsMM());
-    if (margins_mm.left() != margins_mm.right()) {
-      const double new_margin = std::min(margins_mm.left(), margins_mm.right());
-      margins_mm.setLeft(new_margin);
-      margins_mm.setRight(new_margin);
+    Margins marginsMm(calcHardMarginsMM());
+    if (marginsMm.left() != marginsMm.right()) {
+      const double newMargin = std::min(marginsMm.left(), marginsMm.right());
+      marginsMm.setLeft(newMargin);
+      marginsMm.setRight(newMargin);
 
-      const AggregateSizeChanged changed = commitHardMargins(margins_mm);
+      const AggregateSizeChanged changed = commitHardMargins(marginsMm);
 
-      recalcBoxesAndFit(margins_mm);
-      emit marginsSetLocally(margins_mm);
+      recalcBoxesAndFit(marginsMm);
+      emit marginsSetLocally(marginsMm);
 
       invalidateThumbnails(changed);
     }
@@ -186,16 +186,16 @@ void ImageView::leftRightLinkToggled(const bool linked) {
 void ImageView::topBottomLinkToggled(const bool linked) {
   m_topBottomLinked = linked;
   if (linked) {
-    Margins margins_mm(calcHardMarginsMM());
-    if (margins_mm.top() != margins_mm.bottom()) {
-      const double new_margin = std::min(margins_mm.top(), margins_mm.bottom());
-      margins_mm.setTop(new_margin);
-      margins_mm.setBottom(new_margin);
+    Margins marginsMm(calcHardMarginsMM());
+    if (marginsMm.top() != marginsMm.bottom()) {
+      const double newMargin = std::min(marginsMm.top(), marginsMm.bottom());
+      marginsMm.setTop(newMargin);
+      marginsMm.setBottom(newMargin);
 
-      const AggregateSizeChanged changed = commitHardMargins(margins_mm);
+      const AggregateSizeChanged changed = commitHardMargins(marginsMm);
 
-      recalcBoxesAndFit(margins_mm);
-      emit marginsSetLocally(margins_mm);
+      recalcBoxesAndFit(marginsMm);
+      emit marginsSetLocally(marginsMm);
 
       invalidateThumbnails(changed);
     }
@@ -205,7 +205,7 @@ void ImageView::topBottomLinkToggled(const bool linked) {
 void ImageView::alignmentChanged(const Alignment& alignment) {
   m_alignment = alignment;
 
-  const Settings::AggregateSizeChanged size_changed = m_settings->setPageAlignment(m_pageId, alignment);
+  const Settings::AggregateSizeChanged sizeChanged = m_settings->setPageAlignment(m_pageId, alignment);
 
   recalcBoxesAndFit(calcHardMarginsMM());
 
@@ -214,7 +214,7 @@ void ImageView::alignmentChanged(const Alignment& alignment) {
 
   enableMiddleRectInteraction(isShowingMiddleRectEnabled());
 
-  if (size_changed == Settings::AGGREGATE_SIZE_CHANGED) {
+  if (sizeChanged == Settings::AGGREGATE_SIZE_CHANGED) {
     emit invalidateAllThumbnails();
   } else {
     emit invalidateThumbnail(m_pageId);
@@ -229,37 +229,37 @@ void ImageView::aggregateHardSizeChanged() {
 }
 
 void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) {
-  QColor bg_color;
-  QColor fg_color;
+  QColor bgColor;
+  QColor fgColor;
   if (m_alignment.isNull()) {
     // "Align with other pages" is turned off.
     // Different color is useful on a thumbnail list to
     // distinguish "safe" pages from potentially problematic ones.
-    bg_color = QColor(0x58, 0x7f, 0xf4, 70);
-    fg_color = QColor(0x00, 0x52, 0xff);
+    bgColor = QColor(0x58, 0x7f, 0xf4, 70);
+    fgColor = QColor(0x00, 0x52, 0xff);
   } else {
-    bg_color = QColor(0xbb, 0x00, 0xff, 40);
-    fg_color = QColor(0xbe, 0x5b, 0xec);
+    bgColor = QColor(0xbb, 0x00, 0xff, 40);
+    fgColor = QColor(0xbe, 0x5b, 0xec);
   }
 
-  QPainterPath outer_outline;
-  outer_outline.addPolygon(PolygonUtils::round(m_alignment.isNull() ? m_middleRect : m_outerRect));
+  QPainterPath outerOutline;
+  outerOutline.addPolygon(PolygonUtils::round(m_alignment.isNull() ? m_middleRect : m_outerRect));
 
-  QPainterPath content_outline;
-  content_outline.addPolygon(PolygonUtils::round(m_innerRect));
+  QPainterPath contentOutline;
+  contentOutline.addPolygon(PolygonUtils::round(m_innerRect));
 
   painter.setRenderHint(QPainter::Antialiasing, false);
 
   painter.setPen(Qt::NoPen);
-  painter.setBrush(bg_color);
+  painter.setBrush(bgColor);
 
   if (!m_nullContentRect) {
-    painter.drawPath(outer_outline.subtracted(content_outline));
+    painter.drawPath(outerOutline.subtracted(contentOutline));
   } else {
-    painter.drawPath(outer_outline);
+    painter.drawPath(outerOutline);
   }
 
-  QPen pen(fg_color);
+  QPen pen(fgColor);
   pen.setCosmetic(true);
   pen.setWidthF(2.0);
   painter.setPen(pen);
@@ -296,30 +296,30 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
   }
 }  // ImageView::onPaint
 
-Proximity ImageView::cornerProximity(const int edge_mask, const QRectF* box, const QPointF& mouse_pos) const {
+Proximity ImageView::cornerProximity(const int edgeMask, const QRectF* box, const QPointF& mousePos) const {
   const QRectF r(virtualToWidget().mapRect(*box));
   QPointF pt;
 
-  if (edge_mask & TOP) {
+  if (edgeMask & TOP) {
     pt.setY(r.top());
-  } else if (edge_mask & BOTTOM) {
+  } else if (edgeMask & BOTTOM) {
     pt.setY(r.bottom());
   }
 
-  if (edge_mask & LEFT) {
+  if (edgeMask & LEFT) {
     pt.setX(r.left());
-  } else if (edge_mask & RIGHT) {
+  } else if (edgeMask & RIGHT) {
     pt.setX(r.right());
   }
 
-  return Proximity(pt, mouse_pos);
+  return Proximity(pt, mousePos);
 }
 
-Proximity ImageView::edgeProximity(const int edge_mask, const QRectF* box, const QPointF& mouse_pos) const {
+Proximity ImageView::edgeProximity(const int edgeMask, const QRectF* box, const QPointF& mousePos) const {
   const QRectF r(virtualToWidget().mapRect(*box));
   QLineF line;
 
-  switch (edge_mask) {
+  switch (edgeMask) {
     case TOP:
       line.setP1(r.topLeft());
       line.setP2(r.topRight());
@@ -340,77 +340,77 @@ Proximity ImageView::edgeProximity(const int edge_mask, const QRectF* box, const
       assert(!"Unreachable");
   }
 
-  return Proximity::pointAndLineSegment(mouse_pos, line);
+  return Proximity::pointAndLineSegment(mousePos, line);
 }
 
-void ImageView::dragInitiated(const QPointF& mouse_pos) {
+void ImageView::dragInitiated(const QPointF& mousePos) {
   m_beforeResizing.middleWidgetRect = virtualToWidget().mapRect(m_middleRect);
   m_beforeResizing.virtToWidget = virtualToWidget();
   m_beforeResizing.widgetToVirt = widgetToVirtual();
-  m_beforeResizing.mousePos = mouse_pos;
+  m_beforeResizing.mousePos = mousePos;
   m_beforeResizing.focalPoint = getWidgetFocalPoint();
 }
 
-void ImageView::innerRectDragContinuation(int edge_mask, const QPointF& mouse_pos) {
+void ImageView::innerRectDragContinuation(int edgeMask, const QPointF& mousePos) {
   // What really happens when we resize the inner box is resizing
   // the middle box in the opposite direction and moving the scene
   // on screen so that the object being dragged is still under mouse.
 
-  const QPointF delta(mouse_pos - m_beforeResizing.mousePos);
-  qreal left_adjust = 0;
-  qreal right_adjust = 0;
-  qreal top_adjust = 0;
-  qreal bottom_adjust = 0;
+  const QPointF delta(mousePos - m_beforeResizing.mousePos);
+  qreal leftAdjust = 0;
+  qreal rightAdjust = 0;
+  qreal topAdjust = 0;
+  qreal bottomAdjust = 0;
 
-  if (edge_mask & LEFT) {
-    left_adjust = delta.x();
+  if (edgeMask & LEFT) {
+    leftAdjust = delta.x();
     if (m_leftRightLinked) {
-      right_adjust = -left_adjust;
+      rightAdjust = -leftAdjust;
     }
-  } else if (edge_mask & RIGHT) {
-    right_adjust = delta.x();
+  } else if (edgeMask & RIGHT) {
+    rightAdjust = delta.x();
     if (m_leftRightLinked) {
-      left_adjust = -right_adjust;
+      leftAdjust = -rightAdjust;
     }
   }
-  if (edge_mask & TOP) {
-    top_adjust = delta.y();
+  if (edgeMask & TOP) {
+    topAdjust = delta.y();
     if (m_topBottomLinked) {
-      bottom_adjust = -top_adjust;
+      bottomAdjust = -topAdjust;
     }
-  } else if (edge_mask & BOTTOM) {
-    bottom_adjust = delta.y();
+  } else if (edgeMask & BOTTOM) {
+    bottomAdjust = delta.y();
     if (m_topBottomLinked) {
-      top_adjust = -bottom_adjust;
+      topAdjust = -bottomAdjust;
     }
   }
 
-  QRectF widget_rect(m_beforeResizing.middleWidgetRect);
-  widget_rect.adjust(-left_adjust, -top_adjust, -right_adjust, -bottom_adjust);
+  QRectF widgetRect(m_beforeResizing.middleWidgetRect);
+  widgetRect.adjust(-leftAdjust, -topAdjust, -rightAdjust, -bottomAdjust);
 
-  m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widget_rect);
+  m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widgetRect);
   forceNonNegativeHardMargins(m_middleRect);
-  widget_rect = m_beforeResizing.virtToWidget.mapRect(m_middleRect);
+  widgetRect = m_beforeResizing.virtToWidget.mapRect(m_middleRect);
 
-  qreal effective_dx = 0;
-  qreal effective_dy = 0;
+  qreal effectiveDx = 0;
+  qreal effectiveDy = 0;
 
-  const QRectF& old_widget_rect = m_beforeResizing.middleWidgetRect;
-  if (edge_mask & LEFT) {
-    effective_dx = old_widget_rect.left() - widget_rect.left();
-  } else if (edge_mask & RIGHT) {
-    effective_dx = old_widget_rect.right() - widget_rect.right();
+  const QRectF& oldWidgetRect = m_beforeResizing.middleWidgetRect;
+  if (edgeMask & LEFT) {
+    effectiveDx = oldWidgetRect.left() - widgetRect.left();
+  } else if (edgeMask & RIGHT) {
+    effectiveDx = oldWidgetRect.right() - widgetRect.right();
   }
-  if (edge_mask & TOP) {
-    effective_dy = old_widget_rect.top() - widget_rect.top();
-  } else if (edge_mask & BOTTOM) {
-    effective_dy = old_widget_rect.bottom() - widget_rect.bottom();
+  if (edgeMask & TOP) {
+    effectiveDy = oldWidgetRect.top() - widgetRect.top();
+  } else if (edgeMask & BOTTOM) {
+    effectiveDy = oldWidgetRect.bottom() - widgetRect.bottom();
   }
 
   // Updating the focal point is what makes the image move
   // as we drag an inner edge.
   QPointF fp(m_beforeResizing.focalPoint);
-  fp += QPointF(effective_dx, effective_dy);
+  fp += QPointF(effectiveDx, effectiveDy);
   setWidgetFocalPoint(fp);
 
   m_aggregateHardSizeMM = m_settings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
@@ -422,57 +422,57 @@ void ImageView::innerRectDragContinuation(int edge_mask, const QPointF& mouse_po
   emit marginsSetLocally(calcHardMarginsMM());
 }  // ImageView::innerRectDragContinuation
 
-void ImageView::middleRectDragContinuation(const int edge_mask, const QPointF& mouse_pos) {
-  const QPointF delta(mouse_pos - m_beforeResizing.mousePos);
-  qreal left_adjust = 0;
-  qreal right_adjust = 0;
-  qreal top_adjust = 0;
-  qreal bottom_adjust = 0;
+void ImageView::middleRectDragContinuation(const int edgeMask, const QPointF& mousePos) {
+  const QPointF delta(mousePos - m_beforeResizing.mousePos);
+  qreal leftAdjust = 0;
+  qreal rightAdjust = 0;
+  qreal topAdjust = 0;
+  qreal bottomAdjust = 0;
 
   const QRectF bounds(maxViewportRect());
-  const QRectF old_middle_rect(m_beforeResizing.middleWidgetRect);
+  const QRectF oldMiddleRect(m_beforeResizing.middleWidgetRect);
 
-  if (edge_mask & LEFT) {
-    left_adjust = delta.x();
-    if (old_middle_rect.left() + left_adjust < bounds.left()) {
-      left_adjust = bounds.left() - old_middle_rect.left();
+  if (edgeMask & LEFT) {
+    leftAdjust = delta.x();
+    if (oldMiddleRect.left() + leftAdjust < bounds.left()) {
+      leftAdjust = bounds.left() - oldMiddleRect.left();
     }
     if (m_leftRightLinked) {
-      right_adjust = -left_adjust;
+      rightAdjust = -leftAdjust;
     }
-  } else if (edge_mask & RIGHT) {
-    right_adjust = delta.x();
-    if (old_middle_rect.right() + right_adjust > bounds.right()) {
-      right_adjust = bounds.right() - old_middle_rect.right();
+  } else if (edgeMask & RIGHT) {
+    rightAdjust = delta.x();
+    if (oldMiddleRect.right() + rightAdjust > bounds.right()) {
+      rightAdjust = bounds.right() - oldMiddleRect.right();
     }
     if (m_leftRightLinked) {
-      left_adjust = -right_adjust;
+      leftAdjust = -rightAdjust;
     }
   }
-  if (edge_mask & TOP) {
-    top_adjust = delta.y();
-    if (old_middle_rect.top() + top_adjust < bounds.top()) {
-      top_adjust = bounds.top() - old_middle_rect.top();
+  if (edgeMask & TOP) {
+    topAdjust = delta.y();
+    if (oldMiddleRect.top() + topAdjust < bounds.top()) {
+      topAdjust = bounds.top() - oldMiddleRect.top();
     }
     if (m_topBottomLinked) {
-      bottom_adjust = -top_adjust;
+      bottomAdjust = -topAdjust;
     }
-  } else if (edge_mask & BOTTOM) {
-    bottom_adjust = delta.y();
-    if (old_middle_rect.bottom() + bottom_adjust > bounds.bottom()) {
-      bottom_adjust = bounds.bottom() - old_middle_rect.bottom();
+  } else if (edgeMask & BOTTOM) {
+    bottomAdjust = delta.y();
+    if (oldMiddleRect.bottom() + bottomAdjust > bounds.bottom()) {
+      bottomAdjust = bounds.bottom() - oldMiddleRect.bottom();
     }
     if (m_topBottomLinked) {
-      top_adjust = -bottom_adjust;
+      topAdjust = -bottomAdjust;
     }
   }
 
   {
-    QRectF widget_rect(old_middle_rect);
-    widget_rect.adjust(left_adjust, top_adjust, right_adjust, bottom_adjust);
+    QRectF widgetRect(oldMiddleRect);
+    widgetRect.adjust(leftAdjust, topAdjust, rightAdjust, bottomAdjust);
 
-    m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widget_rect);
-    forceNonNegativeHardMargins(m_middleRect);  // invalidates widget_rect
+    m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widgetRect);
+    forceNonNegativeHardMargins(m_middleRect);  // invalidates widgetRect
   }
 
   m_aggregateHardSizeMM = m_settings->getAggregateHardSizeMM(m_pageId, origRectToSizeMM(m_middleRect), m_alignment);
@@ -485,45 +485,45 @@ void ImageView::middleRectDragContinuation(const int edge_mask, const QPointF& m
 }  // ImageView::middleRectDragContinuation
 
 void ImageView::dragFinished() {
-  const AggregateSizeChanged agg_size_changed(commitHardMargins(calcHardMarginsMM()));
+  const AggregateSizeChanged aggSizeChanged(commitHardMargins(calcHardMarginsMM()));
 
-  const QRectF extended_viewport(maxViewportRect().adjusted(-0.5, -0.5, 0.5, 0.5));
-  if (extended_viewport.contains(m_beforeResizing.middleWidgetRect)) {
+  const QRectF extendedViewport(maxViewportRect().adjusted(-0.5, -0.5, 0.5, 0.5));
+  if (extendedViewport.contains(m_beforeResizing.middleWidgetRect)) {
     updatePresentationTransform(FIT);
   } else {
     updatePresentationTransform(DONT_FIT);
   }
 
-  invalidateThumbnails(agg_size_changed);
+  invalidateThumbnails(aggSizeChanged);
 }
 
 /**
- * Updates m_middleRect and m_outerRect based on \p margins_mm,
+ * Updates m_middleRect and m_outerRect based on \p marginsMm,
  * m_aggregateHardSizeMM and m_alignment, updates the displayed area.
  */
-void ImageView::recalcBoxesAndFit(const Margins& margins_mm) {
-  const QTransform virt_to_mm(virtualToImage() * m_pixelsToMmXform);
-  const QTransform mm_to_virt(m_mmToPixelsXform * imageToVirtual());
+void ImageView::recalcBoxesAndFit(const Margins& marginsMm) {
+  const QTransform virtToMm(virtualToImage() * m_pixelsToMmXform);
+  const QTransform mmToVirt(m_mmToPixelsXform * imageToVirtual());
 
-  QPolygonF poly_mm(virt_to_mm.map(m_innerRect));
-  Utils::extendPolyRectWithMargins(poly_mm, margins_mm);
+  QPolygonF polyMm(virtToMm.map(m_innerRect));
+  Utils::extendPolyRectWithMargins(polyMm, marginsMm);
 
-  const QRectF middle_rect(mm_to_virt.map(poly_mm).boundingRect());
+  const QRectF middleRect(mmToVirt.map(polyMm).boundingRect());
 
-  const QSizeF hard_size_mm(QLineF(poly_mm[0], poly_mm[1]).length(), QLineF(poly_mm[0], poly_mm[3]).length());
-  const Margins soft_margins_mm(Utils::calcSoftMarginsMM(
-      hard_size_mm, m_aggregateHardSizeMM, m_alignment, m_settings->getPageParams(m_pageId)->contentRect(),
+  const QSizeF hardSizeMm(QLineF(polyMm[0], polyMm[1]).length(), QLineF(polyMm[0], polyMm[3]).length());
+  const Margins softMarginsMm(Utils::calcSoftMarginsMM(
+      hardSizeMm, m_aggregateHardSizeMM, m_alignment, m_settings->getPageParams(m_pageId)->contentRect(),
       m_settings->getPageParams(m_pageId)->contentSizeMM(), m_settings->getPageParams(m_pageId)->pageRect()));
 
-  Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
+  Utils::extendPolyRectWithMargins(polyMm, softMarginsMm);
 
-  const QRectF outer_rect(mm_to_virt.map(poly_mm).boundingRect());
+  const QRectF outerRect(mmToVirt.map(polyMm).boundingRect());
   updateTransformAndFixFocalPoint(
-      ImagePresentation(imageToVirtual(), m_xform.resultingPreCropArea().intersected(outer_rect), outer_rect),
+      ImagePresentation(imageToVirtual(), m_xform.resultingPreCropArea().intersected(outerRect), outerRect),
       CENTER_IF_FITS);
 
-  m_middleRect = middle_rect;
-  m_outerRect = outer_rect;
+  m_middleRect = middleRect;
+  m_outerRect = outerRect;
 
   updatePhysSize();
 
@@ -536,8 +536,8 @@ void ImageView::recalcBoxesAndFit(const Margins& margins_mm) {
  *
  * \note virtualToImage() and imageToVirtual() are not affected by this.
  */
-void ImageView::updatePresentationTransform(const FitMode fit_mode) {
-  if (fit_mode == DONT_FIT) {
+void ImageView::updatePresentationTransform(const FitMode fitMode) {
+  if (fitMode == DONT_FIT) {
     updateTransformPreservingScale(
         ImagePresentation(imageToVirtual(), m_xform.resultingPreCropArea().intersected(m_outerRect), m_outerRect));
   } else {
@@ -548,18 +548,18 @@ void ImageView::updatePresentationTransform(const FitMode fit_mode) {
   }
 }
 
-void ImageView::forceNonNegativeHardMargins(QRectF& middle_rect) const {
-  if (middle_rect.left() > m_innerRect.left()) {
-    middle_rect.setLeft(m_innerRect.left());
+void ImageView::forceNonNegativeHardMargins(QRectF& middleRect) const {
+  if (middleRect.left() > m_innerRect.left()) {
+    middleRect.setLeft(m_innerRect.left());
   }
-  if (middle_rect.right() < m_innerRect.right()) {
-    middle_rect.setRight(m_innerRect.right());
+  if (middleRect.right() < m_innerRect.right()) {
+    middleRect.setRight(m_innerRect.right());
   }
-  if (middle_rect.top() > m_innerRect.top()) {
-    middle_rect.setTop(m_innerRect.top());
+  if (middleRect.top() > m_innerRect.top()) {
+    middleRect.setTop(m_innerRect.top());
   }
-  if (middle_rect.bottom() < m_innerRect.bottom()) {
-    middle_rect.setBottom(m_innerRect.bottom());
+  if (middleRect.bottom() < m_innerRect.bottom()) {
+    middleRect.setBottom(m_innerRect.bottom());
   }
 }
 
@@ -569,22 +569,21 @@ void ImageView::forceNonNegativeHardMargins(QRectF& middle_rect) const {
 Margins ImageView::calcHardMarginsMM() const {
   const QPointF center(m_innerRect.center());
 
-  const QLineF top_margin_line(QPointF(center.x(), m_middleRect.top()), QPointF(center.x(), m_innerRect.top()));
+  const QLineF topMarginLine(QPointF(center.x(), m_middleRect.top()), QPointF(center.x(), m_innerRect.top()));
 
-  const QLineF bottom_margin_line(QPointF(center.x(), m_innerRect.bottom()),
-                                  QPointF(center.x(), m_middleRect.bottom()));
+  const QLineF bottomMarginLine(QPointF(center.x(), m_innerRect.bottom()), QPointF(center.x(), m_middleRect.bottom()));
 
-  const QLineF left_margin_line(QPointF(m_middleRect.left(), center.y()), QPointF(m_innerRect.left(), center.y()));
+  const QLineF leftMarginLine(QPointF(m_middleRect.left(), center.y()), QPointF(m_innerRect.left(), center.y()));
 
-  const QLineF right_margin_line(QPointF(m_innerRect.right(), center.y()), QPointF(m_middleRect.right(), center.y()));
+  const QLineF rightMarginLine(QPointF(m_innerRect.right(), center.y()), QPointF(m_middleRect.right(), center.y()));
 
-  const QTransform virt_to_mm(virtualToImage() * m_pixelsToMmXform);
+  const QTransform virtToMm(virtualToImage() * m_pixelsToMmXform);
 
   Margins margins;
-  margins.setTop(virt_to_mm.map(top_margin_line).length());
-  margins.setBottom(virt_to_mm.map(bottom_margin_line).length());
-  margins.setLeft(virt_to_mm.map(left_margin_line).length());
-  margins.setRight(virt_to_mm.map(right_margin_line).length());
+  margins.setTop(virtToMm.map(topMarginLine).length());
+  margins.setBottom(virtToMm.map(bottomMarginLine).length());
+  margins.setLeft(virtToMm.map(leftMarginLine).length());
+  margins.setRight(virtToMm.map(rightMarginLine).length());
 
   return margins;
 }  // ImageView::calcHardMarginsMM
@@ -594,37 +593,37 @@ Margins ImageView::calcHardMarginsMM() const {
  *        and m_alignment.
  */
 void ImageView::recalcOuterRect() {
-  const QTransform virt_to_mm(virtualToImage() * m_pixelsToMmXform);
-  const QTransform mm_to_virt(m_mmToPixelsXform * imageToVirtual());
+  const QTransform virtToMm(virtualToImage() * m_pixelsToMmXform);
+  const QTransform mmToVirt(m_mmToPixelsXform * imageToVirtual());
 
-  QPolygonF poly_mm(virt_to_mm.map(m_middleRect));
+  QPolygonF polyMm(virtToMm.map(m_middleRect));
 
-  const QSizeF hard_size_mm(QLineF(poly_mm[0], poly_mm[1]).length(), QLineF(poly_mm[0], poly_mm[3]).length());
-  const Margins soft_margins_mm(Utils::calcSoftMarginsMM(
-      hard_size_mm, m_aggregateHardSizeMM, m_alignment, m_settings->getPageParams(m_pageId)->contentRect(),
+  const QSizeF hardSizeMm(QLineF(polyMm[0], polyMm[1]).length(), QLineF(polyMm[0], polyMm[3]).length());
+  const Margins softMarginsMm(Utils::calcSoftMarginsMM(
+      hardSizeMm, m_aggregateHardSizeMM, m_alignment, m_settings->getPageParams(m_pageId)->contentRect(),
       m_settings->getPageParams(m_pageId)->contentSizeMM(), m_settings->getPageParams(m_pageId)->pageRect()));
 
-  Utils::extendPolyRectWithMargins(poly_mm, soft_margins_mm);
+  Utils::extendPolyRectWithMargins(polyMm, softMarginsMm);
 
-  m_outerRect = mm_to_virt.map(poly_mm).boundingRect();
+  m_outerRect = mmToVirt.map(polyMm).boundingRect();
   updatePhysSize();
 
   forceInscribeGuides();
 }
 
 QSizeF ImageView::origRectToSizeMM(const QRectF& rect) const {
-  const QTransform virt_to_mm(virtualToImage() * m_pixelsToMmXform);
+  const QTransform virtToMm(virtualToImage() * m_pixelsToMmXform);
 
-  const QLineF hor_line(rect.topLeft(), rect.topRight());
-  const QLineF vert_line(rect.topLeft(), rect.bottomLeft());
+  const QLineF horLine(rect.topLeft(), rect.topRight());
+  const QLineF vertLine(rect.topLeft(), rect.bottomLeft());
 
-  const QSizeF size_mm(virt_to_mm.map(hor_line).length(), virt_to_mm.map(vert_line).length());
+  const QSizeF sizeMm(virtToMm.map(horLine).length(), virtToMm.map(vertLine).length());
 
-  return size_mm;
+  return sizeMm;
 }
 
-ImageView::AggregateSizeChanged ImageView::commitHardMargins(const Margins& margins_mm) {
-  m_settings->setHardMarginsMM(m_pageId, margins_mm);
+ImageView::AggregateSizeChanged ImageView::commitHardMargins(const Margins& marginsMm) {
+  m_settings->setHardMarginsMM(m_pageId, marginsMm);
   m_aggregateHardSizeMM = m_settings->getAggregateHardSizeMM();
 
   AggregateSizeChanged changed = AGGREGATE_SIZE_UNCHANGED;
@@ -637,8 +636,8 @@ ImageView::AggregateSizeChanged ImageView::commitHardMargins(const Margins& marg
   return changed;
 }
 
-void ImageView::invalidateThumbnails(const AggregateSizeChanged agg_size_changed) {
-  if (agg_size_changed == AGGREGATE_SIZE_CHANGED) {
+void ImageView::invalidateThumbnails(const AggregateSizeChanged aggSizeChanged) {
+  if (aggSizeChanged == AGGREGATE_SIZE_CHANGED) {
     emit invalidateAllThumbnails();
   } else {
     emit invalidateThumbnail(m_pageId);
@@ -819,13 +818,13 @@ QLineF ImageView::guidePosition(const int index) const {
 }
 
 void ImageView::guideMoveRequest(const int index, QLineF line) {
-  const QRectF valid_area(virtualToWidget().mapRect(m_outerRect));
+  const QRectF validArea(virtualToWidget().mapRect(m_outerRect));
 
   // Limit movement.
   if (m_guides[index].getOrientation() == Qt::Horizontal) {
     const double linePos = line.y1();
-    const double top = valid_area.top() - linePos;
-    const double bottom = linePos - valid_area.bottom();
+    const double top = validArea.top() - linePos;
+    const double bottom = linePos - validArea.bottom();
     if (top > 0.0) {
       line.translate(0.0, top);
     } else if (bottom > 0.0) {
@@ -833,8 +832,8 @@ void ImageView::guideMoveRequest(const int index, QLineF line) {
     }
   } else {
     const double linePos = line.x1();
-    const double left = valid_area.left() - linePos;
-    const double right = linePos - valid_area.right();
+    const double left = validArea.left() - linePos;
+    const double right = linePos - validArea.right();
     if (left > 0.0) {
       line.translate(left, 0.0);
     } else if (right > 0.0) {
@@ -851,13 +850,13 @@ void ImageView::guideDragFinished() {
 }
 
 QLineF ImageView::widgetGuideLine(const int index) const {
-  const QRectF widget_rect(viewport()->rect());
+  const QRectF widgetRect(viewport()->rect());
   const Guide& guide = m_guides.at(index);
   QLineF guideLine = guideToWidgetCs().map(guide);
   if (guide.getOrientation() == Qt::Horizontal) {
-    guideLine = QLineF(widget_rect.left(), guideLine.y1(), widget_rect.right(), guideLine.y2());
+    guideLine = QLineF(widgetRect.left(), guideLine.y1(), widgetRect.right(), guideLine.y2());
   } else {
-    guideLine = QLineF(guideLine.x1(), widget_rect.top(), guideLine.x2(), widget_rect.bottom());
+    guideLine = QLineF(guideLine.x1(), widgetRect.top(), guideLine.x2(), widgetRect.bottom());
   }
 
   return guideLine;
@@ -891,39 +890,39 @@ void ImageView::forceInscribeGuides() {
     return;
   }
 
-  bool need_sync = false;
+  bool needSync = false;
   for (const auto& idxAndGuide : m_guides) {
     const Guide& guide = idxAndGuide.second;
     const double pos = guide.getPosition();
     if (guide.getOrientation() == Qt::Vertical) {
       if (std::abs(pos) > (m_outerRect.width() / 2)) {
         m_guides[idxAndGuide.first].setPosition(std::copysign(m_outerRect.width() / 2, pos));
-        need_sync = true;
+        needSync = true;
       }
     } else {
       if (std::abs(pos) > (m_outerRect.height() / 2)) {
         m_guides[idxAndGuide.first].setPosition(std::copysign(m_outerRect.height() / 2, pos));
-        need_sync = true;
+        needSync = true;
       }
     }
   }
 
-  if (need_sync) {
+  if (needSync) {
     syncGuidesSettings();
   }
 }
 
-void ImageView::innerRectMoveRequest(const QPointF& mouse_pos, const Qt::KeyboardModifiers mask) {
-  QPointF delta(mouse_pos - m_beforeResizing.mousePos);
+void ImageView::innerRectMoveRequest(const QPointF& mousePos, const Qt::KeyboardModifiers mask) {
+  QPointF delta(mousePos - m_beforeResizing.mousePos);
   if (mask == m_innerRectVerticalDragModifier) {
     delta.setX(0);
   } else if (mask == m_innerRectHorizontalDragModifier) {
     delta.setY(0);
   }
 
-  QRectF widget_rect(m_beforeResizing.middleWidgetRect);
-  widget_rect.translate(-delta);
-  m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widget_rect);
+  QRectF widgetRect(m_beforeResizing.middleWidgetRect);
+  widgetRect.translate(-delta);
+  m_middleRect = m_beforeResizing.widgetToVirt.mapRect(widgetRect);
   forceNonNegativeHardMargins(m_middleRect);
 
   // Updating the focal point is what makes the image move
@@ -941,35 +940,35 @@ void ImageView::innerRectMoveRequest(const QPointF& mouse_pos, const Qt::Keyboar
   emit marginsSetLocally(calcHardMarginsMM());
 }
 
-Proximity ImageView::rectProximity(const QRectF& box, const QPointF& mouse_pos) const {
-  double value = virtualToWidget().mapRect(box).contains(mouse_pos) ? 0 : std::numeric_limits<double>::max();
+Proximity ImageView::rectProximity(const QRectF& box, const QPointF& mousePos) const {
+  double value = virtualToWidget().mapRect(box).contains(mousePos) ? 0 : std::numeric_limits<double>::max();
   return Proximity::fromSqDist(value);
 }
 
-void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransformation& xform) {
-  ImageTransformation xform_150dpi(xform);
-  xform_150dpi.preScaleToDpi(Dpi(150, 150));
+void ImageView::buildContentImage(const GrayImage& grayImage, const ImageTransformation& xform) {
+  ImageTransformation xform150dpi(xform);
+  xform150dpi.preScaleToDpi(Dpi(150, 150));
 
-  if (xform_150dpi.resultingRect().toRect().isEmpty()) {
+  if (xform150dpi.resultingRect().toRect().isEmpty()) {
     return;
   }
 
-  QImage gray150(transformToGray(gray_image, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
+  QImage gray150(transformToGray(grayImage, xform150dpi.transform(), xform150dpi.resultingRect().toRect(),
                                  OutsidePixels::assumeColor(Qt::white)));
 
   m_contentImage = binarizeWolf(gray150, QSize(51, 51), 50);
 
-  PolygonRasterizer::fillExcept(m_contentImage, WHITE, xform_150dpi.resultingPreCropArea(), Qt::WindingFill);
+  PolygonRasterizer::fillExcept(m_contentImage, WHITE, xform150dpi.resultingPreCropArea(), Qt::WindingFill);
 
   Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, NullTaskStatus());
 
-  m_originalToContentImage = xform_150dpi.transform();
+  m_originalToContentImage = xform150dpi.transform();
   m_contentImageToOriginal = m_originalToContentImage.inverted();
 }
 
 QRect ImageView::findContentInArea(const QRect& area) const {
-  const uint32_t* image_line = m_contentImage.data();
-  const int image_stride = m_contentImage.wordsPerLine();
+  const uint32_t* imageLine = m_contentImage.data();
+  const int imageStride = m_contentImage.wordsPerLine();
   const uint32_t msb = uint32_t(1) << 31;
 
   int top = std::numeric_limits<int>::max();
@@ -977,27 +976,27 @@ QRect ImageView::findContentInArea(const QRect& area) const {
   int bottom = std::numeric_limits<int>::min();
   int right = std::numeric_limits<int>::min();
 
-  image_line += area.top() * image_stride;
+  imageLine += area.top() * imageStride;
   for (int y = area.top(); y <= area.bottom(); ++y) {
     for (int x = area.left(); x <= area.right(); ++x) {
-      if (image_line[x >> 5] & (msb >> (x & 31))) {
+      if (imageLine[x >> 5] & (msb >> (x & 31))) {
         top = std::min(top, y);
         left = std::min(left, x);
         bottom = std::max(bottom, y);
         right = std::max(right, x);
       }
     }
-    image_line += image_stride;
+    imageLine += imageStride;
   }
 
   if (top > bottom) {
     return QRect();
   }
 
-  QRect found_area = QRect(left, top, right - left + 1, bottom - top + 1);
-  found_area.adjust(-1, -1, 1, 1);
+  QRect foundArea = QRect(left, top, right - left + 1, bottom - top + 1);
+  foundArea.adjust(-1, -1, 1, 1);
 
-  return found_area;
+  return foundArea;
 }
 
 void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
@@ -1009,70 +1008,70 @@ void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& in
 }
 
 void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::KeyboardModifiers mask) {
-  const QTransform widget_to_content_image(widgetToImage() * m_originalToContentImage);
-  const QTransform content_image_to_virtual(m_contentImageToOriginal * imageToVirtual());
+  const QTransform widgetToContentImage(widgetToImage() * m_originalToContentImage);
+  const QTransform contentImageToVirtual(m_contentImageToOriginal * imageToVirtual());
 
-  const QPointF content_pos = widget_to_content_image.map(pos);
+  const QPointF contentPos = widgetToContentImage.map(pos);
 
-  QRect finding_area((content_pos - QPointF(15, 15)).toPoint(), QSize(30, 30));
-  finding_area = finding_area.intersected(m_contentImage.rect());
-  if (finding_area.isEmpty()) {
+  QRect findingArea((contentPos - QPointF(15, 15)).toPoint(), QSize(30, 30));
+  findingArea = findingArea.intersected(m_contentImage.rect());
+  if (findingArea.isEmpty()) {
     return;
   }
 
-  QRect found_area = findContentInArea(finding_area);
-  if (found_area.isEmpty()) {
+  QRect foundArea = findContentInArea(findingArea);
+  if (foundArea.isEmpty()) {
     return;
   }
 
-  const QRectF found_area_in_virtual = content_image_to_virtual.mapRect(QRectF(found_area)).intersected(m_innerRect);
-  if (found_area_in_virtual.isEmpty()) {
+  const QRectF foundAreaInVirtual = contentImageToVirtual.mapRect(QRectF(foundArea)).intersected(m_innerRect);
+  if (foundAreaInVirtual.isEmpty()) {
     return;
   }
 
   QPointF delta;
   {
-    const bool only_horizontal_direction = (mask == m_innerRectHorizontalDragModifier);
-    const bool only_vertical_direction = (mask == m_innerRectVerticalDragModifier);
-    const bool both_directions = (mask == (m_innerRectVerticalDragModifier | m_innerRectHorizontalDragModifier));
+    const bool onlyHorizontalDirection = (mask == m_innerRectHorizontalDragModifier);
+    const bool onlyVerticalDirection = (mask == m_innerRectVerticalDragModifier);
+    const bool bothDirections = (mask == (m_innerRectVerticalDragModifier | m_innerRectHorizontalDragModifier));
 
-    double min_dist_x = std::numeric_limits<int>::max();
-    double min_dist_y = std::numeric_limits<int>::max();
+    double minDistX = std::numeric_limits<int>::max();
+    double minDistY = std::numeric_limits<int>::max();
     for (const auto& idxAndGuide : m_guides) {
       const Guide& guide = idxAndGuide.second;
       if (guide.getOrientation() == Qt::Vertical) {
-        if (only_vertical_direction) {
+        if (onlyVerticalDirection) {
           continue;
         }
 
-        const double guide_pos_in_virtual = guide.getPosition() + m_outerRect.center().x();
-        const double diff_left = guide_pos_in_virtual - found_area_in_virtual.left();
-        const double diff_right = guide_pos_in_virtual - found_area_in_virtual.right();
-        const double diff = std::abs(diff_left) <= std::abs(diff_right) ? diff_left : diff_right;
+        const double guidePosInVirtual = guide.getPosition() + m_outerRect.center().x();
+        const double diffLeft = guidePosInVirtual - foundAreaInVirtual.left();
+        const double diffRight = guidePosInVirtual - foundAreaInVirtual.right();
+        const double diff = std::abs(diffLeft) <= std::abs(diffRight) ? diffLeft : diffRight;
         const double dist = std::abs(diff);
-        const double min_dist = (both_directions) ? min_dist_x : std::min(min_dist_x, min_dist_y);
-        if (dist < min_dist) {
-          min_dist_x = dist;
+        const double minDist = (bothDirections) ? minDistX : std::min(minDistX, minDistY);
+        if (dist < minDist) {
+          minDistX = dist;
           delta.setX(diff);
-          if (!both_directions) {
+          if (!bothDirections) {
             delta.setY(0.0);
           }
         }
       } else {
-        if (only_horizontal_direction) {
+        if (onlyHorizontalDirection) {
           continue;
         }
 
-        const double guide_pos_in_virtual = guide.getPosition() + m_outerRect.center().y();
-        const double diff_top = guide_pos_in_virtual - found_area_in_virtual.top();
-        const double diff_bottom = guide_pos_in_virtual - found_area_in_virtual.bottom();
-        const double diff = std::abs(diff_top) <= std::abs(diff_bottom) ? diff_top : diff_bottom;
+        const double guidePosInVirtual = guide.getPosition() + m_outerRect.center().y();
+        const double diffTop = guidePosInVirtual - foundAreaInVirtual.top();
+        const double diffBottom = guidePosInVirtual - foundAreaInVirtual.bottom();
+        const double diff = std::abs(diffTop) <= std::abs(diffBottom) ? diffTop : diffBottom;
         const double dist = std::abs(diff);
-        const double min_dist = (both_directions) ? min_dist_y : std::min(min_dist_x, min_dist_y);
-        if (dist < min_dist) {
-          min_dist_y = dist;
+        const double minDist = (bothDirections) ? minDistY : std::min(minDistX, minDistY);
+        if (dist < minDist) {
+          minDistY = dist;
           delta.setY(diff);
-          if (!both_directions) {
+          if (!bothDirections) {
             delta.setX(0.0);
           }
         }
@@ -1084,31 +1083,31 @@ void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::Keyboa
   }
 
   {
-    QRectF corrected_middle_rect = m_middleRect;
-    corrected_middle_rect.translate(-delta);
-    corrected_middle_rect |= m_innerRect;
+    QRectF correctedMiddleRect = m_middleRect;
+    correctedMiddleRect.translate(-delta);
+    correctedMiddleRect |= m_innerRect;
 
     {
       // Correct the delta in case of the middle rect size changed.
       // It means that the center is shifted resulting
       // the guide will change its position, so we need an extra addition to delta.
       const double x_correction
-          = std::copysign(std::max(0.0, corrected_middle_rect.width() - m_middleRect.width()), delta.x());
+          = std::copysign(std::max(0.0, correctedMiddleRect.width() - m_middleRect.width()), delta.x());
       const double y_correction
-          = std::copysign(std::max(0.0, corrected_middle_rect.height() - m_middleRect.height()), delta.y());
+          = std::copysign(std::max(0.0, correctedMiddleRect.height() - m_middleRect.height()), delta.y());
       delta.setX(delta.x() + x_correction);
       delta.setY(delta.y() + y_correction);
 
-      corrected_middle_rect.translate(-x_correction, -y_correction);
-      corrected_middle_rect |= m_innerRect;
+      correctedMiddleRect.translate(-x_correction, -y_correction);
+      correctedMiddleRect |= m_innerRect;
     }
 
     {
       // Restrict the delta value in order not to be out of the outer rect.
       const double x_correction
-          = std::copysign(std::max(0.0, corrected_middle_rect.width() - m_outerRect.width()), delta.x());
+          = std::copysign(std::max(0.0, correctedMiddleRect.width() - m_outerRect.width()), delta.x());
       const double y_correction
-          = std::copysign(std::max(0.0, corrected_middle_rect.height() - m_outerRect.height()), delta.y());
+          = std::copysign(std::max(0.0, correctedMiddleRect.height() - m_outerRect.height()), delta.y());
       delta.setX(delta.x() - x_correction);
       delta.setY(delta.y() - y_correction);
     }
@@ -1121,8 +1120,8 @@ void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::Keyboa
 }
 
 void ImageView::enableMiddleRectInteraction(const bool state) {
-  bool internal_state = m_middleCornerHandlers[0].is_linked();
-  if (state == internal_state) {
+  bool internalState = m_middleCornerHandlers[0].is_linked();
+  if (state == internalState) {
     // Don't enable or disable the interaction if that's already done.
     return;
   }

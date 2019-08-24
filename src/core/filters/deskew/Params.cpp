@@ -2,19 +2,19 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Params.h"
-#include <QDomDocument>
 #include <foundation/Utils.h>
+#include <QDomDocument>
 
 using namespace foundation;
 
 namespace deskew {
-Params::Params(const double deskew_angle_deg, const Dependencies& deps, const AutoManualMode mode)
-    : m_deskewAngleDeg(deskew_angle_deg), m_deps(deps), m_mode(mode) {}
+Params::Params(const double deskewAngleDeg, const Dependencies& deps, const AutoManualMode mode)
+    : m_deskewAngleDeg(deskewAngleDeg), m_deps(deps), m_mode(mode) {}
 
-Params::Params(const QDomElement& deskew_el)
-    : m_deskewAngleDeg(deskew_el.attribute("angle").toDouble()),
-      m_deps(deskew_el.namedItem("dependencies").toElement()),
-      m_mode(deskew_el.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO) {}
+Params::Params(const QDomElement& deskewEl)
+    : m_deskewAngleDeg(deskewEl.attribute("angle").toDouble()),
+      m_deps(deskewEl.namedItem("dependencies").toElement()),
+      m_mode(deskewEl.attribute("mode") == "manual" ? MODE_MANUAL : MODE_AUTO) {}
 
 Params::~Params() = default;
 

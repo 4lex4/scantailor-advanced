@@ -20,7 +20,7 @@ class StageListView::Model : public QAbstractTableModel {
  public:
   Model(QObject* parent, intrusive_ptr<StageSequence> stages);
 
-  void updateBatchProcessingAnimation(int selected_row, const QPixmap& animation_frame);
+  void updateBatchProcessingAnimation(int selectedRow, const QPixmap& animationFrame);
 
   void disableBatchProcessingAnimation();
 
@@ -80,13 +80,13 @@ StageListView::StageListView(QWidget* parent)
   setItemDelegateForColumn(0, m_firstColDelegate);
   setItemDelegateForColumn(1, m_secondColDelegate);
 
-  QHeaderView* h_header = horizontalHeader();
-  h_header->setSectionResizeMode(QHeaderView::Stretch);
-  h_header->hide();
+  QHeaderView* hHeader = horizontalHeader();
+  hHeader->setSectionResizeMode(QHeaderView::Stretch);
+  hHeader->hide();
 
-  QHeaderView* v_header = verticalHeader();
-  v_header->setSectionResizeMode(QHeaderView::ResizeToContents);
-  v_header->setSectionsMovable(false);
+  QHeaderView* vHeader = verticalHeader();
+  vHeader->setSectionResizeMode(QHeaderView::ResizeToContents);
+  vHeader->setSectionsMovable(false);
 
   const auto& iconProvider = IconProvider::getInstance();
   m_launchBtn = new SkinnedButton(iconProvider.getIcon("play"), iconProvider.getIcon("play-hovered"),
@@ -113,16 +113,16 @@ void StageListView::setStages(const intrusive_ptr<StageSequence>& stages) {
   m_model = new Model(this, stages);
   setModel(m_model);
 
-  QHeaderView* h_header = horizontalHeader();
-  QHeaderView* v_header = verticalHeader();
-  h_header->setSectionResizeMode(0, QHeaderView::Stretch);
-  h_header->setSectionResizeMode(1, QHeaderView::Fixed);
-  if (v_header->count() != 0) {
+  QHeaderView* hHeader = horizontalHeader();
+  QHeaderView* vHeader = verticalHeader();
+  hHeader->setSectionResizeMode(0, QHeaderView::Stretch);
+  hHeader->setSectionResizeMode(1, QHeaderView::Fixed);
+  if (vHeader->count() != 0) {
     // Make the cells in the last column square.
-    const int square_side = v_header->sectionSize(0);
-    h_header->resizeSection(1, square_side);
-    const int reduced_square_side = std::max(1, square_side - 6);
-    createBatchAnimationSequence(reduced_square_side);
+    const int squareSide = vHeader->sectionSize(0);
+    hHeader->resizeSection(1, squareSide);
+    const int reducedSquareSide = std::max(1, squareSide - 6);
+    createBatchAnimationSequence(reducedSquareSide);
   } else {
     // Just to avoid special cases elsewhere.
     createBatchAnimationSequence(1);
@@ -154,13 +154,13 @@ void StageListView::setBatchProcessingPossible(const bool possible) {
   }
 }
 
-void StageListView::setBatchProcessingInProgress(const bool in_progress) {
-  if (m_batchProcessingInProgress == in_progress) {
+void StageListView::setBatchProcessingInProgress(const bool inProgress) {
+  if (m_batchProcessingInProgress == inProgress) {
     return;
   }
-  m_batchProcessingInProgress = in_progress;
+  m_batchProcessingInProgress = inProgress;
 
-  if (in_progress) {
+  if (inProgress) {
     removeLaunchButton(selectedRow());
     updateRowSpans();  // Join columns.
     // Some styles (Oxygen) visually separate items in a selected row.
@@ -201,12 +201,12 @@ void StageListView::initiateBatchAnimationFrameRendering() {
     return;
   }
 
-  const int selected_row = selectedRow();
-  if (selected_row == -1) {
+  const int selectedRow = this->selectedRow();
+  if (selectedRow == -1) {
     return;
   }
 
-  m_model->updateBatchProcessingAnimation(selected_row, m_batchAnimationPixmaps[m_curBatchAnimationFrame]);
+  m_model->updateBatchProcessingAnimation(selectedRow, m_batchAnimationPixmaps[m_curBatchAnimationFrame]);
   if (++m_curBatchAnimationFrame == (int) m_batchAnimationPixmaps.size()) {
     m_curBatchAnimationFrame = 0;
   }
@@ -246,32 +246,32 @@ void StageListView::placeLaunchButton(int row) {
   }
 
   const QModelIndex idx(m_model->index(row, 0));
-  QRect button_geometry(visualRect(idx));
+  QRect buttonGeometry(visualRect(idx));
 
   // Place it to the right (assuming height is less than width).
-  button_geometry.setLeft(button_geometry.right() + 1 - button_geometry.height());
+  buttonGeometry.setLeft(buttonGeometry.right() + 1 - buttonGeometry.height());
 
-  m_launchBtn->setGeometry(button_geometry);
+  m_launchBtn->setGeometry(buttonGeometry);
   m_launchBtn->show();
 }
 
-void StageListView::createBatchAnimationSequence(const int square_side) {
-  const int num_frames = 8;
-  m_batchAnimationPixmaps.resize(num_frames);
+void StageListView::createBatchAnimationSequence(const int squareSide) {
+  const int numFrames = 8;
+  m_batchAnimationPixmaps.resize(numFrames);
 
-  const QColor head_color = ColorSchemeManager::instance().getColorParam(ColorScheme::StageListHead,
-                                                                         palette().color(QPalette::Window).darker(200));
-  const QColor tail_color = ColorSchemeManager::instance().getColorParam(ColorScheme::StageListTail,
-                                                                         palette().color(QPalette::Window).darker(130));
+  const QColor headColor = ColorSchemeManager::instance().getColorParam(ColorScheme::StageListHead,
+                                                                        palette().color(QPalette::Window).darker(200));
+  const QColor tailColor = ColorSchemeManager::instance().getColorParam(ColorScheme::StageListTail,
+                                                                        palette().color(QPalette::Window).darker(130));
 
-  BubbleAnimation animation(num_frames);
-  for (int i = 0; i < num_frames; ++i) {
+  BubbleAnimation animation(numFrames);
+  for (int i = 0; i < numFrames; ++i) {
     QPixmap& pixmap = m_batchAnimationPixmaps[i];
-    if ((pixmap.width() != square_side) || (pixmap.height() != square_side)) {
-      pixmap = QPixmap(square_side, square_side);
+    if ((pixmap.width() != squareSide) || (pixmap.height() != squareSide)) {
+      pixmap = QPixmap(squareSide, squareSide);
     }
     pixmap.fill(Qt::transparent);
-    animation.nextFrame(head_color, tail_color, &pixmap);
+    animation.nextFrame(headColor, tailColor, &pixmap);
   }
 }
 
@@ -302,11 +302,11 @@ StageListView::Model::Model(QObject* parent, intrusive_ptr<StageSequence> stages
   assert(m_stages);
 }
 
-void StageListView::Model::updateBatchProcessingAnimation(const int selected_row, const QPixmap& animation_frame) {
-  const int max_row = std::max(selected_row, m_curSelectedRow);
-  m_curSelectedRow = selected_row;
-  m_curAnimationFrame = animation_frame;
-  emit dataChanged(index(0, 1), index(max_row, 1));
+void StageListView::Model::updateBatchProcessingAnimation(const int selectedRow, const QPixmap& animationFrame) {
+  const int maxRow = std::max(selectedRow, m_curSelectedRow);
+  m_curSelectedRow = selectedRow;
+  m_curAnimationFrame = animationFrame;
+  emit dataChanged(index(0, 1), index(maxRow, 1));
 }
 
 void StageListView::Model::disableBatchProcessingAnimation() {
@@ -349,10 +349,10 @@ void StageListView::LeftColDelegate::paint(QPainter* painter,
   SuperClass::paint(painter, option, index);
 
   if ((index.row() == m_view->selectedRow()) && m_view->m_launchBtn->isVisible()) {
-    QRect button_geometry(option.rect);
+    QRect buttonGeometry(option.rect);
     // Place it to the right (assuming height is less than width).
-    button_geometry.setLeft(button_geometry.right() + 1 - button_geometry.height());
-    m_view->m_launchBtn->setGeometry(button_geometry);
+    buttonGeometry.setLeft(buttonGeometry.right() + 1 - buttonGeometry.height());
+    m_view->m_launchBtn->setGeometry(buttonGeometry);
   }
 }
 

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_ORDER_OPTION_H_
-#define PAGE_ORDER_OPTION_H_
+#ifndef SCANTAILOR_CORE_PAGEORDEROPTION_H_
+#define SCANTAILOR_CORE_PAGEORDEROPTION_H_
 
 #include <QString>
 #include "PageOrderProvider.h"
@@ -29,4 +29,4 @@ class PageOrderOption {
 };
 
 
-#endif  // ifndef PAGE_ORDER_OPTION_H_
+#endif  // ifndef SCANTAILOR_CORE_PAGEORDEROPTION_H_

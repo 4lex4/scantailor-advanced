@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DRAG_HANDLER_H_
-#define DRAG_HANDLER_H_
+#ifndef SCANTAILOR_INTERACTION_DRAGHANDLER_H_
+#define SCANTAILOR_INTERACTION_DRAGHANDLER_H_
 
 #define BOOST_SIGNALS_NAMESPACE signal
 
@@ -17,10 +17,10 @@ class ImageViewBase;
 class DragHandler : public InteractionHandler {
   Q_DECLARE_TR_FUNCTIONS(DragHandler)
  public:
-  explicit DragHandler(ImageViewBase& image_view);
+  explicit DragHandler(ImageViewBase& imageView);
 
-  DragHandler(ImageViewBase& image_view,
-              const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter);
+  DragHandler(ImageViewBase& imageView,
+              const boost::function<bool(const InteractionState&)>& explicitInteractionPermitter);
 
   bool isActive() const;
 
@@ -41,4 +41,4 @@ class DragHandler : public InteractionHandler {
 };
 
 
-#endif  // ifndef DRAG_HANDLER_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_DRAGHANDLER_H_

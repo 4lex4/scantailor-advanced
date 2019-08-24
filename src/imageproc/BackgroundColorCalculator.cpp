@@ -61,27 +61,27 @@ RgbHistogram::RgbHistogram(const QImage& img, const BinaryImage& mask) {
 }
 
 void RgbHistogram::fromRgbImage(const QImage& img) {
-  const auto* img_line = reinterpret_cast<const uint32_t*>(img.bits());
-  const int img_stride = img.bytesPerLine() / sizeof(uint32_t);
+  const auto* imgLine = reinterpret_cast<const uint32_t*>(img.bits());
+  const int imgStride = img.bytesPerLine() / sizeof(uint32_t);
 
   const int width = img.width();
   const int height = img.height();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      ++m_red[(img_line[x] >> 16) & 0xff];
-      ++m_green[(img_line[x] >> 8) & 0xff];
-      ++m_blue[img_line[x] & 0xff];
+      ++m_red[(imgLine[x] >> 16) & 0xff];
+      ++m_green[(imgLine[x] >> 8) & 0xff];
+      ++m_blue[imgLine[x] & 0xff];
     }
-    img_line += img_stride;
+    imgLine += imgStride;
   }
 }
 
 void RgbHistogram::fromRgbImage(const QImage& img, const BinaryImage& mask) {
-  const auto* img_line = reinterpret_cast<const uint32_t*>(img.bits());
-  const int img_stride = img.bytesPerLine() / sizeof(uint32_t);
-  const uint32_t* mask_line = mask.data();
-  const int mask_stride = mask.wordsPerLine();
+  const auto* imgLine = reinterpret_cast<const uint32_t*>(img.bits());
+  const int imgStride = img.bytesPerLine() / sizeof(uint32_t);
+  const uint32_t* maskLine = mask.data();
+  const int maskStride = mask.wordsPerLine();
 
   const int width = img.width();
   const int height = img.height();
@@ -89,20 +89,20 @@ void RgbHistogram::fromRgbImage(const QImage& img, const BinaryImage& mask) {
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (mask_line[x >> 5] & (msb >> (x & 31))) {
-        ++m_red[(img_line[x] >> 16) & 0xff];
-        ++m_green[(img_line[x] >> 8) & 0xff];
-        ++m_blue[img_line[x] & 0xff];
+      if (maskLine[x >> 5] & (msb >> (x & 31))) {
+        ++m_red[(imgLine[x] >> 16) & 0xff];
+        ++m_green[(imgLine[x] >> 8) & 0xff];
+        ++m_blue[imgLine[x] & 0xff];
       }
     }
-    img_line += img_stride;
-    mask_line += mask_stride;
+    imgLine += imgStride;
+    maskLine += maskStride;
   }
 }
 
-void grayHistToArray(int* raw_hist, GrayscaleHistogram hist) {
+void grayHistToArray(int* rawHist, GrayscaleHistogram hist) {
   for (int i = 0; i < 256; ++i) {
-    raw_hist[i] = hist[i];
+    rawHist[i] = hist[i];
   }
 }
 
@@ -124,23 +124,23 @@ uint8_t BackgroundColorCalculator::calcDominantLevel(const int* hist) {
     integral_hist[i] = hist[i] + integral_hist[i - 1];
   }
 
-  const int num_colors = 256;
-  const int window_size = 10;
+  const int numColors = 256;
+  const int windowSize = 10;
 
-  int best_pos = 0;
-  int best_sum = integral_hist[window_size - 1];
-  for (int i = 1; i <= num_colors - window_size; ++i) {
-    const int sum = integral_hist[i + window_size - 1] - integral_hist[i - 1];
-    if (sum > best_sum) {
-      best_sum = sum;
-      best_pos = i;
+  int bestPos = 0;
+  int bestSum = integral_hist[windowSize - 1];
+  for (int i = 1; i <= numColors - windowSize; ++i) {
+    const int sum = integral_hist[i + windowSize - 1] - integral_hist[i - 1];
+    if (sum > bestSum) {
+      bestSum = sum;
+      bestPos = i;
     }
   }
 
-  int half_sum = 0;
-  for (int i = best_pos; i < best_pos + window_size; ++i) {
-    half_sum += hist[i];
-    if (half_sum >= best_sum / 2) {
+  int halfSum = 0;
+  for (int i = bestPos; i < bestPos + windowSize; ++i) {
+    halfSum += hist[i];
+    if (halfSum >= bestSum / 2) {
       return static_cast<uint8_t>(i);
     }
   }
@@ -152,9 +152,9 @@ uint8_t BackgroundColorCalculator::calcDominantLevel(const int* hist) {
 QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img) {
   checkImageIsValid(img);
 
-  BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(img));
-  background_mask.invert();
-  return calcDominantColor(img, background_mask);
+  BinaryImage backgroundMask(img, BinaryThreshold::otsuThreshold(img));
+  backgroundMask.invert();
+  return calcDominantColor(img, backgroundMask);
 }
 
 QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img, const BinaryImage& mask) {
@@ -163,39 +163,39 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
     throw std::invalid_argument("BackgroundColorCalculator: img and mask have different sizes");
   }
 
-  BinaryImage background_mask(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
-  background_mask.invert();
-  rasterOp<RopAnd<RopSrc, RopDst>>(background_mask, mask);
-  return calcDominantColor(img, background_mask);
+  BinaryImage backgroundMask(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
+  backgroundMask.invert();
+  rasterOp<RopAnd<RopSrc, RopDst>>(backgroundMask, mask);
+  return calcDominantColor(img, backgroundMask);
 }
 
-QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img, const QPolygonF& crop_area) {
+QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img, const QPolygonF& cropArea) {
   checkImageIsValid(img);
-  if (crop_area.intersected(QRectF(img.rect())).isEmpty()) {
+  if (cropArea.intersected(QRectF(img.rect())).isEmpty()) {
     throw std::invalid_argument("BackgroundColorCalculator: the cropping area is wrong.");
   }
 
   BinaryImage mask(img.size(), BLACK);
-  PolygonRasterizer::fillExcept(mask, WHITE, crop_area, Qt::WindingFill);
+  PolygonRasterizer::fillExcept(mask, WHITE, cropArea, Qt::WindingFill);
 
   return calcDominantBackgroundColor(img, mask);
 }
 
-QColor BackgroundColorCalculator::calcDominantColor(const QImage& img, const BinaryImage& background_mask) {
+QColor BackgroundColorCalculator::calcDominantColor(const QImage& img, const BinaryImage& backgroundMask) {
   if ((img.format() == QImage::Format_Indexed8) && img.isGrayscale()) {
-    const GrayscaleHistogram hist(img, background_mask);
-    int raw_hist[256];
-    grayHistToArray(raw_hist, hist);
-    uint8_t dominant_gray = calcDominantLevel(raw_hist);
+    const GrayscaleHistogram hist(img, backgroundMask);
+    int rawHist[256];
+    grayHistToArray(rawHist, hist);
+    uint8_t dominantGray = calcDominantLevel(rawHist);
 
-    return QColor(dominant_gray, dominant_gray, dominant_gray);
+    return QColor(dominantGray, dominantGray, dominantGray);
   } else {
-    const RgbHistogram hist(img, background_mask);
-    uint8_t dominant_red = calcDominantLevel(hist.redChannel());
-    uint8_t dominant_green = calcDominantLevel(hist.greenChannel());
-    uint8_t dominant_blue = calcDominantLevel(hist.blueChannel());
+    const RgbHistogram hist(img, backgroundMask);
+    uint8_t dominantRed = calcDominantLevel(hist.redChannel());
+    uint8_t dominantGreen = calcDominantLevel(hist.greenChannel());
+    uint8_t dominantBlue = calcDominantLevel(hist.blueChannel());
 
-    return QColor(dominant_red, dominant_green, dominant_blue);
+    return QColor(dominantRed, dominantGreen, dominantBlue);
   }
 }
 }  // namespace imageproc

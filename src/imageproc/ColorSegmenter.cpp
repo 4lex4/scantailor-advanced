@@ -80,11 +80,11 @@ class ComponentCleaner {
 };
 
 ComponentCleaner::ComponentCleaner(const Dpi& dpi, const int noiseThreshold) {
-  const int average_dpi = (dpi.horizontal() + dpi.vertical()) / 2;
-  const double dpi_factor = average_dpi / 300.0;
+  const int averageDpi = (dpi.horizontal() + dpi.vertical()) / 2;
+  const double dpiFactor = averageDpi / 300.0;
 
-  m_minAverageWidthThreshold = 1.5 * dpi_factor;
-  m_bigObjectThreshold = qRound(std::pow(noiseThreshold, std::sqrt(2)) * dpi_factor);
+  m_minAverageWidthThreshold = 1.5 * dpiFactor;
+  m_bigObjectThreshold = qRound(std::pow(noiseThreshold, std::sqrt(2)) * dpiFactor);
 }
 
 bool ComponentCleaner::eligibleForDelete(const Component& component, const BoundingBox& boundingBox) const {
@@ -106,10 +106,10 @@ GrayImage extractRgbChannel(const QImage& image, const RgbChannel channel) {
   }
 
   GrayImage dst(image.size());
-  const auto* img_line = reinterpret_cast<const uint32_t*>(image.bits());
-  const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
-  uint8_t* dst_line = dst.data();
-  const int dst_stride = dst.stride();
+  const auto* imgLine = reinterpret_cast<const uint32_t*>(image.bits());
+  const int imgStride = image.bytesPerLine() / sizeof(uint32_t);
+  uint8_t* dstLine = dst.data();
+  const int dstStride = dst.stride();
   const int width = image.width();
   const int height = image.height();
 
@@ -117,18 +117,18 @@ GrayImage extractRgbChannel(const QImage& image, const RgbChannel channel) {
     for (int x = 0; x < width; ++x) {
       switch (channel) {
         case RED_CHANNEL:
-          dst_line[x] = static_cast<uint8_t>((img_line[x] >> 16) & 0xff);
+          dstLine[x] = static_cast<uint8_t>((imgLine[x] >> 16) & 0xff);
           break;
         case GREEN_CHANNEL:
-          dst_line[x] = static_cast<uint8_t>((img_line[x] >> 8) & 0xff);
+          dstLine[x] = static_cast<uint8_t>((imgLine[x] >> 8) & 0xff);
           break;
         case BLUE_CHANNEL:
-          dst_line[x] = static_cast<uint8_t>(img_line[x] & 0xff);
+          dstLine[x] = static_cast<uint8_t>(imgLine[x] & 0xff);
           break;
       }
     }
-    img_line += img_stride;
-    dst_line += dst_stride;
+    imgLine += imgStride;
+    dstLine += dstStride;
   }
   return dst;
 }
@@ -147,15 +147,15 @@ void reduceNoise(ConnectivityMap& segmentsMap, const Dpi& dpi, const int noiseTh
   const int height = size.height();
 
   // Count the number of pixels and the bounding rect of each component.
-  const uint32_t* map_line = segmentsMap.data();
-  const int map_stride = segmentsMap.stride();
+  const uint32_t* mapLine = segmentsMap.data();
+  const int mapStride = segmentsMap.stride();
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      const uint32_t label = map_line[x];
+      const uint32_t label = mapLine[x];
       ++components[label].size;
       boundingBoxes[label].extend(x, y);
     }
-    map_line += map_stride;
+    mapLine += mapStride;
   }
 
   // creating set of labels determining components to be removed
@@ -279,44 +279,44 @@ QImage buildRgbImage(const ConnectivityMap& segmentsMap, const QImage& colorImag
 
   std::vector<ComponentColor> compColorMap(segmentsMap.maxLabel() + 1);
   {
-    const uint32_t* map_line = segmentsMap.data();
-    const int map_stride = segmentsMap.stride();
+    const uint32_t* mapLine = segmentsMap.data();
+    const int mapStride = segmentsMap.stride();
 
-    const auto* img_line = reinterpret_cast<const uint32_t*>(colorImage.bits());
-    const int img_stride = colorImage.bytesPerLine() / sizeof(uint32_t);
+    const auto* imgLine = reinterpret_cast<const uint32_t*>(colorImage.bits());
+    const int imgStride = colorImage.bytesPerLine() / sizeof(uint32_t);
 
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
-        const uint32_t label = map_line[x];
+        const uint32_t label = mapLine[x];
         if (label == 0) {
           continue;
         }
-        compColorMap[label].addPixelColor(img_line[x]);
+        compColorMap[label].addPixelColor(imgLine[x]);
       }
-      map_line += map_stride;
-      img_line += img_stride;
+      mapLine += mapStride;
+      imgLine += imgStride;
     }
   }
 
   QImage dst(colorImage.size(), QImage::Format_RGB32);
   dst.fill(Qt::white);
 
-  auto* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
-  const int dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
+  auto* dstLine = reinterpret_cast<uint32_t*>(dst.bits());
+  const int dstStride = dst.bytesPerLine() / sizeof(uint32_t);
 
-  const uint32_t* map_line = segmentsMap.data();
-  const int map_stride = segmentsMap.stride();
+  const uint32_t* mapLine = segmentsMap.data();
+  const int mapStride = segmentsMap.stride();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      const uint32_t label = map_line[x];
+      const uint32_t label = mapLine[x];
       if (label == 0) {
         continue;
       }
-      dst_line[x] = compColorMap[label].getColor();
+      dstLine[x] = compColorMap[label].getColor();
     }
-    map_line += map_stride;
-    dst_line += dst_stride;
+    mapLine += mapStride;
+    dstLine += dstStride;
   }
 
   return dst;
@@ -329,26 +329,26 @@ GrayImage buildGrayImage(const ConnectivityMap& segmentsMap, const GrayImage& gr
   std::vector<uint8_t> colorMap(segmentsMap.maxLabel() + 1, 0);
 
   {
-    const uint32_t* map_line = segmentsMap.data();
-    const int map_stride = segmentsMap.stride();
+    const uint32_t* mapLine = segmentsMap.data();
+    const int mapStride = segmentsMap.stride();
 
-    const auto* img_line = grayImage.data();
-    const int img_stride = grayImage.stride();
+    const auto* imgLine = grayImage.data();
+    const int imgStride = grayImage.stride();
 
     std::vector<Component> components(segmentsMap.maxLabel() + 1);
     std::vector<uint32_t> graySumMap(segmentsMap.maxLabel() + 1, 0);
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
-        const uint32_t label = map_line[x];
+        const uint32_t label = mapLine[x];
         if (label == 0) {
           continue;
         }
 
         ++components[label].size;
-        graySumMap[label] += img_line[x];
+        graySumMap[label] += imgLine[x];
       }
-      map_line += map_stride;
-      img_line += img_stride;
+      mapLine += mapStride;
+      imgLine += imgStride;
     }
 
     for (uint32_t label = 1; label <= segmentsMap.maxLabel(); label++) {
@@ -359,23 +359,23 @@ GrayImage buildGrayImage(const ConnectivityMap& segmentsMap, const GrayImage& gr
   GrayImage dst(grayImage.size());
   dst.fill(0xff);
 
-  uint8_t* dst_line = dst.data();
-  const int dst_stride = dst.stride();
+  uint8_t* dstLine = dst.data();
+  const int dstStride = dst.stride();
 
-  const uint32_t* map_line = segmentsMap.data();
-  const int map_stride = segmentsMap.stride();
+  const uint32_t* mapLine = segmentsMap.data();
+  const int mapStride = segmentsMap.stride();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      const uint32_t label = map_line[x];
+      const uint32_t label = mapLine[x];
       if (label == 0) {
         continue;
       }
 
-      dst_line[x] = colorMap[label];
+      dstLine[x] = colorMap[label];
     }
-    map_line += map_stride;
-    dst_line += dst_stride;
+    mapLine += mapStride;
+    dstLine += dstStride;
   }
 
   return dst;

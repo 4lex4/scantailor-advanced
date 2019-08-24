@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OBJECT_DRAG_HANDLER_H_
-#define OBJECT_DRAG_HANDLER_H_
+#ifndef SCANTAILOR_INTERACTION_OBJECTDRAGHANDLER_H_
+#define SCANTAILOR_INTERACTION_OBJECTDRAGHANDLER_H_
 
 #include <QPointF>
 #include <set>
@@ -35,14 +35,14 @@ class ObjectDragHandler : public InteractionHandler {
 
   bool proximityLeader(const InteractionState& interaction) const;
 
-  void forceEnterDragState(InteractionState& interaction, QPoint widget_mouse_pos);
+  void forceEnterDragState(InteractionState& interaction, QPoint widgetMousePos);
 
-  void setKeyboardModifiers(const std::set<Qt::KeyboardModifiers>& modifiers_set);
+  void setKeyboardModifiers(const std::set<Qt::KeyboardModifiers>& modifiersSet);
 
  protected:
   void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
-  void onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) override;
+  void onProximityUpdate(const QPointF& screenMousePos, InteractionState& interaction) override;
 
   void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
@@ -62,4 +62,4 @@ class ObjectDragHandler : public InteractionHandler {
 };
 
 
-#endif  // ifndef OBJECT_DRAG_HANDLER_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_OBJECTDRAGHANDLER_H_

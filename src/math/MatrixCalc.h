@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef MATRIX_CALC_H_
-#define MATRIX_CALC_H_
+#ifndef SCANTAILOR_MATH_MATRIXCALC_H_
+#define SCANTAILOR_MATH_MATRIXCALC_H_
 
 #include <cassert>
 #include <cstddef>
@@ -163,14 +163,14 @@ template <typename T>
 Mat<T> Mat<T>::inv() const {
   assert(cols == rows);
 
-  T* ident_data = alloc->allocT(rows * cols);
-  Mat ident(alloc, ident_data, rows, cols);
+  T* identData = alloc->allocT(rows * cols);
+  Mat ident(alloc, identData, rows, cols);
   const int todo = rows * cols;
   for (int i = 0; i < todo; ++i) {
-    ident_data[i] = T();
+    identData[i] = T();
   }
   for (int i = 0; i < todo; i += rows + 1) {
-    ident_data[i] = T(1);
+    identData[i] = T(1);
   }
 
   return solve(ident);
@@ -180,12 +180,12 @@ template <typename T>
 Mat<T> Mat<T>::solve(const Mat& b) const {
   assert(rows == b.rows);
 
-  T* x_data = alloc->allocT(cols * b.cols);
+  T* xData = alloc->allocT(cols * b.cols);
   T* tbuffer = alloc->allocT(cols * (b.rows + b.cols));
   size_t* pbuffer = alloc->allocP(rows);
-  LinearSolver(rows, cols, b.cols).solve(data, x_data, b.data, tbuffer, pbuffer);
+  LinearSolver(rows, cols, b.cols).solve(data, xData, b.data, tbuffer, pbuffer);
 
-  return Mat(alloc, x_data, cols, b.cols);
+  return Mat(alloc, xData, cols, b.cols);
 }
 
 template <typename T>
@@ -199,10 +199,10 @@ Mat<T> Mat<T>::trans() const {
     return Mat<T>(alloc, data, cols, rows);
   }
 
-  T* p_trans = alloc->allocT(cols * rows);
-  transWrite(p_trans);
+  T* pTrans = alloc->allocT(cols * rows);
+  transWrite(pTrans);
 
-  return Mat(alloc, p_trans, cols, rows);
+  return Mat(alloc, pTrans, cols, rows);
 }
 
 template <typename T>
@@ -225,13 +225,13 @@ Mat<T> Mat<T>::write(VecNT<N, T>& vec) const {
 
 template <typename T>
 Mat<T> Mat<T>::transWrite(T* buf) const {
-  T* p_trans = buf;
+  T* pTrans = buf;
   for (int i = 0; i < rows; ++i) {
-    const T* p_src = data + i;
+    const T* pSrc = data + i;
     for (int j = 0; j < cols; ++j) {
-      *p_trans = *p_src;
-      ++p_trans;
-      p_src += rows;
+      *pTrans = *pSrc;
+      ++pTrans;
+      pSrc += rows;
     }
   }
 
@@ -249,12 +249,12 @@ Mat<T> Mat<T>::transWrite(VecNT<N, T>& vec) const {
 /** Unary minus. */
 template <typename T>
 Mat<T> Mat<T>::operator-() const {
-  T* p_res = alloc->allocT(rows * cols);
-  Mat<T> res(alloc, p_res, rows, cols);
+  T* pRes = alloc->allocT(rows * cols);
+  Mat<T> res(alloc, pRes, rows, cols);
 
   const int todo = rows * cols;
   for (int i = 0; i < todo; ++i) {
-    p_res[i] = -data[i];
+    pRes[i] = -data[i];
   }
 
   return res;
@@ -264,12 +264,12 @@ template <typename T>
 Mat<T> operator+(const Mat<T>& m1, const Mat<T>& m2) {
   assert(m1.rows == m2.rows && m1.cols == m2.cols);
 
-  T* p_res = m1.alloc->allocT(m1.rows * m1.cols);
-  Mat<T> res(m1.alloc, p_res, m1.rows, m1.cols);
+  T* pRes = m1.alloc->allocT(m1.rows * m1.cols);
+  Mat<T> res(m1.alloc, pRes, m1.rows, m1.cols);
 
   const int todo = m1.rows * m1.cols;
   for (int i = 0; i < todo; ++i) {
-    p_res[i] = m1.data[i] + m2.data[i];
+    pRes[i] = m1.data[i] + m2.data[i];
   }
 
   return res;
@@ -279,12 +279,12 @@ template <typename T>
 Mat<T> operator-(const Mat<T>& m1, const Mat<T>& m2) {
   assert(m1.rows == m2.rows && m1.cols == m2.cols);
 
-  T* p_res = m1.alloc->allocT(m1.rows * m1.cols);
-  Mat<T> res(m1.alloc, p_res, m1.rows, m1.cols);
+  T* pRes = m1.alloc->allocT(m1.rows * m1.cols);
+  Mat<T> res(m1.alloc, pRes, m1.rows, m1.cols);
 
   const int todo = m1.rows * m1.cols;
   for (int i = 0; i < todo; ++i) {
-    p_res[i] = m1.data[i] - m2.data[i];
+    pRes[i] = m1.data[i] - m2.data[i];
   }
 
   return res;
@@ -294,21 +294,21 @@ template <typename T>
 Mat<T> operator*(const Mat<T>& m1, const Mat<T>& m2) {
   assert(m1.cols == m2.rows);
 
-  T* p_res = m1.alloc->allocT(m1.rows * m2.cols);
-  Mat<T> res(m1.alloc, p_res, m1.rows, m2.cols);
+  T* pRes = m1.alloc->allocT(m1.rows * m2.cols);
+  Mat<T> res(m1.alloc, pRes, m1.rows, m2.cols);
 
   for (int rcol = 0; rcol < res.cols; ++rcol) {
     for (int rrow = 0; rrow < res.rows; ++rrow) {
-      const T* p_m1 = m1.data + rrow;
-      const T* p_m2 = m2.data + rcol * m2.rows;
+      const T* pM1 = m1.data + rrow;
+      const T* pM2 = m2.data + rcol * m2.rows;
       T sum = T();
       for (int i = 0; i < m1.cols; ++i) {
-        sum += *p_m1 * *p_m2;
-        p_m1 += m1.rows;
-        ++p_m2;
+        sum += *pM1 * *pM2;
+        pM1 += m1.rows;
+        ++pM2;
       }
-      *p_res = sum;
-      ++p_res;
+      *pRes = sum;
+      ++pRes;
     }
   }
 
@@ -317,12 +317,12 @@ Mat<T> operator*(const Mat<T>& m1, const Mat<T>& m2) {
 
 template <typename T>
 Mat<T> operator*(T scalar, const Mat<T>& m) {
-  T* p_res = m.alloc->allocT(m.rows * m.cols);
-  Mat<T> res(m.alloc, p_res, m.rows, m.cols);
+  T* pRes = m.alloc->allocT(m.rows * m.cols);
+  Mat<T> res(m.alloc, pRes, m.rows, m.cols);
 
   const int todo = m.rows * m.cols;
   for (int i = 0; i < todo; ++i) {
-    p_res[i] = m.data[i] * scalar;
+    pRes[i] = m.data[i] * scalar;
   }
 
   return res;
@@ -338,4 +338,4 @@ Mat<T> operator/(const Mat<T>& m, T scalar) {
   return m * (1.0f / scalar);
 }
 }  // namespace mcalc
-#endif  // ifndef MATRIX_CALC_H_
+#endif  // ifndef SCANTAILOR_MATH_MATRIXCALC_H_

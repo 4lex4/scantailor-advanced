@@ -13,9 +13,9 @@ OutputFileNameGenerator::OutputFileNameGenerator()
     : m_disambiguator(new FileNameDisambiguator), m_outDir(), m_layoutDirection(Qt::LeftToRight) {}
 
 OutputFileNameGenerator::OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
-                                                 const QString& out_dir,
-                                                 Qt::LayoutDirection layout_direction)
-    : m_disambiguator(std::move(disambiguator)), m_outDir(out_dir), m_layoutDirection(layout_direction) {
+                                                 const QString& outDir,
+                                                 Qt::LayoutDirection layoutDirection)
+    : m_disambiguator(std::move(disambiguator)), m_outDir(outDir), m_layoutDirection(layoutDirection) {
   assert(m_disambiguator);
 }
 
@@ -26,7 +26,7 @@ void OutputFileNameGenerator::performRelinking(const AbstractRelinker& relinker)
 
 QString OutputFileNameGenerator::fileNameFor(const PageId& page) const {
   const bool ltr = (m_layoutDirection == Qt::LeftToRight);
-  const PageId::SubPage sub_page = page.subPage();
+  const PageId::SubPage subPage = page.subPage();
   const int label = m_disambiguator->getLabel(page.imageId().filePath());
 
   QString name(QFileInfo(page.imageId().filePath()).completeBaseName());
@@ -36,10 +36,10 @@ QString OutputFileNameGenerator::fileNameFor(const PageId& page) const {
   if (page.imageId().isMultiPageFile()) {
     name += QString::fromLatin1("_page%1").arg(page.imageId().page(), 4, 10, QLatin1Char('0'));
   }
-  if (sub_page != PageId::SINGLE_PAGE) {
+  if (subPage != PageId::SINGLE_PAGE) {
     name += QLatin1Char('_');
-    name += QLatin1Char(ltr == (sub_page == PageId::LEFT_PAGE) ? '1' : '2');
-    name += QLatin1Char(sub_page == PageId::LEFT_PAGE ? 'L' : 'R');
+    name += QLatin1Char(ltr == (subPage == PageId::LEFT_PAGE) ? '1' : '2');
+    name += QLatin1Char(subPage == PageId::LEFT_PAGE ? 'L' : 'R');
   }
   name += QString::fromLatin1(".tif");
 
@@ -47,7 +47,7 @@ QString OutputFileNameGenerator::fileNameFor(const PageId& page) const {
 }
 
 QString OutputFileNameGenerator::filePathFor(const PageId& page) const {
-  const QString file_name(fileNameFor(page));
+  const QString fileName(fileNameFor(page));
 
-  return QDir(m_outDir).absoluteFilePath(file_name);
+  return QDir(m_outDir).absoluteFilePath(fileName);
 }

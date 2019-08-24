@@ -6,20 +6,20 @@
 #include "MatrixCalc.h"
 
 namespace spfit {
-Optimizer::Optimizer(size_t num_vars)
-    : m_numVars(num_vars),
-      m_A(num_vars, num_vars),
-      m_b(num_vars),
-      m_x(num_vars),
-      m_externalForce(num_vars),
-      m_internalForce(num_vars) {}
+Optimizer::Optimizer(size_t numVars)
+    : m_numVars(numVars),
+      m_A(numVars, numVars),
+      m_b(numVars),
+      m_x(numVars),
+      m_externalForce(numVars),
+      m_internalForce(numVars) {}
 
 void Optimizer::setConstraints(const std::list<LinearFunction>& constraints) {
-  const size_t num_constraints = constraints.size();
-  const size_t num_dimensions = m_numVars + num_constraints;
+  const size_t numConstraints = constraints.size();
+  const size_t numDimensions = m_numVars + numConstraints;
 
-  MatT<double> A(num_dimensions, num_dimensions);
-  VecT<double> b(num_dimensions);
+  MatT<double> A(numDimensions, numDimensions);
+  VecT<double> b(numDimensions);
   // Matrix A and vector b will have the following layout:
   // |N N N L L|      |-D|
   // |N N N L L|      |-D|
@@ -34,14 +34,14 @@ void Optimizer::setConstraints(const std::list<LinearFunction>& constraints) {
   // J: constant part of constraint functions.
 
   auto ctr(constraints.begin());
-  for (size_t i = m_numVars; i < num_dimensions; ++i, ++ctr) {
+  for (size_t i = m_numVars; i < numDimensions; ++i, ++ctr) {
     b[i] = -ctr->b;
     for (size_t j = 0; j < m_numVars; ++j) {
       A(i, j) = A(j, i) = ctr->a[j];
     }
   }
 
-  VecT<double>(num_dimensions).swap(m_x);
+  VecT<double>(numDimensions).swap(m_x);
   m_A.swap(A);
   m_b.swap(b);
 }  // Optimizer::setConstraints
@@ -50,12 +50,12 @@ void Optimizer::addExternalForce(const QuadraticFunction& force) {
   m_externalForce += force;
 }
 
-void Optimizer::addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map) {
-  const size_t num_vars = force.numVars();
-  for (size_t i = 0; i < num_vars; ++i) {
-    const int ii = sparse_map[i];
-    for (size_t j = 0; j < num_vars; ++j) {
-      const int jj = sparse_map[j];
+void Optimizer::addExternalForce(const QuadraticFunction& force, const std::vector<int>& sparseMap) {
+  const size_t numVars = force.numVars();
+  for (size_t i = 0; i < numVars; ++i) {
+    const int ii = sparseMap[i];
+    for (size_t j = 0; j < numVars; ++j) {
+      const int jj = sparseMap[j];
       m_externalForce.A(ii, jj) += force.A(i, j);
     }
     m_externalForce.b[ii] += force.b[i];
@@ -67,12 +67,12 @@ void Optimizer::addInternalForce(const QuadraticFunction& force) {
   m_internalForce += force;
 }
 
-void Optimizer::addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparse_map) {
-  const size_t num_vars = force.numVars();
-  for (size_t i = 0; i < num_vars; ++i) {
-    const int ii = sparse_map[i];
-    for (size_t j = 0; j < num_vars; ++j) {
-      const int jj = sparse_map[j];
+void Optimizer::addInternalForce(const QuadraticFunction& force, const std::vector<int>& sparseMap) {
+  const size_t numVars = force.numVars();
+  for (size_t i = 0; i < numVars; ++i) {
+    const int ii = sparseMap[i];
+    for (size_t j = 0; j < numVars; ++j) {
+      const int jj = sparseMap[j];
       m_internalForce.A(ii, jj) += force.A(i, j);
     }
     m_internalForce.b[ii] += force.b[i];
@@ -80,10 +80,10 @@ void Optimizer::addInternalForce(const QuadraticFunction& force, const std::vect
   m_internalForce.c += force.c;
 }
 
-OptimizationResult Optimizer::optimize(double internal_force_weight) {
+OptimizationResult Optimizer::optimize(double internalForceWeight) {
   // Note: because we are supposed to reset the forces anyway,
   // we re-use m_internalForce to store the cummulative force.
-  m_internalForce *= internal_force_weight;
+  m_internalForce *= internalForceWeight;
   m_internalForce += m_externalForce;
 
   // For the layout of m_A and m_b, see setConstraints()
@@ -95,7 +95,7 @@ OptimizationResult Optimizer::optimize(double internal_force_weight) {
     }
   }
 
-  const double total_force_before = m_internalForce.c;
+  const double totalForceBefore = m_internalForce.c;
   DynamicMatrixCalc<double> mc;
 
   try {
@@ -105,17 +105,17 @@ OptimizationResult Optimizer::optimize(double internal_force_weight) {
     m_internalForce.reset();
     m_x.fill(0);  // To make undoLastStep() work as expected.
 
-    return OptimizationResult(total_force_before, total_force_before);
+    return OptimizationResult(totalForceBefore, totalForceBefore);
   }
 
-  const double total_force_after = m_internalForce.evaluate(m_x.data());
+  const double totalForceAfter = m_internalForce.evaluate(m_x.data());
   m_externalForce.reset();  // Now it's finally safe to reset these.
   m_internalForce.reset();
   // The last thing remaining is to adjust constraints,
   // as they depend on the current variables.
   adjustConstraints(1.0);
 
-  return OptimizationResult(total_force_before, total_force_after);
+  return OptimizationResult(totalForceBefore, totalForceAfter);
 }  // Optimizer::optimize
 
 void Optimizer::undoLastStep() {
@@ -128,8 +128,8 @@ void Optimizer::undoLastStep() {
  * direction == -1 is used for undoing the last step.
  */
 void Optimizer::adjustConstraints(double direction) {
-  const size_t num_dimensions = m_b.size();
-  for (size_t i = m_numVars; i < num_dimensions; ++i) {
+  const size_t numDimensions = m_b.size();
+  for (size_t i = m_numVars; i < numDimensions; ++i) {
     // See setConstraints() for more information
     // on the layout of m_A and m_b.
     double c = 0;

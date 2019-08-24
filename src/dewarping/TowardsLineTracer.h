@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DEWARPING_TOWARDS_LINE_TRACER_H_
-#define DEWARPING_TOWARDS_LINE_TRACER_H_
+#ifndef SCANTAILOR_DEWARPING_TOWARDSLINETRACER_H_
+#define SCANTAILOR_DEWARPING_TOWARDSLINETRACER_H_
 
 #include <QLineF>
 #include <QPoint>
@@ -21,9 +21,9 @@ namespace dewarping {
  */
 class TowardsLineTracer {
  public:
-  TowardsLineTracer(const imageproc::SEDM* dm, const Grid<float>* pm, const QLineF& line, const QPoint& initial_pos);
+  TowardsLineTracer(const imageproc::SEDM* dm, const Grid<float>* pm, const QLineF& line, const QPoint& initialPos);
 
-  const QPoint* trace(float max_dist);
+  const QPoint* trace(float maxDist);
 
  private:
   struct Step {
@@ -48,4 +48,4 @@ class TowardsLineTracer {
   bool m_finished;
 };
 }  // namespace dewarping
-#endif  // ifndef DEWARPING_TOWARDS_LINE_TRACER_H_
+#endif  // ifndef SCANTAILOR_DEWARPING_TOWARDSLINETRACER_H_

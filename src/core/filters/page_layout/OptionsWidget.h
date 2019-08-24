@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_
-#define PAGE_LAYOUT_OPTIONSWIDGET_H_
+#ifndef SCANTAILOR_PAGE_LAYOUT_OPTIONSWIDGET_H_
+#define SCANTAILOR_PAGE_LAYOUT_OPTIONSWIDGET_H_
 
 #include <UnitsListener.h>
 #include <QIcon>
@@ -27,11 +27,11 @@ class Settings;
 class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private Ui::OptionsWidget {
   Q_OBJECT
  public:
-  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
+  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
-  void preUpdateUI(const PageInfo& page_info, const Margins& margins_mm, const Alignment& alignment);
+  void preUpdateUI(const PageInfo& pageInfo, const Margins& marginsMm, const Alignment& alignment);
 
   void postUpdateUI();
 
@@ -53,13 +53,13 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   void alignmentChanged(const Alignment& alignment);
 
-  void marginsSetLocally(const Margins& margins_mm);
+  void marginsSetLocally(const Margins& marginsMm);
 
   void aggregateHardSizeChanged();
 
  public slots:
 
-  void marginsSetExternally(const Margins& margins_mm);
+  void marginsSetExternally(const Margins& marginsMm);
 
  private slots:
 
@@ -133,4 +133,4 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
   std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace page_layout
-#endif  // ifndef PAGE_LAYOUT_OPTIONSWIDGET_H_
+#endif  // ifndef SCANTAILOR_PAGE_LAYOUT_OPTIONSWIDGET_H_

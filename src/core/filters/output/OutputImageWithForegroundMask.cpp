@@ -2,8 +2,8 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputImageWithForegroundMask.h"
-#include <imageproc/Posterizer.h>
 #include <imageproc/ImageCombination.h>
+#include <imageproc/Posterizer.h>
 
 using namespace imageproc;
 
@@ -56,8 +56,7 @@ std::unique_ptr<OutputImageWithForegroundMask> OutputImageWithForegroundMask::fr
   return std::make_unique<OutputImageWithForegroundMask>(image, foregroundMask, getForegroundType(foregroundImage));
 }
 
-ForegroundType OutputImageWithForegroundMask::getForegroundType(
-    const QImage& foregroundImage) {
+ForegroundType OutputImageWithForegroundMask::getForegroundType(const QImage& foregroundImage) {
   if ((foregroundImage.format() == QImage::Format_Mono) || (foregroundImage.format() == QImage::Format_MonoLSB)) {
     return ForegroundType::BINARY;
   } else if ((foregroundImage.format() == QImage::Format_Indexed8) && !foregroundImage.isGrayscale()) {

@@ -2,9 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Params.h"
-#include <foundation/Utils.h>
 #include <XmlMarshaller.h>
 #include <XmlUnmarshaller.h>
+#include <foundation/Utils.h>
 
 using namespace foundation;
 
@@ -109,8 +109,8 @@ const DepthPerception& Params::depthPerception() const {
   return m_depthPerception;
 }
 
-void Params::setDepthPerception(DepthPerception depth_perception) {
-  m_depthPerception = depth_perception;
+void Params::setDepthPerception(DepthPerception depthPerception) {
+  m_depthPerception = depthPerception;
 }
 
 double Params::despeckleLevel() const {

@@ -43,12 +43,12 @@ PngHandle::~PngHandle() {
 }
 }  // namespace
 
-static void readFn(png_structp png_ptr, png_bytep data, png_size_t length) {
-  auto* io_device = (QIODevice*) png_get_io_ptr(png_ptr);
+static void readFn(png_structp pngPtr, png_bytep data, png_size_t length) {
+  auto* ioDevice = (QIODevice*) png_get_io_ptr(pngPtr);
   while (length > 0) {
-    const qint64 read = io_device->read((char*) data, length);
+    const qint64 read = ioDevice->read((char*) data, length);
     if (read <= 0) {
-      png_error(png_ptr, "Read Error");
+      png_error(pngPtr, "Read Error");
 
       return;
     }
@@ -56,14 +56,14 @@ static void readFn(png_structp png_ptr, png_bytep data, png_size_t length) {
   }
 }
 
-ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& io_device,
+ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& ioDevice,
                                                             const VirtualFunction<void, const ImageMetadata&>& out) {
-  if (!io_device.isReadable()) {
+  if (!ioDevice.isReadable()) {
     return GENERIC_ERROR;
   }
 
   png_byte signature[8];
-  if (io_device.peek((char*) signature, 8) != 8) {
+  if (ioDevice.peek((char*) signature, 8) != 8) {
     return FORMAT_NOT_RECOGNIZED;
   }
 
@@ -77,18 +77,18 @@ ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& io_device
     return GENERIC_ERROR;
   }
 
-  png_set_read_fn(png.handle(), &io_device, &readFn);
+  png_set_read_fn(png.handle(), &ioDevice, &readFn);
   png_read_info(png.handle(), png.info());
 
   QSize size;
   Dpi dpi;
   size.setWidth(png_get_image_width(png.handle(), png.info()));
   size.setHeight(png_get_image_height(png.handle(), png.info()));
-  png_uint_32 res_x, res_y;
-  int unit_type;
-  if (png_get_pHYs(png.handle(), png.info(), &res_x, &res_y, &unit_type)) {
-    if (unit_type == PNG_RESOLUTION_METER) {
-      dpi = Dpm(res_x, res_y);
+  png_uint_32 resX, res_y;
+  int unitType;
+  if (png_get_pHYs(png.handle(), png.info(), &resX, &res_y, &unitType)) {
+    if (unitType == PNG_RESOLUTION_METER) {
+      dpi = Dpm(resX, res_y);
     }
   }
 

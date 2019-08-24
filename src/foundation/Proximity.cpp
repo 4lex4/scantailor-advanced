@@ -11,11 +11,11 @@ Proximity::Proximity(const QPointF& p1, const QPointF& p2) {
   m_sqDist = dx * dx + dy * dy;  // dx * dy;
 }
 
-Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* point_on_segment) {
+Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* pointOnSegment) {
   if (segment.p1() == segment.p2()) {
     // Line segment is zero length.
-    if (point_on_segment) {
-      *point_on_segment = segment.p1();
+    if (pointOnSegment) {
+      *pointOnSegment = segment.p1();
     }
 
     return Proximity(pt, segment.p1());
@@ -38,8 +38,8 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
   const double dy12 = dy1 * dy2;
   if ((dx12 < 0.0) || (dy12 < 0.0) || ((dx12 == 0.0) && (dy12 == 0.0))) {
     // Intersection is on the segment.
-    if (point_on_segment) {
-      *point_on_segment = intersection;
+    if (pointOnSegment) {
+      *pointOnSegment = intersection;
     }
 
     return Proximity(intersection, pt);
@@ -53,10 +53,10 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
   pts[0] = segment.p1();
   pts[1] = segment.p2();
 
-  const Proximity* min_prx = std::min_element(prx, prx + 2);
-  if (point_on_segment) {
-    *point_on_segment = pts[min_prx - prx];
+  const Proximity* minPrx = std::min_element(prx, prx + 2);
+  if (pointOnSegment) {
+    *pointOnSegment = pts[minPrx - prx];
   }
 
-  return *min_prx;
+  return *minPrx;
 }  // Proximity::pointAndLineSegment

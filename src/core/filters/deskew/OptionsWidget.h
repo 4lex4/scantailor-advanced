@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DESKEW_OPTIONSWIDGET_H_
-#define DESKEW_OPTIONSWIDGET_H_
+#ifndef SCANTAILOR_DESKEW_OPTIONSWIDGET_H_
+#define SCANTAILOR_DESKEW_OPTIONSWIDGET_H_
 
 #include <list>
 #include <set>
@@ -46,7 +46,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   };
 
 
-  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
+  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
@@ -59,15 +59,15 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   void manualDeskewAngleSetExternally(double degrees);
 
  public:
-  void preUpdateUI(const PageId& page_id);
+  void preUpdateUI(const PageId& pageId);
 
-  void postUpdateUI(const UiData& ui_data);
+  void postUpdateUI(const UiData& uiData);
 
  private slots:
 
-  void spinBoxValueChanged(double skew_degrees);
+  void spinBoxValueChanged(double skewDegrees);
 
-  void modeChanged(bool auto_mode);
+  void modeChanged(bool autoMode);
 
   void showDeskewDialog();
 
@@ -88,7 +88,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void removeUiConnections();
 
-  static double spinBoxToDegrees(double sb_value);
+  static double spinBoxToDegrees(double sbValue);
 
   static double degreesToSpinBox(double degrees);
 
@@ -105,4 +105,4 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace deskew
-#endif  // ifndef DESKEW_OPTIONSWIDGET_H_
+#endif  // ifndef SCANTAILOR_DESKEW_OPTIONSWIDGET_H_

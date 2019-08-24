@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef FIX_ORIENTATION_APPLYDIALOG_H_
-#define FIX_ORIENTATION_APPLYDIALOG_H_
+#ifndef SCANTAILOR_FIX_ORIENTATION_APPLYDIALOG_H_
+#define SCANTAILOR_FIX_ORIENTATION_APPLYDIALOG_H_
 
 #include <QButtonGroup>
 #include <QDialog>
@@ -20,7 +20,7 @@ namespace fix_orientation {
 class ApplyDialog : public QDialog, private Ui::ApplyDialog {
   Q_OBJECT
  public:
-  ApplyDialog(QWidget* parent, const PageId& cur_page, const PageSelectionAccessor& page_selection_accessor);
+  ApplyDialog(QWidget* parent, const PageId& curPage, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~ApplyDialog() override;
 
@@ -42,4 +42,4 @@ class ApplyDialog : public QDialog, private Ui::ApplyDialog {
   QButtonGroup* m_btnGroup;
 };
 }  // namespace fix_orientation
-#endif  // ifndef FIX_ORIENTATION_APPLYDIALOG_H_
+#endif  // ifndef SCANTAILOR_FIX_ORIENTATION_APPLYDIALOG_H_

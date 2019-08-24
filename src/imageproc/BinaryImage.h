@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_BINARYIMAGE_H_
-#define IMAGEPROC_BINARYIMAGE_H_
+#ifndef SCANTAILOR_IMAGEPROC_BINARYIMAGE_H_
+#define SCANTAILOR_IMAGEPROC_BINARYIMAGE_H_
 
 #include <QColor>
 #include <QRect>
@@ -148,12 +148,12 @@ class BinaryImage {
   void fillExcept(const QRect& rect, BWColor color);
 
   /**
-   * \brief Fills the area inside outer_rect but not inside inner_rect.
+   * \brief Fills the area inside outerRect but not inside innerRect.
    *
    * If inner or outer rectangles exceed the image area, or if inner rectangle
    * exceedes the outer rectangle area, they will be automatically truncated.
    */
-  void fillFrame(const QRect& outer_rect, const QRect& inner_rect, BWColor color);
+  void fillFrame(const QRect& outerRect, const QRect& innerRect, BWColor color);
 
   int countBlackPixels() const;
 
@@ -178,7 +178,7 @@ class BinaryImage {
   /**
    * \brief Calculates the bounding box of either black or white content.
    */
-  QRect contentBoundingBox(BWColor content_color = BLACK) const;
+  QRect contentBoundingBox(BWColor contentColor = BLACK) const;
 
   int width() const { return m_width; }
 
@@ -257,11 +257,11 @@ class BinaryImage {
 
   static BinaryImage fromRgb16(const QImage& image, const QRect& rect, int threshold);
 
-  static bool isLineMonotone(const uint32_t* line, int last_word_idx, uint32_t last_word_mask, uint32_t modifier);
+  static bool isLineMonotone(const uint32_t* line, int lastWordIdx, uint32_t lastWordMask, uint32_t modifier);
 
-  static int leftmostBitOffset(const uint32_t* line, int offset_limit, uint32_t modifier);
+  static int leftmostBitOffset(const uint32_t* line, int offsetLimit, uint32_t modifier);
 
-  static int rightmostBitOffset(const uint32_t* line, int offset_limit, uint32_t modifier);
+  static int rightmostBitOffset(const uint32_t* line, int offsetLimit, uint32_t modifier);
 
   SharedData* m_data;
   int m_width;
@@ -275,10 +275,10 @@ inline void swap(BinaryImage& o1, BinaryImage& o2) {
 }
 
 inline BinaryImage BinaryImage::release() {
-  BinaryImage new_img;
-  new_img.swap(*this);
+  BinaryImage newImg;
+  newImg.swap(*this);
 
-  return new_img;
+  return newImg;
 }
 
 /**
@@ -293,4 +293,4 @@ inline bool operator!=(const BinaryImage& lhs, const BinaryImage& rhs) {
   return !(lhs == rhs);
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_BINARYIMAGE_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_BINARYIMAGE_H_

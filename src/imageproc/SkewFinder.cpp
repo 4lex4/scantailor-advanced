@@ -33,18 +33,18 @@ SkewFinder::SkewFinder()
       m_coarseReduction(DEFAULT_COARSE_REDUCTION),
       m_fineReduction(DEFAULT_FINE_REDUCTION) {}
 
-void SkewFinder::setMaxAngle(const double max_angle) {
-  if ((max_angle < 0.0) || (max_angle > 45.0)) {
+void SkewFinder::setMaxAngle(const double maxAngle) {
+  if ((maxAngle < 0.0) || (maxAngle > 45.0)) {
     throw std::invalid_argument("SkewFinder: max skew angle is invalid");
   }
-  m_maxAngle = max_angle;
+  m_maxAngle = maxAngle;
 }
 
-void SkewFinder::setMinAngle(double min_angle) {
-  if ((min_angle < 0.0) || (min_angle > m_maxAngle)) {
+void SkewFinder::setMinAngle(double minAngle) {
+  if ((minAngle < 0.0) || (minAngle > m_maxAngle)) {
     throw std::invalid_argument("SkewFinder: min skew angle is invalid");
   }
-  m_minAngle = min_angle;
+  m_minAngle = minAngle;
 }
 
 void SkewFinder::setDesiredAccuracy(const double accuracy) {
@@ -77,107 +77,107 @@ Skew SkewFinder::findSkew(const BinaryImage& image) const {
     throw std::invalid_argument("SkewFinder: null image was provided");
   }
 
-  ReduceThreshold coarse_reduced(image);
-  const int min_reduction = std::min(m_coarseReduction, m_fineReduction);
-  for (int i = 0; i < min_reduction; ++i) {
-    coarse_reduced.reduce(i == 0 ? 1 : 2);
+  ReduceThreshold coarseReduced(image);
+  const int minReduction = std::min(m_coarseReduction, m_fineReduction);
+  for (int i = 0; i < minReduction; ++i) {
+    coarseReduced.reduce(i == 0 ? 1 : 2);
   }
 
-  ReduceThreshold fine_reduced(coarse_reduced.image());
+  ReduceThreshold fineReduced(coarseReduced.image());
 
-  for (int i = min_reduction; i < m_coarseReduction; ++i) {
-    coarse_reduced.reduce(i == 0 ? 1 : 2);
+  for (int i = minReduction; i < m_coarseReduction; ++i) {
+    coarseReduced.reduce(i == 0 ? 1 : 2);
   }
 
-  BinaryImage skewed(coarse_reduced.image().size());
-  const double coarse_step = 1.0;  // degrees
+  BinaryImage skewed(coarseReduced.image().size());
+  const double coarseStep = 1.0;  // degrees
   // Coarse linear search.
-  int num_coarse_scores = 0;
-  double sum_coarse_scores = 0.0;
-  double best_coarse_score = 0.0;
-  double best_coarse_angle = -m_maxAngle;
-  for (double angle = -m_maxAngle; angle <= m_maxAngle; angle += coarse_step) {
-    const double score = process(coarse_reduced, skewed, angle);
-    sum_coarse_scores += score;
-    ++num_coarse_scores;
-    if (score > best_coarse_score) {
-      best_coarse_angle = angle;
-      best_coarse_score = score;
+  int numCoarseScores = 0;
+  double sumCoarseScores = 0.0;
+  double bestCoarseScore = 0.0;
+  double bestCoarseAngle = -m_maxAngle;
+  for (double angle = -m_maxAngle; angle <= m_maxAngle; angle += coarseStep) {
+    const double score = process(coarseReduced, skewed, angle);
+    sumCoarseScores += score;
+    ++numCoarseScores;
+    if (score > bestCoarseScore) {
+      bestCoarseAngle = angle;
+      bestCoarseScore = score;
     }
   }
 
-  if (m_accuracy >= coarse_step) {
+  if (m_accuracy >= coarseStep) {
     double confidence = 0.0;
-    if (num_coarse_scores > 1) {
-      confidence = best_coarse_score / sum_coarse_scores * num_coarse_scores;
+    if (numCoarseScores > 1) {
+      confidence = bestCoarseScore / sumCoarseScores * numCoarseScores;
     }
 
-    return Skew(-best_coarse_angle, confidence - 1.0);
+    return Skew(-bestCoarseAngle, confidence - 1.0);
   }
 
-  for (int i = min_reduction; i < m_fineReduction; ++i) {
-    fine_reduced.reduce(i == 0 ? 1 : 2);
+  for (int i = minReduction; i < m_fineReduction; ++i) {
+    fineReduced.reduce(i == 0 ? 1 : 2);
   }
 
   if (m_coarseReduction != m_fineReduction) {
-    skewed = BinaryImage(fine_reduced.image().size());
+    skewed = BinaryImage(fineReduced.image().size());
   }
   // Fine binary search.
-  double angle_plus = best_coarse_angle + 0.5 * coarse_step;
-  double angle_minus = best_coarse_angle - 0.5 * coarse_step;
-  double score_plus = process(fine_reduced, skewed, angle_plus);
-  double score_minus = process(fine_reduced, skewed, angle_minus);
-  const double fine_score1 = score_plus;
-  const double fine_score2 = score_minus;
-  while (angle_plus - angle_minus > m_accuracy) {
-    if (score_plus > score_minus) {
-      angle_minus = 0.5 * (angle_plus + angle_minus);
-      score_minus = process(fine_reduced, skewed, angle_minus);
-    } else if (score_plus < score_minus) {
-      angle_plus = 0.5 * (angle_plus + angle_minus);
-      score_plus = process(fine_reduced, skewed, angle_plus);
+  double anglePlus = bestCoarseAngle + 0.5 * coarseStep;
+  double angleMinus = bestCoarseAngle - 0.5 * coarseStep;
+  double scorePlus = process(fineReduced, skewed, anglePlus);
+  double scoreMinus = process(fineReduced, skewed, angleMinus);
+  const double fineScore1 = scorePlus;
+  const double fineScore2 = scoreMinus;
+  while (anglePlus - angleMinus > m_accuracy) {
+    if (scorePlus > scoreMinus) {
+      angleMinus = 0.5 * (anglePlus + angleMinus);
+      scoreMinus = process(fineReduced, skewed, angleMinus);
+    } else if (scorePlus < scoreMinus) {
+      anglePlus = 0.5 * (anglePlus + angleMinus);
+      scorePlus = process(fineReduced, skewed, anglePlus);
     } else {
       // This protects us from unreasonably low m_accuracy.
       break;
     }
   }
 
-  double best_angle;
-  double best_score;
-  if (score_plus > score_minus) {
-    best_angle = angle_plus;
-    best_score = score_plus;
+  double bestAngle;
+  double bestScore;
+  if (scorePlus > scoreMinus) {
+    bestAngle = anglePlus;
+    bestScore = scorePlus;
   } else {
-    best_angle = angle_minus;
-    best_score = score_minus;
+    bestAngle = angleMinus;
+    bestScore = scoreMinus;
   }
 
-  if (std::abs(best_angle) < m_minAngle) {
+  if (std::abs(bestAngle) < m_minAngle) {
     return Skew(0.0, Skew::GOOD_CONFIDENCE);
   }
-  if (best_score <= LOW_SCORE) {
-    return Skew(-best_angle, 0.0);  // Zero confidence.
+  if (bestScore <= LOW_SCORE) {
+    return Skew(-bestAngle, 0.0);  // Zero confidence.
   }
 
   double confidence;
-  if (num_coarse_scores > 1) {
-    confidence = best_score / sum_coarse_scores * num_coarse_scores;
+  if (numCoarseScores > 1) {
+    confidence = bestScore / sumCoarseScores * numCoarseScores;
   } else {
-    int num_scores = num_coarse_scores;
-    double sum_scores = sum_coarse_scores;
-    num_scores += 2;
-    sum_scores += fine_score1;
-    sum_scores += fine_score2;
-    confidence = best_score / sum_scores * num_scores;
+    int numScores = numCoarseScores;
+    double sumScores = sumCoarseScores;
+    numScores += 2;
+    sumScores += fineScore1;
+    sumScores += fineScore2;
+    confidence = bestScore / sumScores * numScores;
   }
 
-  return Skew(-best_angle, confidence - 1.0);
+  return Skew(-bestAngle, confidence - 1.0);
 }  // SkewFinder::findSkew
 
 double SkewFinder::process(const BinaryImage& src, BinaryImage& dst, const double angle) const {
   const double tg = std::tan(angle * constants::DEG2RAD);
-  const double x_center = 0.5 * dst.width();
-  vShearFromTo(src, dst, tg / m_resolutionRatio, x_center, WHITE);
+  const double xCenter = 0.5 * dst.width();
+  vShearFromTo(src, dst, tg / m_resolutionRatio, xCenter, WHITE);
 
   return calcScore(dst);
 }
@@ -187,24 +187,24 @@ double SkewFinder::calcScore(const BinaryImage& image) {
   const int height = image.height();
   const uint32_t* line = image.data();
   const int wpl = image.wordsPerLine();
-  const int last_word_idx = (width - 1) >> 5;
-  const uint32_t last_word_mask = ~uint32_t(0) << (31 - ((width - 1) & 31));
+  const int lastWordIdx = (width - 1) >> 5;
+  const uint32_t lastWordMask = ~uint32_t(0) << (31 - ((width - 1) & 31));
 
   double score = 0.0;
-  int last_line_black_pixels = 0;
+  int lastLineBlackPixels = 0;
   for (int y = 0; y < height; ++y, line += wpl) {
-    int num_black_pixels = 0;
+    int numBlackPixels = 0;
     int i = 0;
-    for (; i != last_word_idx; ++i) {
-      num_black_pixels += countNonZeroBits(line[i]);
+    for (; i != lastWordIdx; ++i) {
+      numBlackPixels += countNonZeroBits(line[i]);
     }
-    num_black_pixels += countNonZeroBits(line[i] & last_word_mask);
+    numBlackPixels += countNonZeroBits(line[i] & lastWordMask);
 
     if (y != 0) {
-      const double diff = num_black_pixels - last_line_black_pixels;
+      const double diff = numBlackPixels - lastLineBlackPixels;
       score += diff * diff;
     }
-    last_line_black_pixels = num_black_pixels;
+    lastLineBlackPixels = numBlackPixels;
   }
 
   return score;

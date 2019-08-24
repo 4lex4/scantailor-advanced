@@ -1,12 +1,12 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef RELINKING_MODEL_H_
-#define RELINKING_MODEL_H_
+#ifndef SCANTAILOR_APP_RELINKINGMODEL_H_
+#define SCANTAILOR_APP_RELINKINGMODEL_H_
 
 #include <QAbstractListModel>
-#include <QModelIndex>
 #include <QIcon>
+#include <QModelIndex>
 #include <QString>
 #include <QThread>
 #include <Qt>
@@ -117,4 +117,4 @@ class RelinkingModel : public QAbstractListModel {
 };
 
 
-#endif  // ifndef RELINKING_MODEL_H_
+#endif  // ifndef SCANTAILOR_APP_RELINKINGMODEL_H_

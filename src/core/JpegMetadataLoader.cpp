@@ -21,7 +21,7 @@ class JpegDecompressHandle {
   DECLARE_NON_COPYABLE(JpegDecompressHandle)
 
  public:
-  JpegDecompressHandle(jpeg_error_mgr* err_mgr, jpeg_source_mgr* src_mgr);
+  JpegDecompressHandle(jpeg_error_mgr* errMgr, jpeg_source_mgr* srcMgr);
 
   ~JpegDecompressHandle();
 
@@ -34,10 +34,10 @@ class JpegDecompressHandle {
 };
 
 
-JpegDecompressHandle::JpegDecompressHandle(jpeg_error_mgr* err_mgr, jpeg_source_mgr* src_mgr) {
-  m_info.err = err_mgr;
+JpegDecompressHandle::JpegDecompressHandle(jpeg_error_mgr* errMgr, jpeg_source_mgr* srcMgr) {
+  m_info.err = errMgr;
   jpeg_create_decompress(&m_info);
-  m_info.src = src_mgr;
+  m_info.src = srcMgr;
 }
 
 JpegDecompressHandle::~JpegDecompressHandle() {
@@ -50,7 +50,7 @@ class JpegSourceManager : public jpeg_source_mgr {
   DECLARE_NON_COPYABLE(JpegSourceManager)
 
  public:
-  explicit JpegSourceManager(QIODevice& io_device);
+  explicit JpegSourceManager(QIODevice& ioDevice);
 
  private:
   static void initSource(j_decompress_ptr cinfo);
@@ -59,9 +59,9 @@ class JpegSourceManager : public jpeg_source_mgr {
 
   boolean fillInputBufferImpl();
 
-  static void skipInputData(j_decompress_ptr cinfo, long num_bytes);
+  static void skipInputData(j_decompress_ptr cinfo, long numBytes);
 
-  void skipInputDataImpl(long num_bytes);
+  void skipInputDataImpl(long numBytes);
 
   static void termSource(j_decompress_ptr cinfo);
 
@@ -72,7 +72,7 @@ class JpegSourceManager : public jpeg_source_mgr {
 };
 
 
-JpegSourceManager::JpegSourceManager(QIODevice& io_device) : jpeg_source_mgr(), m_device(io_device) {
+JpegSourceManager::JpegSourceManager(QIODevice& ioDevice) : jpeg_source_mgr(), m_device(ioDevice) {
   init_source = &JpegSourceManager::initSource;
   fill_input_buffer = &JpegSourceManager::fillInputBuffer;
   skip_input_data = &JpegSourceManager::skipInputData;
@@ -91,9 +91,9 @@ boolean JpegSourceManager::fillInputBuffer(j_decompress_ptr cinfo) {
 }
 
 boolean JpegSourceManager::fillInputBufferImpl() {
-  const qint64 bytes_read = m_device.read((char*) m_buf, sizeof(m_buf));
-  if (bytes_read > 0) {
-    bytes_in_buffer = bytes_read;
+  const qint64 bytesRead = m_device.read((char*) m_buf, sizeof(m_buf));
+  if (bytesRead > 0) {
+    bytes_in_buffer = bytesRead;
   } else {
     // Insert a fake EOI marker.
     m_buf[0] = 0xFF;
@@ -105,21 +105,21 @@ boolean JpegSourceManager::fillInputBufferImpl() {
   return 1;
 }
 
-void JpegSourceManager::skipInputData(j_decompress_ptr cinfo, long num_bytes) {
-  object(cinfo)->skipInputDataImpl(num_bytes);
+void JpegSourceManager::skipInputData(j_decompress_ptr cinfo, long numBytes) {
+  object(cinfo)->skipInputDataImpl(numBytes);
 }
 
-void JpegSourceManager::skipInputDataImpl(long num_bytes) {
-  if (num_bytes <= 0) {
+void JpegSourceManager::skipInputDataImpl(long numBytes) {
+  if (numBytes <= 0) {
     return;
   }
 
-  while (num_bytes > (long) bytes_in_buffer) {
-    num_bytes -= (long) bytes_in_buffer;
+  while (numBytes > (long) bytes_in_buffer) {
+    numBytes -= (long) bytes_in_buffer;
     fillInputBufferImpl();
   }
-  next_input_byte += num_bytes;
-  bytes_in_buffer -= num_bytes;
+  next_input_byte += numBytes;
+  bytes_in_buffer -= numBytes;
 }
 
 void JpegSourceManager::termSource(j_decompress_ptr cinfo) {
@@ -165,39 +165,39 @@ JpegErrorManager* JpegErrorManager::object(j_common_ptr cinfo) {
 
 /*============================= JpegMetadataLoader ==========================*/
 
-ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& io_device,
+ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& ioDevice,
                                                              const VirtualFunction<void, const ImageMetadata&>& out) {
-  if (!io_device.isReadable()) {
+  if (!ioDevice.isReadable()) {
     return GENERIC_ERROR;
   }
 
   static const unsigned char jpeg_signature[] = {0xff, 0xd8, 0xff};
-  static const int sig_size = sizeof(jpeg_signature);
+  static const int sigSize = sizeof(jpeg_signature);
 
-  unsigned char signature[sig_size];
-  if (io_device.peek((char*) signature, sig_size) != sig_size) {
+  unsigned char signature[sigSize];
+  if (ioDevice.peek((char*) signature, sigSize) != sigSize) {
     return FORMAT_NOT_RECOGNIZED;
   }
-  if (memcmp(jpeg_signature, signature, sig_size) != 0) {
+  if (memcmp(jpeg_signature, signature, sigSize) != 0) {
     return FORMAT_NOT_RECOGNIZED;
   }
 
-  JpegErrorManager err_mgr;
-  if (setjmp(err_mgr.jmpBuf())) {
+  JpegErrorManager errMgr;
+  if (setjmp(errMgr.jmpBuf())) {
     // Returning from longjmp().
     return GENERIC_ERROR;
   }
 
-  JpegSourceManager src_mgr(io_device);
-  JpegDecompressHandle cinfo(&err_mgr, &src_mgr);
+  JpegSourceManager srcMgr(ioDevice);
+  JpegDecompressHandle cinfo(&errMgr, &srcMgr);
 
-  const int header_status = jpeg_read_header(cinfo.ptr(), 0);
-  if (header_status == JPEG_HEADER_TABLES_ONLY) {
+  const int headerStatus = jpeg_read_header(cinfo.ptr(), 0);
+  if (headerStatus == JPEG_HEADER_TABLES_ONLY) {
     return NO_IMAGES;
   }
 
   // The other possible value is JPEG_SUSPENDED, but we never suspend it.
-  assert(header_status == JPEG_HEADER_OK);
+  assert(headerStatus == JPEG_HEADER_OK);
 
   if (!jpeg_start_decompress(cinfo.ptr())) {
     // libjpeg doesn't support all compression types.

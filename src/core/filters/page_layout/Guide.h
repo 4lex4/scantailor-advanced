@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_GUIDE_H
-#define SCANTAILOR_GUIDE_H
+#ifndef SCANTAILOR_PAGE_LAYOUT_GUIDE_H_
+#define SCANTAILOR_PAGE_LAYOUT_GUIDE_H_
 
 #include <QDomElement>
 #include <QtCore>
@@ -40,4 +40,4 @@ class Guide {
 };
 }  // namespace page_layout
 
-#endif  // ifndef SCANTAILOR_GUIDE_H
+#endif  // ifndef SCANTAILOR_PAGE_LAYOUT_GUIDE_H_

@@ -10,13 +10,13 @@ void EditableZoneSet::setDefaultProperties(const PropertySet& props) {
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline) {
-  auto new_props = make_intrusive<PropertySet>(m_defaultProps);
-  m_zoneItems.insert(ZoneItem(spline, new_props));
+  auto newProps = make_intrusive<PropertySet>(m_defaultProps);
+  m_zoneItems.insert(ZoneItem(spline, newProps));
 }
 
 void EditableZoneSet::addZone(const EditableSpline::Ptr& spline, const PropertySet& props) {
-  auto new_props = make_intrusive<PropertySet>(props);
-  m_zoneItems.insert(ZoneItem(spline, new_props));
+  auto newProps = make_intrusive<PropertySet>(props);
+  m_zoneItems.insert(ZoneItem(spline, newProps));
 }
 
 void EditableZoneSet::removeZone(const EditableSpline::Ptr& spline) {

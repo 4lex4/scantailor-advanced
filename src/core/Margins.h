@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef MARGINS_H_
-#define MARGINS_H_
+#ifndef SCANTAILOR_CORE_MARGINS_H_
+#define SCANTAILOR_CORE_MARGINS_H_
 
 class QString;
 class QDomElement;
@@ -42,4 +42,4 @@ class Margins {
 };
 
 
-#endif  // ifndef MARGINS_H_
+#endif  // ifndef SCANTAILOR_CORE_MARGINS_H_

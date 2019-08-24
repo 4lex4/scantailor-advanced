@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef LINEAR_FUNCTION_H_
-#define LINEAR_FUNCTION_H_
+#ifndef SCANTAILOR_MATH_LINEARFUNCTION_H_
+#define SCANTAILOR_MATH_LINEARFUNCTION_H_
 
 #include <cstddef>
 #include "VecT.h"
@@ -24,7 +24,7 @@ class LinearFunction {
    * Constructs a linear function of the given number of variables,
    * initializing everything to zero.
    */
-  explicit LinearFunction(size_t num_vars = 0);
+  explicit LinearFunction(size_t numVars = 0);
 
   /**
    * Resets everything to zero, so that F(x) = 0
@@ -50,4 +50,4 @@ inline void swap(LinearFunction& f1, LinearFunction& f2) {
   f1.swap(f2);
 }
 
-#endif  // ifndef LINEAR_FUNCTION_H_
+#endif  // ifndef SCANTAILOR_MATH_LINEARFUNCTION_H_

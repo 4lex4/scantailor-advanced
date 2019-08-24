@@ -1,11 +1,11 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ZONE_H_
-#define ZONE_H_
+#ifndef SCANTAILOR_ZONES_ZONE_H_
+#define SCANTAILOR_ZONES_ZONE_H_
 
-#include "SerializableSpline.h"
 #include <PropertySet.h>
+#include "SerializableSpline.h"
 
 class PropertyFactory;
 class QDomDocument;
@@ -17,7 +17,7 @@ class Zone {
  public:
   explicit Zone(const SerializableSpline& spline, const PropertySet& props = PropertySet());
 
-  Zone(const QDomElement& el, const PropertyFactory& prop_factory);
+  Zone(const QDomElement& el, const PropertyFactory& propFactory);
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
@@ -35,4 +35,4 @@ class Zone {
 };
 
 
-#endif  // ifndef ZONE_H_
+#endif  // ifndef SCANTAILOR_ZONES_ZONE_H_

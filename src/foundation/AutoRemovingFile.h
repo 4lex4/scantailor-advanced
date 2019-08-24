@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef AUTO_REMOVING_FILE_H_
-#define AUTO_REMOVING_FILE_H_
+#ifndef SCANTAILOR_FOUNDATION_AUTOREMOVINGFILE_H_
+#define SCANTAILOR_FOUNDATION_AUTOREMOVINGFILE_H_
 
 #include <QString>
 
@@ -23,7 +23,7 @@ class AutoRemovingFile {
  public:
   AutoRemovingFile();
 
-  explicit AutoRemovingFile(const QString& file_path);
+  explicit AutoRemovingFile(const QString& filePath);
 
   AutoRemovingFile(AutoRemovingFile& other);
 
@@ -48,4 +48,4 @@ class AutoRemovingFile {
 };
 
 
-#endif  // ifndef AUTO_REMOVING_FILE_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_AUTOREMOVINGFILE_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DEWARPING_DISTORTION_MODEL_BUILDER_H_
-#define DEWARPING_DISTORTION_MODEL_BUILDER_H_
+#ifndef SCANTAILOR_DEWARPING_DISTORTIONMODELBUILDER_H_
+#define SCANTAILOR_DEWARPING_DISTORTIONMODELBUILDER_H_
 
 #include <QLineF>
 #include <QPointF>
@@ -25,10 +25,10 @@ class DistortionModelBuilder {
   /**
    * \brief Constructor.
    *
-   * \param down_direction A vector pointing approximately downwards in terms of content.
+   * \param downDirection A vector pointing approximately downwards in terms of content.
    *        The vector can't be zero-length.
    */
-  explicit DistortionModelBuilder(const Vec2d& down_direction);
+  explicit DistortionModelBuilder(const Vec2d& downDirection);
 
   /**
    * \brief Set the vertical content boundaries.
@@ -67,7 +67,7 @@ class DistortionModelBuilder {
    * \return A DistortionModel that may be invalid.
    * \see DistortionModel::isValid()
    */
-  DistortionModel tryBuildModel(DebugImages* dbg = nullptr, const QImage* dbg_background = nullptr) const;
+  DistortionModel tryBuildModel(DebugImages* dbg = nullptr, const QImage* dbgBackground = nullptr) const;
 
  private:
   struct TracedCurve;
@@ -112,4 +112,4 @@ class DistortionModelBuilder {
   std::deque<std::vector<QPointF>> m_ltrPolylines;
 };
 }  // namespace dewarping
-#endif  // ifndef DEWARPING_DISTORTION_MODEL_BUILDER_H_
+#endif  // ifndef SCANTAILOR_DEWARPING_DISTORTIONMODELBUILDER_H_

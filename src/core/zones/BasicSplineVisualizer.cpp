@@ -11,17 +11,17 @@ BasicSplineVisualizer::BasicSplineVisualizer()
   m_pen.setWidthF(1.5);
 }
 
-void BasicSplineVisualizer::drawSplines(QPainter& painter, const QTransform& to_screen, const EditableZoneSet& zones) {
+void BasicSplineVisualizer::drawSplines(QPainter& painter, const QTransform& toScreen, const EditableZoneSet& zones) {
   for (const EditableZoneSet::Zone& zone : zones) {
-    drawSpline(painter, to_screen, zone.spline());
+    drawSpline(painter, toScreen, zone.spline());
   }
 }
 
 void BasicSplineVisualizer::drawSpline(QPainter& painter,
-                                       const QTransform& to_screen,
+                                       const QTransform& toScreen,
                                        const EditableSpline::Ptr& spline) {
   prepareForSpline(painter, spline);
-  painter.drawPolygon(to_screen.map(spline->toPolygon()), Qt::WindingFill);
+  painter.drawPolygon(toScreen.map(spline->toPolygon()), Qt::WindingFill);
 }
 
 void BasicSplineVisualizer::drawVertex(QPainter& painter, const QPointF& pt, const QColor& color) {

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_RASTEROP_H_
-#define IMAGEPROC_RASTEROP_H_
+#ifndef SCANTAILOR_IMAGEPROC_RASTEROP_H_
+#define SCANTAILOR_IMAGEPROC_RASTEROP_H_
 
 #include <QPoint>
 #include <QRect>
@@ -185,166 +185,166 @@ void rasterOpInDirection(BinaryImage& dst,
                          const QPoint& sp,
                          const int dy,
                          const int dx) {
-  const int src_start_bit = sp.x() % 32;
-  const int dst_start_bit = dr.x() % 32;
-  const int rightmost_dst_bit = dr.right();  // == dr.x() + dr.width() - 1;
-  const int rightmost_dst_word = rightmost_dst_bit / 32 - dr.x() / 32;
-  const uint32_t leftmost_dst_mask = ~uint32_t(0) >> dst_start_bit;
-  const uint32_t rightmost_dst_mask = ~uint32_t(0) << (31 - rightmost_dst_bit % 32);
+  const int srcStartBit = sp.x() % 32;
+  const int dstStartBit = dr.x() % 32;
+  const int rightmostDstBit = dr.right();  // == dr.x() + dr.width() - 1;
+  const int rightmostDstWord = rightmostDstBit / 32 - dr.x() / 32;
+  const uint32_t leftmostDstMask = ~uint32_t(0) >> dstStartBit;
+  const uint32_t rightmostDstMask = ~uint32_t(0) << (31 - rightmostDstBit % 32);
 
-  int first_dst_word;
-  int last_dst_word;
-  uint32_t first_dst_mask;
-  uint32_t last_dst_mask;
+  int firstDstWord;
+  int lastDstWord;
+  uint32_t firstDstMask;
+  uint32_t lastDstMask;
   if (dx == 1) {
-    first_dst_word = 0;
-    last_dst_word = rightmost_dst_word;
-    first_dst_mask = leftmost_dst_mask;
-    last_dst_mask = rightmost_dst_mask;
+    firstDstWord = 0;
+    lastDstWord = rightmostDstWord;
+    firstDstMask = leftmostDstMask;
+    lastDstMask = rightmostDstMask;
   } else {
     assert(dx == -1);
-    first_dst_word = rightmost_dst_word;
-    last_dst_word = 0;
-    first_dst_mask = rightmost_dst_mask;
-    last_dst_mask = leftmost_dst_mask;
+    firstDstWord = rightmostDstWord;
+    lastDstWord = 0;
+    firstDstMask = rightmostDstMask;
+    lastDstMask = leftmostDstMask;
   }
 
-  int src_span_delta;
-  int dst_span_delta;
-  uint32_t* dst_span;
-  const uint32_t* src_span;
+  int srcSpanDelta;
+  int dstSpanDelta;
+  uint32_t* dstSpan;
+  const uint32_t* srcSpan;
   if (dy == 1) {
-    src_span_delta = src.wordsPerLine();
-    dst_span_delta = dst.wordsPerLine();
-    dst_span = dst.data() + dr.y() * dst_span_delta + dr.x() / 32;
-    src_span = src.data() + sp.y() * src_span_delta + sp.x() / 32;
+    srcSpanDelta = src.wordsPerLine();
+    dstSpanDelta = dst.wordsPerLine();
+    dstSpan = dst.data() + dr.y() * dstSpanDelta + dr.x() / 32;
+    srcSpan = src.data() + sp.y() * srcSpanDelta + sp.x() / 32;
   } else {
     assert(dy == -1);
-    src_span_delta = -src.wordsPerLine();
-    dst_span_delta = -dst.wordsPerLine();
+    srcSpanDelta = -src.wordsPerLine();
+    dstSpanDelta = -dst.wordsPerLine();
     assert(dr.bottom() == dr.y() + dr.height() - 1);
-    dst_span = dst.data() - dr.bottom() * dst_span_delta + dr.x() / 32;
-    src_span = src.data() - (sp.y() + dr.height() - 1) * src_span_delta + sp.x() / 32;
+    dstSpan = dst.data() - dr.bottom() * dstSpanDelta + dr.x() / 32;
+    srcSpan = src.data() - (sp.y() + dr.height() - 1) * srcSpanDelta + sp.x() / 32;
   }
 
-  int src_word1_shift;
-  int src_word2_shift;
-  if (src_start_bit > dst_start_bit) {
-    src_word1_shift = src_start_bit - dst_start_bit;
-    src_word2_shift = 32 - src_word1_shift;
-  } else if (src_start_bit < dst_start_bit) {
-    src_word2_shift = dst_start_bit - src_start_bit;
-    src_word1_shift = 32 - src_word2_shift;
-    --src_span;
+  int srcWord1Shift;
+  int srcWord2Shift;
+  if (srcStartBit > dstStartBit) {
+    srcWord1Shift = srcStartBit - dstStartBit;
+    srcWord2Shift = 32 - srcWord1Shift;
+  } else if (srcStartBit < dstStartBit) {
+    srcWord2Shift = dstStartBit - srcStartBit;
+    srcWord1Shift = 32 - srcWord2Shift;
+    --srcSpan;
   } else {
     // Here we have a simple case of dst_x % 32 == src_x % 32.
     // Note that the rest of the code doesn't work with such
     // a case because of hardcoded widx + 1.
-    if (first_dst_word == last_dst_word) {
-      assert(first_dst_word == 0);
-      const uint32_t mask = first_dst_mask & last_dst_mask;
+    if (firstDstWord == lastDstWord) {
+      assert(firstDstWord == 0);
+      const uint32_t mask = firstDstMask & lastDstMask;
 
-      for (int i = dr.height(); i > 0; --i, src_span += src_span_delta, dst_span += dst_span_delta) {
-        const uint32_t src_word = src_span[0];
-        const uint32_t dst_word = dst_span[0];
-        const uint32_t new_dst_word = Rop::transform(src_word, dst_word);
-        dst_span[0] = (dst_word & ~mask) | (new_dst_word & mask);
+      for (int i = dr.height(); i > 0; --i, srcSpan += srcSpanDelta, dstSpan += dstSpanDelta) {
+        const uint32_t srcWord = srcSpan[0];
+        const uint32_t dstWord = dstSpan[0];
+        const uint32_t newDstWord = Rop::transform(srcWord, dstWord);
+        dstSpan[0] = (dstWord & ~mask) | (newDstWord & mask);
       }
     } else {
-      for (int i = dr.height(); i > 0; --i, src_span += src_span_delta, dst_span += dst_span_delta) {
-        int widx = first_dst_word;
+      for (int i = dr.height(); i > 0; --i, srcSpan += srcSpanDelta, dstSpan += dstSpanDelta) {
+        int widx = firstDstWord;
         // Handle the first (possibly incomplete) dst word in the line.
-        uint32_t src_word = src_span[widx];
-        uint32_t dst_word = dst_span[widx];
-        uint32_t new_dst_word = Rop::transform(src_word, dst_word);
-        dst_span[widx] = (dst_word & ~first_dst_mask) | (new_dst_word & first_dst_mask);
+        uint32_t srcWord = srcSpan[widx];
+        uint32_t dstWord = dstSpan[widx];
+        uint32_t newDstWord = Rop::transform(srcWord, dstWord);
+        dstSpan[widx] = (dstWord & ~firstDstMask) | (newDstWord & firstDstMask);
 
-        while ((widx += dx) != last_dst_word) {
-          src_word = src_span[widx];
-          dst_word = dst_span[widx];
-          dst_span[widx] = Rop::transform(src_word, dst_word);
+        while ((widx += dx) != lastDstWord) {
+          srcWord = srcSpan[widx];
+          dstWord = dstSpan[widx];
+          dstSpan[widx] = Rop::transform(srcWord, dstWord);
         }
 
         // Handle the last (possibly incomplete) dst word in the line.
-        src_word = src_span[widx];
-        dst_word = dst_span[widx];
-        new_dst_word = Rop::transform(src_word, dst_word);
-        dst_span[widx] = (dst_word & ~last_dst_mask) | (new_dst_word & last_dst_mask);
+        srcWord = srcSpan[widx];
+        dstWord = dstSpan[widx];
+        newDstWord = Rop::transform(srcWord, dstWord);
+        dstSpan[widx] = (dstWord & ~lastDstMask) | (newDstWord & lastDstMask);
       }
     }
 
     return;
   }
 
-  if (first_dst_word == last_dst_word) {
-    assert(first_dst_word == 0);
-    const uint32_t mask = first_dst_mask & last_dst_mask;
-    const uint32_t can_word1 = (~uint32_t(0) << src_word1_shift) & mask;
-    const uint32_t can_word2 = (~uint32_t(0) >> src_word2_shift) & mask;
+  if (firstDstWord == lastDstWord) {
+    assert(firstDstWord == 0);
+    const uint32_t mask = firstDstMask & lastDstMask;
+    const uint32_t canWord1 = (~uint32_t(0) << srcWord1Shift) & mask;
+    const uint32_t canWord2 = (~uint32_t(0) >> srcWord2Shift) & mask;
 
-    for (int i = dr.height(); i > 0; --i, src_span += src_span_delta, dst_span += dst_span_delta) {
-      uint32_t src_word = 0;
-      if (can_word1) {
-        const uint32_t src_word1 = src_span[0];
-        src_word |= src_word1 << src_word1_shift;
+    for (int i = dr.height(); i > 0; --i, srcSpan += srcSpanDelta, dstSpan += dstSpanDelta) {
+      uint32_t srcWord = 0;
+      if (canWord1) {
+        const uint32_t srcWord1 = srcSpan[0];
+        srcWord |= srcWord1 << srcWord1Shift;
       }
-      if (can_word2) {
-        const uint32_t src_word2 = src_span[1];
-        src_word |= src_word2 >> src_word2_shift;
+      if (canWord2) {
+        const uint32_t srcWord2 = srcSpan[1];
+        srcWord |= srcWord2 >> srcWord2Shift;
       }
-      const uint32_t dst_word = dst_span[0];
-      const uint32_t new_dst_word = Rop::transform(src_word, dst_word);
-      dst_span[0] = (dst_word & ~mask) | (new_dst_word & mask);
+      const uint32_t dstWord = dstSpan[0];
+      const uint32_t newDstWord = Rop::transform(srcWord, dstWord);
+      dstSpan[0] = (dstWord & ~mask) | (newDstWord & mask);
     }
   } else {
-    const uint32_t can_first_word1 = (~uint32_t(0) << src_word1_shift) & first_dst_mask;
-    const uint32_t can_first_word2 = (~uint32_t(0) >> src_word2_shift) & first_dst_mask;
-    const uint32_t can_last_word1 = (~uint32_t(0) << src_word1_shift) & last_dst_mask;
-    const uint32_t can_last_word2 = (~uint32_t(0) >> src_word2_shift) & last_dst_mask;
+    const uint32_t canFirstWord1 = (~uint32_t(0) << srcWord1Shift) & firstDstMask;
+    const uint32_t canFirstWord2 = (~uint32_t(0) >> srcWord2Shift) & firstDstMask;
+    const uint32_t canLastWord1 = (~uint32_t(0) << srcWord1Shift) & lastDstMask;
+    const uint32_t canLastWord2 = (~uint32_t(0) >> srcWord2Shift) & lastDstMask;
 
-    for (int i = dr.height(); i > 0; --i, src_span += src_span_delta, dst_span += dst_span_delta) {
-      int widx = first_dst_word;
+    for (int i = dr.height(); i > 0; --i, srcSpan += srcSpanDelta, dstSpan += dstSpanDelta) {
+      int widx = firstDstWord;
       // Handle the first (possibly incomplete) dst word in the line.
-      uint32_t src_word = 0;
-      if (can_first_word1) {
-        const uint32_t src_word1 = src_span[widx];
-        src_word |= src_word1 << src_word1_shift;
+      uint32_t srcWord = 0;
+      if (canFirstWord1) {
+        const uint32_t srcWord1 = srcSpan[widx];
+        srcWord |= srcWord1 << srcWord1Shift;
       }
-      if (can_first_word2) {
-        const uint32_t src_word2 = src_span[widx + 1];
-        src_word |= src_word2 >> src_word2_shift;
+      if (canFirstWord2) {
+        const uint32_t srcWord2 = srcSpan[widx + 1];
+        srcWord |= srcWord2 >> srcWord2Shift;
       }
-      uint32_t dst_word = dst_span[widx];
-      uint32_t new_dst_word = Rop::transform(src_word, dst_word);
-      new_dst_word = (dst_word & ~first_dst_mask) | (new_dst_word & first_dst_mask);
+      uint32_t dstWord = dstSpan[widx];
+      uint32_t newDstWord = Rop::transform(srcWord, dstWord);
+      newDstWord = (dstWord & ~firstDstMask) | (newDstWord & firstDstMask);
 
-      while ((widx += dx) != last_dst_word) {
-        const uint32_t src_word1 = src_span[widx];
-        const uint32_t src_word2 = src_span[widx + 1];
+      while ((widx += dx) != lastDstWord) {
+        const uint32_t srcWord1 = srcSpan[widx];
+        const uint32_t srcWord2 = srcSpan[widx + 1];
 
-        dst_word = dst_span[widx];
-        dst_span[widx - dx] = new_dst_word;
+        dstWord = dstSpan[widx];
+        dstSpan[widx - dx] = newDstWord;
 
-        new_dst_word = Rop::transform((src_word1 << src_word1_shift) | (src_word2 >> src_word2_shift), dst_word);
+        newDstWord = Rop::transform((srcWord1 << srcWord1Shift) | (srcWord2 >> srcWord2Shift), dstWord);
       }
 
       // Handle the last (possibly incomplete) dst word in the line.
-      src_word = 0;
-      if (can_last_word1) {
-        const uint32_t src_word1 = src_span[widx];
-        src_word |= src_word1 << src_word1_shift;
+      srcWord = 0;
+      if (canLastWord1) {
+        const uint32_t srcWord1 = srcSpan[widx];
+        srcWord |= srcWord1 << srcWord1Shift;
       }
-      if (can_last_word2) {
-        const uint32_t src_word2 = src_span[widx + 1];
-        src_word |= src_word2 >> src_word2_shift;
+      if (canLastWord2) {
+        const uint32_t srcWord2 = srcSpan[widx + 1];
+        srcWord |= srcWord2 >> srcWord2Shift;
       }
 
-      dst_word = dst_span[widx];
-      dst_span[widx - dx] = new_dst_word;
+      dstWord = dstSpan[widx];
+      dstSpan[widx - dx] = newDstWord;
 
-      new_dst_word = Rop::transform(src_word, dst_word);
-      new_dst_word = (dst_word & ~last_dst_mask) | (new_dst_word & last_dst_mask);
-      dst_span[widx] = new_dst_word;
+      newDstWord = Rop::transform(srcWord, dstWord);
+      newDstWord = (dstWord & ~lastDstMask) | (newDstWord & lastDstMask);
+      dstSpan[widx] = newDstWord;
     }
   }
 }  // rasterOpInDirection
@@ -410,4 +410,4 @@ void rasterOp(BinaryImage& dst, const BinaryImage& src) {
   rasterOpInDirection<Rop>(dst, dst.rect(), src, QPoint(0, 0), 1, 1);
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_RASTEROP_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_RASTEROP_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SELECT_CONTENT_PARAMS_H_
-#define SELECT_CONTENT_PARAMS_H_
+#ifndef SCANTAILOR_SELECT_CONTENT_PARAMS_H_
+#define SCANTAILOR_SELECT_CONTENT_PARAMS_H_
 
 #include <AutoManualMode.h>
 #include <QRectF>
@@ -22,15 +22,15 @@ class Params {
 
   explicit Params(const Dependencies& deps);
 
-  Params(const QRectF& content_rect,
-         const QSizeF& size_mm,
-         const QRectF& page_rect,
+  Params(const QRectF& contentRect,
+         const QSizeF& sizeMm,
+         const QRectF& pageRect,
          const Dependencies& deps,
-         AutoManualMode content_detection_mode,
-         AutoManualMode page_detection_mode,
-         bool fine_tune_corners);
+         AutoManualMode contentDetectionMode,
+         AutoManualMode pageDetectionMode,
+         bool fineTuneCorners);
 
-  explicit Params(const QDomElement& filter_el);
+  explicit Params(const QDomElement& filterEl);
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
@@ -62,7 +62,7 @@ class Params {
 
   void setDependencies(const Dependencies& deps);
 
-  void setFineTuneCornersEnabled(bool fine_tune_corners);
+  void setFineTuneCornersEnabled(bool fineTuneCorners);
 
  private:
   QRectF m_contentRect;
@@ -74,4 +74,4 @@ class Params {
   bool m_fineTuneCorners;
 };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_PARAMS_H_
+#endif  // ifndef SCANTAILOR_SELECT_CONTENT_PARAMS_H_

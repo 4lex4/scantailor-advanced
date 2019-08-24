@@ -2,8 +2,8 @@
 // Copyright (C) 1995 Spencer Kimball and Peter Mattis
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_GAUSSBLUR_H_
-#define IMAGEPROC_GAUSSBLUR_H_
+#ifndef SCANTAILOR_IMAGEPROC_GAUSSBLUR_H_
+#define SCANTAILOR_IMAGEPROC_GAUSSBLUR_H_
 
 #include <QSize>
 #include <boost/scoped_array.hpp>
@@ -18,23 +18,23 @@ class GrayImage;
  * \brief Applies gaussian blur on a GrayImage.
  *
  * \param src The image to apply gaussian blur to.
- * \param h_sigma The standard deviation in horizontal direction.
- * \param v_sigma The standard deviation in vertical direction.
+ * \param hSigma The standard deviation in horizontal direction.
+ * \param vSigma The standard deviation in vertical direction.
  * \return The blurred image.
  */
-GrayImage gaussBlur(const GrayImage& src, float h_sigma, float v_sigma);
+GrayImage gaussBlur(const GrayImage& src, float hSigma, float vSigma);
 
 /**
  * \brief Applies a 2D gaussian filter on an arbitrary data grid.
  *
  * \param size Data grid dimensions.
- * \param h_sigma The standard deviation in horizontal direction.
- * \param v_sigma The standard deviation in vertical direction.
+ * \param hSigma The standard deviation in horizontal direction.
+ * \param vSigma The standard deviation in vertical direction.
  * \param input A random access iterator (usually a pointer)
  *        to the beginning of input data.
- * \param input_stride The distance (in terms of iterator difference)
+ * \param inputStride The distance (in terms of iterator difference)
  *        from an input grid cell to the one directly below it.
- * \param float_reader A functor to convert whatever value corresponds to *input
+ * \param floatReader A functor to convert whatever value corresponds to *input
  *        into a float.  Consider using one of the functors from ValueConv.h
  *        The functor will be called like this:
  * \code
@@ -44,9 +44,9 @@ GrayImage gaussBlur(const GrayImage& src, float h_sigma, float v_sigma);
  * \param output A random access iterator (usually a pointer)
  *        to the beginning of output data.  Output may point to the same
  *        memory as input.
- * \param output_stride The distance (in terms of iterator difference)
+ * \param outputStride The distance (in terms of iterator difference)
  *        from an output grid cell to the one directly below it.
- * \param float_writer A functor that takes a float value, optionally
+ * \param floatWriter A functor that takes a float value, optionally
  *        converts it into another type and updates an output item.
  *        The functor will be called like this:
  * \code
@@ -68,25 +68,25 @@ GrayImage gaussBlur(const GrayImage& src, float h_sigma, float v_sigma);
  */
 template <typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
 void gaussBlurGeneric(QSize size,
-                      float h_sigma,
-                      float v_sigma,
+                      float hSigma,
+                      float vSigma,
                       SrcIt input,
-                      int input_stride,
-                      FloatReader float_reader,
+                      int inputStride,
+                      FloatReader floatReader,
                       DstIt output,
-                      int output_stride,
-                      FloatWriter float_writer);
+                      int outputStride,
+                      FloatWriter floatWriter);
 
 namespace gauss_blur_impl {
-void find_iir_constants(float* n_p, float* n_m, float* d_p, float* d_m, float* bd_p, float* bd_m, float std_dev);
+void findIirConstants(float* nP, float* nM, float* dP, float* dM, float* bdP, float* bdM, float stdDev);
 
 template <typename Src1It, typename Src2It, typename DstIt, typename FloatWriter>
-void save(int num_items, Src1It src1, Src2It src2, DstIt dst, int dst_stride, FloatWriter writer) {
-  while (num_items-- != 0) {
+void save(int numItems, Src1It src1, Src2It src2, DstIt dst, int dstStride, FloatWriter writer) {
+  while (numItems-- != 0) {
     writer(*dst, *src1 + *src2);
     ++src1;
     ++src2;
-    dst += dst_stride;
+    dst += dstStride;
   }
 }
 
@@ -98,100 +98,100 @@ class FloatToFloatWriter {
 
 template <typename SrcIt, typename DstIt, typename FloatReader, typename FloatWriter>
 void gaussBlurGeneric(const QSize size,
-                      const float h_sigma,
-                      const float v_sigma,
+                      const float hSigma,
+                      const float vSigma,
                       const SrcIt input,
-                      const int input_stride,
-                      const FloatReader float_reader,
+                      const int inputStride,
+                      const FloatReader floatReader,
                       const DstIt output,
-                      const int output_stride,
-                      const FloatWriter float_writer) {
+                      const int outputStride,
+                      const FloatWriter floatWriter) {
   if (size.isEmpty()) {
     return;
   }
 
   const int width = size.width();
   const int height = size.height();
-  const int width_height_max = width > height ? width : height;
+  const int widthHeightMax = width > height ? width : height;
 
-  boost::scoped_array<float> val_p(new float[width_height_max]);
-  boost::scoped_array<float> val_m(new float[width_height_max]);
-  boost::scoped_array<float> intermediate_image(new float[width * height]);
-  const int intermediate_stride = width;
+  boost::scoped_array<float> valP(new float[widthHeightMax]);
+  boost::scoped_array<float> valM(new float[widthHeightMax]);
+  boost::scoped_array<float> intermediateImage(new float[width * height]);
+  const int intermediateStride = width;
 
   // IIR parameters.
-  float n_p[5], n_m[5], d_p[5], d_m[5], bd_p[5], bd_m[5];
+  float nP[5], nM[5], dP[5], dM[5], bdP[5], bdM[5];
   // Vertical pass.
-  gauss_blur_impl::find_iir_constants(n_p, n_m, d_p, d_m, bd_p, bd_m, v_sigma);
+  gauss_blur_impl::findIirConstants(nP, nM, dP, dM, bdP, bdM, vSigma);
   for (int x = 0; x < width; ++x) {
-    memset(&val_p[0], 0, height * sizeof(val_p[0]));
-    memset(&val_m[0], 0, height * sizeof(val_m[0]));
+    memset(&valP[0], 0, height * sizeof(valP[0]));
+    memset(&valM[0], 0, height * sizeof(valM[0]));
 
-    SrcIt sp_p(input + x);
-    SrcIt sp_m(sp_p + (height - 1) * input_stride);
-    float* vp = &val_p[0];
-    float* vm = &val_m[0] + height - 1;
-    const float initial_p = float_reader(sp_p[0]);
-    const float initial_m = float_reader(sp_m[0]);
+    SrcIt spP(input + x);
+    SrcIt spM(spP + (height - 1) * inputStride);
+    float* vp = &valP[0];
+    float* vm = &valM[0] + height - 1;
+    const float initialP = floatReader(spP[0]);
+    const float initialM = floatReader(spM[0]);
 
     for (int y = 0; y < height; ++y) {
       const int terms = y < 4 ? y : 4;
       int i = 0;
-      int sp_off = 0;
-      for (; i <= terms; ++i, sp_off += input_stride) {
-        *vp += n_p[i] * float_reader(sp_p[-sp_off]) - d_p[i] * vp[-i];
-        *vm += n_m[i] * float_reader(sp_m[sp_off]) - d_m[i] * vm[i];
+      int spOff = 0;
+      for (; i <= terms; ++i, spOff += inputStride) {
+        *vp += nP[i] * floatReader(spP[-spOff]) - dP[i] * vp[-i];
+        *vm += nM[i] * floatReader(spM[spOff]) - dM[i] * vm[i];
       }
       for (; i <= 4; ++i) {
-        *vp += (n_p[i] - bd_p[i]) * initial_p;
-        *vm += (n_m[i] - bd_m[i]) * initial_m;
+        *vp += (nP[i] - bdP[i]) * initialP;
+        *vm += (nM[i] - bdM[i]) * initialM;
       }
-      sp_p += input_stride;
-      sp_m -= input_stride;
+      spP += inputStride;
+      spM -= inputStride;
       ++vp;
       --vm;
     }
 
-    gauss_blur_impl::save(height, &val_p[0], &val_m[0], &intermediate_image[0] + x, intermediate_stride,
+    gauss_blur_impl::save(height, &valP[0], &valM[0], &intermediateImage[0] + x, intermediateStride,
                           gauss_blur_impl::FloatToFloatWriter());
   }
   // Horizontal pass.
-  gauss_blur_impl::find_iir_constants(n_p, n_m, d_p, d_m, bd_p, bd_m, h_sigma);
-  const float* intermediate_line = &intermediate_image[0];
-  DstIt output_line(output);
+  gauss_blur_impl::findIirConstants(nP, nM, dP, dM, bdP, bdM, hSigma);
+  const float* intermediateLine = &intermediateImage[0];
+  DstIt outputLine(output);
   for (int y = 0; y < height; ++y) {
-    memset(&val_p[0], 0, width * sizeof(val_p[0]));
-    memset(&val_m[0], 0, width * sizeof(val_m[0]));
+    memset(&valP[0], 0, width * sizeof(valP[0]));
+    memset(&valM[0], 0, width * sizeof(valM[0]));
 
-    const float* sp_p = intermediate_line;
-    const float* sp_m = intermediate_line + width - 1;
-    float* vp = &val_p[0];
-    float* vm = &val_m[0] + width - 1;
-    const float initial_p = sp_p[0];
-    const float initial_m = sp_m[0];
+    const float* spP = intermediateLine;
+    const float* spM = intermediateLine + width - 1;
+    float* vp = &valP[0];
+    float* vm = &valM[0] + width - 1;
+    const float initialP = spP[0];
+    const float initialM = spM[0];
 
     for (int x = 0; x < width; ++x) {
       const int terms = x < 4 ? x : 4;
       int i = 0;
       for (; i <= terms; ++i) {
-        *vp += n_p[i] * sp_p[-i] - d_p[i] * vp[-i];
-        *vm += n_m[i] * sp_m[i] - d_m[i] * vm[i];
+        *vp += nP[i] * spP[-i] - dP[i] * vp[-i];
+        *vm += nM[i] * spM[i] - dM[i] * vm[i];
       }
       for (; i <= 4; ++i) {
-        *vp += (n_p[i] - bd_p[i]) * initial_p;
-        *vm += (n_m[i] - bd_m[i]) * initial_m;
+        *vp += (nP[i] - bdP[i]) * initialP;
+        *vm += (nM[i] - bdM[i]) * initialM;
       }
-      ++sp_p;
-      --sp_m;
+      ++spP;
+      --spM;
       ++vp;
       --vm;
     }
 
-    gauss_blur_impl::save(width, &val_p[0], &val_m[0], output_line, 1, float_writer);
+    gauss_blur_impl::save(width, &valP[0], &valM[0], outputLine, 1, floatWriter);
 
-    intermediate_line += intermediate_stride;
-    output_line += output_stride;
+    intermediateLine += intermediateStride;
+    outputLine += outputStride;
   }
 }  // gaussBlurGeneric
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_GAUSSBLUR_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_GAUSSBLUR_H_

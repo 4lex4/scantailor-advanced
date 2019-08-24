@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_MAX_WHITESPACE_FINDER_H_
-#define IMAGEPROC_MAX_WHITESPACE_FINDER_H_
+#ifndef SCANTAILOR_IMAGEPROC_MAXWHITESPACEFINDER_H_
+#define SCANTAILOR_IMAGEPROC_MAXWHITESPACEFINDER_H_
 
 #include <QRect>
 #include <QSize>
@@ -37,9 +37,9 @@ class MaxWhitespaceFinder {
    * \brief Constructor.
    *
    * \param img The image to find white regions in.
-   * \param min_size The minimum dimensions of regions to find.
+   * \param minSize The minimum dimensions of regions to find.
    */
-  explicit MaxWhitespaceFinder(const BinaryImage& img, QSize min_size = QSize(1, 1));
+  explicit MaxWhitespaceFinder(const BinaryImage& img, QSize minSize = QSize(1, 1));
 
   /**
    * \brief Constructor with customized rectangle ordering.
@@ -64,10 +64,10 @@ class MaxWhitespaceFinder {
    * it can't have lesser quality.
    *
    * \param img The image to find white rectangles in.
-   * \param min_size The minimum dimensions of regions to find.
+   * \param minSize The minimum dimensions of regions to find.
    */
   template <typename QualityCompare>
-  MaxWhitespaceFinder(QualityCompare comp, const BinaryImage& img, QSize min_size = QSize(1, 1));
+  MaxWhitespaceFinder(QualityCompare comp, const BinaryImage& img, QSize minSize = QSize(1, 1));
 
   /**
    * \brief Mark a region as black.
@@ -82,7 +82,7 @@ class MaxWhitespaceFinder {
   /**
    * \brief Find the next white rectangle.
    *
-   * \param obstacle_mode If set to AUTO_OBSTACLES, addObstacle()
+   * \param obstacleMode If set to AUTO_OBSTACLES, addObstacle()
    *        will be called automatically to prevent further rectangles
    *        from covering this region.  If set to MANUAL_OBSTACLES,
    *        the caller is expected to call addObstacle() himself,
@@ -91,7 +91,7 @@ class MaxWhitespaceFinder {
    *        (by adding reduced obstacles).  There is no strict
    *        requirement to manually add an obstacle after calling
    *        this function with MANUAL_OBSTACLES.
-   * \param max_iterations The maximum number of iterations to spend
+   * \param maxIterations The maximum number of iterations to spend
    *        searching for the next maximal white rectangle.
    *        Reaching this limit without finding one will cause
    *        a null rectangle to be returned.  You generally don't
@@ -101,12 +101,12 @@ class MaxWhitespaceFinder {
    * \return A white rectangle, or a null rectangle, if no white
    *         rectangles confirming to the minimum size were found.
    */
-  QRect next(ObstacleMode obstacle_mode = AUTO_OBSTACLES, int max_iterations = 1000);
+  QRect next(ObstacleMode obstacleMode = AUTO_OBSTACLES, int maxIterations = 1000);
 
  private:
   class Region {
    public:
-    Region(unsigned known_new_obstacles, const QRect& bounds);
+    Region(unsigned knownNewObstacles, const QRect& bounds);
 
     /**
      * A shallow copy.  Copies everything except the obstacle list.
@@ -119,9 +119,9 @@ class MaxWhitespaceFinder {
 
     void addObstacle(const QRect& obstacle) { m_obstacles.push_back(obstacle); }
 
-    void addObstacles(const Region& other_region);
+    void addObstacles(const Region& otherRegion);
 
-    void addNewObstacles(const std::vector<QRect>& new_obstacles);
+    void addNewObstacles(const std::vector<QRect>& newObstacles);
 
     void swap(Region& other);
 
@@ -146,7 +146,7 @@ class MaxWhitespaceFinder {
 
   QRect findPivotObstacle(const Region& region) const;
 
-  QPoint findBlackPixelCloseToCenter(QRect non_white_rect) const;
+  QPoint findBlackPixelCloseToCenter(QRect nonWhiteRect) const;
 
   QRect extendBlackPixelToBlackBox(QPoint pixel, QRect bounds) const;
 
@@ -257,13 +257,13 @@ void PriorityStorageImpl<QualityCompare>::popHeap(const std::deque<Region>::iter
   begin->swap(*(end - 1));
 
   typedef std::vector<Region>::iterator::difference_type Distance;
-  const Distance new_length = end - begin - 1;
+  const Distance newLength = end - begin - 1;
   Distance nodeIdx = 0;
   Distance secondChildIdx = 2 * (nodeIdx + 1);
 
   // Lower the new top node all the way down the tree
   // by continuously swapping it with the biggest of its children.
-  while (secondChildIdx < new_length) {
+  while (secondChildIdx < newLength) {
     const Distance firstChildIdx = secondChildIdx - 1;
     Distance biggestChildIdx = firstChildIdx;
 
@@ -276,7 +276,7 @@ void PriorityStorageImpl<QualityCompare>::popHeap(const std::deque<Region>::iter
     nodeIdx = biggestChildIdx;
     secondChildIdx = 2 * (nodeIdx + 1);
   }
-  if (secondChildIdx == new_length) {
+  if (secondChildIdx == newLength) {
     // Swap it with its only child.
     const Distance firstChildIdx = secondChildIdx - 1;
     (begin + nodeIdx)->swap(*(begin + firstChildIdx));
@@ -291,11 +291,11 @@ void PriorityStorageImpl<QualityCompare>::popHeap(const std::deque<Region>::iter
 }  // namespace max_whitespace_finder
 
 template <typename QualityCompare>
-MaxWhitespaceFinder::MaxWhitespaceFinder(const QualityCompare comp, const BinaryImage& img, const QSize min_size)
+MaxWhitespaceFinder::MaxWhitespaceFinder(const QualityCompare comp, const BinaryImage& img, const QSize minSize)
     : m_integralImg(img.size()),
       m_queuedRegions(new max_whitespace_finder::PriorityStorageImpl<QualityCompare>(comp)),
-      m_minSize(min_size) {
+      m_minSize(minSize) {
   init(img);
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_MAX_WHITESPACE_FINDER_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_MAXWHITESPACEFINDER_H_

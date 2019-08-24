@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PROJECTFILESDIALOG_H_
-#define PROJECTFILESDIALOG_H_
+#ifndef SCANTAILOR_APP_PROJECTFILESDIALOG_H_
+#define SCANTAILOR_APP_PROJECTFILESDIALOG_H_
 
 #include <QDialog>
 #include <QSet>
@@ -53,7 +53,7 @@ class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog {
   class SortedFileList;
   class ItemVisualOrdering;
 
-  void setInputDir(const QString& dir, bool auto_add_files = true);
+  void setInputDir(const QString& dir, bool autoAddFiles = true);
 
   void setOutputDir(const QString& dir);
 
@@ -76,4 +76,4 @@ class ProjectFilesDialog : public QDialog, private Ui::ProjectFilesDialog {
 };
 
 
-#endif  // ifndef PROJECTFILESDIALOG_H_
+#endif  // ifndef SCANTAILOR_APP_PROJECTFILESDIALOG_H_

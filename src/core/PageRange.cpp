@@ -15,10 +15,10 @@ std::set<PageId> PageRange::selectEveryOther(const PageId& base) const {
     return selection;
   }
 
-  const int base_idx = static_cast<int>(it - pages.begin());
+  const int baseIdx = static_cast<int>(it - pages.begin());
   int idx = 0;
   for (const PageId& page_id : pages) {
-    if (((idx - base_idx) & 1) == 0) {
+    if (((idx - baseIdx) & 1) == 0) {
       selection.insert(page_id);
     }
     ++idx;

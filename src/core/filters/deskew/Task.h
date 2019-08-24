@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DESKEW_TASK_H_
-#define DESKEW_TASK_H_
+#ifndef SCANTAILOR_DESKEW_TASK_H_
+#define SCANTAILOR_DESKEW_TASK_H_
 
 #include <FilterData.h>
 #include <memory>
@@ -35,10 +35,10 @@ class Task : public ref_countable {
  public:
   Task(intrusive_ptr<Filter> filter,
        intrusive_ptr<Settings> settings,
-       intrusive_ptr<ImageSettings> image_settings,
-       intrusive_ptr<select_content::Task> next_task,
-       const PageId& page_id,
-       bool batch_processing,
+       intrusive_ptr<ImageSettings> imageSettings,
+       intrusive_ptr<select_content::Task> nextTask,
+       const PageId& pageId,
+       bool batchProcessing,
        bool debug);
 
   ~Task() override;
@@ -50,9 +50,9 @@ class Task : public ref_countable {
 
   static void cleanup(const TaskStatus& status, imageproc::BinaryImage& img, const Dpi& dpi);
 
-  static int from150dpi(int size, int target_dpi);
+  static int from150dpi(int size, int targetDpi);
 
-  static QSize from150dpi(const QSize& size, const Dpi& target_dpi);
+  static QSize from150dpi(const QSize& size, const Dpi& targetDpi);
 
   void updateFilterData(const TaskStatus& status, FilterData& data, bool needUpdate);
 
@@ -65,4 +65,4 @@ class Task : public ref_countable {
   bool m_batchProcessing;
 };
 }  // namespace deskew
-#endif  // ifndef DESKEW_TASK_H_
+#endif  // ifndef SCANTAILOR_DESKEW_TASK_H_

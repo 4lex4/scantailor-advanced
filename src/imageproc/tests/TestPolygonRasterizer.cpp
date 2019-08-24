@@ -1,6 +1,11 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include <BWColor.h>
+#include <BinaryImage.h>
+#include <BinaryThreshold.h>
+#include <PolygonRasterizer.h>
+#include <RasterOp.h>
 #include <QBrush>
 #include <QColor>
 #include <QImage>
@@ -12,11 +17,6 @@
 #include <Qt>
 #include <boost/test/auto_unit_test.hpp>
 #include <cmath>
-#include <BWColor.h>
-#include <BinaryImage.h>
-#include <BinaryThreshold.h>
-#include <PolygonRasterizer.h>
-#include <RasterOp.h>
 #include "Utils.h"
 
 namespace imageproc {
@@ -25,17 +25,17 @@ using namespace utils;
 
 BOOST_AUTO_TEST_SUITE(PolygonRasterizerTestSuite)
 
-static QPolygonF createShape(const QSize& image_size, double radius) {
-  const QPointF center(0.5 * image_size.width(), 0.5 * image_size.height());
+static QPolygonF createShape(const QSize& imageSize, double radius) {
+  const QPointF center(0.5 * imageSize.width(), 0.5 * imageSize.height());
   const double PI = 3.14159265;
   double angle = PI / 2.0;
-  const int num_steps = 5;
-  const double step = PI * 2.0 / num_steps;
+  const int numSteps = 5;
+  const double step = PI * 2.0 / numSteps;
 
   QPolygonF poly;
 
   poly.push_back(center + QPointF(std::cos(angle), std::sin(angle)) * radius);
-  for (int i = 1; i < num_steps; ++i) {
+  for (int i = 1; i < numSteps; ++i) {
     angle += step * 2;
     poly.push_back(center + QPointF(std::cos(angle), std::sin(angle)) * radius);
   }
@@ -58,65 +58,65 @@ static bool fuzzyCompare(const BinaryImage& img, const QImage& control) {
   return control1.countBlackPixels() == 0;
 }
 
-static bool testFillShape(const QSize& image_size, const QPolygonF& shape, Qt::FillRule fill_rule) {
-  BinaryImage b_image(image_size, WHITE);
-  PolygonRasterizer::fill(b_image, BLACK, shape, fill_rule);
+static bool testFillShape(const QSize& imageSize, const QPolygonF& shape, Qt::FillRule fillRule) {
+  BinaryImage bImage(imageSize, WHITE);
+  PolygonRasterizer::fill(bImage, BLACK, shape, fillRule);
 
-  QImage q_image(image_size, QImage::Format_RGB32);
-  q_image.fill(0xffffffff);
+  QImage qImage(imageSize, QImage::Format_RGB32);
+  qImage.fill(0xffffffff);
 
   {
-    QPainter painter(&q_image);
+    QPainter painter(&qImage);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setBrush(QColor(0x00, 0x00, 0x00));
     painter.setPen(Qt::NoPen);
-    painter.drawPolygon(shape, fill_rule);
+    painter.drawPolygon(shape, fillRule);
   }
 
-  return fuzzyCompare(b_image, q_image);
+  return fuzzyCompare(bImage, qImage);
 }
 
-static bool testFillExceptShape(const QSize& image_size, const QPolygonF& shape, Qt::FillRule fill_rule) {
-  BinaryImage b_image(image_size, WHITE);
-  PolygonRasterizer::fillExcept(b_image, BLACK, shape, fill_rule);
+static bool testFillExceptShape(const QSize& imageSize, const QPolygonF& shape, Qt::FillRule fillRule) {
+  BinaryImage bImage(imageSize, WHITE);
+  PolygonRasterizer::fillExcept(bImage, BLACK, shape, fillRule);
 
-  QImage q_image(image_size, QImage::Format_RGB32);
-  q_image.fill(0x00000000);
+  QImage qImage(imageSize, QImage::Format_RGB32);
+  qImage.fill(0x00000000);
 
   {
-    QPainter painter(&q_image);
+    QPainter painter(&qImage);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setBrush(QColor(0xff, 0xff, 0xff));
     painter.setPen(Qt::NoPen);
-    painter.drawPolygon(shape, fill_rule);
+    painter.drawPolygon(shape, fillRule);
   }
 
-  return fuzzyCompare(b_image, q_image);
+  return fuzzyCompare(bImage, qImage);
 }
 
 BOOST_AUTO_TEST_CASE(test_complex_shape) {
-  const QSize image_size(500, 500);
+  const QSize imageSize(500, 500);
 
   // This one fits the image.
-  const QPolygonF smaller_shape(createShape(image_size, 230));
+  const QPolygonF smallerShape(createShape(imageSize, 230));
 
   // This one doesn't fit the image and will be clipped.
-  const QPolygonF bigger_shape(createShape(image_size, 300));
+  const QPolygonF biggerShape(createShape(imageSize, 300));
 
-  BOOST_CHECK(testFillShape(image_size, smaller_shape, Qt::OddEvenFill));
-  BOOST_CHECK(testFillShape(image_size, smaller_shape, Qt::WindingFill));
-  BOOST_CHECK(testFillShape(image_size, bigger_shape, Qt::OddEvenFill));
-  BOOST_CHECK(testFillShape(image_size, bigger_shape, Qt::WindingFill));
-  BOOST_CHECK(testFillExceptShape(image_size, smaller_shape, Qt::OddEvenFill));
-  BOOST_CHECK(testFillExceptShape(image_size, smaller_shape, Qt::WindingFill));
-  BOOST_CHECK(testFillExceptShape(image_size, bigger_shape, Qt::OddEvenFill));
-  BOOST_CHECK(testFillExceptShape(image_size, bigger_shape, Qt::WindingFill));
+  BOOST_CHECK(testFillShape(imageSize, smallerShape, Qt::OddEvenFill));
+  BOOST_CHECK(testFillShape(imageSize, smallerShape, Qt::WindingFill));
+  BOOST_CHECK(testFillShape(imageSize, biggerShape, Qt::OddEvenFill));
+  BOOST_CHECK(testFillShape(imageSize, biggerShape, Qt::WindingFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, smallerShape, Qt::OddEvenFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, smallerShape, Qt::WindingFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, biggerShape, Qt::OddEvenFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, biggerShape, Qt::WindingFill));
 }
 
 BOOST_AUTO_TEST_CASE(test_corner_cases) {
-  const QSize image_size(500, 500);
-  const QPolygonF shape(QRectF(QPointF(0, 0), image_size));
-  const QPolygonF shape2(QRectF(QPointF(-1, -1), image_size));
+  const QSize imageSize(500, 500);
+  const QPolygonF shape(QRectF(QPointF(0, 0), imageSize));
+  const QPolygonF shape2(QRectF(QPointF(-1, -1), imageSize));
 
   // This one touches clip rectangle's corners.
   QPolygonF shape3;
@@ -125,18 +125,18 @@ BOOST_AUTO_TEST_CASE(test_corner_cases) {
   shape3.push_back(QPointF(750.0, -250.0));
   shape3.push_back(QPointF(-250.0, 750.0));
 
-  BOOST_CHECK(testFillShape(image_size, shape, Qt::OddEvenFill));
-  BOOST_CHECK(testFillShape(image_size, shape, Qt::WindingFill));
-  BOOST_CHECK(testFillShape(image_size, shape2, Qt::OddEvenFill));
-  BOOST_CHECK(testFillShape(image_size, shape2, Qt::WindingFill));
-  BOOST_CHECK(testFillShape(image_size, shape3, Qt::OddEvenFill));
-  BOOST_CHECK(testFillShape(image_size, shape3, Qt::WindingFill));
-  BOOST_CHECK(testFillExceptShape(image_size, shape, Qt::OddEvenFill));
-  BOOST_CHECK(testFillExceptShape(image_size, shape, Qt::WindingFill));
-  BOOST_CHECK(testFillExceptShape(image_size, shape2, Qt::OddEvenFill));
-  BOOST_CHECK(testFillExceptShape(image_size, shape2, Qt::WindingFill));
-  BOOST_CHECK(testFillExceptShape(image_size, shape3, Qt::OddEvenFill));
-  BOOST_CHECK(testFillExceptShape(image_size, shape3, Qt::WindingFill));
+  BOOST_CHECK(testFillShape(imageSize, shape, Qt::OddEvenFill));
+  BOOST_CHECK(testFillShape(imageSize, shape, Qt::WindingFill));
+  BOOST_CHECK(testFillShape(imageSize, shape2, Qt::OddEvenFill));
+  BOOST_CHECK(testFillShape(imageSize, shape2, Qt::WindingFill));
+  BOOST_CHECK(testFillShape(imageSize, shape3, Qt::OddEvenFill));
+  BOOST_CHECK(testFillShape(imageSize, shape3, Qt::WindingFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, shape, Qt::OddEvenFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, shape, Qt::WindingFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, shape2, Qt::OddEvenFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, shape2, Qt::WindingFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, shape3, Qt::OddEvenFill));
+  BOOST_CHECK(testFillExceptShape(imageSize, shape3, Qt::WindingFill));
 }
 
 BOOST_AUTO_TEST_CASE(regression_test_1) {

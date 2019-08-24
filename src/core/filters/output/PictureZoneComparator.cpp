@@ -2,8 +2,8 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PictureZoneComparator.h"
-#include "ZoneSet.h"
 #include "PictureLayerProperty.h"
+#include "ZoneSet.h"
 
 namespace output {
 bool PictureZoneComparator::equal(const ZoneSet& lhs, const ZoneSet& rhs) {

@@ -115,8 +115,8 @@ bool Alignment::isNull() const {
   return m_isNull;
 }
 
-void Alignment::setNull(bool is_null) {
-  m_isNull = is_null;
+void Alignment::setNull(bool isNull) {
+  m_isNull = isNull;
 }
 
 bool Alignment::isAutoVertical() const {

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_RAST_LINE_FINDER_H_
-#define IMAGEPROC_RAST_LINE_FINDER_H_
+#ifndef SCANTAILOR_IMAGEPROC_RASTLINEFINDER_H_
+#define SCANTAILOR_IMAGEPROC_RASTLINEFINDER_H_
 
 #include <QLineF>
 #include <QPointF>
@@ -30,7 +30,7 @@ class RastLineFinderParams {
    * By default, all angles are considered. Keeping in mind that line direction
    * doesn't matter, that gives us the range of [0, 180) degrees.
    * This method allows you to provide a custom range to consider.
-   * Cases where min_angle_deg > max_angle_deg are valid. Consider the difference
+   * Cases where minAngleDeg > maxAngleDeg are valid. Consider the difference
    * between [20, 200) and [200, 20). The latter one is equivalent to [200, 380).
    *
    * \note This is not the angle between the line and the X axis!
@@ -40,9 +40,9 @@ class RastLineFinderParams {
    *       In other words, after normalizing it to unit length, its
    *       coordinates will correspond to cosine and sine of your angle.
    */
-  void setAngleRangeDeg(double min_angle_deg, double max_angle_deg) {
-    m_minAngleDeg = min_angle_deg;
-    m_maxAngleDeg = max_angle_deg;
+  void setAngleRangeDeg(double minAngleDeg, double maxAngleDeg) {
+    m_minAngleDeg = minAngleDeg;
+    m_maxAngleDeg = maxAngleDeg;
   }
 
   /** \see setAngleRangeDeg() */
@@ -57,7 +57,7 @@ class RastLineFinderParams {
    * for the lines returned. By default it's set to 0.1 degrees. Setting it to
    * a higher value will improve performance.
    */
-  void setAngleToleranceDeg(double tolerance_deg) { m_angleToleranceDeg = tolerance_deg; }
+  void setAngleToleranceDeg(double toleranceDeg) { m_angleToleranceDeg = toleranceDeg; }
 
   /** \see setAngleToleranceDeg() */
   double angleToleranceDeg() const { return m_angleToleranceDeg; }
@@ -132,7 +132,7 @@ class RastLineFinder {
    * When a line is found, its support points are removed from the lists of
    * support points of other candidate lines.
    *
-   * \param[out] point_idxs If provided, it will be filled with indices of support
+   * \param[out] pointIdxs If provided, it will be filled with indices of support
    *             points for this line. The indices index the vector of points
    *             that was passed to RastLineFinder constructor.
    * \return If there are no more lines satisfying the search criteria,
@@ -143,7 +143,7 @@ class RastLineFinder {
    *         line won't be properly fit to its support points, but merely be
    *         close to an optimal line.
    */
-  QLineF findNext(std::vector<unsigned>* point_idxs = nullptr);
+  QLineF findNext(std::vector<unsigned>* pointIdxs = nullptr);
 
  private:
   class Point {
@@ -171,11 +171,11 @@ class RastLineFinder {
     SearchSpace();
 
     SearchSpace(const RastLineFinder& owner,
-                float min_dist,
-                float max_dist,
-                float min_angle_rad,
-                float max_angle_rad,
-                const std::vector<unsigned>& candidate_idxs);
+                float minDist,
+                float maxDist,
+                float minAngleRad,
+                float maxAngleRad,
+                const std::vector<unsigned>& candidateIdxs);
 
     /**
      * Returns a line that corresponds to the center of this search space.
@@ -210,7 +210,7 @@ class RastLineFinder {
     friend class PriorityQueue<SearchSpace, OrderedSearchSpaces>;
 
    private:
-    void setIndex(SearchSpace& obj, size_t heap_idx) {}
+    void setIndex(SearchSpace& obj, size_t heapIdx) {}
 
     bool higherThan(const SearchSpace& lhs, const SearchSpace& rhs) const {
       return lhs.pointIdxs().size() > rhs.pointIdxs().size();
@@ -220,7 +220,7 @@ class RastLineFinder {
 
   void pushIfGoodEnough(SearchSpace& ssp);
 
-  void markPointsUnavailable(const std::vector<unsigned>& point_idxs);
+  void markPointsUnavailable(const std::vector<unsigned>& pointIdxs);
 
   void pruneUnavailablePoints();
 
@@ -234,4 +234,4 @@ class RastLineFinder {
 };
 }  // namespace imageproc
 
-#endif  // ifndef IMAGEPROC_RAST_LINE_FINDER_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_RASTLINEFINDER_H_

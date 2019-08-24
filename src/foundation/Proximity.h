@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PROXIMITY_H_
-#define PROXIMITY_H_
+#ifndef SCANTAILOR_FOUNDATION_PROXIMITY_H_
+#define SCANTAILOR_FOUNDATION_PROXIMITY_H_
 
 #include <cmath>
 #include <limits>
@@ -20,7 +20,7 @@ class Proximity {
 
   static Proximity fromSqDist(double sqDist) { return Proximity(sqDist); }
 
-  static Proximity pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* point_on_segment = nullptr);
+  static Proximity pointAndLineSegment(const QPointF& pt, const QLineF& segment, QPointF* pointOnSegment = nullptr);
 
   double dist() const { return std::sqrt(m_sqDist); }
 
@@ -45,4 +45,4 @@ class Proximity {
 };
 
 
-#endif  // ifndef PROXIMITY_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_PROXIMITY_H_

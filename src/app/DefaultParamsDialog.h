@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_DEFAULTPARAMSDIALOG_H
-#define SCANTAILOR_DEFAULTPARAMSDIALOG_H
+#ifndef SCANTAILOR_APP_DEFAULTPARAMSDIALOG_H_
+#define SCANTAILOR_APP_DEFAULTPARAMSDIALOG_H_
 
 #include <QButtonGroup>
 #include <QWidget>
@@ -31,7 +31,7 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
 
   void layoutModeChanged(int idx);
 
-  void deskewModeChanged(bool auto_mode);
+  void deskewModeChanged(bool autoMode);
 
   void pageDetectAutoToggled();
 
@@ -164,4 +164,4 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
 };
 
 
-#endif  // SCANTAILOR_DEFAULTPARAMSDIALOG_H
+#endif  // SCANTAILOR_APP_DEFAULTPARAMSDIALOG_H_

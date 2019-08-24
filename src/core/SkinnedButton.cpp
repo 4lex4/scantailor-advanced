@@ -9,14 +9,14 @@ SkinnedButton::SkinnedButton(const QIcon& icon, QWidget* parent) : QToolButton(p
   initialize();
 }
 
-SkinnedButton::SkinnedButton(const QIcon& normal_state_icon,
-                             const QIcon& hover_state_icon,
-                             const QIcon& pressed_state_icon,
+SkinnedButton::SkinnedButton(const QIcon& normalStateIcon,
+                             const QIcon& hoverStateIcon,
+                             const QIcon& pressedStateIcon,
                              QWidget* parent)
     : QToolButton(parent),
-      m_normalStateIcon(normal_state_icon),
-      m_hoverStateIcon(hover_state_icon),
-      m_pressedStateIcon(pressed_state_icon) {
+      m_normalStateIcon(normalStateIcon),
+      m_hoverStateIcon(hoverStateIcon),
+      m_pressedStateIcon(pressedStateIcon) {
   initialize();
 }
 

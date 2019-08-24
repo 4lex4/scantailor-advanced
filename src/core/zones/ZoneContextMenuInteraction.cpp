@@ -13,12 +13,12 @@
 class ZoneContextMenuInteraction::OrderByArea {
  public:
   bool operator()(const EditableZoneSet::Zone& lhs, const EditableZoneSet::Zone& rhs) const {
-    const QRectF lhs_bbox(lhs.spline()->toPolygon().boundingRect());
-    const QRectF rhs_bbox(rhs.spline()->toPolygon().boundingRect());
-    const qreal lhs_area = lhs_bbox.width() * lhs_bbox.height();
-    const qreal rhs_area = rhs_bbox.width() * rhs_bbox.height();
+    const QRectF lhsBbox(lhs.spline()->toPolygon().boundingRect());
+    const QRectF rhsBbox(rhs.spline()->toPolygon().boundingRect());
+    const qreal lhsArea = lhsBbox.width() * lhsBbox.height();
+    const qreal rhsArea = rhsBbox.width() * rhsBbox.height();
 
-    return lhs_area < rhs_area;
+    return lhsArea < rhsArea;
   }
 };
 
@@ -30,39 +30,39 @@ ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionCo
 
 ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionContext& context,
                                                                InteractionState& interaction,
-                                                               const MenuCustomizer& menu_customizer) {
-  std::vector<Zone> selectable_zones(zonesUnderMouse(context));
+                                                               const MenuCustomizer& menuCustomizer) {
+  std::vector<Zone> selectableZones(zonesUnderMouse(context));
 
-  if (selectable_zones.empty()) {
+  if (selectableZones.empty()) {
     return nullptr;
   } else {
-    return new ZoneContextMenuInteraction(context, interaction, menu_customizer, selectable_zones);
+    return new ZoneContextMenuInteraction(context, interaction, menuCustomizer, selectableZones);
   }
 }
 
 std::vector<ZoneContextMenuInteraction::Zone> ZoneContextMenuInteraction::zonesUnderMouse(
     ZoneInteractionContext& context) {
-  const QTransform from_screen(context.imageView().widgetToImage());
-  const QPointF image_mouse_pos(from_screen.map(context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5)));
+  const QTransform fromScreen(context.imageView().widgetToImage());
+  const QPointF imageMousePos(fromScreen.map(context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5)));
 
   // Find zones containing the mouse position.
-  std::vector<Zone> selectable_zones;
+  std::vector<Zone> selectableZones;
   for (const EditableZoneSet::Zone& zone : context.zones()) {
     QPainterPath path;
     path.setFillRule(Qt::WindingFill);
     path.addPolygon(zone.spline()->toPolygon());
-    if (path.contains(image_mouse_pos)) {
-      selectable_zones.emplace_back(zone);
+    if (path.contains(imageMousePos)) {
+      selectableZones.emplace_back(zone);
     }
   }
 
-  return selectable_zones;
+  return selectableZones;
 }
 
 ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& context,
                                                        InteractionState& interaction,
-                                                       const MenuCustomizer& menu_customizer,
-                                                       std::vector<Zone>& selectable_zones)
+                                                       const MenuCustomizer& menuCustomizer,
+                                                       std::vector<Zone>& selectableZones)
     : m_context(context),
       m_menu(new QMenu(&context.imageView())),
       m_highlightedZoneIdx(-1),
@@ -71,13 +71,13 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
   m_extraDelaysDone = 0;
 #endif
 
-  m_selectableZones.swap(selectable_zones);
+  m_selectableZones.swap(selectableZones);
   std::sort(m_selectableZones.begin(), m_selectableZones.end(), OrderByArea());
 
   interaction.capture(m_interaction);
 
   int h = 20;
-  const int h_step = 65;
+  const int hStep = 65;
   const int s = 255 * 64 / 100;
   const int v = 255 * 96 / 100;
   const int alpha = 150;
@@ -85,7 +85,7 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
   QPixmap pixmap;
   auto it(m_selectableZones.begin());
   const auto end(m_selectableZones.end());
-  for (int i = 0; it != end; ++it, ++i, h = (h + h_step) % 360) {
+  for (int i = 0; it != end; ++it, ++i, h = (h + hStep) % 360) {
     color.setHsv(h, s, v, alpha);
     it->color = color.toRgb();
 
@@ -95,9 +95,9 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
       pixmap.fill(color);
     }
 
-    const StandardMenuItems std_items(propertiesMenuItemFor(*it), deleteMenuItemFor(*it));
+    const StandardMenuItems stdItems(propertiesMenuItemFor(*it), deleteMenuItemFor(*it));
 
-    for (const ZoneContextMenuItem& item : menu_customizer(*it, std_items)) {
+    for (const ZoneContextMenuItem& item : menuCustomizer(*it, stdItems)) {
       QAction* action = m_menu->addAction(pixmap, item.label());
       connect(
           action, &QAction::triggered,
@@ -122,9 +122,9 @@ void ZoneContextMenuInteraction::onPaint(QPainter& painter, const InteractionSta
   painter.setRenderHint(QPainter::Antialiasing);
 
   if (m_highlightedZoneIdx >= 0) {
-    const QTransform to_screen(m_context.imageView().imageToWidget());
+    const QTransform toScreen(m_context.imageView().imageToWidget());
     const Zone& zone = m_selectableZones[m_highlightedZoneIdx];
-    m_visualizer.drawSpline(painter, to_screen, zone.spline());
+    m_visualizer.drawSpline(painter, toScreen, zone.spline());
   }
 }
 
@@ -145,9 +145,9 @@ void ZoneContextMenuInteraction::menuAboutToHide() {
   }
 #endif
 
-  InteractionHandler* next_handler = m_context.createDefaultInteraction();
-  if (next_handler) {
-    makePeerPreceeder(*next_handler);
+  InteractionHandler* nextHandler = m_context.createDefaultInteraction();
+  if (nextHandler) {
+    makePeerPreceeder(*nextHandler);
   }
 
   unlink();
@@ -160,9 +160,9 @@ void ZoneContextMenuInteraction::menuItemTriggered(InteractionState& interaction
   m_menuItemTriggered = true;
   m_visualizer.switchToStrokeMode();
 
-  InteractionHandler* next_handler = callback(interaction);
-  if (next_handler) {
-    makePeerPreceeder(*next_handler);
+  InteractionHandler* nextHandler = callback(interaction);
+  if (nextHandler) {
+    makePeerPreceeder(*nextHandler);
   }
 
   unlink();
@@ -191,31 +191,31 @@ ZoneContextMenuItem ZoneContextMenuInteraction::propertiesMenuItemFor(const Edit
   return ZoneContextMenuItem(tr("Properties"), boost::bind(&ZoneContextMenuInteraction::propertiesRequest, this, zone));
 }
 
-void ZoneContextMenuInteraction::highlightItem(const int zone_idx) {
+void ZoneContextMenuInteraction::highlightItem(const int zoneIdx) {
   if (m_selectableZones.size() > 1) {
-    m_visualizer.switchToFillMode(m_selectableZones[zone_idx].color);
+    m_visualizer.switchToFillMode(m_selectableZones[zoneIdx].color);
   } else {
     m_visualizer.switchToStrokeMode();
   }
-  m_highlightedZoneIdx = zone_idx;
+  m_highlightedZoneIdx = zoneIdx;
   m_context.imageView().update();
 }
 
 std::vector<ZoneContextMenuItem> ZoneContextMenuInteraction::defaultMenuCustomizer(const EditableZoneSet::Zone& zone,
-                                                                                   const StandardMenuItems& std_items) {
+                                                                                   const StandardMenuItems& stdItems) {
   std::vector<ZoneContextMenuItem> items;
   items.reserve(2);
-  items.push_back(std_items.propertiesItem);
-  items.push_back(std_items.deleteItem);
+  items.push_back(stdItems.propertiesItem);
+  items.push_back(stdItems.deleteItem);
 
   return items;
 }
 
 /*========================== StandardMenuItem =========================*/
 
-ZoneContextMenuInteraction::StandardMenuItems::StandardMenuItems(const ZoneContextMenuItem& properties_item,
-                                                                 const ZoneContextMenuItem& delete_item)
-    : propertiesItem(properties_item), deleteItem(delete_item) {}
+ZoneContextMenuInteraction::StandardMenuItems::StandardMenuItems(const ZoneContextMenuItem& propertiesItem,
+                                                                 const ZoneContextMenuItem& deleteItem)
+    : propertiesItem(propertiesItem), deleteItem(deleteItem) {}
 
 /*============================= Visualizer ============================*/
 

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef FIX_ORIENTATION_TASK_H_
-#define FIX_ORIENTATION_TASK_H_
+#ifndef SCANTAILOR_FIX_ORIENTATION_TASK_H_
+#define SCANTAILOR_FIX_ORIENTATION_TASK_H_
 
 #include <FilterData.h>
 #include "FilterResult.h"
@@ -26,12 +26,12 @@ class Task : public ref_countable {
   DECLARE_NON_COPYABLE(Task)
 
  public:
-  Task(const PageId& page_id,
+  Task(const PageId& pageId,
        intrusive_ptr<Filter> filter,
        intrusive_ptr<Settings> settings,
-       intrusive_ptr<ImageSettings> image_settings,
-       intrusive_ptr<page_split::Task> next_task,
-       bool batch_processing);
+       intrusive_ptr<ImageSettings> imageSettings,
+       intrusive_ptr<page_split::Task> nextTask,
+       bool batchProcessing);
 
   ~Task() override;
 
@@ -51,4 +51,4 @@ class Task : public ref_countable {
   bool m_batchProcessing;
 };
 }  // namespace fix_orientation
-#endif  // ifndef FIX_ORIENTATION_TASK_H_
+#endif  // ifndef SCANTAILOR_FIX_ORIENTATION_TASK_H_

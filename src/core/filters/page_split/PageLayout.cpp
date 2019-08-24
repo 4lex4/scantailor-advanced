@@ -15,26 +15,26 @@ using namespace imageproc;
 namespace page_split {
 PageLayout::PageLayout() : m_type(SINGLE_PAGE_UNCUT) {}
 
-PageLayout::PageLayout(const QRectF& full_rect)
-    : m_uncutOutline(full_rect),
-      m_cutter1(full_rect.topLeft(), full_rect.bottomLeft()),
-      m_cutter2(full_rect.topRight(), full_rect.bottomRight()),
+PageLayout::PageLayout(const QRectF& fullRect)
+    : m_uncutOutline(fullRect),
+      m_cutter1(fullRect.topLeft(), fullRect.bottomLeft()),
+      m_cutter2(fullRect.topRight(), fullRect.bottomRight()),
       m_type(SINGLE_PAGE_UNCUT) {}
 
-PageLayout::PageLayout(const QRectF& full_rect, const QLineF& cutter1, const QLineF& cutter2)
-    : m_uncutOutline(full_rect), m_cutter1(cutter1), m_cutter2(cutter2), m_type(SINGLE_PAGE_CUT) {}
+PageLayout::PageLayout(const QRectF& fullRect, const QLineF& cutter1, const QLineF& cutter2)
+    : m_uncutOutline(fullRect), m_cutter1(cutter1), m_cutter2(cutter2), m_type(SINGLE_PAGE_CUT) {}
 
-PageLayout::PageLayout(const QRectF full_rect, const QLineF& split_line)
-    : m_uncutOutline(full_rect), m_cutter1(split_line), m_type(TWO_PAGES) {}
+PageLayout::PageLayout(const QRectF fullRect, const QLineF& splitLine)
+    : m_uncutOutline(fullRect), m_cutter1(splitLine), m_type(TWO_PAGES) {}
 
 PageLayout::PageLayout(const QPolygonF& outline, const QLineF& cutter1, const QLineF& cutter2, Type type)
     : m_uncutOutline(outline), m_cutter1(cutter1), m_cutter2(cutter2), m_type(type) {}
 
-PageLayout::PageLayout(const QDomElement& layout_el)
-    : m_uncutOutline(XmlUnmarshaller::polygonF(layout_el.namedItem("outline").toElement())),
-      m_cutter1(XmlUnmarshaller::lineF(layout_el.namedItem("cutter1").toElement())),
-      m_cutter2(XmlUnmarshaller::lineF(layout_el.namedItem("cutter2").toElement())),
-      m_type(typeFromString(layout_el.attribute("type"))) {}
+PageLayout::PageLayout(const QDomElement& layoutEl)
+    : m_uncutOutline(XmlUnmarshaller::polygonF(layoutEl.namedItem("outline").toElement())),
+      m_cutter1(XmlUnmarshaller::lineF(layoutEl.namedItem("cutter1").toElement())),
+      m_cutter2(XmlUnmarshaller::lineF(layoutEl.namedItem("cutter2").toElement())),
+      m_type(typeFromString(layoutEl.attribute("type"))) {}
 
 void PageLayout::setType(Type type) {
   m_type = type;
@@ -103,50 +103,50 @@ QLineF PageLayout::inscribedCutterLine(int idx) const {
     return QLineF();
   }
 
-  const QLineF raw_line(cutterLine(idx));
-  const QPointF origin(raw_line.p1());
-  const QPointF line_vec(raw_line.p2() - origin);
+  const QLineF rawLine(cutterLine(idx));
+  const QPointF origin(rawLine.p1());
+  const QPointF lineVec(rawLine.p2() - origin);
 
-  double min_proj = NumericTraits<double>::max();
-  double max_proj = NumericTraits<double>::min();
-  QPointF min_pt;
-  QPointF max_pt;
+  double minProj = NumericTraits<double>::max();
+  double maxProj = NumericTraits<double>::min();
+  QPointF minPt;
+  QPointF maxPt;
 
   QPointF p1, p2;
   double projection;
 
   for (int i = 0; i < 4; ++i) {
-    const QLineF poly_segment(m_uncutOutline[i], m_uncutOutline[(i + 1) & 3]);
+    const QLineF polySegment(m_uncutOutline[i], m_uncutOutline[(i + 1) & 3]);
     QPointF intersection;
-    if (poly_segment.intersect(raw_line, &intersection) == QLineF::NoIntersection) {
+    if (polySegment.intersect(rawLine, &intersection) == QLineF::NoIntersection) {
       continue;
     }
 
-    // Project the intersection point on poly_segment to check
+    // Project the intersection point on polySegment to check
     // if it's between its endpoints.
-    p1 = poly_segment.p2() - poly_segment.p1();
-    p2 = intersection - poly_segment.p1();
+    p1 = polySegment.p2() - polySegment.p1();
+    p2 = intersection - polySegment.p1();
     projection = p1.x() * p2.x() + p1.y() * p2.y();
     if ((projection < 0) || (projection > p1.x() * p1.x() + p1.y() * p1.y())) {
       // Intersection point not on the polygon segment.
       continue;
     }
-    // Now project it on raw_line and update min/max projections.
+    // Now project it on rawLine and update min/max projections.
     p1 = intersection - origin;
-    p2 = line_vec;
+    p2 = lineVec;
     projection = p1.x() * p2.x() + p1.y() * p2.y();
-    if (projection <= min_proj) {
-      min_proj = projection;
-      min_pt = intersection;
+    if (projection <= minProj) {
+      minProj = projection;
+      minPt = intersection;
     }
-    if (projection >= max_proj) {
-      max_proj = projection;
-      max_pt = intersection;
+    if (projection >= maxProj) {
+      maxProj = projection;
+      maxPt = intersection;
     }
   }
 
-  QLineF res(min_pt, max_pt);
-  ensureSameDirection(raw_line, res);
+  QLineF res(minPt, maxPt);
+  ensureSameDirection(rawLine, res);
 
   return res;
 }  // PageLayout::inscribedCutterLine
@@ -168,14 +168,14 @@ QPolygonF PageLayout::singlePageOutline() const {
   const QLineF line1(extendToCover(m_cutter1, m_uncutOutline));
   QLineF line2(extendToCover(m_cutter2, m_uncutOutline));
   ensureSameDirection(line1, line2);
-  const QLineF reverse_line1(line1.p2(), line1.p1());
-  const QLineF reverse_line2(line2.p2(), line2.p1());
+  const QLineF reverseLine1(line1.p2(), line1.p1());
+  const QLineF reverseLine2(line2.p2(), line2.p1());
 
   QPolygonF poly;
   poly << line1.p1();
   maybeAddIntersectionPoint(poly, line1.normalVector(), line2.normalVector());
   poly << line2.p1() << line2.p2();
-  maybeAddIntersectionPoint(poly, reverse_line1.normalVector(), reverse_line2.normalVector());
+  maybeAddIntersectionPoint(poly, reverseLine1.normalVector(), reverseLine2.normalVector());
   poly << line1.p2();
 
   return PolygonUtils::round(m_uncutOutline).intersected(PolygonUtils::round(poly));
@@ -197,14 +197,14 @@ QPolygonF PageLayout::leftPageOutline() const {
   const QLineF line1(m_uncutOutline[0], m_uncutOutline[3]);
   QLineF line2(extendToCover(m_cutter1, m_uncutOutline));
   ensureSameDirection(line1, line2);
-  const QLineF reverse_line1(line1.p2(), line1.p1());
-  const QLineF reverse_line2(line2.p2(), line2.p1());
+  const QLineF reverseLine1(line1.p2(), line1.p1());
+  const QLineF reverseLine2(line2.p2(), line2.p1());
 
   QPolygonF poly;
   poly << line1.p1();
   maybeAddIntersectionPoint(poly, line1.normalVector(), line2.normalVector());
   poly << line2.p1() << line2.p2();
-  maybeAddIntersectionPoint(poly, reverse_line1.normalVector(), reverse_line2.normalVector());
+  maybeAddIntersectionPoint(poly, reverseLine1.normalVector(), reverseLine2.normalVector());
   poly << line1.p2();
 
   return PolygonUtils::round(m_uncutOutline).intersected(PolygonUtils::round(poly));
@@ -226,14 +226,14 @@ QPolygonF PageLayout::rightPageOutline() const {
   const QLineF line1(m_uncutOutline[1], m_uncutOutline[2]);
   QLineF line2(extendToCover(m_cutter1, m_uncutOutline));
   ensureSameDirection(line1, line2);
-  const QLineF reverse_line1(line1.p2(), line1.p1());
-  const QLineF reverse_line2(line2.p2(), line2.p1());
+  const QLineF reverseLine1(line1.p2(), line1.p1());
+  const QLineF reverseLine2(line2.p2(), line2.p1());
 
   QPolygonF poly;
   poly << line1.p1();
   maybeAddIntersectionPoint(poly, line1.normalVector(), line2.normalVector());
   poly << line2.p1() << line2.p2();
-  maybeAddIntersectionPoint(poly, reverse_line1.normalVector(), reverse_line2.normalVector());
+  maybeAddIntersectionPoint(poly, reverseLine1.normalVector(), reverseLine2.normalVector());
   poly << line1.p2();
 
   return PolygonUtils::round(m_uncutOutline).intersected(PolygonUtils::round(poly));
@@ -265,10 +265,10 @@ QDomElement PageLayout::toXml(QDomDocument& doc, const QString& name) const {
   el.setAttribute("type", typeToString(m_type));
   el.appendChild(marshaller.polygonF(m_uncutOutline, "outline"));
 
-  const int num_cutters = numCutters();
-  if (num_cutters > 0) {
+  const int numCutters = this->numCutters();
+  if (numCutters > 0) {
     el.appendChild(marshaller.lineF(m_cutter1, "cutter1"));
-    if (num_cutters > 1) {
+    if (numCutters > 1) {
       el.appendChild(marshaller.lineF(m_cutter2, "cutter2"));
     }
   }

@@ -1,15 +1,15 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#include <QImage>
-#include <QPoint>
-#include <QSize>
-#include <boost/test/auto_unit_test.hpp>
 #include <BWColor.h>
 #include <BinaryImage.h>
 #include <Connectivity.h>
 #include <Grayscale.h>
 #include <SeedFill.h>
+#include <QImage>
+#include <QPoint>
+#include <QSize>
+#include <boost/test/auto_unit_test.hpp>
 #include "Utils.h"
 
 namespace imageproc {
@@ -83,14 +83,14 @@ BOOST_AUTO_TEST_CASE(test_gray4_random) {
   for (int i = 0; i < 200; ++i) {
     const GrayImage seed(randomGrayImage(5, 5));
     const GrayImage mask(randomGrayImage(5, 5));
-    const GrayImage fill_new(seedFillGray(seed, mask, CONN4));
-    const GrayImage fill_old(seedFillGraySlow(seed, mask, CONN4));
-    if (fill_new != fill_old) {
-      BOOST_ERROR("fill_new != fill_old at iteration " << i);
+    const GrayImage fillNew(seedFillGray(seed, mask, CONN4));
+    const GrayImage fillOld(seedFillGraySlow(seed, mask, CONN4));
+    if (fillNew != fillOld) {
+      BOOST_ERROR("fillNew != fillOld at iteration " << i);
       dumpGrayImage(seed, "seed");
       dumpGrayImage(mask, "mask");
-      dumpGrayImage(fill_old, "fill_old");
-      dumpGrayImage(fill_new, "fill_new");
+      dumpGrayImage(fillOld, "fillOld");
+      dumpGrayImage(fillNew, "fillNew");
       break;
     }
   }
@@ -100,14 +100,14 @@ BOOST_AUTO_TEST_CASE(test_gray8_random) {
   for (int i = 0; i < 200; ++i) {
     const GrayImage seed(randomGrayImage(5, 5));
     const GrayImage mask(randomGrayImage(5, 5));
-    const GrayImage fill_new(seedFillGray(seed, mask, CONN8));
-    const GrayImage fill_old(seedFillGraySlow(seed, mask, CONN8));
-    if (fill_new != fill_old) {
-      BOOST_ERROR("fill_new != fill_old at iteration " << i);
+    const GrayImage fillNew(seedFillGray(seed, mask, CONN8));
+    const GrayImage fillOld(seedFillGraySlow(seed, mask, CONN8));
+    if (fillNew != fillOld) {
+      BOOST_ERROR("fillNew != fillOld at iteration " << i);
       dumpGrayImage(seed, "seed");
       dumpGrayImage(mask, "mask");
-      dumpGrayImage(fill_old, "fill_old");
-      dumpGrayImage(fill_new, "fill_new");
+      dumpGrayImage(fillOld, "fillOld");
+      dumpGrayImage(fillNew, "fillNew");
       break;
     }
   }
@@ -115,30 +115,30 @@ BOOST_AUTO_TEST_CASE(test_gray8_random) {
 
 BOOST_AUTO_TEST_CASE(test_gray_vs_binary) {
   for (int i = 0; i < 200; ++i) {
-    const BinaryImage bin_seed(randomBinaryImage(5, 5));
-    const BinaryImage bin_mask(randomBinaryImage(5, 5));
-    const GrayImage gray_seed(toGrayscale(bin_seed.toQImage()));
-    const GrayImage gray_mask(toGrayscale(bin_mask.toQImage()));
-    const BinaryImage fill_bin4(seedFill(bin_seed, bin_mask, CONN4));
-    const BinaryImage fill_bin8(seedFill(bin_seed, bin_mask, CONN8));
-    const GrayImage fill_gray4(seedFillGray(gray_seed, gray_mask, CONN4));
-    const GrayImage fill_gray8(seedFillGray(gray_seed, gray_mask, CONN8));
+    const BinaryImage binSeed(randomBinaryImage(5, 5));
+    const BinaryImage binMask(randomBinaryImage(5, 5));
+    const GrayImage graySeed(toGrayscale(binSeed.toQImage()));
+    const GrayImage grayMask(toGrayscale(binMask.toQImage()));
+    const BinaryImage fillBin4(seedFill(binSeed, binMask, CONN4));
+    const BinaryImage fillBin8(seedFill(binSeed, binMask, CONN8));
+    const GrayImage fillGray4(seedFillGray(graySeed, grayMask, CONN4));
+    const GrayImage fillGray8(seedFillGray(graySeed, grayMask, CONN8));
 
-    if (fill_gray4 != GrayImage(fill_bin4.toQImage())) {
+    if (fillGray4 != GrayImage(fillBin4.toQImage())) {
       BOOST_ERROR("grayscale 4-fill != binary 4-fill at index " << i);
-      dumpBinaryImage(bin_seed, "seed");
-      dumpBinaryImage(bin_mask, "mask");
-      dumpBinaryImage(fill_bin4, "bin_fill");
-      dumpBinaryImage(BinaryImage(fill_gray4), "gray_fill");
+      dumpBinaryImage(binSeed, "seed");
+      dumpBinaryImage(binMask, "mask");
+      dumpBinaryImage(fillBin4, "bin_fill");
+      dumpBinaryImage(BinaryImage(fillGray4), "gray_fill");
       break;
     }
 
-    if (fill_gray8 != GrayImage(fill_bin8.toQImage())) {
+    if (fillGray8 != GrayImage(fillBin8.toQImage())) {
       BOOST_ERROR("grayscale 8-fill != binary 8-fill at index " << i);
-      dumpBinaryImage(bin_seed, "seed");
-      dumpBinaryImage(bin_mask, "mask");
-      dumpBinaryImage(fill_bin8, "bin_fill");
-      dumpBinaryImage(BinaryImage(fill_gray8), "gray_fill");
+      dumpBinaryImage(binSeed, "seed");
+      dumpBinaryImage(binMask, "mask");
+      dumpBinaryImage(fillBin8, "bin_fill");
+      dumpBinaryImage(BinaryImage(fillGray8), "gray_fill");
       break;
     }
   }

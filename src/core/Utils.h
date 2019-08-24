@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef UTILS_H_
-#define UTILS_H_
+#ifndef SCANTAILOR_CORE_UTILS_H_
+#define SCANTAILOR_CORE_UTILS_H_
 
 #include <QString>
 #include <map>
@@ -25,16 +25,16 @@ class Utils {
   static T castOrFindChild(QObject* object);
 
   /**
-   * \brief If \p output_dir exists, creates a "cache" subdirectory under it.
+   * \brief If \p outputDir exists, creates a "cache" subdirectory under it.
    *
    * The idea is to prevent creating a bogus directory structure when loading
    * a project created on another machine.
    */
-  static void maybeCreateCacheDir(const QString& output_dir);
+  static void maybeCreateCacheDir(const QString& outputDir);
 
-  static QString outputDirToThumbDir(const QString& output_dir);
+  static QString outputDirToThumbDir(const QString& outputDir);
 
-  static intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache(const QString& output_dir);
+  static intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache(const QString& outputDir);
 
   /**
    * Unlike QFile::rename(), this one overwrites existing files.
@@ -104,4 +104,4 @@ T Utils::castOrFindChild(QObject* object) {
 }
 }  // namespace core
 
-#endif  // ifndef UTILS_H_
+#endif  // ifndef SCANTAILOR_CORE_UTILS_H_

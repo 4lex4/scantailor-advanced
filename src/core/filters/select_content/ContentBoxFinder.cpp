@@ -66,21 +66,21 @@ struct PreferVertical {
 
 QRectF ContentBoxFinder::findContentBox(const TaskStatus& status,
                                         const FilterData& data,
-                                        const QRectF& page_rect,
+                                        const QRectF& pageRect,
                                         DebugImages* dbg) {
-  ImageTransformation xform_150dpi(data.xform());
-  xform_150dpi.preScaleToDpi(Dpi(150, 150));
+  ImageTransformation xform150dpi(data.xform());
+  xform150dpi.preScaleToDpi(Dpi(150, 150));
 
-  if (xform_150dpi.resultingRect().toRect().isEmpty()) {
+  if (xform150dpi.resultingRect().toRect().isEmpty()) {
     return QRectF();
   }
 
   const GrayImage dataGrayImage = data.grayImageBlackOnWhite();
-  const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
-  const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
+  const uint8_t darkestGrayLevel = imageproc::darkestGrayLevel(dataGrayImage);
+  const QColor outsideColor(darkestGrayLevel, darkestGrayLevel, darkestGrayLevel);
 
-  QImage gray150(transformToGray(dataGrayImage, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
-                                 OutsidePixels::assumeColor(outside_color)));
+  QImage gray150(transformToGray(dataGrayImage, xform150dpi.transform(), xform150dpi.resultingRect().toRect(),
+                                 OutsidePixels::assumeColor(outsideColor)));
   // Note that we fill new areas that appear as a result of
   // rotation with black, not white.  Filling them with white
   // may be bad for detecting the shadow around the page.
@@ -95,34 +95,34 @@ QRectF ContentBoxFinder::findContentBox(const TaskStatus& status,
 
   const double xscale = 150.0 / data.xform().origDpi().horizontal();
   const double yscale = 150.0 / data.xform().origDpi().vertical();
-  QRectF page_rect150(page_rect.left() * xscale, page_rect.top() * yscale, page_rect.right() * xscale,
-                      page_rect.bottom() * yscale);
-  PolygonRasterizer::fillExcept(bw150, BLACK, page_rect150, Qt::WindingFill);
+  QRectF pageRect150(pageRect.left() * xscale, pageRect.top() * yscale, pageRect.right() * xscale,
+                     pageRect.bottom() * yscale);
+  PolygonRasterizer::fillExcept(bw150, BLACK, pageRect150, Qt::WindingFill);
 
-  PolygonRasterizer::fillExcept(bw150, BLACK, xform_150dpi.resultingPreCropArea(), Qt::WindingFill);
+  PolygonRasterizer::fillExcept(bw150, BLACK, xform150dpi.resultingPreCropArea(), Qt::WindingFill);
   if (dbg) {
     dbg->add(bw150, "page_mask_applied");
   }
 
-  BinaryImage hor_shadows_seed(openBrick(bw150, QSize(200, 14), BLACK));
+  BinaryImage horShadowsSeed(openBrick(bw150, QSize(200, 14), BLACK));
   if (dbg) {
-    dbg->add(hor_shadows_seed, "hor_shadows_seed");
+    dbg->add(horShadowsSeed, "horShadowsSeed");
   }
 
   status.throwIfCancelled();
 
-  BinaryImage ver_shadows_seed(openBrick(bw150, QSize(14, 300), BLACK));
+  BinaryImage verShadowsSeed(openBrick(bw150, QSize(14, 300), BLACK));
   if (dbg) {
-    dbg->add(ver_shadows_seed, "ver_shadows_seed");
+    dbg->add(verShadowsSeed, "verShadowsSeed");
   }
 
   status.throwIfCancelled();
 
-  BinaryImage shadows_seed(hor_shadows_seed.release());
-  rasterOp<RopOr<RopSrc, RopDst>>(shadows_seed, ver_shadows_seed);
-  ver_shadows_seed.release();
+  BinaryImage shadowsSeed(horShadowsSeed.release());
+  rasterOp<RopOr<RopSrc, RopDst>>(shadowsSeed, verShadowsSeed);
+  verShadowsSeed.release();
   if (dbg) {
-    dbg->add(shadows_seed, "shadows_seed");
+    dbg->add(shadowsSeed, "shadowsSeed");
   }
 
   status.throwIfCancelled();
@@ -134,16 +134,16 @@ QRectF ContentBoxFinder::findContentBox(const TaskStatus& status,
 
   status.throwIfCancelled();
 
-  BinaryImage shadows_dilated(seedFill(shadows_seed, dilated, CONN8));
+  BinaryImage shadowsDilated(seedFill(shadowsSeed, dilated, CONN8));
   dilated.release();
   if (dbg) {
-    dbg->add(shadows_dilated, "shadows_dilated");
+    dbg->add(shadowsDilated, "shadowsDilated");
   }
 
   status.throwIfCancelled();
 
-  rasterOp<RopAnd<RopSrc, RopDst>>(shadows_dilated, bw150);
-  BinaryImage garbage(shadows_dilated.release());
+  rasterOp<RopAnd<RopSrc, RopDst>>(shadowsDilated, bw150);
+  BinaryImage garbage(shadowsDilated.release());
   if (dbg) {
     dbg->add(garbage, "shadows");
   }
@@ -174,99 +174,99 @@ QRectF ContentBoxFinder::findContentBox(const TaskStatus& status,
 
   status.throwIfCancelled();
 
-  BinaryImage content_blocks(content.size(), BLACK);
-  const int area_threshold = std::min(content.width(), content.height());
+  BinaryImage contentBlocks(content.size(), BLACK);
+  const int areaThreshold = std::min(content.width(), content.height());
 
   {
-    MaxWhitespaceFinder hor_ws_finder(PreferHorizontal(), despeckled);
+    MaxWhitespaceFinder horWsFinder(PreferHorizontal(), despeckled);
 
     for (int i = 0; i < 80; ++i) {
-      QRect ws(hor_ws_finder.next(hor_ws_finder.MANUAL_OBSTACLES));
+      QRect ws(horWsFinder.next(horWsFinder.MANUAL_OBSTACLES));
       if (ws.isNull()) {
         break;
       }
-      if (ws.width() * ws.height() < area_threshold) {
+      if (ws.width() * ws.height() < areaThreshold) {
         break;
       }
-      content_blocks.fill(ws, WHITE);
-      const int height_fraction = ws.height() / 5;
-      ws.setTop(ws.top() + height_fraction);
-      ws.setBottom(ws.bottom() - height_fraction);
-      hor_ws_finder.addObstacle(ws);
+      contentBlocks.fill(ws, WHITE);
+      const int heightFraction = ws.height() / 5;
+      ws.setTop(ws.top() + heightFraction);
+      ws.setBottom(ws.bottom() - heightFraction);
+      horWsFinder.addObstacle(ws);
     }
   }
 
   {
-    MaxWhitespaceFinder vert_ws_finder(PreferVertical(), despeckled);
+    MaxWhitespaceFinder vertWsFinder(PreferVertical(), despeckled);
 
     for (int i = 0; i < 40; ++i) {
-      QRect ws(vert_ws_finder.next(vert_ws_finder.MANUAL_OBSTACLES));
+      QRect ws(vertWsFinder.next(vertWsFinder.MANUAL_OBSTACLES));
       if (ws.isNull()) {
         break;
       }
-      if (ws.width() * ws.height() < area_threshold) {
+      if (ws.width() * ws.height() < areaThreshold) {
         break;
       }
-      content_blocks.fill(ws, WHITE);
-      const int width_fraction = ws.width() / 5;
-      ws.setLeft(ws.left() + width_fraction);
-      ws.setRight(ws.right() - width_fraction);
-      vert_ws_finder.addObstacle(ws);
+      contentBlocks.fill(ws, WHITE);
+      const int widthFraction = ws.width() / 5;
+      ws.setLeft(ws.left() + widthFraction);
+      ws.setRight(ws.right() - widthFraction);
+      vertWsFinder.addObstacle(ws);
     }
   }
 
   if (dbg) {
-    dbg->add(content_blocks, "content_blocks");
+    dbg->add(contentBlocks, "contentBlocks");
   }
 
-  trimContentBlocksInPlace(despeckled, content_blocks);
+  trimContentBlocksInPlace(despeckled, contentBlocks);
   if (dbg) {
-    dbg->add(content_blocks, "initial_trimming");
+    dbg->add(contentBlocks, "initial_trimming");
   }
 
   // Do some more whitespace finding.  This should help us separate
   // blocks that don't belong together.
   {
     BinaryImage tmp(content);
-    rasterOp<RopOr<RopNot<RopSrc>, RopDst>>(tmp, content_blocks);
-    MaxWhitespaceFinder ws_finder(tmp.release(), QSize(4, 4));
+    rasterOp<RopOr<RopNot<RopSrc>, RopDst>>(tmp, contentBlocks);
+    MaxWhitespaceFinder wsFinder(tmp.release(), QSize(4, 4));
 
     for (int i = 0; i < 10; ++i) {
-      QRect ws(ws_finder.next());
+      QRect ws(wsFinder.next());
       if (ws.isNull()) {
         break;
       }
-      if (ws.width() * ws.height() < area_threshold) {
+      if (ws.width() * ws.height() < areaThreshold) {
         break;
       }
-      content_blocks.fill(ws, WHITE);
+      contentBlocks.fill(ws, WHITE);
     }
   }
   if (dbg) {
-    dbg->add(content_blocks, "more_whitespace");
+    dbg->add(contentBlocks, "more_whitespace");
   }
 
-  trimContentBlocksInPlace(despeckled, content_blocks);
+  trimContentBlocksInPlace(despeckled, contentBlocks);
   if (dbg) {
-    dbg->add(content_blocks, "more_trimming");
+    dbg->add(contentBlocks, "more_trimming");
   }
 
   despeckled.release();
 
-  inPlaceRemoveAreasTouchingBorders(content_blocks, dbg);
+  inPlaceRemoveAreasTouchingBorders(contentBlocks, dbg);
   if (dbg) {
-    dbg->add(content_blocks, "except_bordering");
+    dbg->add(contentBlocks, "except_bordering");
   }
 
-  BinaryImage text_mask(estimateTextMask(content, content_blocks, dbg));
+  BinaryImage textMask(estimateTextMask(content, contentBlocks, dbg));
   if (dbg) {
-    QImage text_mask_visualized(content.size(), QImage::Format_ARGB32_Premultiplied);
-    text_mask_visualized.fill(0xffffffff);  // Opaque white.
-    QPainter painter(&text_mask_visualized);
+    QImage textMaskVisualized(content.size(), QImage::Format_ARGB32_Premultiplied);
+    textMaskVisualized.fill(0xffffffff);  // Opaque white.
+    QPainter painter(&textMaskVisualized);
 
     QImage tmp(content.size(), QImage::Format_ARGB32_Premultiplied);
     tmp.fill(0xff64dd62);  // Opaque light green.
-    tmp.setAlphaChannel(text_mask.inverted().toQImage());
+    tmp.setAlphaChannel(textMask.inverted().toQImage());
     painter.drawImage(QPoint(0, 0), tmp);
 
     tmp.fill(0xe0000000);  // Mostly transparent black.
@@ -275,112 +275,112 @@ QRectF ContentBoxFinder::findContentBox(const TaskStatus& status,
 
     painter.end();
 
-    dbg->add(text_mask_visualized, "text_mask");
+    dbg->add(textMaskVisualized, "textMask");
   }
 
-  // Make text_mask strore the actual content pixels that are text.
-  rasterOp<RopAnd<RopSrc, RopDst>>(text_mask, content);
+  // Make textMask strore the actual content pixels that are text.
+  rasterOp<RopAnd<RopSrc, RopDst>>(textMask, content);
 
-  QRect content_rect(content_blocks.contentBoundingBox());
-  // Temporarily reuse hor_shadows_seed and ver_shadows_seed.
+  QRect contentRect(contentBlocks.contentBoundingBox());
+  // Temporarily reuse horShadowsSeed and verShadowsSeed.
   // It's OK they are null.
-  segmentGarbage(garbage, hor_shadows_seed, ver_shadows_seed, dbg);
+  segmentGarbage(garbage, horShadowsSeed, verShadowsSeed, dbg);
   garbage.release();
 
   if (dbg) {
-    dbg->add(hor_shadows_seed, "initial_hor_garbage");
-    dbg->add(ver_shadows_seed, "initial_vert_garbage");
+    dbg->add(horShadowsSeed, "initial_hor_garbage");
+    dbg->add(verShadowsSeed, "initial_vert_garbage");
   }
 
-  Garbage hor_garbage(Garbage::HOR, hor_shadows_seed.release());
-  Garbage vert_garbage(Garbage::VERT, ver_shadows_seed.release());
+  Garbage horGarbage(Garbage::HOR, horShadowsSeed.release());
+  Garbage vertGarbage(Garbage::VERT, verShadowsSeed.release());
 
   enum Side { LEFT = 1, RIGHT = 2, TOP = 4, BOTTOM = 8 };
 
-  int side_mask = LEFT | RIGHT | TOP | BOTTOM;
+  int sideMask = LEFT | RIGHT | TOP | BOTTOM;
 
-  while (side_mask && !content_rect.isEmpty()) {
-    QRect old_content_rect;
+  while (sideMask && !contentRect.isEmpty()) {
+    QRect oldContentRect;
 
-    if (side_mask & LEFT) {
-      side_mask &= ~LEFT;
-      old_content_rect = content_rect;
-      content_rect = trimLeft(content, content_blocks, text_mask, content_rect, vert_garbage, dbg);
-
-      status.throwIfCancelled();
-
-      if (content_rect.isEmpty()) {
-        break;
-      }
-      if (old_content_rect != content_rect) {
-        side_mask |= LEFT | TOP | BOTTOM;
-      }
-    }
-
-    if (side_mask & RIGHT) {
-      side_mask &= ~RIGHT;
-      old_content_rect = content_rect;
-      content_rect = trimRight(content, content_blocks, text_mask, content_rect, vert_garbage, dbg);
+    if (sideMask & LEFT) {
+      sideMask &= ~LEFT;
+      oldContentRect = contentRect;
+      contentRect = trimLeft(content, contentBlocks, textMask, contentRect, vertGarbage, dbg);
 
       status.throwIfCancelled();
 
-      if (content_rect.isEmpty()) {
+      if (contentRect.isEmpty()) {
         break;
       }
-      if (old_content_rect != content_rect) {
-        side_mask |= RIGHT | TOP | BOTTOM;
+      if (oldContentRect != contentRect) {
+        sideMask |= LEFT | TOP | BOTTOM;
       }
     }
 
-    if (side_mask & TOP) {
-      side_mask &= ~TOP;
-      old_content_rect = content_rect;
-      content_rect = trimTop(content, content_blocks, text_mask, content_rect, hor_garbage, dbg);
+    if (sideMask & RIGHT) {
+      sideMask &= ~RIGHT;
+      oldContentRect = contentRect;
+      contentRect = trimRight(content, contentBlocks, textMask, contentRect, vertGarbage, dbg);
 
       status.throwIfCancelled();
 
-      if (content_rect.isEmpty()) {
+      if (contentRect.isEmpty()) {
         break;
       }
-      if (old_content_rect != content_rect) {
-        side_mask |= TOP | LEFT | RIGHT;
+      if (oldContentRect != contentRect) {
+        sideMask |= RIGHT | TOP | BOTTOM;
       }
     }
 
-    if (side_mask & BOTTOM) {
-      side_mask &= ~BOTTOM;
-      old_content_rect = content_rect;
-      content_rect = trimBottom(content, content_blocks, text_mask, content_rect, hor_garbage, dbg);
+    if (sideMask & TOP) {
+      sideMask &= ~TOP;
+      oldContentRect = contentRect;
+      contentRect = trimTop(content, contentBlocks, textMask, contentRect, horGarbage, dbg);
 
       status.throwIfCancelled();
 
-      if (content_rect.isEmpty()) {
+      if (contentRect.isEmpty()) {
         break;
       }
-      if (old_content_rect != content_rect) {
-        side_mask |= BOTTOM | LEFT | RIGHT;
+      if (oldContentRect != contentRect) {
+        sideMask |= TOP | LEFT | RIGHT;
       }
     }
 
-    if ((content_rect.width() < 8) || (content_rect.height() < 8)) {
-      content_rect = QRect();
+    if (sideMask & BOTTOM) {
+      sideMask &= ~BOTTOM;
+      oldContentRect = contentRect;
+      contentRect = trimBottom(content, contentBlocks, textMask, contentRect, horGarbage, dbg);
+
+      status.throwIfCancelled();
+
+      if (contentRect.isEmpty()) {
+        break;
+      }
+      if (oldContentRect != contentRect) {
+        sideMask |= BOTTOM | LEFT | RIGHT;
+      }
+    }
+
+    if ((contentRect.width() < 8) || (contentRect.height() < 8)) {
+      contentRect = QRect();
       break;
-    } else if ((content_rect.width() < 30) && (content_rect.height() > content_rect.width() * 20)) {
-      content_rect = QRect();
+    } else if ((contentRect.width() < 30) && (contentRect.height() > contentRect.width() * 20)) {
+      contentRect = QRect();
       break;
     }
   }
 
   // Increase the content rect due to cutting off the content at edges because of rescaling made.
-  if (!content_rect.isEmpty()) {
-    content_rect.adjust(-1, -1, 1, 1);
+  if (!contentRect.isEmpty()) {
+    contentRect.adjust(-1, -1, 1, 1);
   }
 
   // Transform back from 150dpi.
-  QTransform combined_xform(xform_150dpi.transform().inverted());
-  combined_xform *= data.xform().transform();
+  QTransform combinedXform(xform150dpi.transform().inverted());
+  combinedXform *= data.xform().transform();
 
-  return combined_xform.map(QRectF(content_rect)).boundingRect().intersected(data.xform().resultingRect());
+  return combinedXform.map(QRectF(contentRect)).boundingRect().intersected(data.xform().resultingRect());
 }  // ContentBoxFinder::findContentBox
 
 namespace {
@@ -425,105 +425,105 @@ struct Bounds {
 }  // namespace
 
 void ContentBoxFinder::trimContentBlocksInPlace(const imageproc::BinaryImage& content,
-                                                imageproc::BinaryImage& content_blocks) {
-  const ConnectivityMap cmap(content_blocks, CONN4);
+                                                imageproc::BinaryImage& contentBlocks) {
+  const ConnectivityMap cmap(contentBlocks, CONN4);
   std::vector<Bounds> bounds(cmap.maxLabel() + 1);
 
   int width = content.width();
   int height = content.height();
   const uint32_t msb = uint32_t(1) << 31;
 
-  const uint32_t* content_line = content.data();
-  const int content_stride = content.wordsPerLine();
-  const uint32_t* cmap_line = cmap.data();
-  const int cmap_stride = cmap.stride();
+  const uint32_t* contentLine = content.data();
+  const int contentStride = content.wordsPerLine();
+  const uint32_t* cmapLine = cmap.data();
+  const int cmapStride = cmap.stride();
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      const uint32_t label = cmap_line[x];
+      const uint32_t label = cmapLine[x];
       if (label == 0) {
         continue;
       }
-      if (content_line[x >> 5] & (msb >> (x & 31))) {
+      if (contentLine[x >> 5] & (msb >> (x & 31))) {
         bounds[label].forceInside(x, y);
       }
     }
-    cmap_line += cmap_stride;
-    content_line += content_stride;
+    cmapLine += cmapStride;
+    contentLine += contentStride;
   }
 
-  uint32_t* cb_line = content_blocks.data();
-  const int cb_stride = content_blocks.wordsPerLine();
-  cmap_line = cmap.data();
+  uint32_t* cbLine = contentBlocks.data();
+  const int cbStride = contentBlocks.wordsPerLine();
+  cmapLine = cmap.data();
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      const uint32_t label = cmap_line[x];
+      const uint32_t label = cmapLine[x];
       if (label == 0) {
         continue;
       }
       if (!bounds[label].isInside(x, y)) {
-        cb_line[x >> 5] &= ~(msb >> (x & 31));
+        cbLine[x >> 5] &= ~(msb >> (x & 31));
       }
     }
-    cmap_line += cmap_stride;
-    cb_line += cb_stride;
+    cmapLine += cmapStride;
+    cbLine += cbStride;
   }
 }  // ContentBoxFinder::trimContentBlocksInPlace
 
-void ContentBoxFinder::inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage& content_blocks, DebugImages* dbg) {
+void ContentBoxFinder::inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage& contentBlocks, DebugImages* dbg) {
   // We could just do a seed fill from borders, but that
   // has the potential to remove too much.  Instead, we
   // do something similar to a seed fill, but with a limited
   // spread distance.
 
 
-  const int width = content_blocks.width();
-  const int height = content_blocks.height();
+  const int width = contentBlocks.width();
+  const int height = contentBlocks.height();
 
-  const auto max_spread_dist = static_cast<uint16_t>(std::min(width, height) / 4);
+  const auto maxSpreadDist = static_cast<uint16_t>(std::min(width, height) / 4);
 
   std::vector<uint16_t> map((width + 2) * (height + 2), ~uint16_t(0));
 
-  uint32_t* cb_line = content_blocks.data();
-  const int cb_stride = content_blocks.wordsPerLine();
-  uint16_t* map_line = &map[0] + width + 3;
-  const int map_stride = width + 2;
+  uint32_t* cbLine = contentBlocks.data();
+  const int cbStride = contentBlocks.wordsPerLine();
+  uint16_t* mapLine = &map[0] + width + 3;
+  const int mapStride = width + 2;
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      uint32_t mask = cb_line[x >> 5] >> (31 - (x & 31));
+      uint32_t mask = cbLine[x >> 5] >> (31 - (x & 31));
       mask &= uint32_t(1);
       --mask;
 
       // WHITE -> max, BLACK -> 0
-      map_line[x] = static_cast<uint16_t>(mask);
+      mapLine[x] = static_cast<uint16_t>(mask);
     }
-    map_line += map_stride;
-    cb_line += cb_stride;
+    mapLine += mapStride;
+    cbLine += cbStride;
   }
 
   std::queue<uint16_t*> queue;
   // Initialize border seeds.
-  map_line = &map[0] + width + 3;
+  mapLine = &map[0] + width + 3;
   for (int x = 0; x < width; ++x) {
-    if (map_line[x] == 0) {
-      map_line[x] = max_spread_dist;
-      queue.push(&map_line[x]);
+    if (mapLine[x] == 0) {
+      mapLine[x] = maxSpreadDist;
+      queue.push(&mapLine[x]);
     }
   }
   for (int y = 1; y < height - 1; ++y) {
-    if (map_line[0] == 0) {
-      map_line[0] = max_spread_dist;
-      queue.push(&map_line[0]);
+    if (mapLine[0] == 0) {
+      mapLine[0] = maxSpreadDist;
+      queue.push(&mapLine[0]);
     }
-    if (map_line[width - 1] == 0) {
-      map_line[width - 1] = max_spread_dist;
-      queue.push(&map_line[width - 1]);
+    if (mapLine[width - 1] == 0) {
+      mapLine[width - 1] = maxSpreadDist;
+      queue.push(&mapLine[width - 1]);
     }
-    map_line += map_stride;
+    mapLine += mapStride;
   }
   for (int x = 0; x < width; ++x) {
-    if (map_line[x] == 0) {
-      map_line[x] = max_spread_dist;
-      queue.push(&map_line[x]);
+    if (mapLine[x] == 0) {
+      mapLine[x] = maxSpreadDist;
+      queue.push(&mapLine[x]);
     }
   }
 
@@ -537,73 +537,73 @@ void ContentBoxFinder::inPlaceRemoveAreasTouchingBorders(imageproc::BinaryImage&
     queue.pop();
 
     assert(*cell != 0);
-    const auto new_dist = static_cast<uint16_t>(*cell - 1);
+    const auto newDist = static_cast<uint16_t>(*cell - 1);
 
-    uint16_t* nbh = cell - map_stride;
-    if (new_dist > *nbh) {
-      *nbh = new_dist;
+    uint16_t* nbh = cell - mapStride;
+    if (newDist > *nbh) {
+      *nbh = newDist;
       queue.push(nbh);
     }
 
     nbh = cell - 1;
-    if (new_dist > *nbh) {
-      *nbh = new_dist;
+    if (newDist > *nbh) {
+      *nbh = newDist;
       queue.push(nbh);
     }
 
     nbh = cell + 1;
-    if (new_dist > *nbh) {
-      *nbh = new_dist;
+    if (newDist > *nbh) {
+      *nbh = newDist;
       queue.push(nbh);
     }
 
-    nbh = cell + map_stride;
-    if (new_dist > *nbh) {
-      *nbh = new_dist;
+    nbh = cell + mapStride;
+    if (newDist > *nbh) {
+      *nbh = newDist;
       queue.push(nbh);
     }
   }
 
-  cb_line = content_blocks.data();
-  map_line = &map[0] + width + 3;
+  cbLine = contentBlocks.data();
+  mapLine = &map[0] + width + 3;
   const uint32_t msb = uint32_t(1) << 31;
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (map_line[x] + 1 > 1) {  // If not 0 or ~uint16_t(0)
-        cb_line[x >> 5] &= ~(msb >> (x & 31));
+      if (mapLine[x] + 1 > 1) {  // If not 0 or ~uint16_t(0)
+        cbLine[x >> 5] &= ~(msb >> (x & 31));
       }
     }
-    map_line += map_stride;
-    cb_line += cb_stride;
+    mapLine += mapStride;
+    cbLine += cbStride;
   }
 }  // ContentBoxFinder::inPlaceRemoveAreasTouchingBorders
 
 void ContentBoxFinder::segmentGarbage(const imageproc::BinaryImage& garbage,
-                                      imageproc::BinaryImage& hor_garbage,
-                                      imageproc::BinaryImage& vert_garbage,
+                                      imageproc::BinaryImage& horGarbage,
+                                      imageproc::BinaryImage& vertGarbage,
                                       DebugImages* dbg) {
-  hor_garbage = openBrick(garbage, QSize(200, 1), WHITE);
+  horGarbage = openBrick(garbage, QSize(200, 1), WHITE);
 
   QRect rect(garbage.rect());
   rect.setHeight(1);
-  rasterOp<RopOr<RopSrc, RopDst>>(hor_garbage, rect, garbage, rect.topLeft());
+  rasterOp<RopOr<RopSrc, RopDst>>(horGarbage, rect, garbage, rect.topLeft());
   rect.moveBottom(garbage.rect().bottom());
-  rasterOp<RopOr<RopSrc, RopDst>>(hor_garbage, rect, garbage, rect.topLeft());
+  rasterOp<RopOr<RopSrc, RopDst>>(horGarbage, rect, garbage, rect.topLeft());
 
-  vert_garbage = openBrick(garbage, QSize(1, 200), WHITE);
+  vertGarbage = openBrick(garbage, QSize(1, 200), WHITE);
 
   rect = garbage.rect();
   rect.setWidth(1);
-  rasterOp<RopOr<RopSrc, RopDst>>(vert_garbage, rect, garbage, rect.topLeft());
+  rasterOp<RopOr<RopSrc, RopDst>>(vertGarbage, rect, garbage, rect.topLeft());
   rect.moveRight(garbage.rect().right());
-  rasterOp<RopOr<RopSrc, RopDst>>(vert_garbage, rect, garbage, rect.topLeft());
+  rasterOp<RopOr<RopSrc, RopDst>>(vertGarbage, rect, garbage, rect.topLeft());
 
   ConnectivityMap cmap(garbage.size());
 
-  cmap.addComponent(vert_garbage);
-  vert_garbage.fill(WHITE);
-  cmap.addComponent(hor_garbage);
-  hor_garbage.fill(WHITE);
+  cmap.addComponent(vertGarbage);
+  vertGarbage.fill(WHITE);
+  cmap.addComponent(horGarbage);
+  horGarbage.fill(WHITE);
 
   InfluenceMap imap(cmap, garbage);
   cmap = ConnectivityMap();
@@ -611,44 +611,44 @@ void ContentBoxFinder::segmentGarbage(const imageproc::BinaryImage& garbage,
   const int width = garbage.width();
   const int height = garbage.height();
 
-  InfluenceMap::Cell* imap_line = imap.data();
-  const int imap_stride = imap.stride();
+  InfluenceMap::Cell* imapLine = imap.data();
+  const int imapStride = imap.stride();
 
-  uint32_t* vg_line = vert_garbage.data();
-  const int vg_stride = vert_garbage.wordsPerLine();
-  uint32_t* hg_line = hor_garbage.data();
-  const int hg_stride = hor_garbage.wordsPerLine();
+  uint32_t* vgLine = vertGarbage.data();
+  const int vgStride = vertGarbage.wordsPerLine();
+  uint32_t* hgLine = horGarbage.data();
+  const int hgStride = horGarbage.wordsPerLine();
 
   const uint32_t msb = uint32_t(1) << 31;
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      switch (imap_line[x].label) {
+      switch (imapLine[x].label) {
         case 1:
-          vg_line[x >> 5] |= msb >> (x & 31);
+          vgLine[x >> 5] |= msb >> (x & 31);
           break;
         case 2:
-          hg_line[x >> 5] |= msb >> (x & 31);
+          hgLine[x >> 5] |= msb >> (x & 31);
           break;
         default:
           break;
       }
     }
-    imap_line += imap_stride;
-    vg_line += vg_stride;
-    hg_line += hg_stride;
+    imapLine += imapStride;
+    vgLine += vgStride;
+    hgLine += hgStride;
   }
 
-  BinaryImage unconnected_garbage(garbage);
-  rasterOp<RopSubtract<RopDst, RopSrc>>(unconnected_garbage, hor_garbage);
-  rasterOp<RopSubtract<RopDst, RopSrc>>(unconnected_garbage, vert_garbage);
+  BinaryImage unconnectedGarbage(garbage);
+  rasterOp<RopSubtract<RopDst, RopSrc>>(unconnectedGarbage, horGarbage);
+  rasterOp<RopSubtract<RopDst, RopSrc>>(unconnectedGarbage, vertGarbage);
 
-  rasterOp<RopOr<RopSrc, RopDst>>(hor_garbage, unconnected_garbage);
-  rasterOp<RopOr<RopSrc, RopDst>>(vert_garbage, unconnected_garbage);
+  rasterOp<RopOr<RopSrc, RopDst>>(horGarbage, unconnectedGarbage);
+  rasterOp<RopOr<RopSrc, RopDst>>(vertGarbage, unconnectedGarbage);
 }  // ContentBoxFinder::segmentGarbage
 
 imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::BinaryImage& content,
-                                                          const imageproc::BinaryImage& content_blocks,
+                                                          const imageproc::BinaryImage& contentBlocks,
                                                           DebugImages* dbg) {
   // We differentiate between a text line and a slightly skewed straight
   // line (which may have a fill factor similar to that of text) by the
@@ -656,7 +656,7 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
 
   const BinaryImage ueps(SEDM(content, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS).findPeaksDestructive());
   if (dbg) {
-    QImage canvas(content_blocks.toQImage().convertToFormat(QImage::Format_ARGB32_Premultiplied));
+    QImage canvas(contentBlocks.toQImage().convertToFormat(QImage::Format_ARGB32_Premultiplied));
     QPainter painter;
     painter.begin(&canvas);
     QImage overlay(canvas.size(), canvas.format());
@@ -664,80 +664,80 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
     overlay.setAlphaChannel(content.inverted().toQImage());
     painter.drawImage(QPoint(0, 0), overlay);
 
-    BinaryImage ueps_on_content_blocks(content_blocks);
-    rasterOp<RopAnd<RopSrc, RopDst>>(ueps_on_content_blocks, ueps);
+    BinaryImage uepsOnContentBlocks(contentBlocks);
+    rasterOp<RopAnd<RopSrc, RopDst>>(uepsOnContentBlocks, ueps);
 
     overlay.fill(0xffffff00);  // opaque yellow
-    overlay.setAlphaChannel(ueps_on_content_blocks.inverted().toQImage());
+    overlay.setAlphaChannel(uepsOnContentBlocks.inverted().toQImage());
     painter.drawImage(QPoint(0, 0), overlay);
 
     painter.end();
     dbg->add(canvas, "ueps");
   }
 
-  BinaryImage text_mask(content.size(), WHITE);
+  BinaryImage textMask(content.size(), WHITE);
 
-  const int min_text_height = 6;
+  const int minTextHeight = 6;
 
-  ConnCompEraserExt eraser(content_blocks, CONN4);
+  ConnCompEraserExt eraser(contentBlocks, CONN4);
   while (true) {
     const ConnComp cc(eraser.nextConnComp());
     if (cc.isNull()) {
       break;
     }
 
-    BinaryImage cc_img(eraser.computeConnCompImage());
-    BinaryImage content_img(cc_img.size());
-    rasterOp<RopSrc>(content_img, content_img.rect(), content, cc.rect().topLeft());
+    BinaryImage ccImg(eraser.computeConnCompImage());
+    BinaryImage contentImg(ccImg.size());
+    rasterOp<RopSrc>(contentImg, contentImg.rect(), content, cc.rect().topLeft());
 
     // Note that some content may actually be not masked
-    // by content_blocks, because we build content_blocks
+    // by contentBlocks, because we build contentBlocks
     // based on despeckled content image.
-    rasterOp<RopAnd<RopSrc, RopDst>>(content_img, cc_img);
+    rasterOp<RopAnd<RopSrc, RopDst>>(contentImg, ccImg);
 
-    const SlicedHistogram hist(content_img, SlicedHistogram::ROWS);
-    const SlicedHistogram block_hist(cc_img, SlicedHistogram::ROWS);
+    const SlicedHistogram hist(contentImg, SlicedHistogram::ROWS);
+    const SlicedHistogram blockHist(ccImg, SlicedHistogram::ROWS);
 
     assert(hist.size() != 0);
 
     typedef std::pair<const int*, const int*> Range;
     std::vector<Range> ranges;
-    std::vector<Range> splittable_ranges;
-    splittable_ranges.emplace_back(&hist[0], &hist[hist.size() - 1]);
+    std::vector<Range> splittableRanges;
+    splittableRanges.emplace_back(&hist[0], &hist[hist.size() - 1]);
 
-    std::vector<int> max_forward(hist.size());
-    std::vector<int> max_backwards(hist.size());
+    std::vector<int> maxForward(hist.size());
+    std::vector<int> maxBackwards(hist.size());
 
     // Try splitting text lines.
-    while (!splittable_ranges.empty()) {
-      const int* const first = splittable_ranges.back().first;
-      const int* const last = splittable_ranges.back().second;
-      splittable_ranges.pop_back();
+    while (!splittableRanges.empty()) {
+      const int* const first = splittableRanges.back().first;
+      const int* const last = splittableRanges.back().second;
+      splittableRanges.pop_back();
 
-      if (last - first < min_text_height - 1) {
+      if (last - first < minTextHeight - 1) {
         // Just ignore such a small segment.
         continue;
       }
-      // Fill max_forward and max_backwards.
+      // Fill maxForward and maxBackwards.
       {
         int prev = *first;
         for (int i = 0; i <= last - first; ++i) {
           prev = std::max(prev, first[i]);
-          max_forward[i] = prev;
+          maxForward[i] = prev;
         }
         prev = *last;
         for (int i = 0; i <= last - first; ++i) {
           prev = std::max(prev, last[-i]);
-          max_backwards[i] = prev;
+          maxBackwards[i] = prev;
         }
       }
 
-      int best_magnitude = std::numeric_limits<int>::min();
-      const int* best_split_pos = nullptr;
+      int bestMagnitude = std::numeric_limits<int>::min();
+      const int* bestSplitPos = nullptr;
       assert(first != last);
       for (const int* p = first + 1; p != last; ++p) {
-        const int peak1 = max_forward[p - (first + 1)];
-        const int peak2 = max_backwards[(last - 1) - p];
+        const int peak1 = maxForward[p - (first + 1)];
+        const int peak2 = maxBackwards[(last - 1) - p];
         if (*p * 3.5 > 0.5 * (peak1 + peak2)) {
           continue;
         }
@@ -751,15 +751,15 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
         }
 
         const int magnitude = shoulder1 + shoulder2;
-        if (magnitude > best_magnitude) {
-          best_magnitude = magnitude;
-          best_split_pos = p;
+        if (magnitude > bestMagnitude) {
+          bestMagnitude = magnitude;
+          bestSplitPos = p;
         }
       }
 
-      if (best_split_pos) {
-        splittable_ranges.emplace_back(first, best_split_pos - 1);
-        splittable_ranges.emplace_back(best_split_pos + 1, last);
+      if (bestSplitPos) {
+        splittableRanges.emplace_back(first, bestSplitPos - 1);
+        splittableRanges.emplace_back(bestSplitPos + 1, last);
       } else {
         ranges.emplace_back(first, last);
       }
@@ -768,142 +768,141 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
     for (const Range range : ranges) {
       const auto first = static_cast<int>(range.first - &hist[0]);
       const auto last = static_cast<int>(range.second - &hist[0]);
-      if (last - first < min_text_height - 1) {
+      if (last - first < minTextHeight - 1) {
         continue;
       }
 
-      int64_t weighted_y = 0;
-      int total_weight = 0;
+      int64_t weightedY = 0;
+      int totalWeight = 0;
       for (int i = first; i <= last; ++i) {
         const int val = hist[i];
-        weighted_y += val * i;
-        total_weight += val;
+        weightedY += val * i;
+        totalWeight += val;
       }
 
-      if (total_weight == 0) {
+      if (totalWeight == 0) {
         // qDebug() << "no black pixels at all";
         continue;
       }
 
-      const double min_fill_factor = 0.22;
-      const double max_fill_factor = 0.65;
+      const double minFillFactor = 0.22;
+      const double maxFillFactor = 0.65;
 
-      const auto center_y = static_cast<int>((weighted_y + total_weight / 2) / total_weight);
-      int top = center_y - min_text_height / 2;
-      int bottom = top + min_text_height - 1;
-      int num_black = 0;
-      int num_total = 0;
-      int max_width = 0;
+      const auto centerY = static_cast<int>((weightedY + totalWeight / 2) / totalWeight);
+      int top = centerY - minTextHeight / 2;
+      int bottom = top + minTextHeight - 1;
+      int numBlack = 0;
+      int numTotal = 0;
+      int maxWidth = 0;
       if ((top < first) || (bottom > last)) {
         continue;
       }
       for (int i = top; i <= bottom; ++i) {
-        num_black += hist[i];
-        num_total += block_hist[i];
-        max_width = std::max(max_width, block_hist[i]);
+        numBlack += hist[i];
+        numTotal += blockHist[i];
+        maxWidth = std::max(maxWidth, blockHist[i]);
       }
-      if (num_black < num_total * min_fill_factor) {
+      if (numBlack < numTotal * minFillFactor) {
         // qDebug() << "initial fill factor too low";
         continue;
       }
-      if (num_black > num_total * max_fill_factor) {
+      if (numBlack > numTotal * maxFillFactor) {
         // qDebug() << "initial fill factor too high";
         continue;
       }
 
       // Extend the top and bottom of the text line.
-      while ((top > first || bottom < last) && std::abs((center_y - top) - (bottom - center_y)) <= 1) {
-        const int new_top = (top > first) ? top - 1 : top;
-        const int new_bottom = (bottom < last) ? bottom + 1 : bottom;
-        num_black += hist[new_top] + hist[new_bottom];
-        num_total += block_hist[new_top] + block_hist[new_bottom];
-        if (num_black < num_total * min_fill_factor) {
+      while ((top > first || bottom < last) && std::abs((centerY - top) - (bottom - centerY)) <= 1) {
+        const int newTop = (top > first) ? top - 1 : top;
+        const int newBottom = (bottom < last) ? bottom + 1 : bottom;
+        numBlack += hist[newTop] + hist[newBottom];
+        numTotal += blockHist[newTop] + blockHist[newBottom];
+        if (numBlack < numTotal * minFillFactor) {
           break;
         }
-        max_width = std::max(max_width, block_hist[new_top]);
-        max_width = std::max(max_width, block_hist[new_bottom]);
-        top = new_top;
-        bottom = new_bottom;
+        maxWidth = std::max(maxWidth, blockHist[newTop]);
+        maxWidth = std::max(maxWidth, blockHist[newBottom]);
+        top = newTop;
+        bottom = newBottom;
       }
 
-      if (num_black > num_total * max_fill_factor) {
+      if (numBlack > numTotal * maxFillFactor) {
         // qDebug() << "final fill factor too high";
         continue;
       }
 
-      if (max_width < (bottom - top + 1) * 0.6) {
+      if (maxWidth < (bottom - top + 1) * 0.6) {
         // qDebug() << "aspect ratio too low";
         continue;
       }
 
-      QRect line_rect(cc.rect());
-      line_rect.setTop(cc.rect().top() + top);
-      line_rect.setBottom(cc.rect().top() + bottom);
+      QRect lineRect(cc.rect());
+      lineRect.setTop(cc.rect().top() + top);
+      lineRect.setBottom(cc.rect().top() + bottom);
 
       // Check if there are enough ultimate eroded points on the line.
-      auto ueps_todo = int(0.4 * line_rect.width() / line_rect.height());
-      if (ueps_todo) {
-        BinaryImage line_ueps(line_rect.size());
-        rasterOp<RopSrc>(line_ueps, line_ueps.rect(), content_blocks, line_rect.topLeft());
-        rasterOp<RopAnd<RopSrc, RopDst>>(line_ueps, line_ueps.rect(), ueps, line_rect.topLeft());
-        ConnCompEraser ueps_eraser(line_ueps, CONN4);
+      auto uepsTodo = int(0.4 * lineRect.width() / lineRect.height());
+      if (uepsTodo) {
+        BinaryImage lineUeps(lineRect.size());
+        rasterOp<RopSrc>(lineUeps, lineUeps.rect(), contentBlocks, lineRect.topLeft());
+        rasterOp<RopAnd<RopSrc, RopDst>>(lineUeps, lineUeps.rect(), ueps, lineRect.topLeft());
+        ConnCompEraser uepsEraser(lineUeps, CONN4);
         ConnComp cc;
-        for (; ueps_todo && !(cc = ueps_eraser.nextConnComp()).isNull(); --ueps_todo) {
-          // Erase components until ueps_todo reaches zero or there are no more components.
+        for (; uepsTodo && !(cc = uepsEraser.nextConnComp()).isNull(); --uepsTodo) {
+          // Erase components until uepsTodo reaches zero or there are no more components.
         }
-        if (ueps_todo) {
+        if (uepsTodo) {
           // Not enough ueps were found.
           // qDebug() << "Not enough UEPs.";
           continue;
         }
       }
       // Write this block to the text mask.
-      rasterOp<RopOr<RopSrc, RopDst>>(text_mask, line_rect, cc_img, QPoint(0, top));
+      rasterOp<RopOr<RopSrc, RopDst>>(textMask, lineRect, ccImg, QPoint(0, top));
     }
   }
 
-  return text_mask;
+  return textMask;
 }  // ContentBoxFinder::estimateTextMask
 
 QRect ContentBoxFinder::trimLeft(const imageproc::BinaryImage& content,
-                                 const imageproc::BinaryImage& content_blocks,
+                                 const imageproc::BinaryImage& contentBlocks,
                                  const imageproc::BinaryImage& text,
                                  const QRect& area,
                                  Garbage& garbage,
                                  DebugImages* const dbg) {
-  const SlicedHistogram hist(content_blocks, area, SlicedHistogram::COLS);
+  const SlicedHistogram hist(contentBlocks, area, SlicedHistogram::COLS);
 
   size_t start = 0;
   while (start < hist.size()) {
-    size_t first_ws = start;
-    for (; first_ws < hist.size() && hist[first_ws] != 0; ++first_ws) {
+    size_t firstWs = start;
+    for (; firstWs < hist.size() && hist[firstWs] != 0; ++firstWs) {
       // Skip non-empty columns.
     }
-    size_t first_non_ws = first_ws;
-    for (; first_non_ws < hist.size() && hist[first_non_ws] == 0; ++first_non_ws) {
+    size_t firstNonWs = firstWs;
+    for (; firstNonWs < hist.size() && hist[firstNonWs] == 0; ++firstNonWs) {
       // Skip empty columns.
     }
 
-    first_ws += area.left();
-    first_non_ws += area.left();
+    firstWs += area.left();
+    firstNonWs += area.left();
 
-    QRect new_area(area);
-    new_area.setLeft(static_cast<int>(first_non_ws));
-    if (new_area.isEmpty()) {
+    QRect newArea(area);
+    newArea.setLeft(static_cast<int>(firstNonWs));
+    if (newArea.isEmpty()) {
       return area;
     }
 
-    QRect removed_area(area);
-    removed_area.setRight(static_cast<int>(first_ws - 1));
-    if (removed_area.isEmpty()) {
-      return new_area;
+    QRect removedArea(area);
+    removedArea.setRight(static_cast<int>(firstWs - 1));
+    if (removedArea.isEmpty()) {
+      return newArea;
     }
 
-    bool can_retry_grouped = false;
-    const QRect res
-        = trim(content, content_blocks, text, area, new_area, removed_area, garbage, can_retry_grouped, dbg);
-    if (can_retry_grouped) {
-      start = first_non_ws - area.left();
+    bool canRetryGrouped = false;
+    const QRect res = trim(content, contentBlocks, text, area, newArea, removedArea, garbage, canRetryGrouped, dbg);
+    if (canRetryGrouped) {
+      start = firstNonWs - area.left();
     } else {
       return res;
     }
@@ -913,44 +912,43 @@ QRect ContentBoxFinder::trimLeft(const imageproc::BinaryImage& content,
 }  // ContentBoxFinder::trimLeft
 
 QRect ContentBoxFinder::trimRight(const imageproc::BinaryImage& content,
-                                  const imageproc::BinaryImage& content_blocks,
+                                  const imageproc::BinaryImage& contentBlocks,
                                   const imageproc::BinaryImage& text,
                                   const QRect& area,
                                   Garbage& garbage,
                                   DebugImages* const dbg) {
-  const SlicedHistogram hist(content_blocks, area, SlicedHistogram::COLS);
+  const SlicedHistogram hist(contentBlocks, area, SlicedHistogram::COLS);
 
   auto start = static_cast<int>(hist.size() - 1);
   while (start >= 0) {
-    int first_ws = start;
-    for (; first_ws >= 0 && hist[first_ws] != 0; --first_ws) {
+    int firstWs = start;
+    for (; firstWs >= 0 && hist[firstWs] != 0; --firstWs) {
       // Skip non-empty columns.
     }
-    int first_non_ws = first_ws;
-    for (; first_non_ws >= 0 && hist[first_non_ws] == 0; --first_non_ws) {
+    int firstNonWs = firstWs;
+    for (; firstNonWs >= 0 && hist[firstNonWs] == 0; --firstNonWs) {
       // Skip empty columns.
     }
 
-    first_ws += area.left();
-    first_non_ws += area.left();
+    firstWs += area.left();
+    firstNonWs += area.left();
 
-    QRect new_area(area);
-    new_area.setRight(first_non_ws);
-    if (new_area.isEmpty()) {
+    QRect newArea(area);
+    newArea.setRight(firstNonWs);
+    if (newArea.isEmpty()) {
       return area;
     }
 
-    QRect removed_area(area);
-    removed_area.setLeft(first_ws + 1);
-    if (removed_area.isEmpty()) {
-      return new_area;
+    QRect removedArea(area);
+    removedArea.setLeft(firstWs + 1);
+    if (removedArea.isEmpty()) {
+      return newArea;
     }
 
-    bool can_retry_grouped = false;
-    const QRect res
-        = trim(content, content_blocks, text, area, new_area, removed_area, garbage, can_retry_grouped, dbg);
-    if (can_retry_grouped) {
-      start = first_non_ws - area.left();
+    bool canRetryGrouped = false;
+    const QRect res = trim(content, contentBlocks, text, area, newArea, removedArea, garbage, canRetryGrouped, dbg);
+    if (canRetryGrouped) {
+      start = firstNonWs - area.left();
     } else {
       return res;
     }
@@ -960,44 +958,43 @@ QRect ContentBoxFinder::trimRight(const imageproc::BinaryImage& content,
 }  // ContentBoxFinder::trimRight
 
 QRect ContentBoxFinder::trimTop(const imageproc::BinaryImage& content,
-                                const imageproc::BinaryImage& content_blocks,
+                                const imageproc::BinaryImage& contentBlocks,
                                 const imageproc::BinaryImage& text,
                                 const QRect& area,
                                 Garbage& garbage,
                                 DebugImages* const dbg) {
-  const SlicedHistogram hist(content_blocks, area, SlicedHistogram::ROWS);
+  const SlicedHistogram hist(contentBlocks, area, SlicedHistogram::ROWS);
 
   size_t start = 0;
   while (start < hist.size()) {
-    size_t first_ws = start;
-    for (; first_ws < hist.size() && hist[first_ws] != 0; ++first_ws) {
+    size_t firstWs = start;
+    for (; firstWs < hist.size() && hist[firstWs] != 0; ++firstWs) {
       // Skip non-empty columns.
     }
-    size_t first_non_ws = first_ws;
-    for (; first_non_ws < hist.size() && hist[first_non_ws] == 0; ++first_non_ws) {
+    size_t firstNonWs = firstWs;
+    for (; firstNonWs < hist.size() && hist[firstNonWs] == 0; ++firstNonWs) {
       // Skip empty columns.
     }
 
-    first_ws += area.top();
-    first_non_ws += area.top();
+    firstWs += area.top();
+    firstNonWs += area.top();
 
-    QRect new_area(area);
-    new_area.setTop(static_cast<int>(first_non_ws));
-    if (new_area.isEmpty()) {
+    QRect newArea(area);
+    newArea.setTop(static_cast<int>(firstNonWs));
+    if (newArea.isEmpty()) {
       return area;
     }
 
-    QRect removed_area(area);
-    removed_area.setBottom(static_cast<int>(first_ws - 1));
-    if (removed_area.isEmpty()) {
-      return new_area;
+    QRect removedArea(area);
+    removedArea.setBottom(static_cast<int>(firstWs - 1));
+    if (removedArea.isEmpty()) {
+      return newArea;
     }
 
-    bool can_retry_grouped = false;
-    const QRect res
-        = trim(content, content_blocks, text, area, new_area, removed_area, garbage, can_retry_grouped, dbg);
-    if (can_retry_grouped) {
-      start = first_non_ws - area.top();
+    bool canRetryGrouped = false;
+    const QRect res = trim(content, contentBlocks, text, area, newArea, removedArea, garbage, canRetryGrouped, dbg);
+    if (canRetryGrouped) {
+      start = firstNonWs - area.top();
     } else {
       return res;
     }
@@ -1007,44 +1004,43 @@ QRect ContentBoxFinder::trimTop(const imageproc::BinaryImage& content,
 }  // ContentBoxFinder::trimTop
 
 QRect ContentBoxFinder::trimBottom(const imageproc::BinaryImage& content,
-                                   const imageproc::BinaryImage& content_blocks,
+                                   const imageproc::BinaryImage& contentBlocks,
                                    const imageproc::BinaryImage& text,
                                    const QRect& area,
                                    Garbage& garbage,
                                    DebugImages* const dbg) {
-  const SlicedHistogram hist(content_blocks, area, SlicedHistogram::ROWS);
+  const SlicedHistogram hist(contentBlocks, area, SlicedHistogram::ROWS);
 
   auto start = static_cast<int>(hist.size() - 1);
   while (start >= 0) {
-    int first_ws = start;
-    for (; first_ws >= 0 && hist[first_ws] != 0; --first_ws) {
+    int firstWs = start;
+    for (; firstWs >= 0 && hist[firstWs] != 0; --firstWs) {
       // Skip non-empty columns.
     }
-    int first_non_ws = first_ws;
-    for (; first_non_ws >= 0 && hist[first_non_ws] == 0; --first_non_ws) {
+    int firstNonWs = firstWs;
+    for (; firstNonWs >= 0 && hist[firstNonWs] == 0; --firstNonWs) {
       // Skip empty columns.
     }
 
-    first_ws += area.top();
-    first_non_ws += area.top();
+    firstWs += area.top();
+    firstNonWs += area.top();
 
-    QRect new_area(area);
-    new_area.setBottom(first_non_ws);
-    if (new_area.isEmpty()) {
+    QRect newArea(area);
+    newArea.setBottom(firstNonWs);
+    if (newArea.isEmpty()) {
       return area;
     }
 
-    QRect removed_area(area);
-    removed_area.setTop(first_ws + 1);
-    if (removed_area.isEmpty()) {
-      return new_area;
+    QRect removedArea(area);
+    removedArea.setTop(firstWs + 1);
+    if (removedArea.isEmpty()) {
+      return newArea;
     }
 
-    bool can_retry_grouped = false;
-    const QRect res
-        = trim(content, content_blocks, text, area, new_area, removed_area, garbage, can_retry_grouped, dbg);
-    if (can_retry_grouped) {
-      start = first_non_ws - area.top();
+    bool canRetryGrouped = false;
+    const QRect res = trim(content, contentBlocks, text, area, newArea, removedArea, garbage, canRetryGrouped, dbg);
+    if (canRetryGrouped) {
+      start = firstNonWs - area.top();
     } else {
       return res;
     }
@@ -1054,41 +1050,41 @@ QRect ContentBoxFinder::trimBottom(const imageproc::BinaryImage& content,
 }  // ContentBoxFinder::trimBottom
 
 QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
-                             const imageproc::BinaryImage& content_blocks,
+                             const imageproc::BinaryImage& contentBlocks,
                              const imageproc::BinaryImage& text,
                              const QRect& area,
-                             const QRect& new_area,
-                             const QRect& removed_area,
+                             const QRect& newArea,
+                             const QRect& removedArea,
                              Garbage& garbage,
-                             bool& can_retry_grouped,
+                             bool& canRetryGrouped,
                              DebugImages* const dbg) {
-  can_retry_grouped = false;
+  canRetryGrouped = false;
 
   QImage visualized;
 
   if (dbg) {
-    visualized = QImage(content_blocks.size(), QImage::Format_ARGB32_Premultiplied);
+    visualized = QImage(contentBlocks.size(), QImage::Format_ARGB32_Premultiplied);
     QPainter painter(&visualized);
-    painter.drawImage(QPoint(0, 0), content_blocks.toQImage());
+    painter.drawImage(QPoint(0, 0), contentBlocks.toQImage());
 
-    QPainterPath outer_path;
-    outer_path.addRect(visualized.rect());
-    QPainterPath inner_path;
-    inner_path.addRect(area);
+    QPainterPath outerPath;
+    outerPath.addRect(visualized.rect());
+    QPainterPath innerPath;
+    innerPath.addRect(area);
 
     // Fill already rejected area with translucent gray.
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(0x00, 0x00, 0x00, 50));
-    painter.drawPath(outer_path.subtracted(inner_path));
+    painter.drawPath(outerPath.subtracted(innerPath));
   }
 
   // Don't trim too much.
-  while (removed_area.width() * removed_area.height() > 0.3 * (new_area.width() * new_area.height())) {
+  while (removedArea.width() * removedArea.height() > 0.3 * (newArea.width() * newArea.height())) {
     // It's a loop just to be able to break from it.
 
     // There is a special case when there is nothing but
     // garbage on the page.  Let's try to handle it here.
-    if ((removed_area.width() < 6) || (removed_area.height() < 6)) {
+    if ((removedArea.width() < 6) || (removedArea.height() < 6)) {
       break;
     }
 
@@ -1096,8 +1092,8 @@ QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
       QPainter painter(&visualized);
       painter.setPen(Qt::NoPen);
       painter.setBrush(QColor(0x5f, 0xdf, 0x57, 50));
-      painter.drawRect(removed_area);
-      painter.drawRect(new_area);
+      painter.drawRect(removedArea);
+      painter.drawRect(newArea);
       painter.end();
       dbg->add(visualized, "trim_too_much");
     }
@@ -1105,109 +1101,109 @@ QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
     return area;
   }
 
-  const int content_pixels = content.countBlackPixels(removed_area);
+  const int contentPixels = content.countBlackPixels(removedArea);
 
-  const bool vertical_cut = (new_area.top() == area.top() && new_area.bottom() == area.bottom());
-  // qDebug() << "vertical cut: " << vertical_cut;
+  const bool verticalCut = (newArea.top() == area.top() && newArea.bottom() == area.bottom());
+  // qDebug() << "vertical cut: " << verticalCut;
   // Ranged from 0.0 to 1.0.  When it's less than 0.5, objects
   // are more likely to be considered as garbage.  When it's
   // more than 0.5, objects are less likely to be considered
   // as garbage.
-  double proximity_bias = vertical_cut ? 0.5 : 0.65;
+  double proximityBias = verticalCut ? 0.5 : 0.65;
 
-  const int num_text_pixels = text.countBlackPixels(removed_area);
-  if (num_text_pixels == 0) {
-    proximity_bias = vertical_cut ? 0.4 : 0.5;
+  const int numTextPixels = text.countBlackPixels(removedArea);
+  if (numTextPixels == 0) {
+    proximityBias = verticalCut ? 0.4 : 0.5;
   } else {
-    int total_pixels = content_pixels;
-    total_pixels += garbage.image().countBlackPixels(removed_area);
+    int totalPixels = contentPixels;
+    totalPixels += garbage.image().countBlackPixels(removedArea);
 
-    // qDebug() << "num_text_pixels = " << num_text_pixels;
-    // qDebug() << "total_pixels = " << total_pixels;
-    ++total_pixels;  // just in case
-    const double min_text_influence = 0.2;
-    const double max_text_influence = 1.0;
-    const int upper_threshold = 5000;
-    double text_influence = max_text_influence;
-    if (num_text_pixels < upper_threshold) {
-      text_influence = min_text_influence
-                       + (max_text_influence - min_text_influence) * std::log((double) num_text_pixels)
-                             / std::log((double) upper_threshold);
+    // qDebug() << "numTextPixels = " << numTextPixels;
+    // qDebug() << "totalPixels = " << totalPixels;
+    ++totalPixels;  // just in case
+    const double minTextInfluence = 0.2;
+    const double maxTextInfluence = 1.0;
+    const int upperThreshold = 5000;
+    double textInfluence = maxTextInfluence;
+    if (numTextPixels < upperThreshold) {
+      textInfluence = minTextInfluence
+                      + (maxTextInfluence - minTextInfluence) * std::log((double) numTextPixels)
+                            / std::log((double) upperThreshold);
     }
-    // qDebug() << "text_influence = " << text_influence;
+    // qDebug() << "textInfluence = " << textInfluence;
 
-    proximity_bias += (1.0 - proximity_bias) * text_influence * num_text_pixels / total_pixels;
-    proximity_bias = qBound(0.0, proximity_bias, 1.0);
+    proximityBias += (1.0 - proximityBias) * textInfluence * numTextPixels / totalPixels;
+    proximityBias = qBound(0.0, proximityBias, 1.0);
   }
 
-  BinaryImage remaining_content(content_blocks.size(), WHITE);
-  rasterOp<RopSrc>(remaining_content, new_area, content, new_area.topLeft());
-  rasterOp<RopAnd<RopSrc, RopDst>>(remaining_content, new_area, content_blocks, new_area.topLeft());
+  BinaryImage remainingContent(contentBlocks.size(), WHITE);
+  rasterOp<RopSrc>(remainingContent, newArea, content, newArea.topLeft());
+  rasterOp<RopAnd<RopSrc, RopDst>>(remainingContent, newArea, contentBlocks, newArea.topLeft());
 
-  const SEDM dm_to_others(remaining_content, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
-  remaining_content.release();
+  const SEDM dmToOthers(remainingContent, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
+  remainingContent.release();
 
-  double sum_dist_to_garbage = 0;
-  double sum_dist_to_others = 0;
+  double sumDistToGarbage = 0;
+  double sumDistToOthers = 0;
 
-  const uint32_t* cb_line = content_blocks.data();
-  const int cb_stride = content_blocks.wordsPerLine();
+  const uint32_t* cbLine = contentBlocks.data();
+  const int cbStride = contentBlocks.wordsPerLine();
   const uint32_t msb = uint32_t(1) << 31;
 
-  const uint32_t* dm_garbage_line = garbage.sedm().data();
-  const uint32_t* dm_others_line = dm_to_others.data();
-  const int dm_stride = dm_to_others.stride();
+  const uint32_t* dmGarbageLine = garbage.sedm().data();
+  const uint32_t* dmOthersLine = dmToOthers.data();
+  const int dmStride = dmToOthers.stride();
 
   int count = 0;
-  cb_line += cb_stride * removed_area.top();
-  dm_garbage_line += dm_stride * removed_area.top();
-  dm_others_line += dm_stride * removed_area.top();
-  for (int y = removed_area.top(); y <= removed_area.bottom(); ++y) {
-    for (int x = removed_area.left(); x <= removed_area.right(); ++x) {
-      if (cb_line[x >> 5] & (msb >> (x & 31))) {
-        sum_dist_to_garbage += std::sqrt((double) dm_garbage_line[x]);
-        sum_dist_to_others += std::sqrt((double) dm_others_line[x]);
+  cbLine += cbStride * removedArea.top();
+  dmGarbageLine += dmStride * removedArea.top();
+  dmOthersLine += dmStride * removedArea.top();
+  for (int y = removedArea.top(); y <= removedArea.bottom(); ++y) {
+    for (int x = removedArea.left(); x <= removedArea.right(); ++x) {
+      if (cbLine[x >> 5] & (msb >> (x & 31))) {
+        sumDistToGarbage += std::sqrt((double) dmGarbageLine[x]);
+        sumDistToOthers += std::sqrt((double) dmOthersLine[x]);
         ++count;
       }
     }
-    cb_line += cb_stride;
-    dm_garbage_line += dm_stride;
-    dm_others_line += dm_stride;
+    cbLine += cbStride;
+    dmGarbageLine += dmStride;
+    dmOthersLine += dmStride;
   }
 
-  // qDebug() << "proximity_bias = " << proximity_bias;
-  // qDebug() << "sum_dist_to_garbage = " << sum_dist_to_garbage;
-  // qDebug() << "sum_dist_to_others = " << sum_dist_to_others;
+  // qDebug() << "proximityBias = " << proximityBias;
+  // qDebug() << "sumDistToGarbage = " << sumDistToGarbage;
+  // qDebug() << "sumDistToOthers = " << sumDistToOthers;
   // qDebug() << "count = " << count;
 
-  sum_dist_to_garbage *= proximity_bias;
-  sum_dist_to_others *= 1.0 - proximity_bias;
+  sumDistToGarbage *= proximityBias;
+  sumDistToOthers *= 1.0 - proximityBias;
 
-  if (sum_dist_to_garbage < sum_dist_to_others) {
-    garbage.add(content, removed_area);
+  if (sumDistToGarbage < sumDistToOthers) {
+    garbage.add(content, removedArea);
     if (dbg) {
       QPainter painter(&visualized);
       painter.setPen(Qt::NoPen);
       painter.setBrush(QColor(0x5f, 0xdf, 0x57, 50));
-      painter.drawRect(new_area);
+      painter.drawRect(newArea);
       painter.setBrush(QColor(0xff, 0x20, 0x1e, 50));
-      painter.drawRect(removed_area);
+      painter.drawRect(removedArea);
       painter.end();
       dbg->add(visualized, "trimmed");
     }
 
-    return new_area;
+    return newArea;
   } else {
     if (dbg) {
       QPainter painter(&visualized);
       painter.setPen(Qt::NoPen);
       painter.setBrush(QColor(0x5f, 0xdf, 0x57, 50));
-      painter.drawRect(removed_area);
-      painter.drawRect(new_area);
+      painter.drawRect(removedArea);
+      painter.drawRect(newArea);
       painter.end();
       dbg->add(visualized, "not_trimmed");
     }
-    can_retry_grouped = (proximity_bias < 0.85);
+    canRetryGrouped = (proximityBias < 0.85);
 
     return area;
   }
@@ -1226,54 +1222,54 @@ void ContentBoxFinder::filterShadows(const TaskStatus& status,
   BinaryImage borders(shadows.size(), WHITE);
   borders.fillExcept(borders.rect().adjusted(1, 1, -1, -1), BLACK);
 
-  BinaryImage touching_shadows(seedFill(borders, shadows, CONN8));
-  rasterOp<RopXor<RopSrc, RopDst>>(shadows, touching_shadows);
+  BinaryImage touchingShadows(seedFill(borders, shadows, CONN8));
+  rasterOp<RopXor<RopSrc, RopDst>>(shadows, touchingShadows);
   if (dbg) {
     dbg->add(shadows, "non_border_shadows");
   }
 
   if (shadows.countBlackPixels()) {
-    BinaryImage inv_shadows(shadows.inverted());
-    BinaryImage mask(seedFill(borders, inv_shadows, CONN8));
+    BinaryImage invShadows(shadows.inverted());
+    BinaryImage mask(seedFill(borders, invShadows, CONN8));
     borders.release();
     rasterOp<RopOr<RopNot<RopDst>, RopSrc>>(mask, shadows);
     if (dbg) {
       dbg->add(mask, "shadows_no_holes");
     }
 
-    BinaryImage text_mask(estimateTextMask(inv_shadows, mask, dbg));
-    inv_shadows.release();
+    BinaryImage textMask(estimateTextMask(invShadows, mask, dbg));
+    invShadows.release();
     mask.release();
-    text_mask = seedFill(text_mask, shadows, CONN8);
+    textMask = seedFill(textMask, shadows, CONN8);
     if (dbg) {
-      dbg->add(text_mask, "misclassified_shadows");
+      dbg->add(textMask, "misclassified_shadows");
     }
-    rasterOp<RopXor<RopSrc, RopDst>>(shadows, text_mask);
+    rasterOp<RopXor<RopSrc, RopDst>>(shadows, textMask);
   }
 
-  rasterOp<RopOr<RopSrc, RopDst>>(shadows, touching_shadows);
+  rasterOp<RopOr<RopSrc, RopDst>>(shadows, touchingShadows);
 #else   // if 1
         // White dots on black background may be a problem for us.
         // They may be misclassified as parts of white letters.
-  BinaryImage reduced_dithering(closeBrick(shadows, QSize(1, 2), BLACK));
-  reduced_dithering = closeBrick(reduced_dithering, QSize(2, 1), BLACK);
+  BinaryImage reducedDithering(closeBrick(shadows, QSize(1, 2), BLACK));
+  reducedDithering = closeBrick(reducedDithering, QSize(2, 1), BLACK);
   if (dbg) {
-    dbg->add(reduced_dithering, "reduced_dithering");
+    dbg->add(reducedDithering, "reducedDithering");
   }
 
   status.throwIfCancelled();
 
   // Long white vertical lines are definately not spaces between letters.
-  BinaryImage vert_whitespace(closeBrick(reduced_dithering, QSize(1, 150), BLACK));
+  BinaryImage vertWhitespace(closeBrick(reducedDithering, QSize(1, 150), BLACK));
   if (dbg) {
-    dbg->add(vert_whitespace, "vert_whitespace");
+    dbg->add(vertWhitespace, "vertWhitespace");
   }
 
   status.throwIfCancelled();
 
   // Join neighboring white letters.
-  BinaryImage opened(openBrick(reduced_dithering, QSize(10, 4), BLACK));
-  reduced_dithering.release();
+  BinaryImage opened(openBrick(reducedDithering, QSize(10, 4), BLACK));
+  reducedDithering.release();
   if (dbg) {
     dbg->add(opened, "opened");
   }
@@ -1290,8 +1286,8 @@ void ContentBoxFinder::filterShadows(const TaskStatus& status,
   // Join the spacings between words together.
   BinaryImage closed(closeBrick(opened, QSize(20, 1), WHITE));
   opened.release();
-  rasterOp<RopAnd<RopSrc, RopDst>>(closed, vert_whitespace);
-  vert_whitespace.release();
+  rasterOp<RopAnd<RopSrc, RopDst>>(closed, vertWhitespace);
+  vertWhitespace.release();
   if (dbg) {
     dbg->add(closed, "closed");
   }
@@ -1307,15 +1303,15 @@ void ContentBoxFinder::filterShadows(const TaskStatus& status,
 
   status.throwIfCancelled();
 
-  BinaryImage non_shadows(seedFill(opened, shadows, CONN8));
+  BinaryImage nonShadows(seedFill(opened, shadows, CONN8));
   opened.release();
   if (dbg) {
-    dbg->add(non_shadows, "non_shadows");
+    dbg->add(nonShadows, "nonShadows");
   }
 
   status.throwIfCancelled();
 
-  rasterOp<RopSubtract<RopDst, RopSrc>>(shadows, non_shadows);
+  rasterOp<RopSubtract<RopDst, RopSrc>>(shadows, nonShadows);
 #endif  // if 1
 }  // ContentBoxFinder::filterShadows
 

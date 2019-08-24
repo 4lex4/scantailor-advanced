@@ -767,7 +767,10 @@ void despeckleImpl(BinaryImage& image,
 
   bool haveAnchoredToSmallButNotBig = false;
   for (const Component& comp : components) {
-    haveAnchoredToSmallButNotBig = comp.anchoredToSmallButNotBig();
+    if (comp.anchoredToSmallButNotBig()) {
+      haveAnchoredToSmallButNotBig = true;
+      break;
+    }
   }
 
   if (haveAnchoredToSmallButNotBig) {

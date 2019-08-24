@@ -308,7 +308,7 @@ void ProjectFilesDialog::setInputDir(const QString& dir, const bool autoAddFiles
                         std::back_inserter(files), FileInfoLess());
   }
 
-  typedef std::vector<Item> ItemList;
+  using ItemList = std::vector<Item>;
   ItemList items;
   for (const QFileInfo& file : files) {
     Qt::ItemFlags flags;
@@ -334,7 +334,7 @@ void ProjectFilesDialog::addToProject() {
   const QItemSelection selection(
       m_offProjectFilesSorted->model()->mapSelectionToSource(offProjectList->selectionModel()->selection()));
 
-  typedef std::vector<Item> ItemList;
+  using ItemList = std::vector<Item>;
   ItemList items;
 
   m_offProjectFiles->items(selection, [&](const Item& item) { items.push_back(item); });
@@ -350,7 +350,7 @@ void ProjectFilesDialog::removeFromProject() {
   const QItemSelection selection(
       m_inProjectFilesSorted->model()->mapSelectionToSource(inProjectList->selectionModel()->selection()));
 
-  typedef std::vector<Item> ItemList;
+  using ItemList = std::vector<Item>;
   ItemList items;
 
   m_inProjectFiles->items(selection, [&](const Item& item) {
@@ -507,7 +507,7 @@ void ProjectFilesDialog::FileList::remove(const QItemSelection& selection) {
     return;
   }
 
-  typedef std::pair<int, int> Range;
+  using Range = std::pair<int, int>;
   QVector<Range> sortedRanges;
   for (const auto& range : selection) {
     sortedRanges.push_back(Range(range.top(), range.bottom()));

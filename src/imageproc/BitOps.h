@@ -31,7 +31,7 @@ struct ReverseBytes {
     const int leftShift = (TotalBytes - Offset - 1) * 8;
     const int rightShift = Offset * 8;
 
-    typedef unsigned char Byte;
+    using Byte = unsigned char;
     const Byte leftByte = static_cast<Byte>(val >> leftShift);
     const Byte rightByte = static_cast<Byte>(val >> rightShift);
 
@@ -51,7 +51,7 @@ struct ReverseBytes<T, TotalBytes, Offset, true> {
 template <typename T>
 struct ReverseBytes<T, 1, 0, false> {
   static T result(const T val) {
-    typedef unsigned char Byte;
+    using Byte = unsigned char;
 
     return T(reversedBits[static_cast<Byte>(val)]);
   }

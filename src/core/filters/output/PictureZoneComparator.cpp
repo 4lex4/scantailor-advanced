@@ -29,7 +29,7 @@ bool PictureZoneComparator::equal(const Zone& lhs, const Zone& rhs) {
 }
 
 bool PictureZoneComparator::equal(const PropertySet& lhs, const PropertySet& rhs) {
-  typedef PictureLayerProperty PLP;
+  using PLP = PictureLayerProperty;
 
   return lhs.locateOrDefault<PLP>()->layer() == rhs.locateOrDefault<PLP>()->layer();
 }

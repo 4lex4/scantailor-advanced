@@ -10,19 +10,19 @@
 template <size_t N, typename T>
 class VecNT;
 
-typedef VecNT<1, float> Vec1f;
-typedef VecNT<1, double> Vec1d;
-typedef VecNT<2, float> Vec2f;
-typedef VecNT<2, double> Vec2d;
-typedef VecNT<3, float> Vec3f;
-typedef VecNT<3, double> Vec3d;
-typedef VecNT<4, float> Vec4f;
-typedef VecNT<4, double> Vec4d;
+using Vec1f = VecNT<1, float>;
+using Vec1d = VecNT<1, double>;
+using Vec2f = VecNT<2, float>;
+using Vec2d = VecNT<2, double>;
+using Vec3f = VecNT<3, float>;
+using Vec3d = VecNT<3, double>;
+using Vec4f = VecNT<4, float>;
+using Vec4d = VecNT<4, double>;
 
 template <size_t N, typename T>
 class VecNT {
  public:
-  typedef T type;
+  using type = T;
   enum { SIZE = static_cast<int>(N) };
 
   /**

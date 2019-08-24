@@ -18,7 +18,7 @@ class TabbedDebugImages : public QTabWidget {
   void currentTabChanged(int idx);
 
  private:
-  typedef boost::intrusive::list<DebugImageView, boost::intrusive::constant_time_size<false>> DebugViewList;
+  using DebugViewList = boost::intrusive::list<DebugImageView, boost::intrusive::constant_time_size<false>>;
 
   enum { MAX_LIVE_VIEWS = 3 };
 

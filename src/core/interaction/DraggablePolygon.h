@@ -13,9 +13,9 @@ class ObjectDragHandler;
 
 class DraggablePolygon : public DraggableObject {
  public:
-  typedef boost::function<QPolygonF()> PositionCallback;
+  using PositionCallback = boost::function<QPolygonF()>;
 
-  typedef boost::function<void(const QPolygonF& polygon)> MoveRequestCallback;
+  using MoveRequestCallback = boost::function<void(const QPolygonF& polygon)>;
 
   DraggablePolygon();
 

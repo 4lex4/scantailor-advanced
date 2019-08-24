@@ -294,7 +294,7 @@ void PolygonRasterizer::Rasterizer::prepareEdges() {
 
 void PolygonRasterizer::Rasterizer::fillBinary(BinaryImage& image, const BWColor color) const {
   std::vector<EdgeComponent> edgesForLine;
-  typedef std::vector<EdgeComponent>::const_iterator EdgeIter;
+  using EdgeIter = std::vector<EdgeComponent>::const_iterator;
 
   uint32_t* line = image.data();
   const int wpl = image.wordsPerLine();
@@ -334,7 +334,7 @@ void PolygonRasterizer::Rasterizer::fillBinary(BinaryImage& image, const BWColor
 
 void PolygonRasterizer::Rasterizer::fillGrayscale(QImage& image, const uint8_t color) const {
   std::vector<EdgeComponent> edgesForLine;
-  typedef std::vector<EdgeComponent>::const_iterator EdgeIter;
+  using EdgeIter = std::vector<EdgeComponent>::const_iterator;
 
   uint8_t* line = image.bits();
   const int bpl = image.bytesPerLine();

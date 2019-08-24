@@ -25,7 +25,7 @@ class ColorSchemeFactory {
   std::unique_ptr<ColorScheme> create(const QString& scheme) const;
 
  private:
-  typedef std::unordered_map<QString, ColorSchemeConstructor, hashes::hash<QString>> Registry;
+  using Registry = std::unordered_map<QString, ColorSchemeConstructor, hashes::hash<QString>>;
 
   Registry m_registry;
 };

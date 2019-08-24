@@ -14,7 +14,7 @@ class SerializableSpline;
 
 class EditableSpline : public ref_countable {
  public:
-  typedef intrusive_ptr<EditableSpline> Ptr;
+  using Ptr = intrusive_ptr<EditableSpline>;
 
   class SegmentIterator {
    public:

@@ -17,7 +17,7 @@
 namespace output {
 class FillZoneEditor::MenuCustomizer {
  private:
-  typedef ZoneContextMenuInteraction::StandardMenuItems StdMenuItems;
+  using StdMenuItems = ZoneContextMenuInteraction::StandardMenuItems;
 
  public:
   explicit MenuCustomizer(FillZoneEditor* editor) : m_editor(editor) {}
@@ -85,7 +85,7 @@ void FillZoneEditor::onPaint(QPainter& painter, const InteractionState& interact
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
   for (const EditableZoneSet::Zone& zone : m_zones) {
-    typedef FillColorProperty FCP;
+    using FCP = FillColorProperty;
     const QColor color(zone.properties()->locateOrDefault<FCP>()->color());
     painter.setBrush(m_colorAdapter(color));
     painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);

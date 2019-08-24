@@ -101,7 +101,7 @@ class InteractionState {
   void setRedrawRequested(bool requested) { m_redrawRequested = requested; }
 
  private:
-  typedef boost::intrusive::list<Captor, boost::intrusive::constant_time_size<false>> CaptorList;
+  using CaptorList = boost::intrusive::list<Captor, boost::intrusive::constant_time_size<false>>;
 
   /**
    * Returns true if the provided proximity is better than the stored one.

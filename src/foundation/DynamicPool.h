@@ -58,7 +58,7 @@ class DynamicPool {
     void operator()(Chunk* chunk) { delete chunk; }
   };
 
-  typedef boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false>> ChunkList;
+  using ChunkList = boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false>>;
 
   static size_t adviseChunkSize(size_t numElements);
 

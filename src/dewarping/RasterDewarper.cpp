@@ -440,9 +440,9 @@ void dewarpGeneric(const PixelType* const srcData,
 }  // dewarpGeneric
 #endif  // INTERPOLATION_METHOD
 #if INTERPOLATION_METHOD == INTERP_BILLINEAR
-typedef float MixingWeight;
+using MixingWeight = float;
 #else
-typedef unsigned MixingWeight;
+using MixingWeight = unsigned;
 #endif
 
 QImage dewarpGrayscale(const QImage& src,

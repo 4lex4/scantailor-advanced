@@ -150,7 +150,7 @@ PolynomialLine::PolynomialLine(int degree, const T* values, const int numValues,
 
 template <typename T>
 void PolynomialLine::output(T* values, int numValues, int step) const {
-  typedef DefaultPostProcessor<T, std::numeric_limits<T>::is_integer> PP;
+  using PP = DefaultPostProcessor<T, std::numeric_limits<T>::is_integer>;
   output(values, numValues, step, PP());
 }
 

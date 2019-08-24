@@ -18,9 +18,9 @@
 class InteractiveXSpline : public InteractionHandler {
   Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
  public:
-  typedef boost::function<QPointF(const QPointF&)> Transform;
-  typedef boost::function<void()> ModifiedCallback;
-  typedef boost::function<void()> DragFinishedCallback;
+  using Transform = boost::function<QPointF(const QPointF&)>;
+  using ModifiedCallback = boost::function<void()>;
+  using DragFinishedCallback = boost::function<void()>;
 
   InteractiveXSpline();
 

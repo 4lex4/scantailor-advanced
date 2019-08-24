@@ -42,7 +42,7 @@ class Settings : public ref_countable {
   const DeviationProvider<PageId>& deviationProvider() const;
 
  private:
-  typedef std::unordered_map<PageId, Params> PerPageParams;
+  using PerPageParams = std::unordered_map<PageId, Params>;
 
   mutable QMutex m_mutex;
   PerPageParams m_perPageParams;

@@ -44,7 +44,7 @@ class StageListView::LeftColDelegate : public ChangedStateItemDelegate<QStyledIt
   void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
  private:
-  typedef ChangedStateItemDelegate<QStyledItemDelegate> SuperClass;
+  using SuperClass = ChangedStateItemDelegate<QStyledItemDelegate>;
 
   StageListView* m_view;
 };
@@ -57,7 +57,7 @@ class StageListView::RightColDelegate : public ChangedStateItemDelegate<QStyledI
   void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
  private:
-  typedef ChangedStateItemDelegate<QStyledItemDelegate> SuperClass;
+  using SuperClass = ChangedStateItemDelegate<QStyledItemDelegate>;
 };
 
 

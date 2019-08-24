@@ -14,8 +14,8 @@ class HomographicTransform;
 template <size_t N, typename T>
 class HomographicTransformBase {
  public:
-  typedef VecNT<N, T> Vec;
-  typedef VecNT<(N + 1) * (N + 1), T> Mat;
+  using Vec = VecNT<N, T>;
+  using Mat = VecNT<(N + 1) * (N + 1), T>;
 
   explicit HomographicTransformBase(const Mat& mat) : m_mat(mat) {}
 

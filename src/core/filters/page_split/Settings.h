@@ -157,7 +157,7 @@ class Settings : public ref_countable {
   Record conditionalUpdate(const ImageId& imageId, const UpdateAction& action, bool* conflict = nullptr);
 
  private:
-  typedef std::unordered_map<ImageId, BaseRecord> PerPageRecords;
+  using PerPageRecords = std::unordered_map<ImageId, BaseRecord>;
 
   Record getPageRecordLocked(const ImageId& imageId) const;
 

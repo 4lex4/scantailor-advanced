@@ -15,7 +15,7 @@ class QString;
 
 class ZoneSet {
  public:
-  typedef std::list<Zone>::const_iterator const_iterator;
+  using const_iterator = std::list<Zone>::const_iterator;
 
   ZoneSet() = default;
 

@@ -700,7 +700,7 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
 
     assert(hist.size() != 0);
 
-    typedef std::pair<const int*, const int*> Range;
+    using Range = std::pair<const int*, const int*>;
     std::vector<Range> ranges;
     std::vector<Range> splittableRanges;
     splittableRanges.emplace_back(&hist[0], &hist[hist.size() - 1]);

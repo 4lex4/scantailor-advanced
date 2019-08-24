@@ -12,7 +12,7 @@ class SplineVertex {
  public:
   enum Loop { LOOP, NO_LOOP, LOOP_IF_BRIDGED };
 
-  typedef intrusive_ptr<SplineVertex> Ptr;
+  using Ptr = intrusive_ptr<SplineVertex>;
 
   SplineVertex(SplineVertex* prev, SplineVertex* next);
 

@@ -23,7 +23,7 @@ class AbstractFilter;
 
 class ProjectReader {
  public:
-  typedef intrusive_ptr<AbstractFilter> FilterPtr;
+  using FilterPtr = intrusive_ptr<AbstractFilter>;
 
   explicit ProjectReader(const QDomDocument& doc);
 
@@ -57,10 +57,10 @@ class ProjectReader {
     FileRecord(const QString& filePath, bool compatMultiPage) : filePath(filePath), compatMultiPage(compatMultiPage) {}
   };
 
-  typedef std::unordered_map<int, QString> DirMap;
-  typedef std::unordered_map<int, FileRecord> FileMap;
-  typedef std::unordered_map<int, ImageInfo> ImageMap;
-  typedef std::unordered_map<int, PageId> PageMap;
+  using DirMap = std::unordered_map<int, QString>;
+  using FileMap = std::unordered_map<int, FileRecord>;
+  using ImageMap = std::unordered_map<int, ImageInfo>;
+  using PageMap = std::unordered_map<int, PageId>;
 
   void processDirectories(const QDomElement& dirsEl);
 

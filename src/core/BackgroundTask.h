@@ -40,6 +40,6 @@ class BackgroundTask : public AbstractCommand<FilterResultPtr>, public TaskStatu
 };
 
 
-typedef intrusive_ptr<BackgroundTask> BackgroundTaskPtr;
+using BackgroundTaskPtr = intrusive_ptr<BackgroundTask>;
 
 #endif  // ifndef SCANTAILOR_CORE_BACKGROUNDTASK_H_

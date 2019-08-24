@@ -15,7 +15,7 @@ ColorPickupInteraction::ColorPickupInteraction(EditableZoneSet& zones, ZoneInter
 }
 
 void ColorPickupInteraction::startInteraction(const EditableZoneSet::Zone& zone, InteractionState& interaction) {
-  typedef FillColorProperty FCP;
+  using FCP = FillColorProperty;
   m_fillColorProp = zone.properties()->locateOrCreate<FCP>();
   interaction.capture(m_interaction);
 }

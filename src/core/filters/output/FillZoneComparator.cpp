@@ -32,7 +32,7 @@ bool FillZoneComparator::equal(const Zone& lhs, const Zone& rhs) {
 }
 
 bool FillZoneComparator::equal(const PropertySet& lhs, const PropertySet& rhs) {
-  typedef FillColorProperty FCP;
+  using FCP = FillColorProperty;
 
   return lhs.locateOrDefault<FCP>()->color() == rhs.locateOrDefault<FCP>()->color();
 }

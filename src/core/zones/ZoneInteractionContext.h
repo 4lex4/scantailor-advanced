@@ -16,21 +16,20 @@ class EditableZoneSet;
 
 class ZoneInteractionContext {
  public:
-  typedef boost::function<InteractionHandler*()> DefaultInteractionCreator;
+  using DefaultInteractionCreator = boost::function<InteractionHandler*()>;
 
-  typedef boost::function<InteractionHandler*(InteractionState& interaction)> ZoneCreationInteractionCreator;
+  using ZoneCreationInteractionCreator = boost::function<InteractionHandler*(InteractionState& interaction)>;
 
-  typedef boost::function<InteractionHandler*(InteractionState& interaction,
-                                              const EditableSpline::Ptr& spline,
-                                              const SplineVertex::Ptr& vertex)>
-      VertexDragInteractionCreator;
+  using VertexDragInteractionCreator = boost::function<InteractionHandler*(InteractionState& interaction,
+                                                                           const EditableSpline::Ptr& spline,
+                                                                           const SplineVertex::Ptr& vertex)>;
 
-  typedef boost::function<InteractionHandler*(InteractionState& interaction, const EditableSpline::Ptr& spline)>
-      ZoneDragInteractionCreator;
+  using ZoneDragInteractionCreator
+      = boost::function<InteractionHandler*(InteractionState& interaction, const EditableSpline::Ptr& spline)>;
 
-  typedef boost::function<InteractionHandler*(InteractionState& interaction)> ContextMenuInteractionCreator;
+  using ContextMenuInteractionCreator = boost::function<InteractionHandler*(InteractionState& interaction)>;
 
-  typedef boost::function<void(const EditableZoneSet::Zone& zone)> ShowPropertiesCommand;
+  using ShowPropertiesCommand = boost::function<void(const EditableZoneSet::Zone& zone)>;
 
   ZoneInteractionContext(ImageViewBase& imageView, EditableZoneSet& zones);
 

@@ -160,7 +160,7 @@ class MaxWhitespaceFinder {
 namespace max_whitespace_finder {
 class PriorityStorage {
  protected:
-  typedef MaxWhitespaceFinder::Region Region;
+  using Region = MaxWhitespaceFinder::Region;
 
  public:
   virtual ~PriorityStorage() = default;
@@ -233,7 +233,7 @@ void PriorityStorageImpl<QualityCompare>::pop() {
 template <typename QualityCompare>
 void PriorityStorageImpl<QualityCompare>::pushHeap(const std::deque<Region>::iterator begin,
                                                    const std::deque<Region>::iterator end) {
-  typedef std::vector<Region>::iterator::difference_type Distance;
+  using Distance = std::vector<Region>::iterator::difference_type;
 
   Distance valueIdx = end - begin - 1;
   Distance parentIdx = (valueIdx - 1) / 2;
@@ -256,7 +256,7 @@ void PriorityStorageImpl<QualityCompare>::popHeap(const std::deque<Region>::iter
   // Swap the first (top) and the last elements.
   begin->swap(*(end - 1));
 
-  typedef std::vector<Region>::iterator::difference_type Distance;
+  using Distance = std::vector<Region>::iterator::difference_type;
   const Distance newLength = end - begin - 1;
   Distance nodeIdx = 0;
   Distance secondChildIdx = 2 * (nodeIdx + 1);

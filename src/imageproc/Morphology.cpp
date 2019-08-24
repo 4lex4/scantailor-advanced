@@ -717,7 +717,7 @@ BinaryImage erodeBrick(const BinaryImage& src,
     throw std::invalid_argument("erodeBrick: dstArea is empty");
   }
 
-  typedef RopAnd<RopSrc, RopDst> Rop;
+  using Rop = RopAnd<RopSrc, RopDst>;
 
   TemplateRasterOp<RopAnd<RopSrc, RopDst>> rop;
   BinaryImage dst(dstArea.size());

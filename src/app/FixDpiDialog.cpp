@@ -53,7 +53,7 @@ class FixDpiDialog::DpiCounts {
     bool operator()(const ImageMetadata& lhs, const ImageMetadata& rhs) const;
   };
 
-  typedef std::map<ImageMetadata, int, MetadataComparator> Map;
+  using Map = std::map<ImageMetadata, int, MetadataComparator>;
 
   Map m_counts;
 };

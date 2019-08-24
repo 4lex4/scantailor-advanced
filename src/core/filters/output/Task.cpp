@@ -541,7 +541,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
     origToOutput = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
     outputToOrig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
   } else {
-    typedef QPointF (QTransform::*MapPointFunc)(const QPointF&) const;
+    using MapPointFunc = QPointF (QTransform::*)(const QPointF&) const;
     origToOutput = boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1);
     outputToOrig = boost::bind((MapPointFunc) &QTransform::map, m_xform.transformBack(), _1);
   }

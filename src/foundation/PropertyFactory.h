@@ -24,7 +24,7 @@ class PropertyFactory {
   intrusive_ptr<Property> construct(const QDomElement& el) const;
 
  private:
-  typedef std::unordered_map<QString, PropertyConstructor, hashes::hash<QString>> Registry;
+  using Registry = std::unordered_map<QString, PropertyConstructor, hashes::hash<QString>>;
   Registry m_registry;
 };
 

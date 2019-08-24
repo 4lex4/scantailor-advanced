@@ -162,7 +162,7 @@ class Settings::Impl {
   class DescWidthTag;
   class DescHeightTag;
 
-  typedef multi_index_container<
+  using Container = multi_index_container<
       Item,
       indexed_by<hashed_unique<member<Item, PageId, &Item::pageId>, std::hash<PageId>>,
                  sequenced<tag<SequencedTag>>,
@@ -177,12 +177,11 @@ class Settings::Impl {
                                     composite_key<Item,
                                                   const_mem_fun<Item, bool, &Item::alignedWithOthers>,
                                                   const_mem_fun<Item, double, &Item::hardHeightMM>>,
-                                    composite_key_compare<std::greater<>, std::greater<double>>>>>
-      Container;
+                                    composite_key_compare<std::greater<>, std::greater<double>>>>>;
 
-  typedef Container::index<SequencedTag>::type UnorderedItems;
-  typedef Container::index<DescWidthTag>::type DescWidthOrder;
-  typedef Container::index<DescHeightTag>::type DescHeightOrder;
+  using UnorderedItems = Container::index<SequencedTag>::type;
+  using DescWidthOrder = Container::index<DescWidthTag>::type;
+  using DescHeightOrder = Container::index<DescHeightTag>::type;
 
   mutable QMutex m_mutex;
   Container m_items;

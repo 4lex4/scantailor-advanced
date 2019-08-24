@@ -93,10 +93,10 @@ class Settings : public ref_countable {
   void setBlackOnWhite(const PageId& pageId, bool blackOnWhite);
 
  private:
-  typedef std::unordered_map<PageId, Params> PerPageParams;
-  typedef std::unordered_map<PageId, OutputParams> PerPageOutputParams;
-  typedef std::unordered_map<PageId, ZoneSet> PerPageZones;
-  typedef std::unordered_map<PageId, OutputProcessingParams> PerPageOutputProcessingParams;
+  using PerPageParams = std::unordered_map<PageId, Params>;
+  using PerPageOutputParams = std::unordered_map<PageId, OutputParams>;
+  using PerPageZones = std::unordered_map<PageId, ZoneSet>;
+  using PerPageOutputProcessingParams = std::unordered_map<PageId, OutputProcessingParams>;
 
   static PropertySet initialPictureZoneProps();
 

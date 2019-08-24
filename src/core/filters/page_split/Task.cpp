@@ -26,12 +26,12 @@ class Task::UiUpdater : public FilterResult {
  public:
   UiUpdater(intrusive_ptr<Filter> filter,
             intrusive_ptr<ProjectPages> pages,
-            std::unique_ptr<DebugImages> dbg_img,
+            std::unique_ptr<DebugImages> dbgImg,
             const QImage& image,
-            const PageInfo& page_info,
+            const PageInfo& pageInfo,
             const ImageTransformation& xform,
-            const OptionsWidget::UiData& ui_data,
-            bool batch_processing);
+            const OptionsWidget::UiData& uiData,
+            bool batchProcessing);
 
   void updateUI(FilterUiInterface* ui) override;
 
@@ -67,16 +67,16 @@ static ProjectPages::LayoutType toPageLayoutType(const PageLayout& layout) {
 Task::Task(intrusive_ptr<Filter> filter,
            intrusive_ptr<Settings> settings,
            intrusive_ptr<ProjectPages> pages,
-           intrusive_ptr<deskew::Task> next_task,
-           const PageInfo& page_info,
-           const bool batch_processing,
+           intrusive_ptr<deskew::Task> nextTask,
+           const PageInfo& pageInfo,
+           const bool batchProcessing,
            const bool debug)
     : m_filter(std::move(filter)),
       m_settings(std::move(settings)),
       m_pages(std::move(pages)),
-      m_nextTask(std::move(next_task)),
-      m_pageInfo(page_info),
-      m_batchProcessing(batch_processing) {
+      m_nextTask(std::move(nextTask)),
+      m_pageInfo(pageInfo),
+      m_batchProcessing(batchProcessing) {
   if (debug) {
     m_dbg = std::make_unique<DebugImagesImpl>();
   }
@@ -93,44 +93,44 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
   while (true) {
     const Params* const params = record.params();
 
-    LayoutType new_layout_type = record.combinedLayoutType();
-    AutoManualMode split_line_mode = MODE_AUTO;
-    PageLayout new_layout;
+    LayoutType newLayoutType = record.combinedLayoutType();
+    AutoManualMode splitLineMode = MODE_AUTO;
+    PageLayout newLayout;
 
     if (!params || !deps.compatibleWith(*params)) {
       if (!params || (record.combinedLayoutType() == AUTO_LAYOUT_TYPE)) {
-        new_layout = PageLayoutEstimator::estimatePageLayout(record.combinedLayoutType(), data.grayImage(),
-                                                             data.xform(), data.bwThreshold(), m_dbg.get());
+        newLayout = PageLayoutEstimator::estimatePageLayout(record.combinedLayoutType(), data.grayImage(), data.xform(),
+                                                            data.bwThreshold(), m_dbg.get());
 
         status.throwIfCancelled();
       } else {
-        new_layout = PageLayoutAdapter::adaptPageLayout(params->pageLayout(), data.xform().resultingRect());
-        new_layout_type = new_layout.toLayoutType();
-        split_line_mode = params->splitLineMode();
+        newLayout = PageLayoutAdapter::adaptPageLayout(params->pageLayout(), data.xform().resultingRect());
+        newLayoutType = newLayout.toLayoutType();
+        splitLineMode = params->splitLineMode();
       }
     } else {
-      PageLayout corrected_page_layout = params->pageLayout();
-      PageLayoutAdapter::correctPageLayoutType(&corrected_page_layout);
-      if (corrected_page_layout.type() == params->pageLayout().type()) {
+      PageLayout correctedPageLayout = params->pageLayout();
+      PageLayoutAdapter::correctPageLayoutType(&correctedPageLayout);
+      if (correctedPageLayout.type() == params->pageLayout().type()) {
         break;
       } else {
-        new_layout = corrected_page_layout;
-        new_layout_type = new_layout.toLayoutType();
-        split_line_mode = params->splitLineMode();
+        newLayout = correctedPageLayout;
+        newLayoutType = newLayout.toLayoutType();
+        splitLineMode = params->splitLineMode();
       }
     }
-    deps.setLayoutType(new_layout_type);
-    const Params new_params(new_layout, deps, split_line_mode);
+    deps.setLayoutType(newLayoutType);
+    const Params newParams(newLayout, deps, splitLineMode);
 
     Settings::UpdateAction update;
-    update.setLayoutType(new_layout_type);
-    update.setParams(new_params);
+    update.setLayoutType(newLayoutType);
+    update.setParams(newParams);
 
 #ifndef NDEBUG
     {
-      Settings::Record updated_record(record);
-      updated_record.update(update);
-      assert(!updated_record.hasLayoutTypeConflict());
+      Settings::Record updatedRecord(record);
+      updatedRecord.update(update);
+      assert(!updatedRecord.hasLayoutTypeConflict());
       // This assert effectively verifies that PageLayoutEstimator::estimatePageLayout()
       // returned a layout with of a type consistent with the requested one.
       // If it didn't, it's a bug which will in fact cause a dead loop.
@@ -155,51 +155,51 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     break;
   }
 
-  OptionsWidget::UiData ui_data;
-  ui_data.setDependencies(deps);
+  OptionsWidget::UiData uiData;
+  uiData.setDependencies(deps);
   const PageLayout& layout = record.params()->pageLayout();
-  ui_data.setLayoutTypeAutoDetected(record.combinedLayoutType() == AUTO_LAYOUT_TYPE);
-  ui_data.setPageLayout(layout);
-  ui_data.setSplitLineMode(record.params()->splitLineMode());
+  uiData.setLayoutTypeAutoDetected(record.combinedLayoutType() == AUTO_LAYOUT_TYPE);
+  uiData.setPageLayout(layout);
+  uiData.setSplitLineMode(record.params()->splitLineMode());
 
   m_pages->setLayoutTypeFor(m_pageInfo.imageId(), toPageLayoutType(layout));
 
   if (m_nextTask != nullptr) {
-    ImageTransformation new_xform(data.xform());
-    new_xform.setPreCropArea(layout.pageOutline(m_pageInfo.id().subPage()).toPolygon());
+    ImageTransformation newXform(data.xform());
+    newXform.setPreCropArea(layout.pageOutline(m_pageInfo.id().subPage()).toPolygon());
 
-    return m_nextTask->process(status, FilterData(data, new_xform));
+    return m_nextTask->process(status, FilterData(data, newXform));
   }
 
   return make_intrusive<UiUpdater>(m_filter, m_pages, std::move(m_dbg), data.origImage(), m_pageInfo, data.xform(),
-                                   ui_data, m_batchProcessing);
+                                   uiData, m_batchProcessing);
 }  // Task::process
 
 /*============================ Task::UiUpdater =========================*/
 
 Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            intrusive_ptr<ProjectPages> pages,
-                           std::unique_ptr<DebugImages> dbg_img,
+                           std::unique_ptr<DebugImages> dbgImg,
                            const QImage& image,
-                           const PageInfo& page_info,
+                           const PageInfo& pageInfo,
                            const ImageTransformation& xform,
-                           const OptionsWidget::UiData& ui_data,
-                           const bool batch_processing)
+                           const OptionsWidget::UiData& uiData,
+                           const bool batchProcessing)
     : m_filter(std::move(filter)),
       m_pages(std::move(pages)),
-      m_dbg(std::move(dbg_img)),
+      m_dbg(std::move(dbgImg)),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
-      m_pageInfo(page_info),
+      m_pageInfo(pageInfo),
       m_xform(xform),
-      m_uiData(ui_data),
-      m_batchProcessing(batch_processing) {}
+      m_uiData(uiData),
+      m_batchProcessing(batchProcessing) {}
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_filter->optionsWidget();
-  opt_widget->postUpdateUI(m_uiData);
-  ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI(m_uiData);
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   ui->invalidateThumbnail(m_pageInfo.id());
 
@@ -211,11 +211,11 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
                             m_pageInfo.leftHalfRemoved(), m_pageInfo.rightHalfRemoved());
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_dbg.get());
 
-  QObject::connect(view, SIGNAL(invalidateThumbnail(const PageInfo&)), opt_widget,
+  QObject::connect(view, SIGNAL(invalidateThumbnail(const PageInfo&)), optWidget,
                    SIGNAL(invalidateThumbnail(const PageInfo&)));
-  QObject::connect(view, SIGNAL(pageLayoutSetLocally(const PageLayout&)), opt_widget,
+  QObject::connect(view, SIGNAL(pageLayoutSetLocally(const PageLayout&)), optWidget,
                    SLOT(pageLayoutSetExternally(const PageLayout&)));
-  QObject::connect(opt_widget, SIGNAL(pageLayoutSetLocally(const PageLayout&)), view,
+  QObject::connect(optWidget, SIGNAL(pageLayoutSetLocally(const PageLayout&)), view,
                    SLOT(pageLayoutSetExternally(const PageLayout&)));
 }  // Task::UiUpdater::updateUI
 }  // namespace page_split

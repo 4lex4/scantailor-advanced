@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef STAGELISTVIEW_H_
-#define STAGELISTVIEW_H_
+#ifndef SCANTAILOR_CORE_STAGELISTVIEW_H_
+#define SCANTAILOR_CORE_STAGELISTVIEW_H_
 
 #include <QPixmap>
 #include <QTableView>
@@ -30,7 +30,7 @@ class StageListView : public QTableView {
 
   void setBatchProcessingPossible(bool possible);
 
-  void setBatchProcessingInProgress(bool in_progress);
+  void setBatchProcessingInProgress(bool inProgress);
 
  protected slots:
 
@@ -55,7 +55,7 @@ class StageListView : public QTableView {
 
   void initiateBatchAnimationFrameRendering();
 
-  void createBatchAnimationSequence(int square_side);
+  void createBatchAnimationSequence(int squareSide);
 
   void updateRowSpans();
 
@@ -74,4 +74,4 @@ class StageListView : public QTableView {
 };
 
 
-#endif  // ifndef STAGELISTVIEW_H_
+#endif  // ifndef SCANTAILOR_CORE_STAGELISTVIEW_H_

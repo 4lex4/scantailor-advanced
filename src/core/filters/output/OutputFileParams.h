@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_OUTPUT_FILE_PARAMS_H_
-#define OUTPUT_OUTPUT_FILE_PARAMS_H_
+#ifndef SCANTAILOR_OUTPUT_OUTPUTFILEPARAMS_H_
+#define SCANTAILOR_OUTPUT_OUTPUTFILEPARAMS_H_
 
 #include <QtGlobal>
 #include <ctime>
@@ -19,7 +19,7 @@ class OutputFileParams {
  public:
   OutputFileParams();
 
-  explicit OutputFileParams(const QFileInfo& file_info);
+  explicit OutputFileParams(const QFileInfo& fileInfo);
 
   explicit OutputFileParams(const QDomElement& el);
 
@@ -37,4 +37,4 @@ class OutputFileParams {
   time_t m_modifiedTime;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_OUTPUT_FILE_PARAMS_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_OUTPUTFILEPARAMS_H_

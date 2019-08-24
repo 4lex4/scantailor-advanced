@@ -10,11 +10,11 @@
 
 using namespace imageproc;
 
-static const double distinction_increase = 1.0 / 5.0;
-static const double distinction_decrease = -1.0 / 3.0;
+static const double distinctionIncrease = 1.0 / 5.0;
+static const double distinctionDecrease = -1.0 / 3.0;
 
 ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
-    : QWidget(parent), m_animation(10), m_distinction(1.0), m_distinctionDelta(distinction_increase), m_timerId(0) {
+    : QWidget(parent), m_animation(10), m_distinction(1.0), m_distinctionDelta(distinctionIncrease), m_timerId(0) {
   m_headColor = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationHeadColor,
                                                              palette().color(QPalette::Window).darker(200));
   m_tailColor = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationTail,
@@ -23,30 +23,30 @@ ProcessingIndicationWidget::ProcessingIndicationWidget(QWidget* parent)
 
 void ProcessingIndicationWidget::resetAnimation() {
   m_distinction = 1.0;
-  m_distinctionDelta = distinction_increase;
+  m_distinctionDelta = distinctionIncrease;
 }
 
 void ProcessingIndicationWidget::processingRestartedEffect() {
   m_distinction = 1.0;
-  m_distinctionDelta = distinction_decrease;
+  m_distinctionDelta = distinctionDecrease;
 }
 
 void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
-  QRect animation_rect(animationRect());
-  if (!event->rect().contains(animation_rect)) {
-    update(animation_rect);
+  QRect animationRect(this->animationRect());
+  if (!event->rect().contains(animationRect)) {
+    update(animationRect);
 
     return;
   }
 
-  QColor head_color(colorInterpolation(m_tailColor, m_headColor, m_distinction));
+  QColor headColor(colorInterpolation(m_tailColor, m_headColor, m_distinction));
 
   m_distinction += m_distinctionDelta;
   if (m_distinction > 1.0) {
     m_distinction = 1.0;
   } else if (m_distinction <= 0.0) {
     m_distinction = 0.0;
-    m_distinctionDelta = distinction_increase;
+    m_distinctionDelta = distinctionIncrease;
   }
 
   QPainter painter(this);
@@ -56,7 +56,7 @@ void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
   fade_color.setAlpha(127);
   painter.fillRect(rect(), fade_color);
 
-  m_animation.nextFrame(head_color, m_tailColor, &painter, animation_rect);
+  m_animation.nextFrame(headColor, m_tailColor, &painter, animationRect);
 
   if (m_timerId == 0) {
     m_timerId = startTimer(180);

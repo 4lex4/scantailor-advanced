@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_INTRUSIVE_PTR_H
-#define SCANTAILOR_INTRUSIVE_PTR_H
+#ifndef SCANTAILOR_FOUNDATION_INTRUSIVE_PTR_H_
+#define SCANTAILOR_FOUNDATION_INTRUSIVE_PTR_H_
 
 #include <cstddef>
 #include <utility>
@@ -294,4 +294,4 @@ inline intrusive_ptr<T> reinterpret_pointer_cast(const intrusive_ptr<OT>& r) noe
   return intrusive_ptr<T>(reinterpret_cast<typename intrusive_ptr<T>::pointer>(r.get()));
 }
 
-#endif  // ifndef SCANTAILOR_INTRUSIVE_PTR_H
+#endif  // ifndef SCANTAILOR_FOUNDATION_INTRUSIVE_PTR_H_

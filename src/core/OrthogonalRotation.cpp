@@ -2,11 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OrthogonalRotation.h"
-#include <QString>
-#include <QDomElement>
 #include <QDomDocument>
+#include <QDomElement>
 #include <QPointF>
 #include <QSize>
+#include <QString>
 #include <QTransform>
 #include <cassert>
 

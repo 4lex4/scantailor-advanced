@@ -7,11 +7,11 @@
 GridLineTraverser::GridLineTraverser(const QLineF& line) {
   const QPoint p1(line.p1().toPoint());
   const QPoint p2(line.p2().toPoint());
-  int h_spans, v_spans, num_spans;
+  int hSpans, v_spans, num_spans;
   double s1 = 0.0, s2 = 0.0;
-  if ((h_spans = std::abs(p1.x() - p2.x())) > (v_spans = std::abs(p1.y() - p2.y()))) {
+  if ((hSpans = std::abs(p1.x() - p2.x())) > (v_spans = std::abs(p1.y() - p2.y()))) {
     // Major direction: horizontal.
-    num_spans = h_spans;
+    num_spans = hSpans;
     lineIntersectionScalar(line, QLineF(p1, QPoint(p1.x(), p1.y() + 1)), s1);
     lineIntersectionScalar(line, QLineF(p2, QPoint(p2.x(), p2.y() + 1)), s2);
   } else {

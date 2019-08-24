@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ZONE_CONTEXT_MENU_INTERACTION_H_
-#define ZONE_CONTEXT_MENU_INTERACTION_H_
+#ifndef SCANTAILOR_ZONES_ZONECONTEXTMENUINTERACTION_H_
+#define SCANTAILOR_ZONES_ZONECONTEXTMENUINTERACTION_H_
 
 #include <QColor>
 #include <QObject>
@@ -31,7 +31,7 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
     ZoneContextMenuItem propertiesItem;
     ZoneContextMenuItem deleteItem;
 
-    StandardMenuItems(const ZoneContextMenuItem& properties_item, const ZoneContextMenuItem& delete_item);
+    StandardMenuItems(const ZoneContextMenuItem& propertiesItem, const ZoneContextMenuItem& deleteItem);
   };
 
   typedef boost::function<std::vector<ZoneContextMenuItem>(const EditableZoneSet::Zone&, const StandardMenuItems&)>
@@ -48,7 +48,7 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
    */
   static ZoneContextMenuInteraction* create(ZoneInteractionContext& context,
                                             InteractionState& interaction,
-                                            const MenuCustomizer& menu_customizer);
+                                            const MenuCustomizer& menuCustomizer);
 
   ~ZoneContextMenuInteraction() override;
 
@@ -65,8 +65,8 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
 
   ZoneContextMenuInteraction(ZoneInteractionContext& context,
                              InteractionState& interaction,
-                             const MenuCustomizer& menu_customizer,
-                             std::vector<Zone>& selectable_zones);
+                             const MenuCustomizer& menuCustomizer,
+                             std::vector<Zone>& selectableZones);
 
   ZoneInteractionContext& context() { return m_context; }
 
@@ -74,7 +74,7 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
 
   void menuAboutToHide();
 
-  void highlightItem(int zone_idx);
+  void highlightItem(int zoneIdx);
 
  private:
   class OrderByArea;
@@ -93,7 +93,7 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
 
 
   static std::vector<ZoneContextMenuItem> defaultMenuCustomizer(const EditableZoneSet::Zone& zone,
-                                                                const StandardMenuItems& std_items);
+                                                                const StandardMenuItems& stdItems);
 
   void onPaint(QPainter& painter, const InteractionState& interaction) override;
 
@@ -120,4 +120,4 @@ class ZoneContextMenuInteraction : public QObject, public InteractionHandler {
 };
 
 
-#endif  // ifndef ZONE_CONTEXT_MENU_INTERACTION_H_
+#endif  // ifndef SCANTAILOR_ZONES_ZONECONTEXTMENUINTERACTION_H_

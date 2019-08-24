@@ -48,7 +48,7 @@ const QString& Application::getCurrentLocale() const {
 }
 
 std::list<QString> Application::getLanguagesList() const {
-  std::list<QString> list {"en"};
+  std::list<QString> list{"en"};
   std::transform(m_translationsMap.begin(), m_translationsMap.end(), std::back_inserter(list),
                  [](const std::pair<QString, QString>& val) { return val.first; });
 
@@ -56,13 +56,13 @@ std::list<QString> Application::getLanguagesList() const {
 }
 
 void Application::initTranslations() {
-  const QStringList translation_dirs(QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts));
+  const QStringList translationDirs(QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts));
 
-  const QStringList language_file_filter("scantailor_*.qm");
-  for (const QString& path : translation_dirs) {
+  const QStringList languageFileFilter("scantailor_*.qm");
+  for (const QString& path : translationDirs) {
     QDir dir = (QDir::isAbsolutePath(path)) ? QDir(path) : QDir::cleanPath(applicationDirPath() + '/' + path);
     if (dir.exists()) {
-      QStringList translationFileNames = QDir(dir.path()).entryList(language_file_filter);
+      QStringList translationFileNames = QDir(dir.path()).entryList(languageFileFilter);
       for (const QString& fileName : translationFileNames) {
         QString locale(fileName);
         locale.truncate(locale.lastIndexOf('.'));

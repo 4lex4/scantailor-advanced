@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef EDITABLE_ZONE_SET_H_
-#define EDITABLE_ZONE_SET_H_
+#ifndef SCANTAILOR_ZONES_EDITABLEZONESET_H_
+#define SCANTAILOR_ZONES_EDITABLEZONESET_H_
 
 #include <QObject>
 #include <boost/foreach.hpp>
@@ -106,4 +106,4 @@ class EditableZoneSet : public QObject {
   PropertySet m_defaultProps;
 };
 
-#endif  // ifndef EDITABLE_ZONE_SET_H_
+#endif  // ifndef SCANTAILOR_ZONES_EDITABLEZONESET_H_

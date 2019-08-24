@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DRAGGABLE_LINE_SEGMENT_H_
-#define DRAGGABLE_LINE_SEGMENT_H_
+#ifndef SCANTAILOR_INTERACTION_DRAGGABLELINESEGMENT_H_
+#define SCANTAILOR_INTERACTION_DRAGGABLELINESEGMENT_H_
 
 #include <QLineF>
 #include <QPointF>
@@ -23,11 +23,11 @@ class DraggableLineSegment : public DraggableObject {
 
   int proximityPriority() const override;
 
-  Proximity proximity(const QPointF& mouse_pos) override;
+  Proximity proximity(const QPointF& mousePos) override;
 
-  void dragInitiated(const QPointF& mouse_pos) override;
+  void dragInitiated(const QPointF& mousePos) override;
 
-  void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) override;
+  void dragContinuation(const QPointF& mousePos, Qt::KeyboardModifiers mask) override;
 
   void setPositionCallback(const PositionCallback& callback) { m_positionCallback = callback; }
 
@@ -49,4 +49,4 @@ class DraggableLineSegment : public DraggableObject {
 };
 
 
-#endif  // ifndef DRAGGABLE_LINE_SEGMENT_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_DRAGGABLELINESEGMENT_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef THUMBNAILSEQUENCE_H_
-#define THUMBNAILSEQUENCE_H_
+#ifndef SCANTAILOR_APP_THUMBNAILSEQUENCE_H_
+#define SCANTAILOR_APP_THUMBNAILSEQUENCE_H_
 
 #include <QObject>
 #include <memory>
@@ -57,7 +57,7 @@ class ThumbnailSequence : public QObject {
 
   enum ViewMode { SINGLE_COLUMN, MULTI_COLUMN };
 
-  explicit ThumbnailSequence(const QSizeF& max_logical_thumb_size, ViewMode view_mode);
+  explicit ThumbnailSequence(const QSizeF& maxLogicalThumbSize, ViewMode viewMode);
 
   ~ThumbnailSequence() override;
 
@@ -69,17 +69,17 @@ class ThumbnailSequence : public QObject {
    * \brief Re-populate the list of thumbnails.
    *
    * \param pages Pages to put in the sequence.
-   * \param selection_action Whether to keep the selection, provided
+   * \param selectionAction Whether to keep the selection, provided
    *        selected item(s) are still present in the new list of pages.
-   * \param order_provider The source of ordering information.  It will
+   * \param orderProvider The source of ordering information.  It will
    *        be preserved until the next reset() call and will be taken
    *        into account by other methods, like invalidateThumbnail()
    *        and insert().  A null order provider indicates to keep the
    *        order of ProjectPages.
    */
   void reset(const PageSequence& pages,
-             SelectionAction selection_action,
-             intrusive_ptr<const PageOrderProvider> order_provider = nullptr);
+             SelectionAction selectionAction,
+             intrusive_ptr<const PageOrderProvider> orderProvider = nullptr);
 
   /** Returns the current page order provider, which may be null. */
   intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
@@ -100,19 +100,19 @@ class ThumbnailSequence : public QObject {
    * is a selection leader, newSelectionLeader() signal will be emitted
    * with REDUNDANT_SELECTION flag set.
    *
-   * \note This function assumes the thumbnail specified by page_id
+   * \note This function assumes the thumbnail specified by pageId
    *       is the only thumbnail at incorrect position.  If you do
    *       something that changes the logical position of more than
    *       one thumbnail at once, use invalidateAllThumbnails()
    *       instead of sequentially calling invalidateThumbnail().
    */
-  void invalidateThumbnail(const PageId& page_id);
+  void invalidateThumbnail(const PageId& pageId);
 
   /**
    * This signature differs from invalidateThumbnail(PageId) in that
    * it will cause PageInfo stored by ThumbnailSequence to be updated.
    */
-  void invalidateThumbnail(const PageInfo& page_info);
+  void invalidateThumbnail(const PageInfo& pageInfo);
 
   /**
    * \brief Updates appearance of all thumbnails and possibly their order.
@@ -125,8 +125,8 @@ class ThumbnailSequence : public QObject {
   /**
    * \brief Makes the item a selection leader, and unselects other items.
    *
-   * \param page_id The page to select.
-   * \param selection_action Whether to keep the selection, provided
+   * \param pageId The page to select.
+   * \param selectionAction Whether to keep the selection, provided
    *        selected item(s) are still present in the new list of pages.
    * \return true on success, false if the requested page wasn't found.
    *
@@ -134,7 +134,7 @@ class ThumbnailSequence : public QObject {
    * with REDUNDANT_SELECTION flag set, in case our page was already the
    * selection leader.
    */
-  bool setSelection(const PageId& page_id, SelectionAction selection_action = RESET_SELECTION);
+  bool setSelection(const PageId& pageId, SelectionAction selectionAction = RESET_SELECTION);
 
   /**
    * \brief Returns the current selection leader.
@@ -149,7 +149,7 @@ class ThumbnailSequence : public QObject {
    * A null PageInfo is returned if the given page wasn't found or
    * there are no pages preceding it.
    */
-  PageInfo prevPage(const PageId& reference_page) const;
+  PageInfo prevPage(const PageId& referencePage) const;
 
   /**
    * \brief Returns the page immediately following the given one.
@@ -157,7 +157,7 @@ class ThumbnailSequence : public QObject {
    * A null PageInfo is returned if the given page wasn't found or
    * there are no pages following it.
    */
-  PageInfo nextPage(const PageId& reference_page) const;
+  PageInfo nextPage(const PageId& referencePage) const;
 
   /**
    * \brief Returns the selected page preceding the given one.
@@ -165,7 +165,7 @@ class ThumbnailSequence : public QObject {
    * A null PageInfo is returned if the given page wasn't found or
    * there are no pages preceding it.
    */
-  PageInfo prevSelectedPage(const PageId& reference_page) const;
+  PageInfo prevSelectedPage(const PageId& referencePage) const;
 
   /**
    * \brief Returns the selected page following the given one.
@@ -173,7 +173,7 @@ class ThumbnailSequence : public QObject {
    * A null PageInfo is returned if the given page wasn't found or
    * there are no pages following it.
    */
-  PageInfo nextSelectedPage(const PageId& reference_page) const;
+  PageInfo nextSelectedPage(const PageId& referencePage) const;
 
   /**
    * \brief Returns the first page in the sequence.
@@ -196,13 +196,13 @@ class ThumbnailSequence : public QObject {
    * we won't allow inserting a page between two halves of another page,
    * to be compatible with what reset() does.  Otherwise, the new
    * page will be inserted at a correct position according to the current
-   * order provider.  In this case \p before_or_after doesn't really matter.
+   * order provider.  In this case \p beforeOrAfter doesn't really matter.
    *
    * If there are no pages with matching ImageId, the new page won't
    * be inserted, unless the request is to insert BEFORE a null ImageId(),
    * which would cause insertion at the end.
    */
-  void insert(const PageInfo& new_page, BeforeOrAfter before_or_after, const ImageId& image);
+  void insert(const PageInfo& newPage, BeforeOrAfter beforeOrAfter, const ImageId& image);
 
   void removePages(const std::set<PageId>& pages);
 
@@ -227,19 +227,19 @@ class ThumbnailSequence : public QObject {
 
  signals:
 
-  void newSelectionLeader(const PageInfo& page_info, const QRectF& thumb_rect, ThumbnailSequence::SelectionFlags flags);
+  void newSelectionLeader(const PageInfo& pageInfo, const QRectF& thumbRect, ThumbnailSequence::SelectionFlags flags);
 
   /**
    * Emitted when a user right-clicks on a page thumbnail.
    */
-  void pageContextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
+  void pageContextMenuRequested(const PageInfo& pageInfo, const QPoint& screenPos, bool selected);
 
   /**
    * Emitted when a user right clicks on area below the last page.
    * In the absence of any pages, all the area is considered to be
    * below the last page.
    */
-  void pastLastPageContextMenuRequested(const QPoint& screen_pos);
+  void pastLastPageContextMenuRequested(const QPoint& screenPos);
 
  private:
   class Item;
@@ -249,7 +249,7 @@ class ThumbnailSequence : public QObject {
   class LabelGroup;
   class CompositeItem;
 
-  void emitNewSelectionLeader(const PageInfo& page_info, const CompositeItem* composite, SelectionFlags flags);
+  void emitNewSelectionLeader(const PageInfo& pageInfo, const CompositeItem* composite, SelectionFlags flags);
 
   std::unique_ptr<Impl> m_impl;
 };
@@ -257,4 +257,4 @@ class ThumbnailSequence : public QObject {
 
 DEFINE_FLAG_OPS(ThumbnailSequence::SelectionFlags)
 
-#endif  // ifndef THUMBNAILSEQUENCE_H_
+#endif  // ifndef SCANTAILOR_APP_THUMBNAILSEQUENCE_H_

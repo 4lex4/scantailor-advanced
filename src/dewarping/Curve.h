@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DEWARPING_CURVE_H_
-#define DEWARPING_CURVE_H_
+#ifndef SCANTAILOR_DEWARPING_CURVE_H_
+#define SCANTAILOR_DEWARPING_CURVE_H_
 
 #include <QPointF>
 #include <vector>
@@ -52,4 +52,4 @@ class Curve {
   std::vector<QPointF> m_polyline;
 };
 }  // namespace dewarping
-#endif  // ifndef DEWARPING_CURVE_H_
+#endif  // ifndef SCANTAILOR_DEWARPING_CURVE_H_

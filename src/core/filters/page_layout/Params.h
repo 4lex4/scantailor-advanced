@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_LAYOUT_PARAMS_H_
-#define PAGE_LAYOUT_PARAMS_H_
+#ifndef SCANTAILOR_PAGE_LAYOUT_PARAMS_H_
+#define SCANTAILOR_PAGE_LAYOUT_PARAMS_H_
 
 #include <QRectF>
 #include <QSizeF>
@@ -17,12 +17,12 @@ namespace page_layout {
 class Params {
   // Member-wise copying is OK.
  public:
-  Params(const Margins& hard_margins_mm,
-         const QRectF& page_rect,
-         const QRectF& content_rect,
-         const QSizeF& content_size_mm,
+  Params(const Margins& hardMarginsMm,
+         const QRectF& pageRect,
+         const QRectF& contentRect,
+         const QSizeF& contentSizeMm,
          const Alignment& alignment,
-         bool auto_margins);
+         bool autoMargins);
 
   explicit Params(const QDomElement& el);
 
@@ -49,4 +49,4 @@ class Params {
   bool m_autoMargins;
 };
 }  // namespace page_layout
-#endif  // ifndef PAGE_LAYOUT_PARAMS_H_
+#endif  // ifndef SCANTAILOR_PAGE_LAYOUT_PARAMS_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGELAYOUT_H_
-#define PAGELAYOUT_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_PAGELAYOUT_H_
+#define SCANTAILOR_PAGE_SPLIT_PAGELAYOUT_H_
 
 #include <QLineF>
 #include <QPolygonF>
@@ -42,22 +42,22 @@ class PageLayout {
   /**
    * \brief Constructs a SINGLE_PAGE_UNCUT layout.
    */
-  explicit PageLayout(const QRectF& full_rect);
+  explicit PageLayout(const QRectF& fullRect);
 
   /**
    * \brief Constructs a SINGLE_PAGE_CUT layout.
    */
-  PageLayout(const QRectF& full_rect, const QLineF& cutter1, const QLineF& cutter2);
+  PageLayout(const QRectF& fullRect, const QLineF& cutter1, const QLineF& cutter2);
 
   /**
    * \brief Constructs a TWO_PAGES layout.
    */
-  PageLayout(QRectF full_rect, const QLineF& split_line);
+  PageLayout(QRectF fullRect, const QLineF& splitLine);
 
   /**
    * \brief Construct a page layout based on XML data.
    */
-  explicit PageLayout(const QDomElement& layout_el);
+  explicit PageLayout(const QDomElement& layoutEl);
 
   bool isNull() const;
 
@@ -177,4 +177,4 @@ class PageLayout {
   Type m_type;
 };
 }  // namespace page_split
-#endif  // ifndef PAGELAYOUT_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_PAGELAYOUT_H_

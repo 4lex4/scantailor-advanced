@@ -5,8 +5,8 @@
 #include <cassert>
 
 namespace page_split {
-QString layoutTypeToString(const LayoutType layout_type) {
-  switch (layout_type) {
+QString layoutTypeToString(const LayoutType layoutType) {
+  switch (layoutType) {
     case AUTO_LAYOUT_TYPE:
       return "auto-detect";
     case SINGLE_PAGE_UNCUT:
@@ -21,12 +21,12 @@ QString layoutTypeToString(const LayoutType layout_type) {
   return QString();
 }
 
-LayoutType layoutTypeFromString(const QString& layout_type) {
-  if (layout_type == "single-uncut") {
+LayoutType layoutTypeFromString(const QString& layoutType) {
+  if (layoutType == "single-uncut") {
     return SINGLE_PAGE_UNCUT;
-  } else if (layout_type == "single-cut") {
+  } else if (layoutType == "single-cut") {
     return PAGE_PLUS_OFFCUT;
-  } else if (layout_type == "two-pages") {
+  } else if (layoutType == "two-pages") {
     return TWO_PAGES;
   } else {
     return AUTO_LAYOUT_TYPE;

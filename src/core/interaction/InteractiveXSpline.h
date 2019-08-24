@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef INTERACTIVE_XSPLINE_H_
-#define INTERACTIVE_XSPLINE_H_
+#ifndef SCANTAILOR_INTERACTION_INTERACTIVEXSPLINE_H_
+#define SCANTAILOR_INTERACTION_INTERACTIVEXSPLINE_H_
 
 #include <QCoreApplication>
 #include <QPointF>
@@ -28,7 +28,7 @@ class InteractiveXSpline : public InteractionHandler {
 
   const XSpline& spline() const { return m_spline; }
 
-  void setStorageTransform(const Transform& from_storage, const Transform& to_storage);
+  void setStorageTransform(const Transform& fromStorage, const Transform& toStorage);
 
   void setModifiedCallback(const ModifiedCallback& callback);
 
@@ -48,7 +48,7 @@ class InteractiveXSpline : public InteractionHandler {
   bool curveIsProximityLeader(const InteractionState& state, QPointF* pt = nullptr, double* t = nullptr) const;
 
  protected:
-  void onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) override;
+  void onProximityUpdate(const QPointF& screenMousePos, InteractionState& interaction) override;
 
   void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
@@ -89,4 +89,4 @@ class InteractiveXSpline : public InteractionHandler {
 };
 
 
-#endif  // ifndef INTERACTIVE_XSPLINE_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_INTERACTIVEXSPLINE_H_

@@ -2,14 +2,14 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Utils.h"
+#include <BinaryImage.h>
+#include <Grayscale.h>
 #include <QImage>
 #include <QRect>
 #include <cassert>
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
-#include <BinaryImage.h>
-#include <Grayscale.h>
 
 namespace imageproc {
 namespace tests {
@@ -148,29 +148,29 @@ bool surroundingsIntact(const QImage& img1, const QImage& img2, const QRect& rec
   const int h = img1.height();
 
   if (rect.left() != 0) {
-    const QRect left_of(0, 0, rect.x(), h);
-    if (img1.copy(left_of) != img2.copy(left_of)) {
+    const QRect leftOf(0, 0, rect.x(), h);
+    if (img1.copy(leftOf) != img2.copy(leftOf)) {
       return false;
     }
   }
 
   if (rect.right() != img1.rect().right()) {
-    const QRect right_of(rect.x() + w, 0, w - rect.x() - rect.width(), h);
-    if (img1.copy(right_of) != img2.copy(right_of)) {
+    const QRect rightOf(rect.x() + w, 0, w - rect.x() - rect.width(), h);
+    if (img1.copy(rightOf) != img2.copy(rightOf)) {
       return false;
     }
   }
 
   if (rect.top() != 0) {
-    const QRect top_of(0, 0, w, rect.y());
-    if (img1.copy(top_of) != img2.copy(top_of)) {
+    const QRect topOf(0, 0, w, rect.y());
+    if (img1.copy(topOf) != img2.copy(topOf)) {
       return false;
     }
   }
 
   if (rect.bottom() != img1.rect().bottom()) {
-    const QRect bottom_of(0, rect.y() + rect.height(), w, h - rect.y() - rect.height());
-    if (img1.copy(bottom_of) != img2.copy(bottom_of)) {
+    const QRect bottomOf(0, rect.y() + rect.height(), w, h - rect.y() - rect.height());
+    if (img1.copy(bottomOf) != img2.copy(bottomOf)) {
       return false;
     }
   }

@@ -7,13 +7,13 @@
 
 namespace output {
 ChangeDewarpingDialog::ChangeDewarpingDialog(QWidget* parent,
-                                             const PageId& cur_page,
+                                             const PageId& curPage,
                                              const DewarpingOptions& dewarpingOptions,
-                                             const PageSelectionAccessor& page_selection_accessor)
+                                             const PageSelectionAccessor& pageSelectionAccessor)
     : QDialog(parent),
-      m_pages(page_selection_accessor.allPages()),
-      m_selectedPages(page_selection_accessor.selectedPages()),
-      m_curPage(cur_page),
+      m_pages(pageSelectionAccessor.allPages()),
+      m_selectedPages(pageSelectionAccessor.selectedPages()),
+      m_curPage(curPage),
       m_dewarpingMode(dewarpingOptions.dewarpingMode()),
       m_dewarpingOptions(dewarpingOptions),
       m_scopeGroup(new QButtonGroup(this)) {

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PROJECT_PAGES_H_
-#define PROJECT_PAGES_H_
+#ifndef SCANTAILOR_CORE_PROJECTPAGES_H_
+#define SCANTAILOR_CORE_PROJECTPAGES_H_
 
 #include <QMutex>
 #include <QObject>
@@ -38,11 +38,11 @@ class ProjectPages : public QObject, public ref_countable {
 
   enum LayoutType { ONE_PAGE_LAYOUT, TWO_PAGE_LAYOUT };
 
-  explicit ProjectPages(Qt::LayoutDirection layout_direction = Qt::LeftToRight);
+  explicit ProjectPages(Qt::LayoutDirection layoutDirection = Qt::LeftToRight);
 
-  ProjectPages(const std::vector<ImageInfo>& images, Qt::LayoutDirection layout_direction);
+  ProjectPages(const std::vector<ImageInfo>& images, Qt::LayoutDirection layoutDirection);
 
-  ProjectPages(const std::vector<ImageFileInfo>& files, Pages pages, Qt::LayoutDirection layout_direction);
+  ProjectPages(const std::vector<ImageFileInfo>& files, Pages pages, Qt::LayoutDirection layoutDirection);
 
   ~ProjectPages() override;
 
@@ -58,13 +58,13 @@ class ProjectPages : public QObject, public ref_countable {
    */
   void performRelinking(const AbstractRelinker& relinker);
 
-  void setLayoutTypeFor(const ImageId& image_id, LayoutType layout);
+  void setLayoutTypeFor(const ImageId& imageId, LayoutType layout);
 
   void setLayoutTypeForAllPages(LayoutType layout);
 
-  void autoSetLayoutTypeFor(const ImageId& image_id, OrthogonalRotation rotation);
+  void autoSetLayoutTypeFor(const ImageId& imageId, OrthogonalRotation rotation);
 
-  void updateImageMetadata(const ImageId& image_id, const ImageMetadata& metadata);
+  void updateImageMetadata(const ImageId& imageId, const ImageMetadata& metadata);
 
   static int adviseNumberOfLogicalPages(const ImageMetadata& metadata, OrthogonalRotation rotation);
 
@@ -77,8 +77,8 @@ class ProjectPages : public QObject, public ref_countable {
    * exists in this ProjectPages.  Requesting to insert a new image
    * BEFORE the null one is legal and means inserting it at the end.
    *
-   * \param new_image The image to insert.
-   * \param before_or_after Whether to insert before or after another image.
+   * \param newImage The image to insert.
+   * \param beforeOrAfter Whether to insert before or after another image.
    * \param existing The image we are inserting before or after.
    * \param view This one only affects what is returned.
    * \return One or two (or zero, if existing image wasn't found) logical
@@ -86,8 +86,8 @@ class ProjectPages : public QObject, public ref_countable {
    *         in the order dependent on the layout direction specified
    *         at construction time.
    */
-  std::vector<PageInfo> insertImage(const ImageInfo& new_image,
-                                    BeforeOrAfter before_or_after,
+  std::vector<PageInfo> insertImage(const ImageInfo& newImage,
+                                    BeforeOrAfter beforeOrAfter,
                                     const ImageId& existing,
                                     PageView view);
 
@@ -96,11 +96,11 @@ class ProjectPages : public QObject, public ref_countable {
   /**
    * \brief Unremoves half-a-page, if the other half is still present.
    *
-   * \param page_id Left or right sub-page to restore.
+   * \param pageId Left or right sub-page to restore.
    * \return A PageInfo corresponding to the page restored or
    *         a null PageInfo if restoring failed.
    */
-  PageInfo unremovePage(const PageId& page_id);
+  PageInfo unremovePage(const PageId& pageId);
 
   /**
    * \brief Check if all DPIs are OK, in terms of ImageMetadata::isDpiOK()
@@ -125,32 +125,32 @@ class ProjectPages : public QObject, public ref_countable {
     bool leftHalfRemoved;   // Both can't be true, and if one is true,
     bool rightHalfRemoved;  // then numLogicalPages is 1.
 
-    explicit ImageDesc(const ImageInfo& image_info);
+    explicit ImageDesc(const ImageInfo& imageInfo);
 
     ImageDesc(const ImageId& id, const ImageMetadata& metadata, Pages pages);
 
-    PageId::SubPage logicalPageToSubPage(int logical_page, const PageId::SubPage* sub_pages_in_order) const;
+    PageId::SubPage logicalPageToSubPage(int logicalPage, const PageId::SubPage* subPagesInOrder) const;
   };
 
-  void initSubPagesInOrder(Qt::LayoutDirection layout_direction);
+  void initSubPagesInOrder(Qt::LayoutDirection layoutDirection);
 
-  void setLayoutTypeForImpl(const ImageId& image_id, LayoutType layout, bool* modified);
+  void setLayoutTypeForImpl(const ImageId& imageId, LayoutType layout, bool* modified);
 
   void setLayoutTypeForAllPagesImpl(LayoutType layout, bool* modified);
 
-  void autoSetLayoutTypeForImpl(const ImageId& image_id, OrthogonalRotation rotation, bool* modified);
+  void autoSetLayoutTypeForImpl(const ImageId& imageId, OrthogonalRotation rotation, bool* modified);
 
-  void updateImageMetadataImpl(const ImageId& image_id, const ImageMetadata& metadata, bool* modified);
+  void updateImageMetadataImpl(const ImageId& imageId, const ImageMetadata& metadata, bool* modified);
 
-  std::vector<PageInfo> insertImageImpl(const ImageInfo& new_image,
-                                        BeforeOrAfter before_or_after,
+  std::vector<PageInfo> insertImageImpl(const ImageInfo& newImage,
+                                        BeforeOrAfter beforeOrAfter,
                                         const ImageId& existing,
                                         PageView view,
                                         bool& modified);
 
   void removePagesImpl(const std::set<PageId>& pages, bool& modified);
 
-  PageInfo unremovePageImpl(const PageId& page_id, bool& modified);
+  PageInfo unremovePageImpl(const PageId& pageId, bool& modified);
 
   mutable QMutex m_mutex;
   std::vector<ImageDesc> m_images;
@@ -158,4 +158,4 @@ class ProjectPages : public QObject, public ref_countable {
 };
 
 
-#endif  // ifndef PROJECT_PAGES_H_
+#endif  // ifndef SCANTAILOR_CORE_PROJECTPAGES_H_

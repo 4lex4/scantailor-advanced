@@ -27,14 +27,14 @@ void ImageSettings::performRelinking(const AbstractRelinker& relinker) {
   m_perPageParams.swap(newParams);
 }
 
-void ImageSettings::setPageParams(const PageId& page_id, const PageParams& params) {
+void ImageSettings::setPageParams(const PageId& pageId, const PageParams& params) {
   QMutexLocker locker(&m_mutex);
-  Utils::mapSetValue(m_perPageParams, page_id, params);
+  Utils::mapSetValue(m_perPageParams, pageId, params);
 }
 
-std::unique_ptr<ImageSettings::PageParams> ImageSettings::getPageParams(const PageId& page_id) const {
+std::unique_ptr<ImageSettings::PageParams> ImageSettings::getPageParams(const PageId& pageId) const {
   QMutexLocker locker(&m_mutex);
-  const auto it(m_perPageParams.find(page_id));
+  const auto it(m_perPageParams.find(pageId));
   if (it != m_perPageParams.end()) {
     return std::make_unique<PageParams>(it->second);
   } else {

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_COLOR_FOR_ID_H_
-#define IMAGEPROC_COLOR_FOR_ID_H_
+#ifndef SCANTAILOR_IMAGEPROC_COLORFORID_H_
+#define SCANTAILOR_IMAGEPROC_COLORFORID_H_
 
 #include <QColor>
 #include "BitOps.h"
@@ -16,10 +16,10 @@ namespace imageproc {
  */
 template <typename T>
 QColor colorForId(T id) {
-  const int bits_unused = countMostSignificantZeroes(id);
-  const int bits_used = sizeof(T) * 8 - bits_unused;
-  const T reversed = reverseBits(id) >> bits_unused;
-  const T mask = (T(1) << bits_used) - 1;
+  const int bitsUnused = countMostSignificantZeroes(id);
+  const int bitsUsed = sizeof(T) * 8 - bitsUnused;
+  const T reversed = reverseBits(id) >> bitsUnused;
+  const T mask = (T(1) << bitsUsed) - 1;
 
   const double H = 0.99 * double(reversed + 1) / (mask + 1);
   const double S = 1.0;

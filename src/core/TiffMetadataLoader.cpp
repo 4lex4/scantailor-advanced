@@ -4,7 +4,7 @@
 #include "TiffMetadataLoader.h"
 #include "TiffReader.h"
 
-ImageMetadataLoader::Status TiffMetadataLoader::loadMetadata(QIODevice& io_device,
+ImageMetadataLoader::Status TiffMetadataLoader::loadMetadata(QIODevice& ioDevice,
                                                              const VirtualFunction<void, const ImageMetadata&>& out) {
-  return TiffReader::readMetadata(io_device, out);
+  return TiffReader::readMetadata(ioDevice, out);
 }

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_REF_COUNTABLE_H
-#define SCANTAILOR_REF_COUNTABLE_H
+#ifndef SCANTAILOR_FOUNDATION_REF_COUNTABLE_H_
+#define SCANTAILOR_FOUNDATION_REF_COUNTABLE_H_
 
 #include <QAtomicInt>
 
@@ -30,4 +30,4 @@ class ref_countable {
 };
 
 
-#endif  // ifndef SCANTAILOR_REF_COUNTABLE_H
+#endif  // ifndef SCANTAILOR_FOUNDATION_REF_COUNTABLE_H_

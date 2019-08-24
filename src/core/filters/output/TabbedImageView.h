@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_TABBED_IMAGE_VIEW_H_
-#define OUTPUT_TABBED_IMAGE_VIEW_H_
+#ifndef SCANTAILOR_OUTPUT_TABBEDIMAGEVIEW_H_
+#define SCANTAILOR_OUTPUT_TABBEDIMAGEVIEW_H_
 
 #include <QScrollBar>
 #include <QTabWidget>
@@ -24,7 +24,7 @@ class TabbedImageView : public QTabWidget {
 
   void addTab(QWidget* widget, const QString& label, ImageViewTab tab);
 
-  void setImageRectMap(std::unique_ptr<TabImageRectMap> tab_image_rect_map);
+  void setImageRectMap(std::unique_ptr<TabImageRectMap> tabImageRectMap);
 
  public slots:
 
@@ -42,15 +42,15 @@ class TabbedImageView : public QTabWidget {
   void tabChangedSlot(int idx);
 
  private:
-  void copyViewZoomAndPos(int old_idx, int new_idx) const;
+  void copyViewZoomAndPos(int oldIdx, int newIdx) const;
 
-  QPointF getFocus(const QRectF& rect, const QScrollBar& hor_bar, const QScrollBar& ver_bar) const;
+  QPointF getFocus(const QRectF& rect, const QScrollBar& horBar, const QScrollBar& verBar) const;
 
-  void setFocus(QScrollBar& hor_bar, QScrollBar& ver_bar, const QRectF& rect, const QPointF& focal) const;
+  void setFocus(QScrollBar& horBar, QScrollBar& verBar, const QRectF& rect, const QPointF& focal) const;
 
   std::unordered_map<QWidget*, ImageViewTab> m_registry;
   std::unique_ptr<TabImageRectMap> m_tabImageRectMap;
   int m_prevImageViewTabIndex;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_TABBED_IMAGE_VIEW_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_TABBEDIMAGEVIEW_H_

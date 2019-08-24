@@ -7,9 +7,9 @@
 
 PolylineIntersector::Hint::Hint() : m_lastSegment(0), m_direction(1) {}
 
-void PolylineIntersector::Hint::update(int new_segment) {
-  m_direction = new_segment < m_lastSegment ? -1 : 1;
-  m_lastSegment = new_segment;
+void PolylineIntersector::Hint::update(int newSegment) {
+  m_direction = newSegment < m_lastSegment ? -1 : 1;
+  m_lastSegment = newSegment;
 }
 
 PolylineIntersector::PolylineIntersector(const std::vector<QPointF>& polyline)
@@ -46,27 +46,27 @@ QPointF PolylineIntersector::intersect(const QLineF& line, Hint& hint) const {
   // OK, let's do a binary search then.
   const QPointF origin(normal.p1());
   const Vec2d nv(normal.p2() - normal.p1());
-  int left_idx = 0;
-  auto right_idx = static_cast<int>(m_polyline.size() - 1);
-  double left_dot = nv.dot(m_polyline[left_idx] - origin);
+  int leftIdx = 0;
+  auto rightIdx = static_cast<int>(m_polyline.size() - 1);
+  double leftDot = nv.dot(m_polyline[leftIdx] - origin);
 
-  while (left_idx + 1 < right_idx) {
-    const int mid_idx = (left_idx + right_idx) >> 1;
-    const double mid_dot = nv.dot(m_polyline[mid_idx] - origin);
+  while (leftIdx + 1 < rightIdx) {
+    const int midIdx = (leftIdx + rightIdx) >> 1;
+    const double midDot = nv.dot(m_polyline[midIdx] - origin);
 
-    if (mid_dot * left_dot <= 0) {
+    if (midDot * leftDot <= 0) {
       // Note: <= 0 vs < 0 is actually important for this branch.
       // 0 would indicate either left or mid point is our exact answer.
-      right_idx = mid_idx;
+      rightIdx = midIdx;
     } else {
-      left_idx = mid_idx;
-      left_dot = mid_dot;
+      leftIdx = midIdx;
+      leftDot = midDot;
     }
   }
 
-  hint.update(left_idx);
+  hint.update(leftIdx);
 
-  return intersectWithSegment(line, left_idx);
+  return intersectWithSegment(line, leftIdx);
 }  // PolylineIntersector::intersect
 
 bool PolylineIntersector::intersectsSegment(const QLineF& normal, int segment) const {
@@ -74,9 +74,9 @@ bool PolylineIntersector::intersectsSegment(const QLineF& normal, int segment) c
     return false;
   }
 
-  const QLineF seg_line(m_polyline[segment], m_polyline[segment + 1]);
+  const QLineF segLine(m_polyline[segment], m_polyline[segment + 1]);
 
-  return intersectsSpan(normal, seg_line);
+  return intersectsSpan(normal, segLine);
 }
 
 bool PolylineIntersector::intersectsSpan(const QLineF& normal, const QLineF& span) const {
@@ -88,13 +88,13 @@ bool PolylineIntersector::intersectsSpan(const QLineF& normal, const QLineF& spa
 }
 
 QPointF PolylineIntersector::intersectWithSegment(const QLineF& line, int segment) const {
-  const QLineF seg_line(m_polyline[segment], m_polyline[segment + 1]);
+  const QLineF segLine(m_polyline[segment], m_polyline[segment + 1]);
   QPointF intersection;
-  if (line.intersect(seg_line, &intersection) == QLineF::NoIntersection) {
+  if (line.intersect(segLine, &intersection) == QLineF::NoIntersection) {
     // Considering we were called for a reason, the segment must
     // be on the same line as our subject line.  Just return segment
     // midpoint in this case.
-    return seg_line.pointAt(0.5);
+    return segLine.pointAt(0.5);
   }
 
   return intersection;
@@ -107,18 +107,18 @@ bool PolylineIntersector::tryIntersectingOutsideOfPolyline(const QLineF& line,
   const QPointF origin(normal.p1());
   const Vec2d nv(normal.p2() - normal.p1());
 
-  const Vec2d front_vec(m_polyline.front() - origin);
-  const Vec2d back_vec(m_polyline.back() - origin);
-  const double front_dot = nv.dot(front_vec);
-  const double back_dot = nv.dot(back_vec);
+  const Vec2d frontVec(m_polyline.front() - origin);
+  const Vec2d backVec(m_polyline.back() - origin);
+  const double frontDot = nv.dot(frontVec);
+  const double backDot = nv.dot(backVec);
 
-  if (front_dot * back_dot <= 0) {
+  if (frontDot * backDot <= 0) {
     return false;
   }
 
   const ToLineProjector proj(line);
 
-  if (std::fabs(front_dot) < std::fabs(back_dot)) {
+  if (std::fabs(frontDot) < std::fabs(backDot)) {
     hint.update(-1);
     intersection = proj.projectionPoint(m_polyline.front());
   } else {

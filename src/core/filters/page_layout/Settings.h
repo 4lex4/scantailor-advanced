@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_LAYOUT_SETTINGS_H_
-#define PAGE_LAYOUT_SETTINGS_H_
+#ifndef SCANTAILOR_PAGE_LAYOUT_SETTINGS_H_
+#define SCANTAILOR_PAGE_LAYOUT_SETTINGS_H_
 
 #include <DeviationProvider.h>
 #include <memory>
@@ -59,24 +59,24 @@ class Settings : public ref_countable {
    *
    * May return a null unique_ptr if the specified page is unknown to us.
    */
-  std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
+  std::unique_ptr<Params> getPageParams(const PageId& pageId) const;
 
-  bool isParamsNull(const PageId& page_id) const;
+  bool isParamsNull(const PageId& pageId) const;
 
   /**
    * \brief Set all page parameters at once.
    */
-  void setPageParams(const PageId& page_id, const Params& params);
+  void setPageParams(const PageId& pageId, const Params& params);
 
   /**
    * \brief Updates content size and returns all parameters at once.
    */
-  Params updateContentSizeAndGetParams(const PageId& page_id,
-                                       const QRectF& page_rect,
-                                       const QRectF& content_rect,
-                                       const QSizeF& content_size_mm,
-                                       QSizeF* agg_hard_size_before = nullptr,
-                                       QSizeF* agg_hard_size_after = nullptr);
+  Params updateContentSizeAndGetParams(const PageId& pageId,
+                                       const QRectF& pageRect,
+                                       const QRectF& contentRect,
+                                       const QSizeF& contentSizeMm,
+                                       QSizeF* aggHardSizeBefore = nullptr,
+                                       QSizeF* aggHardSizeAfter = nullptr);
 
   /**
    * \brief Returns the hard margins for the specified page.
@@ -88,7 +88,7 @@ class Settings : public ref_countable {
    * If no margins were assigned to the specified page, the default
    * margins are returned.
    */
-  Margins getHardMarginsMM(const PageId& page_id) const;
+  Margins getHardMarginsMM(const PageId& pageId) const;
 
   /**
    * \brief Sets hard margins for the specified page.
@@ -97,7 +97,7 @@ class Settings : public ref_countable {
    * Soft margins are those added to extend the page to match its
    * size with other pages.
    */
-  void setHardMarginsMM(const PageId& page_id, const Margins& margins_mm);
+  void setHardMarginsMM(const PageId& pageId, const Margins& marginsMm);
 
   /**
    * \brief Returns the alignment for the specified page.
@@ -107,7 +107,7 @@ class Settings : public ref_countable {
    * If no alignment was specified, the default alignment is returned,
    * which is "center vertically and horizontally".
    */
-  Alignment getPageAlignment(const PageId& page_id) const;
+  Alignment getPageAlignment(const PageId& pageId) const;
 
   /**
    * \brief Sets alignment for the specified page.
@@ -115,16 +115,16 @@ class Settings : public ref_countable {
    * Alignments affect the distribution of soft margins and whether this
    * page's size affects others and vice versa.
    */
-  AggregateSizeChanged setPageAlignment(const PageId& page_id, const Alignment& alignment);
+  AggregateSizeChanged setPageAlignment(const PageId& pageId, const Alignment& alignment);
 
   /**
    * \brief Sets content size in millimeters for the specified page.
    *
    * The content size comes from the "Select Content" filter.
    */
-  AggregateSizeChanged setContentSizeMM(const PageId& page_id, const QSizeF& content_size_mm);
+  AggregateSizeChanged setContentSizeMM(const PageId& pageId, const QSizeF& contentSizeMm);
 
-  void invalidateContentSize(const PageId& page_id);
+  void invalidateContentSize(const PageId& pageId);
 
   /**
    * \brief Returns the aggregate (max width + max height) hard page size.
@@ -138,11 +138,11 @@ class Settings : public ref_countable {
    * This function doesn't modify anything, it just pretends that
    * the size and alignment of a specified page have changed.
    */
-  QSizeF getAggregateHardSizeMM(const PageId& page_id, const QSizeF& hard_size_mm, const Alignment& alignment) const;
+  QSizeF getAggregateHardSizeMM(const PageId& pageId, const QSizeF& hardSizeMm, const Alignment& alignment) const;
 
-  bool isPageAutoMarginsEnabled(const PageId& page_id);
+  bool isPageAutoMarginsEnabled(const PageId& pageId);
 
-  void setPageAutoMarginsEnabled(const PageId& page_id, bool state);
+  void setPageAutoMarginsEnabled(const PageId& pageId, bool state);
 
   const DeviationProvider<PageId>& deviationProvider() const;
 
@@ -163,4 +163,4 @@ class Settings : public ref_countable {
   std::unique_ptr<Impl> m_impl;
 };
 }  // namespace page_layout
-#endif  // ifndef PAGE_LAYOUT_SETTINGS_H_
+#endif  // ifndef SCANTAILOR_PAGE_LAYOUT_SETTINGS_H_

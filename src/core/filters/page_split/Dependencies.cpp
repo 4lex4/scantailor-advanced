@@ -14,8 +14,8 @@ Dependencies::Dependencies(const QDomElement& el)
       m_rotation(el.namedItem("rotation").toElement()),
       m_layoutType(layoutTypeFromString(XmlUnmarshaller::string(el.namedItem("layoutType").toElement()))) {}
 
-Dependencies::Dependencies(const QSize& image_size, const OrthogonalRotation rotation, const LayoutType layout_type)
-    : m_imageSize(image_size), m_rotation(rotation), m_layoutType(layout_type) {}
+Dependencies::Dependencies(const QSize& imageSize, const OrthogonalRotation rotation, const LayoutType layoutType)
+    : m_imageSize(imageSize), m_rotation(rotation), m_layoutType(layoutType) {}
 
 bool Dependencies::compatibleWith(const Params& params) const {
   const Dependencies& deps = params.dependencies();
@@ -44,14 +44,14 @@ bool Dependencies::compatibleWith(const Params& params) const {
   return false;
 }
 
-QDomElement Dependencies::toXml(QDomDocument& doc, const QString& tag_name) const {
+QDomElement Dependencies::toXml(QDomDocument& doc, const QString& tagName) const {
   if (isNull()) {
     return QDomElement();
   }
 
   XmlMarshaller marshaller(doc);
 
-  QDomElement el(doc.createElement(tag_name));
+  QDomElement el(doc.createElement(tagName));
   el.appendChild(m_rotation.toXml(doc, "rotation"));
   el.appendChild(marshaller.size(m_imageSize, "size"));
   el.appendChild(marshaller.string(layoutTypeToString(m_layoutType), "layoutType"));

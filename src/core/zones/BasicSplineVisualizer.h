@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef BASIC_SPLINE_VISUALIZER_H_
-#define BASIC_SPLINE_VISUALIZER_H_
+#ifndef SCANTAILOR_ZONES_BASICSPLINEVISUALIZER_H_
+#define SCANTAILOR_ZONES_BASICSPLINEVISUALIZER_H_
 
 #include <QColor>
 #include <QPen>
@@ -24,9 +24,9 @@ class BasicSplineVisualizer {
 
   void drawVertex(QPainter& painter, const QPointF& pt, const QColor& color);
 
-  void drawSplines(QPainter& painter, const QTransform& to_screen, const EditableZoneSet& zones);
+  void drawSplines(QPainter& painter, const QTransform& toScreen, const EditableZoneSet& zones);
 
-  virtual void drawSpline(QPainter& painter, const QTransform& to_screen, const EditableSpline::Ptr& spline);
+  virtual void drawSpline(QPainter& painter, const QTransform& toScreen, const EditableSpline::Ptr& spline);
 
   virtual void prepareForSpline(QPainter& painter, const EditableSpline::Ptr& spline);
 
@@ -38,4 +38,4 @@ class BasicSplineVisualizer {
 };
 
 
-#endif  // ifndef BASIC_SPLINE_VISUALIZER_H_
+#endif  // ifndef SCANTAILOR_ZONES_BASICSPLINEVISUALIZER_H_

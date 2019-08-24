@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SPFIT_FRENET_FRAME_H_
-#define SPFIT_FRENET_FRAME_H_
+#ifndef SCANTAILOR_SPFIT_FRENETFRAME_H_
+#define SCANTAILOR_SPFIT_FRENETFRAME_H_
 
 #include "VecNT.h"
 
@@ -26,7 +26,7 @@ class FrenetFrame {
    * relative to the X axis direction in the coordinate system from which we derive
    * the curvature.  For 2D computer graphics, the right direction is Y_POINTS_DOWN.
    */
-  FrenetFrame(const Vec2d& origin, const Vec2d& tangent_vector, YAxisDirection ydir = Y_POINTS_DOWN);
+  FrenetFrame(const Vec2d& origin, const Vec2d& tangentVector, YAxisDirection ydir = Y_POINTS_DOWN);
 
   const Vec2d& origin() const { return m_origin; }
 
@@ -40,4 +40,4 @@ class FrenetFrame {
   Vec2d m_unitNormal;
 };
 }  // namespace spfit
-#endif  // ifndef SPFIT_FRENET_FRAME_H_
+#endif  // ifndef SCANTAILOR_SPFIT_FRENETFRAME_H_

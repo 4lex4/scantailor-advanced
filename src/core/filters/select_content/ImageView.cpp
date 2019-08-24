@@ -23,20 +23,20 @@ using namespace imageproc;
 
 namespace select_content {
 ImageView::ImageView(const QImage& image,
-                     const QImage& downscaled_image,
-                     const GrayImage& gray_image,
+                     const QImage& downscaledImage,
+                     const GrayImage& grayImage,
                      const ImageTransformation& xform,
-                     const QRectF& content_rect,
-                     const QRectF& page_rect,
-                     const bool page_rect_enabled)
-    : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
+                     const QRectF& contentRect,
+                     const QRectF& pageRect,
+                     const bool pageRectEnabled)
+    : ImageViewBase(image, downscaledImage, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
       m_dragHandler(*this),
       m_zoomHandler(*this),
       m_noContentMenu(new QMenu(this)),
       m_haveContentMenu(new QMenu(this)),
-      m_contentRect(content_rect),
-      m_pageRect(page_rect),
-      m_pageRectEnabled(page_rect_enabled),
+      m_contentRect(contentRect),
+      m_pageRect(pageRect),
+      m_pageRectEnabled(pageRectEnabled),
       m_pageRectReloadRequested(false),
       m_minBoxSize(10.0, 10.0),
       m_adjustmentVerticalModifier(Qt::ControlModifier),
@@ -47,8 +47,8 @@ ImageView::ImageView(const QImage& image,
       tr("Use the context menu to enable / disable the content box. Hold Shift to drag a box. Use double-click "
          "on content to automatically adjust the content area."));
 
-  const QString content_rect_drag_tip(tr("Drag lines or corners to resize the content box."));
-  const QString page_rect_drag_tip(tr("Drag lines or corners to resize the page box."));
+  const QString contentRectDragTip(tr("Drag lines or corners to resize the content box."));
+  const QString pageRectDragTip(tr("Drag lines or corners to resize the page box."));
   static const int masks_by_edge[] = {TOP, RIGHT, BOTTOM, LEFT};
   static const int masks_by_corner[] = {TOP | LEFT, TOP | RIGHT, BOTTOM | RIGHT, BOTTOM | LEFT};
   for (int i = 0; i < 4; ++i) {
@@ -65,13 +65,13 @@ ImageView::ImageView(const QImage& image,
         boost::bind(&ImageView::contentRectCornerMoveRequest, this, masks_by_corner[i], _1));
     m_contentRectCorners[i].setDragFinishedCallback(boost::bind(&ImageView::contentRectDragFinished, this));
     m_contentRectCornerHandlers[i].setObject(&m_contentRectCorners[i]);
-    m_contentRectCornerHandlers[i].setProximityStatusTip(content_rect_drag_tip);
+    m_contentRectCornerHandlers[i].setProximityStatusTip(contentRectDragTip);
     m_pageRectCorners[i].setPositionCallback(boost::bind(&ImageView::pageRectCornerPosition, this, masks_by_corner[i]));
     m_pageRectCorners[i].setMoveRequestCallback(
         boost::bind(&ImageView::pageRectCornerMoveRequest, this, masks_by_corner[i], _1));
     m_pageRectCorners[i].setDragFinishedCallback(boost::bind(&ImageView::pageRectDragFinished, this));
     m_pageRectCornerHandlers[i].setObject(&m_pageRectCorners[i]);
-    m_pageRectCornerHandlers[i].setProximityStatusTip(page_rect_drag_tip);
+    m_pageRectCornerHandlers[i].setProximityStatusTip(pageRectDragTip);
 
     // Setup edge drag handlers.
     m_contentRectEdges[i].setPositionCallback(boost::bind(&ImageView::contentRectEdgePosition, this, masks_by_edge[i]));
@@ -79,25 +79,25 @@ ImageView::ImageView(const QImage& image,
         boost::bind(&ImageView::contentRectEdgeMoveRequest, this, masks_by_edge[i], _1));
     m_contentRectEdges[i].setDragFinishedCallback(boost::bind(&ImageView::contentRectDragFinished, this));
     m_contentRectEdgeHandlers[i].setObject(&m_contentRectEdges[i]);
-    m_contentRectEdgeHandlers[i].setProximityStatusTip(content_rect_drag_tip);
+    m_contentRectEdgeHandlers[i].setProximityStatusTip(contentRectDragTip);
     m_pageRectEdges[i].setPositionCallback(boost::bind(&ImageView::pageRectEdgePosition, this, masks_by_edge[i]));
     m_pageRectEdges[i].setMoveRequestCallback(
         boost::bind(&ImageView::pageRectEdgeMoveRequest, this, masks_by_edge[i], _1));
     m_pageRectEdges[i].setDragFinishedCallback(boost::bind(&ImageView::pageRectDragFinished, this));
     m_pageRectEdgeHandlers[i].setObject(&m_pageRectEdges[i]);
-    m_pageRectEdgeHandlers[i].setProximityStatusTip(page_rect_drag_tip);
+    m_pageRectEdgeHandlers[i].setProximityStatusTip(pageRectDragTip);
 
-    Qt::CursorShape corner_cursor = (i & 1) ? Qt::SizeBDiagCursor : Qt::SizeFDiagCursor;
-    m_contentRectCornerHandlers[i].setProximityCursor(corner_cursor);
-    m_contentRectCornerHandlers[i].setInteractionCursor(corner_cursor);
-    m_pageRectCornerHandlers[i].setProximityCursor(corner_cursor);
-    m_pageRectCornerHandlers[i].setInteractionCursor(corner_cursor);
+    Qt::CursorShape cornerCursor = (i & 1) ? Qt::SizeBDiagCursor : Qt::SizeFDiagCursor;
+    m_contentRectCornerHandlers[i].setProximityCursor(cornerCursor);
+    m_contentRectCornerHandlers[i].setInteractionCursor(cornerCursor);
+    m_pageRectCornerHandlers[i].setProximityCursor(cornerCursor);
+    m_pageRectCornerHandlers[i].setInteractionCursor(cornerCursor);
 
-    Qt::CursorShape edge_cursor = (i & 1) ? Qt::SizeHorCursor : Qt::SizeVerCursor;
-    m_contentRectEdgeHandlers[i].setProximityCursor(edge_cursor);
-    m_contentRectEdgeHandlers[i].setInteractionCursor(edge_cursor);
-    m_pageRectEdgeHandlers[i].setProximityCursor(edge_cursor);
-    m_pageRectEdgeHandlers[i].setInteractionCursor(edge_cursor);
+    Qt::CursorShape edgeCursor = (i & 1) ? Qt::SizeHorCursor : Qt::SizeVerCursor;
+    m_contentRectEdgeHandlers[i].setProximityCursor(edgeCursor);
+    m_contentRectEdgeHandlers[i].setInteractionCursor(edgeCursor);
+    m_pageRectEdgeHandlers[i].setProximityCursor(edgeCursor);
+    m_pageRectEdgeHandlers[i].setInteractionCursor(edgeCursor);
 
     if (m_contentRect.isValid()) {
       makeLastFollower(m_contentRectCornerHandlers[i]);
@@ -157,7 +157,7 @@ ImageView::ImageView(const QImage& image,
   connect(create, SIGNAL(triggered(bool)), this, SLOT(createContentBox()));
   connect(remove, SIGNAL(triggered(bool)), this, SLOT(removeContentBox()));
 
-  buildContentImage(gray_image, xform);
+  buildContentImage(grayImage, xform);
 }
 
 ImageView::~ImageView() = default;
@@ -170,10 +170,10 @@ void ImageView::createContentBox() {
     return;
   }
 
-  const QRectF virtual_rect(virtualDisplayRect());
-  QRectF content_rect(0, 0, virtual_rect.width() * 0.7, virtual_rect.height() * 0.7);
-  content_rect.moveCenter(virtual_rect.center());
-  m_contentRect = content_rect;
+  const QRectF virtualRect(virtualDisplayRect());
+  QRectF contentRect(0, 0, virtualRect.width() * 0.7, virtualRect.height() * 0.7);
+  contentRect.moveCenter(virtualRect.center());
+  m_contentRect = contentRect;
   forcePageRectDescribeContent();
   enableContentRectInteraction(true);
 
@@ -244,43 +244,43 @@ void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& i
   }
 }
 
-QPointF ImageView::contentRectCornerPosition(int edge_mask) const {
+QPointF ImageView::contentRectCornerPosition(int edgeMask) const {
   const QRectF rect(virtualToWidget().mapRect(m_contentRect));
   QPointF pt;
 
-  if (edge_mask & TOP) {
+  if (edgeMask & TOP) {
     pt.setY(rect.top());
-  } else if (edge_mask & BOTTOM) {
+  } else if (edgeMask & BOTTOM) {
     pt.setY(rect.bottom());
   }
 
-  if (edge_mask & LEFT) {
+  if (edgeMask & LEFT) {
     pt.setX(rect.left());
-  } else if (edge_mask & RIGHT) {
+  } else if (edgeMask & RIGHT) {
     pt.setX(rect.right());
   }
 
   return pt;
 }
 
-void ImageView::contentRectCornerMoveRequest(int edge_mask, const QPointF& pos) {
+void ImageView::contentRectCornerMoveRequest(int edgeMask, const QPointF& pos) {
   QRectF r(virtualToWidget().mapRect(m_contentRect));
   const qreal minw = m_minBoxSize.width();
   const qreal minh = m_minBoxSize.height();
 
-  if (edge_mask & TOP) {
+  if (edgeMask & TOP) {
     r.setTop(std::min(pos.y(), r.bottom() - minh));
-  } else if (edge_mask & BOTTOM) {
+  } else if (edgeMask & BOTTOM) {
     r.setBottom(std::max(pos.y(), r.top() + minh));
   }
 
-  if (edge_mask & LEFT) {
+  if (edgeMask & LEFT) {
     r.setLeft(std::min(pos.x(), r.right() - minw));
-  } else if (edge_mask & RIGHT) {
+  } else if (edgeMask & RIGHT) {
     r.setRight(std::max(pos.x(), r.left() + minw));
   }
 
-  forceInsideImage(r, edge_mask);
+  forceInsideImage(r, edgeMask);
   m_contentRect = widgetToVirtual().mapRect(r);
 
   forcePageRectDescribeContent();
@@ -314,39 +314,39 @@ void ImageView::contentRectDragFinished() {
   }
 }
 
-QPointF ImageView::pageRectCornerPosition(int edge_mask) const {
+QPointF ImageView::pageRectCornerPosition(int edgeMask) const {
   const QRectF rect(virtualToWidget().mapRect(m_pageRect));
   QPointF pt;
 
-  if (edge_mask & TOP) {
+  if (edgeMask & TOP) {
     pt.setY(rect.top());
-  } else if (edge_mask & BOTTOM) {
+  } else if (edgeMask & BOTTOM) {
     pt.setY(rect.bottom());
   }
 
-  if (edge_mask & LEFT) {
+  if (edgeMask & LEFT) {
     pt.setX(rect.left());
-  } else if (edge_mask & RIGHT) {
+  } else if (edgeMask & RIGHT) {
     pt.setX(rect.right());
   }
 
   return pt;
 }
 
-void ImageView::pageRectCornerMoveRequest(int edge_mask, const QPointF& pos) {
+void ImageView::pageRectCornerMoveRequest(int edgeMask, const QPointF& pos) {
   QRectF r(virtualToWidget().mapRect(m_pageRect));
   const qreal minw = m_minBoxSize.width();
   const qreal minh = m_minBoxSize.height();
 
-  if (edge_mask & TOP) {
+  if (edgeMask & TOP) {
     r.setTop(std::min(pos.y(), r.bottom() - minh));
-  } else if (edge_mask & BOTTOM) {
+  } else if (edgeMask & BOTTOM) {
     r.setBottom(std::max(pos.y(), r.top() + minh));
   }
 
-  if (edge_mask & LEFT) {
+  if (edgeMask & LEFT) {
     r.setLeft(std::min(pos.x(), r.right() - minw));
-  } else if (edge_mask & RIGHT) {
+  } else if (edgeMask & RIGHT) {
     r.setRight(std::max(pos.x(), r.left() + minw));
   }
 
@@ -379,26 +379,26 @@ void ImageView::pageRectDragFinished() {
   emit manualPageRectSet(m_pageRect);
 }
 
-void ImageView::forceInsideImage(QRectF& widget_rect, const int edge_mask) const {
+void ImageView::forceInsideImage(QRectF& widgetRect, const int edgeMask) const {
   const qreal minw = m_minBoxSize.width();
   const qreal minh = m_minBoxSize.height();
-  const QRectF image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
+  const QRectF imageRect(virtualToWidget().mapRect(virtualDisplayRect()));
 
-  if ((edge_mask & LEFT) && (widget_rect.left() < image_rect.left())) {
-    widget_rect.setLeft(image_rect.left());
-    widget_rect.setRight(std::max(widget_rect.right(), widget_rect.left() + minw));
+  if ((edgeMask & LEFT) && (widgetRect.left() < imageRect.left())) {
+    widgetRect.setLeft(imageRect.left());
+    widgetRect.setRight(std::max(widgetRect.right(), widgetRect.left() + minw));
   }
-  if ((edge_mask & RIGHT) && (widget_rect.right() > image_rect.right())) {
-    widget_rect.setRight(image_rect.right());
-    widget_rect.setLeft(std::min(widget_rect.left(), widget_rect.right() - minw));
+  if ((edgeMask & RIGHT) && (widgetRect.right() > imageRect.right())) {
+    widgetRect.setRight(imageRect.right());
+    widgetRect.setLeft(std::min(widgetRect.left(), widgetRect.right() - minw));
   }
-  if ((edge_mask & TOP) && (widget_rect.top() < image_rect.top())) {
-    widget_rect.setTop(image_rect.top());
-    widget_rect.setBottom(std::max(widget_rect.bottom(), widget_rect.top() + minh));
+  if ((edgeMask & TOP) && (widgetRect.top() < imageRect.top())) {
+    widgetRect.setTop(imageRect.top());
+    widgetRect.setBottom(std::max(widgetRect.bottom(), widgetRect.top() + minh));
   }
-  if ((edge_mask & BOTTOM) && (widget_rect.bottom() > image_rect.bottom())) {
-    widget_rect.setBottom(image_rect.bottom());
-    widget_rect.setTop(std::min(widget_rect.top(), widget_rect.bottom() - minh));
+  if ((edgeMask & BOTTOM) && (widgetRect.bottom() > imageRect.bottom())) {
+    widgetRect.setBottom(imageRect.bottom());
+    widgetRect.setTop(std::min(widgetRect.top(), widgetRect.bottom() - minh));
   }
 }
 
@@ -419,21 +419,21 @@ QRectF ImageView::contentRectPosition() const {
   return virtualToWidget().mapRect(m_contentRect);
 }
 
-void ImageView::contentRectMoveRequest(const QPolygonF& poly_moved) {
-  QRectF contentRectInWidget(poly_moved.boundingRect());
+void ImageView::contentRectMoveRequest(const QPolygonF& polyMoved) {
+  QRectF contentRectInWidget(polyMoved.boundingRect());
 
-  const QRectF image_rect(virtualToWidget().mapRect(virtualDisplayRect()));
-  if (contentRectInWidget.left() < image_rect.left()) {
-    contentRectInWidget.translate(image_rect.left() - contentRectInWidget.left(), 0);
+  const QRectF imageRect(virtualToWidget().mapRect(virtualDisplayRect()));
+  if (contentRectInWidget.left() < imageRect.left()) {
+    contentRectInWidget.translate(imageRect.left() - contentRectInWidget.left(), 0);
   }
-  if (contentRectInWidget.right() > image_rect.right()) {
-    contentRectInWidget.translate(image_rect.right() - contentRectInWidget.right(), 0);
+  if (contentRectInWidget.right() > imageRect.right()) {
+    contentRectInWidget.translate(imageRect.right() - contentRectInWidget.right(), 0);
   }
-  if (contentRectInWidget.top() < image_rect.top()) {
-    contentRectInWidget.translate(0, image_rect.top() - contentRectInWidget.top());
+  if (contentRectInWidget.top() < imageRect.top()) {
+    contentRectInWidget.translate(0, imageRect.top() - contentRectInWidget.top());
   }
-  if (contentRectInWidget.bottom() > image_rect.bottom()) {
-    contentRectInWidget.translate(0, image_rect.bottom() - contentRectInWidget.bottom());
+  if (contentRectInWidget.bottom() > imageRect.bottom()) {
+    contentRectInWidget.translate(0, imageRect.bottom() - contentRectInWidget.bottom());
   }
 
   m_contentRect = widgetToVirtual().mapRect(contentRectInWidget);
@@ -447,22 +447,22 @@ QRectF ImageView::pageRectPosition() const {
   return virtualToWidget().mapRect(m_pageRect);
 }
 
-void ImageView::pageRectMoveRequest(const QPolygonF& poly_moved) {
-  QRectF pageRectInWidget(poly_moved.boundingRect());
+void ImageView::pageRectMoveRequest(const QPolygonF& polyMoved) {
+  QRectF pageRectInWidget(polyMoved.boundingRect());
 
   if (m_contentRect.isValid()) {
-    const QRectF content_rect(virtualToWidget().mapRect(m_contentRect));
-    if (pageRectInWidget.left() > content_rect.left()) {
-      pageRectInWidget.translate(content_rect.left() - pageRectInWidget.left(), 0);
+    const QRectF contentRect(virtualToWidget().mapRect(m_contentRect));
+    if (pageRectInWidget.left() > contentRect.left()) {
+      pageRectInWidget.translate(contentRect.left() - pageRectInWidget.left(), 0);
     }
-    if (pageRectInWidget.right() < content_rect.right()) {
-      pageRectInWidget.translate(content_rect.right() - pageRectInWidget.right(), 0);
+    if (pageRectInWidget.right() < contentRect.right()) {
+      pageRectInWidget.translate(contentRect.right() - pageRectInWidget.right(), 0);
     }
-    if (pageRectInWidget.top() > content_rect.top()) {
-      pageRectInWidget.translate(0, content_rect.top() - pageRectInWidget.top());
+    if (pageRectInWidget.top() > contentRect.top()) {
+      pageRectInWidget.translate(0, contentRect.top() - pageRectInWidget.top());
     }
-    if (pageRectInWidget.bottom() < content_rect.bottom()) {
-      pageRectInWidget.translate(0, content_rect.bottom() - pageRectInWidget.bottom());
+    if (pageRectInWidget.bottom() < contentRect.bottom()) {
+      pageRectInWidget.translate(0, contentRect.bottom() - pageRectInWidget.bottom());
     }
   }
 
@@ -485,24 +485,24 @@ void ImageView::pageRectSetExternally(const QRectF& pageRect) {
   update();
 }
 
-void ImageView::buildContentImage(const GrayImage& gray_image, const ImageTransformation& xform) {
-  ImageTransformation xform_150dpi(xform);
-  xform_150dpi.preScaleToDpi(Dpi(150, 150));
+void ImageView::buildContentImage(const GrayImage& grayImage, const ImageTransformation& xform) {
+  ImageTransformation xform150dpi(xform);
+  xform150dpi.preScaleToDpi(Dpi(150, 150));
 
-  if (xform_150dpi.resultingRect().toRect().isEmpty()) {
+  if (xform150dpi.resultingRect().toRect().isEmpty()) {
     return;
   }
 
-  QImage gray150(transformToGray(gray_image, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
+  QImage gray150(transformToGray(grayImage, xform150dpi.transform(), xform150dpi.resultingRect().toRect(),
                                  OutsidePixels::assumeColor(Qt::white)));
 
   m_contentImage = binarizeWolf(gray150, QSize(51, 51), 50);
 
-  PolygonRasterizer::fillExcept(m_contentImage, WHITE, xform_150dpi.resultingPreCropArea(), Qt::WindingFill);
+  PolygonRasterizer::fillExcept(m_contentImage, WHITE, xform150dpi.resultingPreCropArea(), Qt::WindingFill);
 
   Despeckle::despeckleInPlace(m_contentImage, Dpi(150, 150), Despeckle::NORMAL, NullTaskStatus());
 
-  m_originalToContentImage = xform_150dpi.transform();
+  m_originalToContentImage = xform150dpi.transform();
   m_contentImageToOriginal = m_originalToContentImage.inverted();
 }
 
@@ -515,73 +515,73 @@ void ImageView::onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& in
 }
 
 void ImageView::correctContentBox(const QPointF& pos, const Qt::KeyboardModifiers mask) {
-  const QTransform widget_to_content_image(widgetToImage() * m_originalToContentImage);
-  const QTransform content_image_to_virtual(m_contentImageToOriginal * imageToVirtual());
+  const QTransform widgetToContentImage(widgetToImage() * m_originalToContentImage);
+  const QTransform contentImageToVirtual(m_contentImageToOriginal * imageToVirtual());
 
-  const QPointF content_pos = widget_to_content_image.map(pos);
+  const QPointF contentPos = widgetToContentImage.map(pos);
 
-  QRect finding_area((content_pos - QPointF(15, 15)).toPoint(), QSize(30, 30));
-  finding_area = finding_area.intersected(m_contentImage.rect());
-  if (finding_area.isEmpty()) {
+  QRect findingArea((contentPos - QPointF(15, 15)).toPoint(), QSize(30, 30));
+  findingArea = findingArea.intersected(m_contentImage.rect());
+  if (findingArea.isEmpty()) {
     return;
   }
 
-  QRect found_area = findContentInArea(finding_area);
-  if (found_area.isEmpty()) {
+  QRect foundArea = findContentInArea(findingArea);
+  if (foundArea.isEmpty()) {
     return;
   }
 
-  const QPointF pos_in_virtual = widgetToVirtual().map(pos);
+  const QPointF posInVirtual = widgetToVirtual().map(pos);
   const QRectF found_area_in_virtual
-      = content_image_to_virtual.mapRect(QRectF(found_area)).intersected(virtualDisplayRect());
+      = contentImageToVirtual.mapRect(QRectF(foundArea)).intersected(virtualDisplayRect());
   if (found_area_in_virtual.isEmpty()) {
     return;
   }
 
   // If click position is inside the content rect, adjust the nearest side of the rect,
   // else include the content at the position into the content rect.
-  if (!m_contentRect.contains(pos_in_virtual)) {
+  if (!m_contentRect.contains(posInVirtual)) {
     m_contentRect |= found_area_in_virtual;
     forcePageRectDescribeContent();
   } else {
-    const bool only_horizontal_direction = (mask == m_adjustmentHorizontalModifier);
-    const bool only_vertical_direction = (mask == m_adjustmentVerticalModifier);
-    const bool both_directions = (mask == (m_adjustmentVerticalModifier | m_adjustmentHorizontalModifier));
+    const bool onlyHorizontalDirection = (mask == m_adjustmentHorizontalModifier);
+    const bool onlyVerticalDirection = (mask == m_adjustmentVerticalModifier);
+    const bool bothDirections = (mask == (m_adjustmentVerticalModifier | m_adjustmentHorizontalModifier));
 
-    const double top_dist = pos_in_virtual.y() - m_contentRect.top();
-    const double left_dist = pos_in_virtual.x() - m_contentRect.left();
-    const double bottom_dist = m_contentRect.bottom() - pos_in_virtual.y();
-    const double right_dist = m_contentRect.right() - pos_in_virtual.x();
-    std::map<double, Edge> distance_map;
-    distance_map[top_dist] = TOP;
-    distance_map[left_dist] = LEFT;
-    distance_map[bottom_dist] = BOTTOM;
-    distance_map[right_dist] = RIGHT;
+    const double topDist = posInVirtual.y() - m_contentRect.top();
+    const double leftDist = posInVirtual.x() - m_contentRect.left();
+    const double bottomDist = m_contentRect.bottom() - posInVirtual.y();
+    const double rightDist = m_contentRect.right() - posInVirtual.x();
+    std::map<double, Edge> distanceMap;
+    distanceMap[topDist] = TOP;
+    distanceMap[leftDist] = LEFT;
+    distanceMap[bottomDist] = BOTTOM;
+    distanceMap[rightDist] = RIGHT;
 
-    int edge_mask;
-    if (only_horizontal_direction) {
-      edge_mask = distance_map.at(std::min(left_dist, right_dist));
-    } else if (only_vertical_direction) {
-      edge_mask = distance_map.at(std::min(top_dist, bottom_dist));
-    } else if (both_directions) {
-      edge_mask = distance_map.at(std::min(left_dist, right_dist)) | distance_map.at(std::min(top_dist, bottom_dist));
+    int edgeMask;
+    if (onlyHorizontalDirection) {
+      edgeMask = distanceMap.at(std::min(leftDist, rightDist));
+    } else if (onlyVerticalDirection) {
+      edgeMask = distanceMap.at(std::min(topDist, bottomDist));
+    } else if (bothDirections) {
+      edgeMask = distanceMap.at(std::min(leftDist, rightDist)) | distanceMap.at(std::min(topDist, bottomDist));
     } else {
-      edge_mask = distance_map.begin()->second;
+      edgeMask = distanceMap.begin()->second;
     }
 
     QPointF movePoint;
-    if (edge_mask & TOP) {
+    if (edgeMask & TOP) {
       movePoint.setY(found_area_in_virtual.top());
-    } else if (edge_mask & BOTTOM) {
+    } else if (edgeMask & BOTTOM) {
       movePoint.setY(found_area_in_virtual.bottom());
     }
-    if (edge_mask & LEFT) {
+    if (edgeMask & LEFT) {
       movePoint.setX(found_area_in_virtual.left());
-    } else if (edge_mask & RIGHT) {
+    } else if (edgeMask & RIGHT) {
       movePoint.setX(found_area_in_virtual.right());
     }
 
-    contentRectCornerMoveRequest(edge_mask, virtualToWidget().map(movePoint));
+    contentRectCornerMoveRequest(edgeMask, virtualToWidget().map(movePoint));
   }
 
   update();
@@ -589,8 +589,8 @@ void ImageView::correctContentBox(const QPointF& pos, const Qt::KeyboardModifier
 }
 
 QRect ImageView::findContentInArea(const QRect& area) const {
-  const uint32_t* image_line = m_contentImage.data();
-  const int image_stride = m_contentImage.wordsPerLine();
+  const uint32_t* imageLine = m_contentImage.data();
+  const int imageStride = m_contentImage.wordsPerLine();
   const uint32_t msb = uint32_t(1) << 31;
 
   int top = std::numeric_limits<int>::max();
@@ -598,27 +598,27 @@ QRect ImageView::findContentInArea(const QRect& area) const {
   int bottom = std::numeric_limits<int>::min();
   int right = std::numeric_limits<int>::min();
 
-  image_line += area.top() * image_stride;
+  imageLine += area.top() * imageStride;
   for (int y = area.top(); y <= area.bottom(); ++y) {
     for (int x = area.left(); x <= area.right(); ++x) {
-      if (image_line[x >> 5] & (msb >> (x & 31))) {
+      if (imageLine[x >> 5] & (msb >> (x & 31))) {
         top = std::min(top, y);
         left = std::min(left, x);
         bottom = std::max(bottom, y);
         right = std::max(right, x);
       }
     }
-    image_line += image_stride;
+    imageLine += imageStride;
   }
 
   if (top > bottom) {
     return QRect();
   }
 
-  QRect found_area = QRect(left, top, right - left + 1, bottom - top + 1);
-  found_area.adjust(-1, -1, 1, 1);
+  QRect foundArea = QRect(left, top, right - left + 1, bottom - top + 1);
+  foundArea.adjust(-1, -1, 1, 1);
 
-  return found_area;
+  return foundArea;
 }
 
 void ImageView::setPageRectEnabled(const bool state) {

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DPI_H_
-#define DPI_H_
+#ifndef SCANTAILOR_IMAGEPROC_DPI_H_
+#define SCANTAILOR_IMAGEPROC_DPI_H_
 
 #include <QSize>
 
@@ -45,4 +45,4 @@ class Dpi {
 };
 
 
-#endif  // ifndef DPI_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_DPI_H_

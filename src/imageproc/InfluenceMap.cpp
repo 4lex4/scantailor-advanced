@@ -85,19 +85,19 @@ void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
   }
 
   if (mask) {
-    const uint32_t* mask_line = mask->data();
-    const int mask_stride = mask->wordsPerLine();
+    const uint32_t* maskLine = mask->data();
+    const int maskStride = mask->wordsPerLine();
     cell = m_plainData;
     const uint32_t msb = uint32_t(1) << 31;
     for (int y = 0; y < height - 2; ++y) {
       for (int x = 0; x < width - 2; ++x, ++cell) {
-        if (mask_line[x >> 5] & (msb >> (x & 31))) {
+        if (maskLine[x >> 5] & (msb >> (x & 31))) {
           if (cell->label == 0) {
             cell->distSq = ~uint32_t(0);
           }
         }
       }
-      mask_line += mask_stride;
+      maskLine += maskStride;
       cell += 2;
     }
   } else {
@@ -129,20 +129,20 @@ void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
 
     // North-western neighbor.
     Cell* nbh = cell - width - 1;
-    uint32_t new_dist_sq = cell->distSq + dx2 + dy2 + 2;
-    if (new_dist_sq < nbh->distSq) {
+    uint32_t newDistSq = cell->distSq + dx2 + dy2 + 2;
+    if (newDistSq < nbh->distSq) {
       nbh->label = cell->label;
-      nbh->distSq = new_dist_sq;
+      nbh->distSq = newDistSq;
       nbh->vec.x = static_cast<int16_t>(cell->vec.x + 1);
       nbh->vec.y = static_cast<int16_t>(cell->vec.y + 1);
       queue.push(nbh);
     }
     // Northern neighbor.
     ++nbh;
-    new_dist_sq = cell->distSq + dy2 + 1;
-    if (new_dist_sq < nbh->distSq) {
+    newDistSq = cell->distSq + dy2 + 1;
+    if (newDistSq < nbh->distSq) {
       nbh->label = cell->label;
-      nbh->distSq = new_dist_sq;
+      nbh->distSq = newDistSq;
       nbh->vec.x = cell->vec.x;
       nbh->vec.y = static_cast<int16_t>(cell->vec.y + 1);
       queue.push(nbh);
@@ -150,20 +150,20 @@ void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
 
     // North-eastern neighbor.
     ++nbh;
-    new_dist_sq = cell->distSq - dx2 + dy2 + 2;
-    if (new_dist_sq < nbh->distSq) {
+    newDistSq = cell->distSq - dx2 + dy2 + 2;
+    if (newDistSq < nbh->distSq) {
       nbh->label = cell->label;
-      nbh->distSq = new_dist_sq;
+      nbh->distSq = newDistSq;
       nbh->vec.x = static_cast<int16_t>(cell->vec.x - 1);
       nbh->vec.y = static_cast<int16_t>(cell->vec.y + 1);
       queue.push(nbh);
     }
     // Eastern neighbor.
     nbh += width;
-    new_dist_sq = cell->distSq - dx2 + 1;
-    if (new_dist_sq < nbh->distSq) {
+    newDistSq = cell->distSq - dx2 + 1;
+    if (newDistSq < nbh->distSq) {
       nbh->label = cell->label;
-      nbh->distSq = new_dist_sq;
+      nbh->distSq = newDistSq;
       nbh->vec.x = static_cast<int16_t>(cell->vec.x - 1);
       nbh->vec.y = cell->vec.y;
       queue.push(nbh);
@@ -171,20 +171,20 @@ void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
 
     // South-eastern neighbor.
     nbh += width;
-    new_dist_sq = cell->distSq - dx2 - dy2 + 2;
-    if (new_dist_sq < nbh->distSq) {
+    newDistSq = cell->distSq - dx2 - dy2 + 2;
+    if (newDistSq < nbh->distSq) {
       nbh->label = cell->label;
-      nbh->distSq = new_dist_sq;
+      nbh->distSq = newDistSq;
       nbh->vec.x = static_cast<int16_t>(cell->vec.x - 1);
       nbh->vec.y = static_cast<int16_t>(cell->vec.y - 1);
       queue.push(nbh);
     }
     // Southern neighbor.
     --nbh;
-    new_dist_sq = cell->distSq - dy2 + 1;
-    if (new_dist_sq < nbh->distSq) {
+    newDistSq = cell->distSq - dy2 + 1;
+    if (newDistSq < nbh->distSq) {
       nbh->label = cell->label;
-      nbh->distSq = new_dist_sq;
+      nbh->distSq = newDistSq;
       nbh->vec.x = cell->vec.x;
       nbh->vec.y = static_cast<int16_t>(cell->vec.y - 1);
       queue.push(nbh);
@@ -192,20 +192,20 @@ void InfluenceMap::init(const ConnectivityMap& cmap, const BinaryImage* mask) {
 
     // South-western neighbor.
     --nbh;
-    new_dist_sq = cell->distSq + dx2 - dy2 + 2;
-    if (new_dist_sq < nbh->distSq) {
+    newDistSq = cell->distSq + dx2 - dy2 + 2;
+    if (newDistSq < nbh->distSq) {
       nbh->label = cell->label;
-      nbh->distSq = new_dist_sq;
+      nbh->distSq = newDistSq;
       nbh->vec.x = static_cast<int16_t>(cell->vec.x + 1);
       nbh->vec.y = static_cast<int16_t>(cell->vec.y - 1);
       queue.push(nbh);
     }
     // Western neighbor.
     nbh -= width;
-    new_dist_sq = cell->distSq + dx2 + 1;
-    if (new_dist_sq < nbh->distSq) {
+    newDistSq = cell->distSq + dx2 + 1;
+    if (newDistSq < nbh->distSq) {
       nbh->label = cell->label;
-      nbh->distSq = new_dist_sq;
+      nbh->distSq = newDistSq;
       nbh->vec.x = static_cast<int16_t>(cell->vec.x + 1);
       nbh->vec.y = cell->vec.y;
       queue.push(nbh);
@@ -223,22 +223,22 @@ QImage InfluenceMap::visualized() const {
 
   QImage dst(m_size, QImage::Format_ARGB32);
   dst.fill(0x00FFFFFF);  // transparent white
-  const Cell* src_line = m_plainData;
-  const int src_stride = m_stride;
+  const Cell* srcLine = m_plainData;
+  const int srcStride = m_stride;
 
-  auto* dst_line = reinterpret_cast<uint32_t*>(dst.bits());
-  const int dst_stride = dst.bytesPerLine() / sizeof(uint32_t);
+  auto* dstLine = reinterpret_cast<uint32_t*>(dst.bits());
+  const int dstStride = dst.bytesPerLine() / sizeof(uint32_t);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      const uint32_t val = src_line[x].label;
+      const uint32_t val = srcLine[x].label;
       if (val == 0) {
         continue;
       }
 
-      const int bits_unused = countMostSignificantZeroes(val);
-      const uint32_t reversed = reverseBits(val) >> bits_unused;
-      const uint32_t mask = ~uint32_t(0) >> bits_unused;
+      const int bitsUnused = countMostSignificantZeroes(val);
+      const uint32_t reversed = reverseBits(val) >> bitsUnused;
+      const uint32_t mask = ~uint32_t(0) >> bitsUnused;
 
       const double H = 0.99 * (double(reversed) / mask);
       const double S = 1.0;
@@ -246,10 +246,10 @@ QImage InfluenceMap::visualized() const {
       QColor color;
       color.setHsvF(H, S, V, 1.0);
 
-      dst_line[x] = color.rgba();
+      dstLine[x] = color.rgba();
     }
-    src_line += src_stride;
-    dst_line += dst_stride;
+    srcLine += srcStride;
+    dstLine += dstStride;
   }
 
   return dst;

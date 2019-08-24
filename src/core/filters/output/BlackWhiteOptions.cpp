@@ -2,9 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "BlackWhiteOptions.h"
+#include <foundation/Utils.h>
 #include <QDomDocument>
 #include <cmath>
-#include <foundation/Utils.h>
 
 using namespace foundation;
 

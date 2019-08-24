@@ -10,13 +10,13 @@
 
 void DebugImagesImpl::add(const QImage& image,
                           const QString& label,
-                          const boost::function<QWidget*(const QImage&)>& image_view_factory) {
+                          const boost::function<QWidget*(const QImage&)>& imageViewFactory) {
   QTemporaryFile file(QDir::tempPath() + "/scantailor-dbg-XXXXXX.png");
   if (!file.open()) {
     return;
   }
 
-  AutoRemovingFile arem_file(file.fileName());
+  AutoRemovingFile aremFile(file.fileName());
   file.setAutoRemove(false);
 
   QImageWriter writer(&file, "png");
@@ -25,17 +25,17 @@ void DebugImagesImpl::add(const QImage& image,
     return;
   }
 
-  m_sequence.push_back(make_intrusive<Item>(arem_file, label, image_view_factory));
+  m_sequence.push_back(make_intrusive<Item>(aremFile, label, imageViewFactory));
 }
 
 void DebugImagesImpl::add(const imageproc::BinaryImage& image,
                           const QString& label,
-                          const boost::function<QWidget*(const QImage&)>& image_view_factory) {
-  add(image.toQImage(), label, image_view_factory);
+                          const boost::function<QWidget*(const QImage&)>& imageViewFactory) {
+  add(image.toQImage(), label, imageViewFactory);
 }
 
 AutoRemovingFile DebugImagesImpl::retrieveNext(QString* label,
-                                               boost::function<QWidget*(const QImage&)>* image_view_factory) {
+                                               boost::function<QWidget*(const QImage&)>* imageViewFactory) {
   if (m_sequence.empty()) {
     return AutoRemovingFile();
   }
@@ -44,8 +44,8 @@ AutoRemovingFile DebugImagesImpl::retrieveNext(QString* label,
   if (label) {
     *label = m_sequence.front()->label;
   }
-  if (image_view_factory) {
-    *image_view_factory = m_sequence.front()->imageViewFactory;
+  if (imageViewFactory) {
+    *imageViewFactory = m_sequence.front()->imageViewFactory;
   }
 
   m_sequence.pop_front();

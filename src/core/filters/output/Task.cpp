@@ -46,16 +46,16 @@ class Task::UiUpdater : public FilterResult {
  public:
   UiUpdater(intrusive_ptr<Filter> filter,
             intrusive_ptr<Settings> settings,
-            std::unique_ptr<DebugImages> dbg_img,
+            std::unique_ptr<DebugImages> dbgImg,
             const Params& params,
             const ImageTransformation& xform,
-            const QRect& virt_content_rect,
-            const PageId& page_id,
-            const QImage& orig_image,
-            const QImage& output_image,
-            const BinaryImage& picture_mask,
-            const DespeckleState& despeckle_state,
-            const DespeckleVisualization& despeckle_visualization,
+            const QRect& virtContentRect,
+            const PageId& pageId,
+            const QImage& origImage,
+            const QImage& outputImage,
+            const BinaryImage& pictureMask,
+            const DespeckleState& despeckleState,
+            const DespeckleVisualization& despeckleVisualization,
             bool batch,
             bool debug);
 
@@ -85,18 +85,18 @@ class Task::UiUpdater : public FilterResult {
 
 Task::Task(intrusive_ptr<Filter> filter,
            intrusive_ptr<Settings> settings,
-           intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-           const PageId& page_id,
-           const OutputFileNameGenerator& out_file_name_gen,
-           const ImageViewTab last_tab,
+           intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+           const PageId& pageId,
+           const OutputFileNameGenerator& outFileNameGen,
+           const ImageViewTab lastTab,
            const bool batch,
            const bool debug)
     : m_filter(std::move(filter)),
       m_settings(std::move(settings)),
-      m_thumbnailCache(std::move(thumbnail_cache)),
-      m_pageId(page_id),
-      m_outFileNameGen(out_file_name_gen),
-      m_lastTab(last_tab),
+      m_thumbnailCache(std::move(thumbnailCache)),
+      m_pageId(pageId),
+      m_outFileNameGen(outFileNameGen),
+      m_lastTab(lastTab),
       m_batchProcessing(batch),
       m_debug(debug) {
   if (debug) {
@@ -106,44 +106,44 @@ Task::Task(intrusive_ptr<Filter> filter,
 
 Task::~Task() = default;
 
-FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, const QPolygonF& content_rect_phys) {
+FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, const QPolygonF& contentRectPhys) {
   status.throwIfCancelled();
 
   Params params = m_settings->getParams(m_pageId);
 
-  RenderParams render_params(params.colorParams(), params.splittingOptions());
-  const QString out_file_path(m_outFileNameGen.filePathFor(m_pageId));
-  const QFileInfo out_file_info(out_file_path);
+  RenderParams renderParams(params.colorParams(), params.splittingOptions());
+  const QString outFilePath(m_outFileNameGen.filePathFor(m_pageId));
+  const QFileInfo outFileInfo(outFilePath);
 
-  ImageTransformation new_xform(data.xform());
-  new_xform.postScaleToDpi(params.outputDpi());
+  ImageTransformation newXform(data.xform());
+  newXform.postScaleToDpi(params.outputDpi());
 
-  const QString foreground_dir(Utils::foregroundDir(m_outFileNameGen.outDir()));
-  const QString background_dir(Utils::backgroundDir(m_outFileNameGen.outDir()));
-  const QString original_background_dir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
-  const QString foreground_file_path(QDir(foreground_dir).absoluteFilePath(out_file_info.fileName()));
-  const QString background_file_path(QDir(background_dir).absoluteFilePath(out_file_info.fileName()));
-  const QString original_background_file_path(QDir(original_background_dir).absoluteFilePath(out_file_info.fileName()));
-  const QFileInfo foreground_file_info(foreground_file_path);
-  const QFileInfo background_file_info(background_file_path);
-  const QFileInfo original_background_file_info(original_background_file_path);
+  const QString foregroundDir(Utils::foregroundDir(m_outFileNameGen.outDir()));
+  const QString backgroundDir(Utils::backgroundDir(m_outFileNameGen.outDir()));
+  const QString originalBackgroundDir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
+  const QString foregroundFilePath(QDir(foregroundDir).absoluteFilePath(outFileInfo.fileName()));
+  const QString backgroundFilePath(QDir(backgroundDir).absoluteFilePath(outFileInfo.fileName()));
+  const QString originalBackgroundFilePath(QDir(originalBackgroundDir).absoluteFilePath(outFileInfo.fileName()));
+  const QFileInfo foregroundFileInfo(foregroundFilePath);
+  const QFileInfo backgroundFileInfo(backgroundFilePath);
+  const QFileInfo originalBackgroundFileInfo(originalBackgroundFilePath);
 
-  const QString automask_dir(Utils::automaskDir(m_outFileNameGen.outDir()));
-  const QString automask_file_path(QDir(automask_dir).absoluteFilePath(out_file_info.fileName()));
-  QFileInfo automask_file_info(automask_file_path);
+  const QString automaskDir(Utils::automaskDir(m_outFileNameGen.outDir()));
+  const QString automaskFilePath(QDir(automaskDir).absoluteFilePath(outFileInfo.fileName()));
+  QFileInfo automaskFileInfo(automaskFilePath);
 
-  const QString speckles_dir(Utils::specklesDir(m_outFileNameGen.outDir()));
-  const QString speckles_file_path(QDir(speckles_dir).absoluteFilePath(out_file_info.fileName()));
-  QFileInfo speckles_file_info(speckles_file_path);
+  const QString specklesDir(Utils::specklesDir(m_outFileNameGen.outDir()));
+  const QString specklesFilePath(QDir(specklesDir).absoluteFilePath(outFileInfo.fileName()));
+  QFileInfo specklesFileInfo(specklesFilePath);
 
-  const bool need_picture_editor = render_params.mixedOutput() && !m_batchProcessing;
+  const bool needPictureEditor = renderParams.mixedOutput() && !m_batchProcessing;
   const bool need_speckles_image
-      = params.despeckleLevel() != DESPECKLE_OFF && render_params.needBinarization() && !m_batchProcessing;
+      = params.despeckleLevel() != DESPECKLE_OFF && renderParams.needBinarization() && !m_batchProcessing;
 
   {
-    std::unique_ptr<OutputParams> stored_output_params(m_settings->getOutputParams(m_pageId));
-    if (stored_output_params != nullptr) {
-      if (stored_output_params->outputImageParams().getPictureShapeOptions() != params.pictureShapeOptions()) {
+    std::unique_ptr<OutputParams> storedOutputParams(m_settings->getOutputParams(m_pageId));
+    if (storedOutputParams != nullptr) {
+      if (storedOutputParams->outputImageParams().getPictureShapeOptions() != params.pictureShapeOptions()) {
         // if picture shape options changed, reset auto picture zones
         OutputProcessingParams outputProcessingParams = m_settings->getOutputProcessingParams(m_pageId);
         outputProcessingParams.setAutoZonesFound(false);
@@ -152,286 +152,286 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     }
   }
 
-  const OutputGenerator generator(new_xform, content_rect_phys);
+  const OutputGenerator generator(newXform, contentRectPhys);
 
-  OutputImageParams new_output_image_params(
-      generator.outputImageSize(), generator.outputContentRect(), new_xform, params.outputDpi(), params.colorParams(),
-      params.splittingOptions(), params.dewarpingOptions(), params.distortionModel(), params.depthPerception(),
-      params.despeckleLevel(), params.pictureShapeOptions(), m_settings->getOutputProcessingParams(m_pageId),
-      params.isBlackOnWhite());
+  OutputImageParams newOutputImageParams(generator.outputImageSize(), generator.outputContentRect(), newXform,
+                                         params.outputDpi(), params.colorParams(), params.splittingOptions(),
+                                         params.dewarpingOptions(), params.distortionModel(), params.depthPerception(),
+                                         params.despeckleLevel(), params.pictureShapeOptions(),
+                                         m_settings->getOutputProcessingParams(m_pageId), params.isBlackOnWhite());
 
-  ZoneSet new_picture_zones(m_settings->pictureZonesForPage(m_pageId));
-  const ZoneSet new_fill_zones(m_settings->fillZonesForPage(m_pageId));
+  ZoneSet newPictureZones(m_settings->pictureZonesForPage(m_pageId));
+  const ZoneSet newFillZones(m_settings->fillZonesForPage(m_pageId));
 
-  bool need_reprocess = false;
+  bool needReprocess = false;
   do {  // Just to be able to break from it.
-    std::unique_ptr<OutputParams> stored_output_params(m_settings->getOutputParams(m_pageId));
+    std::unique_ptr<OutputParams> storedOutputParams(m_settings->getOutputParams(m_pageId));
 
-    if (!stored_output_params) {
-      need_reprocess = true;
+    if (!storedOutputParams) {
+      needReprocess = true;
       break;
     }
 
-    if (!stored_output_params->outputImageParams().matches(new_output_image_params)) {
-      need_reprocess = true;
+    if (!storedOutputParams->outputImageParams().matches(newOutputImageParams)) {
+      needReprocess = true;
       break;
     }
 
-    if (!PictureZoneComparator::equal(stored_output_params->pictureZones(), new_picture_zones)) {
-      need_reprocess = true;
+    if (!PictureZoneComparator::equal(storedOutputParams->pictureZones(), newPictureZones)) {
+      needReprocess = true;
       break;
     }
 
-    if (!FillZoneComparator::equal(stored_output_params->fillZones(), new_fill_zones)) {
-      need_reprocess = true;
+    if (!FillZoneComparator::equal(storedOutputParams->fillZones(), newFillZones)) {
+      needReprocess = true;
       break;
     }
 
-    if (!render_params.splitOutput()) {
-      if (!out_file_info.exists()) {
-        need_reprocess = true;
+    if (!renderParams.splitOutput()) {
+      if (!outFileInfo.exists()) {
+        needReprocess = true;
         break;
       }
 
-      if (!stored_output_params->outputFileParams().matches(OutputFileParams(out_file_info))) {
-        need_reprocess = true;
+      if (!storedOutputParams->outputFileParams().matches(OutputFileParams(outFileInfo))) {
+        needReprocess = true;
         break;
       }
     } else {
-      if (!foreground_file_info.exists() || !background_file_info.exists()) {
-        need_reprocess = true;
+      if (!foregroundFileInfo.exists() || !backgroundFileInfo.exists()) {
+        needReprocess = true;
         break;
       }
-      if (!(stored_output_params->foregroundFileParams().matches(OutputFileParams(foreground_file_info)))
-          || !(stored_output_params->backgroundFileParams().matches(OutputFileParams(background_file_info)))) {
-        need_reprocess = true;
+      if (!(storedOutputParams->foregroundFileParams().matches(OutputFileParams(foregroundFileInfo)))
+          || !(storedOutputParams->backgroundFileParams().matches(OutputFileParams(backgroundFileInfo)))) {
+        needReprocess = true;
         break;
       }
 
-      if (render_params.originalBackground()) {
-        if (!original_background_file_info.exists()) {
-          need_reprocess = true;
+      if (renderParams.originalBackground()) {
+        if (!originalBackgroundFileInfo.exists()) {
+          needReprocess = true;
           break;
         }
-        if (!(stored_output_params->originalBackgroundFileParams().matches(
-                OutputFileParams(original_background_file_info)))) {
-          need_reprocess = true;
+        if (!(storedOutputParams->originalBackgroundFileParams().matches(
+                OutputFileParams(originalBackgroundFileInfo)))) {
+          needReprocess = true;
           break;
         }
       }
     }
 
-    if (need_picture_editor) {
-      if (!automask_file_info.exists()) {
-        need_reprocess = true;
+    if (needPictureEditor) {
+      if (!automaskFileInfo.exists()) {
+        needReprocess = true;
         break;
       }
 
-      if (!stored_output_params->automaskFileParams().matches(OutputFileParams(automask_file_info))) {
-        need_reprocess = true;
+      if (!storedOutputParams->automaskFileParams().matches(OutputFileParams(automaskFileInfo))) {
+        needReprocess = true;
         break;
       }
     }
 
     if (need_speckles_image) {
-      if (!speckles_file_info.exists()) {
-        need_reprocess = true;
+      if (!specklesFileInfo.exists()) {
+        needReprocess = true;
         break;
       }
-      if (!stored_output_params->specklesFileParams().matches(OutputFileParams(speckles_file_info))) {
-        need_reprocess = true;
+      if (!storedOutputParams->specklesFileParams().matches(OutputFileParams(specklesFileInfo))) {
+        needReprocess = true;
         break;
       }
     }
   } while (false);
 
-  QImage out_img;
-  BinaryImage automask_img;
-  BinaryImage speckles_img;
+  QImage outImg;
+  BinaryImage automaskImg;
+  BinaryImage specklesImg;
 
-  if (!need_reprocess) {
-    QFile out_file(out_file_path);
-    if (out_file.open(QIODevice::ReadOnly)) {
-      out_img = ImageLoader::load(out_file, 0);
+  if (!needReprocess) {
+    QFile outFile(outFilePath);
+    if (outFile.open(QIODevice::ReadOnly)) {
+      outImg = ImageLoader::load(outFile, 0);
     }
-    if (out_img.isNull() && render_params.splitOutput()) {
+    if (outImg.isNull() && renderParams.splitOutput()) {
       OutputImageBuilder imageBuilder;
-      QFile foreground_file(foreground_file_path);
-      if (foreground_file.open(QIODevice::ReadOnly)) {
-        imageBuilder.setForegroundImage(ImageLoader::load(foreground_file, 0));
+      QFile foregroundFile(foregroundFilePath);
+      if (foregroundFile.open(QIODevice::ReadOnly)) {
+        imageBuilder.setForegroundImage(ImageLoader::load(foregroundFile, 0));
       }
-      QFile background_file(background_file_path);
-      if (background_file.open(QIODevice::ReadOnly)) {
-        imageBuilder.setBackgroundImage(ImageLoader::load(background_file, 0));
+      QFile backgroundFile(backgroundFilePath);
+      if (backgroundFile.open(QIODevice::ReadOnly)) {
+        imageBuilder.setBackgroundImage(ImageLoader::load(backgroundFile, 0));
       }
-      if (render_params.originalBackground()) {
-        QFile original_background_file(original_background_file_path);
-        if (original_background_file.open(QIODevice::ReadOnly)) {
-          imageBuilder.setOriginalBackgroundImage(ImageLoader::load(original_background_file, 0));
+      if (renderParams.originalBackground()) {
+        QFile originalBackgroundFile(originalBackgroundFilePath);
+        if (originalBackgroundFile.open(QIODevice::ReadOnly)) {
+          imageBuilder.setOriginalBackgroundImage(ImageLoader::load(originalBackgroundFile, 0));
         }
       }
-      out_img = *imageBuilder.build();
+      outImg = *imageBuilder.build();
     }
-    need_reprocess = out_img.isNull();
+    needReprocess = outImg.isNull();
 
-    if (need_picture_editor && !need_reprocess) {
-      QFile automask_file(automask_file_path);
-      if (automask_file.open(QIODevice::ReadOnly)) {
-        automask_img = BinaryImage(ImageLoader::load(automask_file, 0));
+    if (needPictureEditor && !needReprocess) {
+      QFile automaskFile(automaskFilePath);
+      if (automaskFile.open(QIODevice::ReadOnly)) {
+        automaskImg = BinaryImage(ImageLoader::load(automaskFile, 0));
       }
-      need_reprocess = automask_img.isNull() || automask_img.size() != out_img.size();
+      needReprocess = automaskImg.isNull() || automaskImg.size() != outImg.size();
     }
 
-    if (need_speckles_image && !need_reprocess) {
-      QFile speckles_file(speckles_file_path);
-      if (speckles_file.open(QIODevice::ReadOnly)) {
-        speckles_img = BinaryImage(ImageLoader::load(speckles_file, 0));
+    if (need_speckles_image && !needReprocess) {
+      QFile specklesFile(specklesFilePath);
+      if (specklesFile.open(QIODevice::ReadOnly)) {
+        specklesImg = BinaryImage(ImageLoader::load(specklesFile, 0));
       }
-      need_reprocess = speckles_img.isNull();
+      needReprocess = specklesImg.isNull();
     }
   }
 
-  if (need_reprocess) {
+  if (needReprocess) {
     // Even in batch processing mode we should still write automask, because it
     // will be needed when we view the results back in interactive mode.
     // The same applies even more to speckles file, as we need it not only
     // for visualization purposes, but also for re-doing despeckling at
     // different levels without going through the whole output generation process.
-    const bool write_automask = render_params.mixedOutput();
-    const bool write_speckles_file = params.despeckleLevel() != DESPECKLE_OFF && render_params.needBinarization();
+    const bool writeAutomask = renderParams.mixedOutput();
+    const bool writeSpecklesFile = params.despeckleLevel() != DESPECKLE_OFF && renderParams.needBinarization();
 
-    automask_img = BinaryImage();
-    speckles_img = BinaryImage();
+    automaskImg = BinaryImage();
+    specklesImg = BinaryImage();
 
     // OutputGenerator will write a new distortion model
     // there, if dewarping mode is AUTO.
-    DistortionModel distortion_model;
+    DistortionModel distortionModel;
     if (params.dewarpingOptions().dewarpingMode() == MANUAL) {
-      distortion_model = params.distortionModel();
+      distortionModel = params.distortionModel();
     }
 
-    bool invalidate_params = false;
+    bool invalidateParams = false;
     {
       std::unique_ptr<OutputImage> outputImage
-          = generator.process(status, data, new_picture_zones, new_fill_zones, distortion_model,
-                              params.depthPerception(), write_automask ? &automask_img : nullptr,
-                              write_speckles_file ? &speckles_img : nullptr, m_dbg.get(), m_pageId, m_settings);
+          = generator.process(status, data, newPictureZones, newFillZones, distortionModel, params.depthPerception(),
+                              writeAutomask ? &automaskImg : nullptr, writeSpecklesFile ? &specklesImg : nullptr,
+                              m_dbg.get(), m_pageId, m_settings);
 
       params = m_settings->getParams(m_pageId);
 
       if (((params.dewarpingOptions().dewarpingMode() == AUTO)
            || (params.dewarpingOptions().dewarpingMode() == MARGINAL))
-          && distortion_model.isValid()) {
+          && distortionModel.isValid()) {
         // A new distortion model was generated.
         // We need to save it to be able to modify it manually.
-        params.setDistortionModel(distortion_model);
+        params.setDistortionModel(distortionModel);
         m_settings->setParams(m_pageId, params);
-        new_output_image_params.setDistortionModel(distortion_model);
+        newOutputImageParams.setDistortionModel(distortionModel);
       }
 
       // Saving refreshed params and output processing params.
-      new_output_image_params.setBlackOnWhite(m_settings->getParams(m_pageId).isBlackOnWhite());
-      new_output_image_params.setOutputProcessingParams(m_settings->getOutputProcessingParams(m_pageId));
+      newOutputImageParams.setBlackOnWhite(m_settings->getParams(m_pageId).isBlackOnWhite());
+      newOutputImageParams.setOutputProcessingParams(m_settings->getOutputProcessingParams(m_pageId));
 
-      if (render_params.splitOutput()) {
+      if (renderParams.splitOutput()) {
         auto* outputImageWithForeground = dynamic_cast<OutputImageWithForeground*>(outputImage.get());
 
-        QDir().mkdir(foreground_dir);
-        QDir().mkdir(background_dir);
-        if (!TiffWriter::writeImage(foreground_file_path, outputImageWithForeground->getForegroundImage())
-            || !TiffWriter::writeImage(background_file_path, outputImageWithForeground->getBackgroundImage())) {
-          invalidate_params = true;
+        QDir().mkdir(foregroundDir);
+        QDir().mkdir(backgroundDir);
+        if (!TiffWriter::writeImage(foregroundFilePath, outputImageWithForeground->getForegroundImage())
+            || !TiffWriter::writeImage(backgroundFilePath, outputImageWithForeground->getBackgroundImage())) {
+          invalidateParams = true;
         }
 
-        if (render_params.originalBackground()) {
+        if (renderParams.originalBackground()) {
           auto* outputImageWithOrigBg = dynamic_cast<OutputImageWithOriginalBackground*>(outputImage.get());
 
-          QDir().mkdir(original_background_dir);
-          if (!TiffWriter::writeImage(original_background_file_path,
+          QDir().mkdir(originalBackgroundDir);
+          if (!TiffWriter::writeImage(originalBackgroundFilePath,
                                       outputImageWithOrigBg->getOriginalBackgroundImage())) {
-            invalidate_params = true;
+            invalidateParams = true;
           }
         }
       }
 
-      out_img = *outputImage;
+      outImg = *outputImage;
     }
 
-    if (!render_params.originalBackground()) {
-      QFile::remove(original_background_file_path);
+    if (!renderParams.originalBackground()) {
+      QFile::remove(originalBackgroundFilePath);
     }
-    if (!render_params.splitOutput()) {
-      QFile::remove(foreground_file_path);
-      QFile::remove(background_file_path);
+    if (!renderParams.splitOutput()) {
+      QFile::remove(foregroundFilePath);
+      QFile::remove(backgroundFilePath);
     }
 
-    if (!TiffWriter::writeImage(out_file_path, out_img)) {
-      invalidate_params = true;
+    if (!TiffWriter::writeImage(outFilePath, outImg)) {
+      invalidateParams = true;
     } else {
       deleteMutuallyExclusiveOutputFiles();
     }
 
-    if (write_speckles_file && speckles_img.isNull()) {
+    if (writeSpecklesFile && specklesImg.isNull()) {
       // Even if despeckling didn't actually take place, we still need
       // to write an empty speckles file.  Making it a special case
       // is simply not worth it.
-      BinaryImage(out_img.size(), WHITE).swap(speckles_img);
+      BinaryImage(outImg.size(), WHITE).swap(specklesImg);
     }
 
-    if (write_automask) {
+    if (writeAutomask) {
       // Note that QDir::mkdir() will fail if the parent directory,
       // that is $OUT/cache doesn't exist. We want that behaviour,
       // as otherwise when loading a project from a different machine,
       // a whole bunch of bogus directories would be created.
-      QDir().mkdir(automask_dir);
+      QDir().mkdir(automaskDir);
       // Also note that QDir::mkdir() will fail if the directory already exists,
       // so we ignore its return value here.
-      if (!TiffWriter::writeImage(automask_file_path, automask_img.toQImage())) {
-        invalidate_params = true;
+      if (!TiffWriter::writeImage(automaskFilePath, automaskImg.toQImage())) {
+        invalidateParams = true;
       }
     }
-    if (write_speckles_file) {
-      if (!QDir().mkpath(speckles_dir)) {
-        invalidate_params = true;
-      } else if (!TiffWriter::writeImage(speckles_file_path, speckles_img.toQImage())) {
-        invalidate_params = true;
+    if (writeSpecklesFile) {
+      if (!QDir().mkpath(specklesDir)) {
+        invalidateParams = true;
+      } else if (!TiffWriter::writeImage(specklesFilePath, specklesImg.toQImage())) {
+        invalidateParams = true;
       }
     }
 
-    if (invalidate_params) {
+    if (invalidateParams) {
       m_settings->removeOutputParams(m_pageId);
     } else {
       // Note that we can't reuse *_file_info objects
       // as we've just overwritten those files.
-      const OutputParams out_params(
-          new_output_image_params, OutputFileParams(QFileInfo(out_file_path)),
-          render_params.splitOutput() ? OutputFileParams(QFileInfo(foreground_file_path)) : OutputFileParams(),
-          render_params.splitOutput() ? OutputFileParams(QFileInfo(background_file_path)) : OutputFileParams(),
-          render_params.originalBackground() ? OutputFileParams(QFileInfo(original_background_file_path))
-                                             : OutputFileParams(),
-          write_automask ? OutputFileParams(QFileInfo(automask_file_path)) : OutputFileParams(),
-          write_speckles_file ? OutputFileParams(QFileInfo(speckles_file_path)) : OutputFileParams(), new_picture_zones,
-          new_fill_zones);
+      const OutputParams outParams(
+          newOutputImageParams, OutputFileParams(QFileInfo(outFilePath)),
+          renderParams.splitOutput() ? OutputFileParams(QFileInfo(foregroundFilePath)) : OutputFileParams(),
+          renderParams.splitOutput() ? OutputFileParams(QFileInfo(backgroundFilePath)) : OutputFileParams(),
+          renderParams.originalBackground() ? OutputFileParams(QFileInfo(originalBackgroundFilePath))
+                                            : OutputFileParams(),
+          writeAutomask ? OutputFileParams(QFileInfo(automaskFilePath)) : OutputFileParams(),
+          writeSpecklesFile ? OutputFileParams(QFileInfo(specklesFilePath)) : OutputFileParams(), newPictureZones,
+          newFillZones);
 
-      m_settings->setOutputParams(m_pageId, out_params);
+      m_settings->setOutputParams(m_pageId, outParams);
     }
 
-    m_thumbnailCache->recreateThumbnail(ImageId(out_file_path), out_img);
+    m_thumbnailCache->recreateThumbnail(ImageId(outFilePath), outImg);
   }
 
-  const DespeckleState despeckle_state(out_img, speckles_img, params.despeckleLevel(), params.outputDpi());
+  const DespeckleState despeckleState(outImg, specklesImg, params.despeckleLevel(), params.outputDpi());
 
-  DespeckleVisualization despeckle_visualization;
+  DespeckleVisualization despeckleVisualization;
   if (m_lastTab == TAB_DESPECKLING) {
     // Because constructing DespeckleVisualization takes a noticeable
     // amount of time, we only do it if we are sure we'll need it.
     // Otherwise it will get constructed on demand.
-    despeckle_visualization = despeckle_state.visualize();
+    despeckleVisualization = despeckleState.visualize();
   }
 
-  return make_intrusive<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, new_xform,
-                                   generator.outputContentRect(), m_pageId, data.origImage(), out_img, automask_img,
-                                   despeckle_state, despeckle_visualization, m_batchProcessing, m_debug);
+  return make_intrusive<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, newXform,
+                                   generator.outputContentRect(), m_pageId, data.origImage(), outImg, automaskImg,
+                                   despeckleState, despeckleVisualization, m_batchProcessing, m_debug);
 }  // Task::process
 
 /**
@@ -454,40 +454,40 @@ void Task::deleteMutuallyExclusiveOutputFiles() {
 
 Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            intrusive_ptr<Settings> settings,
-                           std::unique_ptr<DebugImages> dbg_img,
+                           std::unique_ptr<DebugImages> dbgImg,
                            const Params& params,
                            const ImageTransformation& xform,
-                           const QRect& virt_content_rect,
-                           const PageId& page_id,
-                           const QImage& orig_image,
-                           const QImage& output_image,
-                           const BinaryImage& picture_mask,
-                           const DespeckleState& despeckle_state,
-                           const DespeckleVisualization& despeckle_visualization,
+                           const QRect& virtContentRect,
+                           const PageId& pageId,
+                           const QImage& origImage,
+                           const QImage& outputImage,
+                           const BinaryImage& pictureMask,
+                           const DespeckleState& despeckleState,
+                           const DespeckleVisualization& despeckleVisualization,
                            const bool batch,
                            const bool debug)
     : m_filter(std::move(filter)),
       m_settings(std::move(settings)),
-      m_dbg(std::move(dbg_img)),
+      m_dbg(std::move(dbgImg)),
       m_params(params),
       m_xform(xform),
-      m_virtContentRect(virt_content_rect),
-      m_pageId(page_id),
-      m_origImage(orig_image),
-      m_downscaledOrigImage(ImageView::createDownscaledImage(orig_image)),
-      m_outputImage(output_image),
-      m_downscaledOutputImage(ImageView::createDownscaledImage(output_image)),
-      m_pictureMask(picture_mask),
-      m_despeckleState(despeckle_state),
-      m_despeckleVisualization(despeckle_visualization),
+      m_virtContentRect(virtContentRect),
+      m_pageId(pageId),
+      m_origImage(origImage),
+      m_downscaledOrigImage(ImageView::createDownscaledImage(origImage)),
+      m_outputImage(outputImage),
+      m_downscaledOutputImage(ImageView::createDownscaledImage(outputImage)),
+      m_pictureMask(pictureMask),
+      m_despeckleState(despeckleState),
+      m_despeckleVisualization(despeckleVisualization),
       m_batchProcessing(batch),
       m_debug(debug) {}
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_filter->optionsWidget();
-  opt_widget->postUpdateUI();
-  ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI();
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   ui->invalidateThumbnail(m_pageId);
 
@@ -495,34 +495,34 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
     return;
   }
 
-  auto tab_image_rect_map = std::make_unique<std::unordered_map<ImageViewTab, QRectF, std::hash<int>>>();
+  auto tabImageRectMap = std::make_unique<std::unordered_map<ImageViewTab, QRectF, std::hash<int>>>();
 
-  auto image_view = std::make_unique<ImageView>(m_outputImage, m_downscaledOutputImage);
-  const QPixmap downscaled_output_pixmap(image_view->downscaledPixmap());
-  tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_OUTPUT, m_xform.resultingRect()));
+  auto imageView = std::make_unique<ImageView>(m_outputImage, m_downscaledOutputImage);
+  const QPixmap downscaledOutputPixmap(imageView->downscaledPixmap());
+  tabImageRectMap->insert(std::pair<ImageViewTab, QRectF>(TAB_OUTPUT, m_xform.resultingRect()));
 
-  auto dewarping_view = std::make_unique<DewarpingView>(
+  auto dewarpingView = std::make_unique<DewarpingView>(
       m_origImage, m_downscaledOrigImage, m_xform.transform(),
       PolygonUtils::convexHull(m_xform.resultingPreCropArea().toStdVector()), m_virtContentRect, m_pageId,
-      m_params.dewarpingOptions(), m_params.distortionModel(), opt_widget->depthPerception());
-  const QPixmap downscaled_orig_pixmap(dewarping_view->downscaledPixmap());
-  QObject::connect(opt_widget, SIGNAL(depthPerceptionChanged(double)), dewarping_view.get(),
+      m_params.dewarpingOptions(), m_params.distortionModel(), optWidget->depthPerception());
+  const QPixmap downscaledOrigPixmap(dewarpingView->downscaledPixmap());
+  QObject::connect(optWidget, SIGNAL(depthPerceptionChanged(double)), dewarpingView.get(),
                    SLOT(depthPerceptionChanged(double)));
-  QObject::connect(dewarping_view.get(), SIGNAL(distortionModelChanged(const dewarping::DistortionModel&)), opt_widget,
+  QObject::connect(dewarpingView.get(), SIGNAL(distortionModelChanged(const dewarping::DistortionModel&)), optWidget,
                    SLOT(distortionModelChanged(const dewarping::DistortionModel&)));
-  tab_image_rect_map->insert(
+  tabImageRectMap->insert(
       std::pair<ImageViewTab, QRectF>(TAB_DEWARPING, m_xform.resultingPreCropArea().boundingRect()));
 
-  std::unique_ptr<QWidget> picture_zone_editor;
+  std::unique_ptr<QWidget> pictureZoneEditor;
   if (m_pictureMask.isNull()) {
-    picture_zone_editor = std::make_unique<ErrorWidget>(tr("Picture zones are only available in Mixed mode."));
+    pictureZoneEditor = std::make_unique<ErrorWidget>(tr("Picture zones are only available in Mixed mode."));
   } else {
-    picture_zone_editor = std::make_unique<output::PictureZoneEditor>(
-        m_origImage, downscaled_orig_pixmap, m_pictureMask, m_xform.transform(), m_xform.resultingPreCropArea(),
-        m_pageId, m_settings);
-    QObject::connect(picture_zone_editor.get(), SIGNAL(invalidateThumbnail(const PageId&)), opt_widget,
+    pictureZoneEditor = std::make_unique<output::PictureZoneEditor>(m_origImage, downscaledOrigPixmap, m_pictureMask,
+                                                                    m_xform.transform(), m_xform.resultingPreCropArea(),
+                                                                    m_pageId, m_settings);
+    QObject::connect(pictureZoneEditor.get(), SIGNAL(invalidateThumbnail(const PageId&)), optWidget,
                      SIGNAL(invalidateThumbnail(const PageId&)));
-    tab_image_rect_map->insert(
+    tabImageRectMap->insert(
         std::pair<ImageViewTab, QRectF>(TAB_PICTURE_ZONES, m_xform.resultingPreCropArea().boundingRect()));
   }
 
@@ -531,50 +531,50 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // In OptionsWidget::dewarpingChanged() we make sure to reload
   // if we are on the "Fill Zones" tab, and if not, it will be reloaded
   // anyway when another tab is selected.
-  boost::function<QPointF(const QPointF&)> orig_to_output;
-  boost::function<QPointF(const QPointF&)> output_to_orig;
+  boost::function<QPointF(const QPointF&)> origToOutput;
+  boost::function<QPointF(const QPointF&)> outputToOrig;
   if ((m_params.dewarpingOptions().dewarpingMode() != OFF) && m_params.distortionModel().isValid()) {
     const QTransform rotate_xform
         = Utils::rotate(m_params.dewarpingOptions().getPostDeskewAngle(), m_xform.resultingRect().toRect());
     auto mapper = std::make_shared<DewarpingPointMapper>(m_params.distortionModel(), m_params.depthPerception().value(),
                                                          m_xform.transform(), m_virtContentRect, rotate_xform);
-    orig_to_output = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
-    output_to_orig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
+    origToOutput = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
+    outputToOrig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
   } else {
     typedef QPointF (QTransform::*MapPointFunc)(const QPointF&) const;
-    orig_to_output = boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1);
-    output_to_orig = boost::bind((MapPointFunc) &QTransform::map, m_xform.transformBack(), _1);
+    origToOutput = boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1);
+    outputToOrig = boost::bind((MapPointFunc) &QTransform::map, m_xform.transformBack(), _1);
   }
 
-  auto fill_zone_editor = std::make_unique<FillZoneEditor>(m_outputImage, downscaled_output_pixmap, orig_to_output,
-                                                           output_to_orig, m_pageId, m_settings);
-  QObject::connect(fill_zone_editor.get(), SIGNAL(invalidateThumbnail(const PageId&)), opt_widget,
+  auto fillZoneEditor = std::make_unique<FillZoneEditor>(m_outputImage, downscaledOutputPixmap, origToOutput,
+                                                         outputToOrig, m_pageId, m_settings);
+  QObject::connect(fillZoneEditor.get(), SIGNAL(invalidateThumbnail(const PageId&)), optWidget,
                    SIGNAL(invalidateThumbnail(const PageId&)));
-  tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_FILL_ZONES, m_xform.resultingRect()));
+  tabImageRectMap->insert(std::pair<ImageViewTab, QRectF>(TAB_FILL_ZONES, m_xform.resultingRect()));
 
-  std::unique_ptr<QWidget> despeckle_view;
+  std::unique_ptr<QWidget> despeckleView;
   if (m_params.colorParams().colorMode() == COLOR_GRAYSCALE) {
-    despeckle_view = std::make_unique<ErrorWidget>(tr("Despeckling can't be done in Color / Grayscale mode."));
+    despeckleView = std::make_unique<ErrorWidget>(tr("Despeckling can't be done in Color / Grayscale mode."));
   } else {
-    despeckle_view = std::make_unique<output::DespeckleView>(m_despeckleState, m_despeckleVisualization, m_debug);
-    QObject::connect(opt_widget, SIGNAL(despeckleLevelChanged(double, bool*)), despeckle_view.get(),
+    despeckleView = std::make_unique<output::DespeckleView>(m_despeckleState, m_despeckleVisualization, m_debug);
+    QObject::connect(optWidget, SIGNAL(despeckleLevelChanged(double, bool*)), despeckleView.get(),
                      SLOT(despeckleLevelChanged(double, bool*)));
-    tab_image_rect_map->insert(std::pair<ImageViewTab, QRectF>(TAB_DESPECKLING, m_xform.resultingRect()));
+    tabImageRectMap->insert(std::pair<ImageViewTab, QRectF>(TAB_DESPECKLING, m_xform.resultingRect()));
   }
 
-  auto tab_widget = std::make_unique<TabbedImageView>();
-  tab_widget->setDocumentMode(true);
-  tab_widget->setTabPosition(QTabWidget::East);
-  tab_widget->addTab(image_view.release(), tr("Output"), TAB_OUTPUT);
-  tab_widget->addTab(picture_zone_editor.release(), tr("Picture Zones"), TAB_PICTURE_ZONES);
-  tab_widget->addTab(fill_zone_editor.release(), tr("Fill Zones"), TAB_FILL_ZONES);
-  tab_widget->addTab(dewarping_view.release(), tr("Dewarping"), TAB_DEWARPING);
-  tab_widget->addTab(despeckle_view.release(), tr("Despeckling"), TAB_DESPECKLING);
-  tab_widget->setCurrentTab(opt_widget->lastTab());
-  tab_widget->setImageRectMap(std::move(tab_image_rect_map));
+  auto tabWidget = std::make_unique<TabbedImageView>();
+  tabWidget->setDocumentMode(true);
+  tabWidget->setTabPosition(QTabWidget::East);
+  tabWidget->addTab(imageView.release(), tr("Output"), TAB_OUTPUT);
+  tabWidget->addTab(pictureZoneEditor.release(), tr("Picture Zones"), TAB_PICTURE_ZONES);
+  tabWidget->addTab(fillZoneEditor.release(), tr("Fill Zones"), TAB_FILL_ZONES);
+  tabWidget->addTab(dewarpingView.release(), tr("Dewarping"), TAB_DEWARPING);
+  tabWidget->addTab(despeckleView.release(), tr("Despeckling"), TAB_DESPECKLING);
+  tabWidget->setCurrentTab(optWidget->lastTab());
+  tabWidget->setImageRectMap(std::move(tabImageRectMap));
 
-  QObject::connect(tab_widget.get(), SIGNAL(tabChanged(ImageViewTab)), opt_widget, SLOT(tabChanged(ImageViewTab)));
+  QObject::connect(tabWidget.get(), SIGNAL(tabChanged(ImageViewTab)), optWidget, SLOT(tabChanged(ImageViewTab)));
 
-  ui->setImageWidget(tab_widget.release(), ui->TRANSFER_OWNERSHIP, m_dbg.get());
+  ui->setImageWidget(tabWidget.release(), ui->TRANSFER_OWNERSHIP, m_dbg.get());
 }  // Task::UiUpdater::updateUI
 }  // namespace output

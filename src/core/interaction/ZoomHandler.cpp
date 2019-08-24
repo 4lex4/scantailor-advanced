@@ -5,14 +5,14 @@
 #include <QWheelEvent>
 #include "ImageViewBase.h"
 
-ZoomHandler::ZoomHandler(ImageViewBase& image_view)
-    : m_imageView(image_view),
+ZoomHandler::ZoomHandler(ImageViewBase& imageView)
+    : m_imageView(imageView),
       m_interactionPermitter(&InteractionHandler::defaultInteractionPermitter),
       m_focus(CURSOR) {}
 
-ZoomHandler::ZoomHandler(ImageViewBase& image_view,
-                         const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter)
-    : m_imageView(image_view), m_interactionPermitter(explicit_interaction_permitter), m_focus(CURSOR) {}
+ZoomHandler::ZoomHandler(ImageViewBase& imageView,
+                         const boost::function<bool(const InteractionState&)>& explicitInteractionPermitter)
+    : m_imageView(imageView), m_interactionPermitter(explicitInteractionPermitter), m_focus(CURSOR) {}
 
 void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction) {
   if (event->orientation() != Qt::Vertical) {
@@ -31,9 +31,9 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
     // Alredy zoomed out and trying to zoom out more.
 
     // Scroll amount in terms of typical mouse wheel "clicks".
-    const double delta_clicks = event->delta() / 120;
+    const double deltaClicks = event->delta() / 120;
 
-    const double dist = -delta_clicks * 30;  // 30px per "click"
+    const double dist = -deltaClicks * 30;  // 30px per "click"
     m_imageView.moveTowardsIdealPosition(dist);
 
     return;
@@ -45,16 +45,16 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
     zoom = 1.0;
   }
 
-  QPointF focus_point;
+  QPointF focusPoint;
   switch (m_focus) {
     case CENTER:
-      focus_point = QRectF(m_imageView.rect()).center();
+      focusPoint = QRectF(m_imageView.rect()).center();
       break;
     case CURSOR:
-      focus_point = event->pos() + QPointF(0.5, 0.5);
+      focusPoint = event->pos() + QPointF(0.5, 0.5);
       break;
   }
-  m_imageView.setWidgetFocalPointWithoutMoving(focus_point);
+  m_imageView.setWidgetFocalPointWithoutMoving(focusPoint);
   m_imageView.setZoomLevel(zoom);  // this will call update()
 }  // ZoomHandler::onWheelEvent
 
@@ -76,8 +76,8 @@ void ZoomHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interactio
       return;
   }
 
-  QPointF focus_point = QRectF(m_imageView.rect()).center();
+  QPointF focusPoint = QRectF(m_imageView.rect()).center();
 
-  m_imageView.setWidgetFocalPointWithoutMoving(focus_point);
+  m_imageView.setWidgetFocalPointWithoutMoving(focusPoint);
   m_imageView.setZoomLevel(zoom);  // this will call update()
 }

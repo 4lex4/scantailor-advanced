@@ -26,8 +26,8 @@ void Guide::setPosition(double position) {
 }
 
 Qt::Orientation Guide::lineOrientation(const QLineF& line) {
-  const double angle_cos = std::abs((line.p2().x() - line.p1().x()) / line.length());
-  return (angle_cos > (1.0 / std::sqrt(2))) ? Qt::Horizontal : Qt::Vertical;
+  const double angleCos = std::abs((line.p2().x() - line.p1().x()) / line.length());
+  return (angleCos > (1.0 / std::sqrt(2))) ? Qt::Horizontal : Qt::Vertical;
 }
 
 Guide::operator QLineF() const {

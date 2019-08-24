@@ -11,9 +11,9 @@ DepthPerception::DepthPerception() : m_value(defaultValue()) {}
 
 DepthPerception::DepthPerception(double value) : m_value(qBound(minValue(), value, maxValue())) {}
 
-DepthPerception::DepthPerception(const QString& from_string) {
+DepthPerception::DepthPerception(const QString& fromString) {
   bool ok = false;
-  m_value = from_string.toDouble(&ok);
+  m_value = fromString.toDouble(&ok);
   if (!ok) {
     m_value = defaultValue();
   } else {

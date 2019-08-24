@@ -28,7 +28,7 @@ ImageMetadata::DpiStatus ImageMetadata::verticalDpiStatus() const {
   return dpiStatus(m_size.height(), m_dpi.vertical());
 }
 
-ImageMetadata::DpiStatus ImageMetadata::dpiStatus(int pixel_size, int dpi) {
+ImageMetadata::DpiStatus ImageMetadata::dpiStatus(int pixelSize, int dpi) {
   if (dpi <= 1) {
     return DPI_UNDEFINED;
   }
@@ -41,7 +41,7 @@ ImageMetadata::DpiStatus ImageMetadata::dpiStatus(int pixel_size, int dpi) {
     return DPI_TOO_LARGE;
   }
 
-  const double mm = INCH2MM * pixel_size / dpi;
+  const double mm = INCH2MM * pixelSize / dpi;
   if (mm > 500) {
     // This may indicate we are working with very large printed materials,
     // but most likely it indicates the DPI is wrong (too low).

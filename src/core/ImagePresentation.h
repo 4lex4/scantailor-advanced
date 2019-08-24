@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGE_PRESENTATION_H_
-#define IMAGE_PRESENTATION_H_
+#ifndef SCANTAILOR_CORE_IMAGEPRESENTATION_H_
+#define SCANTAILOR_CORE_IMAGEPRESENTATION_H_
 
 #include <QPolygonF>
 #include <QRectF>
@@ -21,11 +21,11 @@
 class ImagePresentation {
   // Member-wise copying is OK.
  public:
-  ImagePresentation(const QTransform& xform, const QPolygonF& crop_area)
-      : m_xform(xform), m_cropArea(crop_area), m_displayArea(crop_area.boundingRect()) {}
+  ImagePresentation(const QTransform& xform, const QPolygonF& cropArea)
+      : m_xform(xform), m_cropArea(cropArea), m_displayArea(cropArea.boundingRect()) {}
 
-  ImagePresentation(const QTransform& xform, const QPolygonF& crop_area, const QRectF& display_area)
-      : m_xform(xform), m_cropArea(crop_area), m_displayArea(display_area) {}
+  ImagePresentation(const QTransform& xform, const QPolygonF& cropArea, const QRectF& displayArea)
+      : m_xform(xform), m_cropArea(cropArea), m_displayArea(displayArea) {}
 
   const QTransform& transform() const { return m_xform; }
 
@@ -33,11 +33,11 @@ class ImagePresentation {
 
   const QPolygonF& cropArea() const { return m_cropArea; }
 
-  void setCropArea(const QPolygonF& crop_area) { m_cropArea = crop_area; }
+  void setCropArea(const QPolygonF& cropArea) { m_cropArea = cropArea; }
 
   const QRectF& displayArea() const { return m_displayArea; }
 
-  void setDisplayArea(const QRectF& display_area) { m_displayArea = display_area; }
+  void setDisplayArea(const QRectF& displayArea) { m_displayArea = displayArea; }
 
  private:
   QTransform m_xform;
@@ -46,4 +46,4 @@ class ImagePresentation {
 };
 
 
-#endif  // ifndef IMAGE_PRESENTATION_H_
+#endif  // ifndef SCANTAILOR_CORE_IMAGEPRESENTATION_H_

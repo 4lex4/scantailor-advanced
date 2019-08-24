@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_OPTIONSWIDGET_H_
-#define OUTPUT_OPTIONSWIDGET_H_
+#ifndef SCANTAILOR_OUTPUT_OPTIONSWIDGET_H_
+#define SCANTAILOR_OUTPUT_OPTIONSWIDGET_H_
 
 #include <QtCore/QObjectCleanupHandler>
 #include <QtCore/QPointer>
@@ -36,11 +36,11 @@ class Settings;
 class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   Q_OBJECT
  public:
-  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
+  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
-  void preUpdateUI(const PageId& page_id);
+  void preUpdateUI(const PageId& pageId);
 
   void postUpdateUI();
 
@@ -191,4 +191,4 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_OPTIONSWIDGET_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_OPTIONSWIDGET_H_

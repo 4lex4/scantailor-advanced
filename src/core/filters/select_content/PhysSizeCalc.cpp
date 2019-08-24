@@ -11,10 +11,10 @@ PhysSizeCalc::PhysSizeCalc() = default;
 PhysSizeCalc::PhysSizeCalc(const ImageTransformation& xform)
     : m_virtToPhys(xform.transformBack() * UnitsConverter(xform.origDpi()).transform(PIXELS, MILLIMETRES)) {}
 
-QSizeF PhysSizeCalc::sizeMM(const QRectF& rect_px) const {
-  const QPolygonF poly_mm(m_virtToPhys.map(rect_px));
-  const QSizeF size_mm(QLineF(poly_mm[0], poly_mm[1]).length(), QLineF(poly_mm[1], poly_mm[2]).length());
+QSizeF PhysSizeCalc::sizeMM(const QRectF& rectPx) const {
+  const QPolygonF polyMm(m_virtToPhys.map(rectPx));
+  const QSizeF sizeMm(QLineF(polyMm[0], polyMm[1]).length(), QLineF(polyMm[1], polyMm[2]).length());
 
-  return size_mm;
+  return sizeMm;
 }
 }  // namespace select_content

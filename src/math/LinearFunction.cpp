@@ -4,7 +4,7 @@
 #include "LinearFunction.h"
 #include <algorithm>
 
-LinearFunction::LinearFunction(size_t num_vars) : a(num_vars), b(0) {}
+LinearFunction::LinearFunction(size_t numVars) : a(numVars), b(0) {}
 
 void LinearFunction::reset() {
   a.fill(0);
@@ -12,10 +12,10 @@ void LinearFunction::reset() {
 }
 
 double LinearFunction::evaluate(const double* x) const {
-  const size_t num_vars = numVars();
+  const size_t numVars = this->numVars();
 
   double sum = b;
-  for (size_t i = 0; i < num_vars; ++i) {
+  for (size_t i = 0; i < numVars; ++i) {
     sum += a[i] * x[i];
   }
 

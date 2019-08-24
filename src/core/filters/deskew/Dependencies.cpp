@@ -2,21 +2,21 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Dependencies.h"
+#include <PolygonUtils.h>
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
-#include <PolygonUtils.h>
 
 using namespace imageproc;
 
 namespace deskew {
 Dependencies::Dependencies() = default;
 
-Dependencies::Dependencies(const QPolygonF& page_outline, const OrthogonalRotation rotation)
-    : m_pageOutline(page_outline), m_rotation(rotation) {}
+Dependencies::Dependencies(const QPolygonF& pageOutline, const OrthogonalRotation rotation)
+    : m_pageOutline(pageOutline), m_rotation(rotation) {}
 
-Dependencies::Dependencies(const QDomElement& deps_el)
-    : m_pageOutline(XmlUnmarshaller::polygonF(deps_el.namedItem("page-outline").toElement())),
-      m_rotation(deps_el.namedItem("rotation").toElement()) {}
+Dependencies::Dependencies(const QDomElement& depsEl)
+    : m_pageOutline(XmlUnmarshaller::polygonF(depsEl.namedItem("page-outline").toElement())),
+      m_rotation(depsEl.namedItem("rotation").toElement()) {}
 
 Dependencies::~Dependencies() = default;
 

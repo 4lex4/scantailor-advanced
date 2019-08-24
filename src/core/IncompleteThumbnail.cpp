@@ -8,15 +8,15 @@
 
 QPainterPath IncompleteThumbnail::m_sCachedPath;
 
-IncompleteThumbnail::IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                                         const QSizeF& max_size,
-                                         const ImageId& image_id,
-                                         const ImageTransformation& image_xform)
-    : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, image_xform) {}
+IncompleteThumbnail::IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                                         const QSizeF& maxSize,
+                                         const ImageId& imageId,
+                                         const ImageTransformation& imageXform)
+    : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, imageXform) {}
 
 IncompleteThumbnail::~IncompleteThumbnail() = default;
 
-void IncompleteThumbnail::drawQuestionMark(QPainter& painter, const QRectF& bounding_rect) {
+void IncompleteThumbnail::drawQuestionMark(QPainter& painter, const QRectF& boundingRect) {
   const QString text(QString::fromLatin1("?"));
   // Because painting happens only from the main thread, we don't
   // need to care about concurrent access.
@@ -48,22 +48,22 @@ void IncompleteThumbnail::drawQuestionMark(QPainter& painter, const QRectF& boun
 #endif  // if 0
   }
 
-  const QRectF text_rect(m_sCachedPath.boundingRect());
+  const QRectF textRect(m_sCachedPath.boundingRect());
 
   QTransform xform1;
-  xform1.translate(-text_rect.left(), -text_rect.top());
+  xform1.translate(-textRect.left(), -textRect.top());
 
-  const QSizeF unscaled_size(text_rect.size());
-  QSizeF scaled_size(unscaled_size);
-  scaled_size.scale(bounding_rect.size() * 0.9, Qt::KeepAspectRatio);
+  const QSizeF unscaledSize(textRect.size());
+  QSizeF scaledSize(unscaledSize);
+  scaledSize.scale(boundingRect.size() * 0.9, Qt::KeepAspectRatio);
 
-  const double hscale = scaled_size.width() / unscaled_size.width();
-  const double vscale = scaled_size.height() / unscaled_size.height();
+  const double hscale = scaledSize.width() / unscaledSize.width();
+  const double vscale = scaledSize.height() / unscaledSize.height();
   QTransform xform2;
   xform2.scale(hscale, vscale);
 
   // Position the text at the center of our bounding rect.
-  const QSizeF translation(bounding_rect.size() * 0.5 - scaled_size * 0.5);
+  const QSizeF translation(boundingRect.size() * 0.5 - scaledSize * 0.5);
   QTransform xform3;
   xform3.translate(translation.width(), translation.height());
 
@@ -79,7 +79,7 @@ void IncompleteThumbnail::drawQuestionMark(QPainter& painter, const QRectF& boun
 }  // IncompleteThumbnail::drawQuestionMark
 
 void IncompleteThumbnail::paintOverImage(QPainter& painter,
-                                         const QTransform& image_to_display,
-                                         const QTransform& thumb_to_display) {
+                                         const QTransform& imageToDisplay,
+                                         const QTransform& thumbToDisplay) {
   drawQuestionMark(painter, boundingRect());
 }

@@ -34,41 +34,41 @@ QString Utils::richTextForLink(const QString& label, const QString& target) {
       .arg(target.toHtmlEscaped(), label.toHtmlEscaped());
 }
 
-void Utils::maybeCreateCacheDir(const QString& output_dir) {
-  QDir(output_dir).mkdir(QString::fromLatin1("cache"));
+void Utils::maybeCreateCacheDir(const QString& outputDir) {
+  QDir(outputDir).mkdir(QString::fromLatin1("cache"));
 
   // QDir::mkdir() returns false if the directory already exists,
   // so to prevent confusion this function return void.
 }
 
-QString Utils::outputDirToThumbDir(const QString& output_dir) {
-  return output_dir + QLatin1String("/cache/thumbs");
+QString Utils::outputDirToThumbDir(const QString& outputDir) {
+  return outputDir + QLatin1String("/cache/thumbs");
 }
 
-intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& output_dir) {
-  const QSize max_pixmap_size = ApplicationSettings::getInstance().getThumbnailQuality();
-  const QString thumbs_cache_path(outputDirToThumbDir(output_dir));
+intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& outputDir) {
+  const QSize maxPixmapSize = ApplicationSettings::getInstance().getThumbnailQuality();
+  const QString thumbsCachePath(outputDirToThumbDir(outputDir));
 
-  return make_intrusive<ThumbnailPixmapCache>(thumbs_cache_path, max_pixmap_size, 40, 5);
+  return make_intrusive<ThumbnailPixmapCache>(thumbsCachePath, maxPixmapSize, 40, 5);
 }
 
 QString Utils::qssConvertPxToEm(const QString& stylesheet, const double base, const int precision) {
   QString result = "";
-  const QRegExp px_to_em(R"((\d+(\.\d+)?)px)");
+  const QRegExp pxToEm(R"((\d+(\.\d+)?)px)");
 
-  int prev_index = 0;
+  int prevIndex = 0;
   int index = 0;
-  while ((index = px_to_em.indexIn(stylesheet, index)) != -1) {
-    result.append(stylesheet.mid(prev_index, index - prev_index));
+  while ((index = pxToEm.indexIn(stylesheet, index)) != -1) {
+    result.append(stylesheet.mid(prevIndex, index - prevIndex));
 
-    double value = px_to_em.cap(1).toDouble();
+    double value = pxToEm.cap(1).toDouble();
     value /= base;
     result.append(QString::number(value, 'f', precision)).append("em");
 
-    index += px_to_em.matchedLength();
-    prev_index = index;
+    index += pxToEm.matchedLength();
+    prevIndex = index;
   }
-  result.append(stylesheet.mid(prev_index));
+  result.append(stylesheet.mid(prevIndex));
 
   return result;
 }

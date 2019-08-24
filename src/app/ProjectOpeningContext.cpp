@@ -8,8 +8,8 @@
 #include "ProjectPages.h"
 #include "version.h"
 
-ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, const QString& project_file, const QDomDocument& doc)
-    : m_projectFile(project_file), m_reader(doc), m_parent(parent) {}
+ProjectOpeningContext::ProjectOpeningContext(QWidget* parent, const QString& projectFile, const QDomDocument& doc)
+    : m_projectFile(projectFile), m_reader(doc), m_parent(parent) {}
 
 ProjectOpeningContext::~ProjectOpeningContext() {
   // Deleting a null pointer is OK.

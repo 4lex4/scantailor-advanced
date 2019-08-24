@@ -2,11 +2,6 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "VertLineFinder.h"
-#include <QDebug>
-#include <QPainter>
-#include <cmath>
-#include "DebugImages.h"
-#include "ImageTransformation.h"
 #include <Constants.h>
 #include <GrayImage.h>
 #include <GrayRasterOp.h>
@@ -15,38 +10,43 @@
 #include <MorphGradientDetect.h>
 #include <Morphology.h>
 #include <Transform.h>
+#include <QDebug>
+#include <QPainter>
+#include <cmath>
+#include "DebugImages.h"
+#include "ImageTransformation.h"
 
 namespace page_split {
 using namespace imageproc;
 
 std::vector<QLineF> VertLineFinder::findLines(const QImage& image,
                                               const ImageTransformation& xform,
-                                              const int max_lines,
+                                              const int maxLines,
                                               DebugImages* dbg,
-                                              GrayImage* gray_downscaled,
-                                              QTransform* out_to_downscaled) {
+                                              GrayImage* grayDownscaled,
+                                              QTransform* outToDownscaled) {
   const int dpi = 100;
 
-  ImageTransformation xform_100dpi(xform);
-  xform_100dpi.preScaleToDpi(Dpi(dpi, dpi));
+  ImageTransformation xform100dpi(xform);
+  xform100dpi.preScaleToDpi(Dpi(dpi, dpi));
 
-  QRect target_rect(xform_100dpi.resultingRect().toRect());
-  if (target_rect.isEmpty()) {
-    target_rect.setWidth(1);
-    target_rect.setHeight(1);
+  QRect targetRect(xform100dpi.resultingRect().toRect());
+  if (targetRect.isEmpty()) {
+    targetRect.setWidth(1);
+    targetRect.setHeight(1);
   }
 
-  const GrayImage gray100(transformToGray(image, xform_100dpi.transform(), target_rect,
+  const GrayImage gray100(transformToGray(image, xform100dpi.transform(), targetRect,
                                           OutsidePixels::assumeWeakColor(Qt::black), QSizeF(5.0, 5.0)));
   if (dbg) {
     dbg->add(gray100, "gray100");
   }
 
-  if (gray_downscaled) {
-    *gray_downscaled = gray100;
+  if (grayDownscaled) {
+    *grayDownscaled = gray100;
   }
-  if (out_to_downscaled) {
-    *out_to_downscaled = xform.transformBack() * xform_100dpi.transform();
+  if (outToDownscaled) {
+    *outToDownscaled = xform.transformBack() * xform100dpi.transform();
   }
 
 #if 0
@@ -65,17 +65,17 @@ std::vector<QLineF> VertLineFinder::findLines(const QImage& image,
 #endif
 
 #if 0
-        GrayImage h_gradient(morphGradientDetectDarkSide(preprocessed, QSize(11, 1)));
-        GrayImage v_gradient(morphGradientDetectDarkSide(preprocessed, QSize(1, 11)));
+        GrayImage hGradient(morphGradientDetectDarkSide(preprocessed, QSize(11, 1)));
+        GrayImage vGradient(morphGradientDetectDarkSide(preprocessed, QSize(1, 11)));
         if (dbg) {
-            dbg->add(h_gradient, "h_gradient");
-            dbg->add(v_gradient, "v_gradient");
+            dbg->add(hGradient, "hGradient");
+            dbg->add(vGradient, "vGradient");
         }
 #else
   // These are not gradients, but their difference is the same as for
   // the two gradients above.  This branch is an optimization.
-  GrayImage h_gradient(erodeGray(preprocessed, QSize(11, 1), 0x00));
-  GrayImage v_gradient(erodeGray(preprocessed, QSize(1, 11), 0x00));
+  GrayImage hGradient(erodeGray(preprocessed, QSize(11, 1), 0x00));
+  GrayImage vGradient(erodeGray(preprocessed, QSize(1, 11), 0x00));
 #endif
 
   if (!dbg) {
@@ -83,86 +83,86 @@ std::vector<QLineF> VertLineFinder::findLines(const QImage& image,
     preprocessed = GrayImage();
   }
 
-  grayRasterOp<GRopClippedSubtract<GRopDst, GRopSrc>>(h_gradient, v_gradient);
-  v_gradient = GrayImage();
+  grayRasterOp<GRopClippedSubtract<GRopDst, GRopSrc>>(hGradient, vGradient);
+  vGradient = GrayImage();
   if (dbg) {
-    dbg->add(h_gradient, "vert_raster_lines");
+    dbg->add(hGradient, "vert_raster_lines");
   }
 
-  const GrayImage raster_lines(closeGray(h_gradient, QSize(1, 19), 0x00));
-  h_gradient = GrayImage();
+  const GrayImage rasterLines(closeGray(hGradient, QSize(1, 19), 0x00));
+  hGradient = GrayImage();
   if (dbg) {
-    dbg->add(raster_lines, "short_segments_removed");
+    dbg->add(rasterLines, "short_segments_removed");
   }
 
-  const double line_thickness = 5.0;
-  const double max_angle = 7.0;  // degrees
-  const double angle_step = 0.25;
-  const auto angle_steps_to_max = (int) (max_angle / angle_step);
-  const int total_angle_steps = angle_steps_to_max * 2 + 1;
-  const double min_angle = -angle_steps_to_max * angle_step;
-  HoughLineDetector line_detector(raster_lines.size(), line_thickness, min_angle, angle_step, total_angle_steps);
+  const double lineThickness = 5.0;
+  const double maxAngle = 7.0;  // degrees
+  const double angleStep = 0.25;
+  const auto angleStepsToMax = (int) (maxAngle / angleStep);
+  const int totalAngleSteps = angleStepsToMax * 2 + 1;
+  const double minAngle = -angleStepsToMax * angleStep;
+  HoughLineDetector lineDetector(rasterLines.size(), lineThickness, minAngle, angleStep, totalAngleSteps);
 
   unsigned weight_table[256];
   buildWeightTable(weight_table);
 
   // We don't want to process areas too close to the vertical edges.
-  const double margin_mm = 3.5;
-  const auto margin = (int) std::floor(0.5 + margin_mm * constants::MM2INCH * dpi);
+  const double marginMm = 3.5;
+  const auto margin = (int) std::floor(0.5 + marginMm * constants::MM2INCH * dpi);
 
-  const int x_limit = raster_lines.width() - margin;
-  const int height = raster_lines.height();
-  const uint8_t* line = raster_lines.data();
-  const int stride = raster_lines.stride();
+  const int xLimit = rasterLines.width() - margin;
+  const int height = rasterLines.height();
+  const uint8_t* line = rasterLines.data();
+  const int stride = rasterLines.stride();
   for (int y = 0; y < height; ++y, line += stride) {
-    for (int x = margin; x < x_limit; ++x) {
+    for (int x = margin; x < xLimit; ++x) {
       const unsigned val = line[x];
       if (val > 1) {
-        line_detector.process(x, y, weight_table[val]);
+        lineDetector.process(x, y, weight_table[val]);
       }
     }
   }
 
-  const unsigned min_quality = (unsigned) (height * line_thickness * 1.8) + 1;
+  const unsigned minQuality = (unsigned) (height * lineThickness * 1.8) + 1;
 
   if (dbg) {
-    dbg->add(line_detector.visualizeHoughSpace(min_quality), "hough_space");
+    dbg->add(lineDetector.visualizeHoughSpace(minQuality), "hough_space");
   }
 
-  const std::vector<HoughLine> hough_lines(line_detector.findLines(min_quality));
+  const std::vector<HoughLine> houghLines(lineDetector.findLines(minQuality));
 
   typedef std::list<LineGroup> LineGroups;
-  LineGroups line_groups;
-  for (const HoughLine& hough_line : hough_lines) {
-    const QualityLine new_line(hough_line.pointAtY(0.0), hough_line.pointAtY(height), hough_line.quality());
-    LineGroup* home_group = nullptr;
+  LineGroups lineGroups;
+  for (const HoughLine& hough_line : houghLines) {
+    const QualityLine newLine(hough_line.pointAtY(0.0), hough_line.pointAtY(height), hough_line.quality());
+    LineGroup* homeGroup = nullptr;
 
-    auto it(line_groups.begin());
-    const auto end(line_groups.end());
+    auto it(lineGroups.begin());
+    const auto end(lineGroups.end());
     while (it != end) {
       LineGroup& group = *it;
-      if (group.belongsHere(new_line)) {
-        if (home_group) {
-          home_group->merge(group);
-          line_groups.erase(it++);
+      if (group.belongsHere(newLine)) {
+        if (homeGroup) {
+          homeGroup->merge(group);
+          lineGroups.erase(it++);
           continue;
         } else {
-          group.add(new_line);
-          home_group = &group;
+          group.add(newLine);
+          homeGroup = &group;
         }
       }
       ++it;
     }
 
-    if (!home_group) {
-      line_groups.emplace_back(new_line);
+    if (!homeGroup) {
+      lineGroups.emplace_back(newLine);
     }
   }
 
   std::vector<QLineF> lines;
-  for (const LineGroup& group : line_groups) {
+  for (const LineGroup& group : lineGroups) {
     lines.push_back(group.leader().toQLine());
-    if ((int) lines.size() == max_lines) {
+    if ((int) lines.size() == maxLines) {
       break;
     }
   }
@@ -185,9 +185,9 @@ std::vector<QLineF> VertLineFinder::findLines(const QImage& image,
   }
 
   // Transform lines back into original coordinates.
-  const QTransform undo_100dpi(xform_100dpi.transformBack() * xform.transform());
+  const QTransform undo100dpi(xform100dpi.transformBack() * xform.transform());
   for (QLineF& line : lines) {
-    line = undo_100dpi.map(line);
+    line = undo100dpi.map(line);
   }
 
   return lines;
@@ -206,41 +206,41 @@ void VertLineFinder::selectVertBorders(GrayImage& image) {
   const int w = image.width();
   const int h = image.height();
 
-  unsigned char* image_line = image.data();
-  const int image_stride = image.stride();
+  unsigned char* imageLine = image.data();
+  const int imageStride = image.stride();
 
-  std::vector<unsigned char> tmp_line(w, 0x00);
+  std::vector<unsigned char> tmpLine(w, 0x00);
 
-  for (int y = 0; y < h; ++y, image_line += image_stride) {
+  for (int y = 0; y < h; ++y, imageLine += imageStride) {
     // Left to right.
-    unsigned char prev_pixel = 0x00;  // Black vertical border.
+    unsigned char prevPixel = 0x00;  // Black vertical border.
     for (int x = 0; x < w; ++x) {
-      prev_pixel = std::max(image_line[x], prev_pixel);
-      tmp_line[x] = prev_pixel;
+      prevPixel = std::max(imageLine[x], prevPixel);
+      tmpLine[x] = prevPixel;
     }
     // Right to left
-    prev_pixel = 0x00;  // Black vertical border.
+    prevPixel = 0x00;  // Black vertical border.
     for (int x = w - 1; x >= 0; --x) {
-      prev_pixel = std::max(image_line[x], std::min(prev_pixel, tmp_line[x]));
-      image_line[x] = prev_pixel;
+      prevPixel = std::max(imageLine[x], std::min(prevPixel, tmpLine[x]));
+      imageLine[x] = prevPixel;
     }
   }
 }
 
 void VertLineFinder::buildWeightTable(unsigned weight_table[]) {
-  int gray_level = 0;
+  int grayLevel = 0;
   unsigned weight = 2;
   int segment = 2;
-  int prev_segment = 1;
+  int prevSegment = 1;
 
-  while (gray_level < 256) {
-    const int limit = std::min(256, gray_level + segment);
-    for (; gray_level < limit; ++gray_level) {
-      weight_table[gray_level] = weight;
+  while (grayLevel < 256) {
+    const int limit = std::min(256, grayLevel + segment);
+    for (; grayLevel < limit; ++grayLevel) {
+      weight_table[grayLevel] = weight;
     }
     ++weight;
-    segment += prev_segment;
-    prev_segment = segment;
+    segment += prevSegment;
+    prevSegment = segment;
   }
 }
 

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DESKEW_PARAMS_H_
-#define DESKEW_PARAMS_H_
+#ifndef SCANTAILOR_DESKEW_PARAMS_H_
+#define SCANTAILOR_DESKEW_PARAMS_H_
 
 #include <QString>
 #include <algorithm>
@@ -18,9 +18,9 @@ class Params {
  public:
   // Member-wise copying is OK.
 
-  Params(double deskew_angle_deg, const Dependencies& deps, AutoManualMode mode);
+  Params(double deskewAngleDeg, const Dependencies& deps, AutoManualMode mode);
 
-  explicit Params(const QDomElement& deskew_el);
+  explicit Params(const QDomElement& deskewEl);
 
   ~Params();
 
@@ -38,4 +38,4 @@ class Params {
   AutoManualMode m_mode;
 };
 }  // namespace deskew
-#endif  // ifndef DESKEW_PARAMS_H_
+#endif  // ifndef SCANTAILOR_DESKEW_PARAMS_H_

@@ -34,21 +34,21 @@ bool ObjectDragHandler::proximityLeader(const InteractionState& interaction) con
   return interaction.proximityLeader(m_interaction);
 }
 
-void ObjectDragHandler::forceEnterDragState(InteractionState& interaction, QPoint widget_mouse_pos) {
+void ObjectDragHandler::forceEnterDragState(InteractionState& interaction, QPoint widgetMousePos) {
   interaction.capture(m_interaction);
-  m_obj->dragInitiated(QPointF(0.5, 0.5) + widget_mouse_pos);
+  m_obj->dragInitiated(QPointF(0.5, 0.5) + widgetMousePos);
 }
 
 void ObjectDragHandler::onPaint(QPainter& painter, const InteractionState& interaction) {
   m_obj->paint(painter, interaction);
 }
 
-void ObjectDragHandler::onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
+void ObjectDragHandler::onProximityUpdate(const QPointF& screenMousePos, InteractionState& interaction) {
   if (m_keyboardModifiersSet.find(m_activeKeyboardModifiers) == m_keyboardModifiersSet.end()) {
     return;
   }
 
-  interaction.updateProximity(m_interaction, m_obj->proximity(screen_mouse_pos), m_obj->proximityPriority(),
+  interaction.updateProximity(m_interaction, m_obj->proximity(screenMousePos), m_obj->proximityPriority(),
                               m_obj->proximityThreshold(interaction));
 }
 
@@ -77,8 +77,8 @@ void ObjectDragHandler::onMouseMoveEvent(QMouseEvent* event, InteractionState& i
   }
 }
 
-void ObjectDragHandler::setKeyboardModifiers(const std::set<Qt::KeyboardModifiers>& modifiers_set) {
-  m_keyboardModifiersSet = modifiers_set;
+void ObjectDragHandler::setKeyboardModifiers(const std::set<Qt::KeyboardModifiers>& modifiersSet) {
+  m_keyboardModifiersSet = modifiersSet;
 }
 
 void ObjectDragHandler::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {

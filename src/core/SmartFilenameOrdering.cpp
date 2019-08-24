@@ -10,54 +10,54 @@ bool SmartFilenameOrdering::operator()(const QFileInfo& lhs, const QFileInfo& rh
     return comp < 0;
   }
 
-  const QString lhs_fname(lhs.fileName());
-  const QString rhs_fname(rhs.fileName());
-  const QChar* lhs_ptr = lhs_fname.constData();
-  const QChar* rhs_ptr = rhs_fname.constData();
-  while (!lhs_ptr->isNull() && !rhs_ptr->isNull()) {
-    const bool lhs_is_digit = lhs_ptr->isDigit();
-    const bool rhs_is_digit = rhs_ptr->isDigit();
-    if (lhs_is_digit != rhs_is_digit) {
+  const QString lhsFname(lhs.fileName());
+  const QString rhsFname(rhs.fileName());
+  const QChar* lhsPtr = lhsFname.constData();
+  const QChar* rhsPtr = rhsFname.constData();
+  while (!lhsPtr->isNull() && !rhsPtr->isNull()) {
+    const bool lhsIsDigit = lhsPtr->isDigit();
+    const bool rhsIsDigit = rhsPtr->isDigit();
+    if (lhsIsDigit != rhsIsDigit) {
       // Digits have priority over non-digits.
-      return lhs_is_digit;
+      return lhsIsDigit;
     }
 
-    if (lhs_is_digit && rhs_is_digit) {
-      unsigned long lhs_number = 0;
+    if (lhsIsDigit && rhsIsDigit) {
+      unsigned long lhsNumber = 0;
       do {
-        lhs_number = lhs_number * 10 + lhs_ptr->digitValue();
-        ++lhs_ptr;
+        lhsNumber = lhsNumber * 10 + lhsPtr->digitValue();
+        ++lhsPtr;
         // Note: isDigit() implies !isNull()
-      } while (lhs_ptr->isDigit());
+      } while (lhsPtr->isDigit());
 
-      unsigned long rhs_number = 0;
+      unsigned long rhsNumber = 0;
       do {
-        rhs_number = rhs_number * 10 + rhs_ptr->digitValue();
-        ++rhs_ptr;
+        rhsNumber = rhsNumber * 10 + rhsPtr->digitValue();
+        ++rhsPtr;
         // Note: isDigit() implies !isNull()
-      } while (rhs_ptr->isDigit());
+      } while (rhsPtr->isDigit());
 
-      if (lhs_number != rhs_number) {
-        return lhs_number < rhs_number;
+      if (lhsNumber != rhsNumber) {
+        return lhsNumber < rhsNumber;
       } else {
         continue;
       }
     }
 
-    if (lhs_ptr->isNull() != rhs_ptr->isNull()) {
-      return *lhs_ptr < *rhs_ptr;
+    if (lhsPtr->isNull() != rhsPtr->isNull()) {
+      return *lhsPtr < *rhsPtr;
     }
 
-    ++lhs_ptr;
-    ++rhs_ptr;
+    ++lhsPtr;
+    ++rhsPtr;
   }
 
-  if (!lhs_ptr->isNull() || !rhs_ptr->isNull()) {
-    return lhs_ptr->isNull();
+  if (!lhsPtr->isNull() || !rhsPtr->isNull()) {
+    return lhsPtr->isNull();
   }
 
   // OK, the smart comparison indicates the file names are equal.
   // However, if they aren't symbol-to-symbol equal, we can't treat
   // them as equal, so let's do a usual comparision now.
-  return lhs_fname < rhs_fname;
+  return lhsFname < rhsFname;
 }  // ()

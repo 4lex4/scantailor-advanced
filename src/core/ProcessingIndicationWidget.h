@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PROCESSING_INDICATION_WIDGET_H_
-#define PROCESSING_INDICATION_WIDGET_H_
+#ifndef SCANTAILOR_CORE_PROCESSINGINDICATIONWIDGET_H_
+#define SCANTAILOR_CORE_PROCESSINGINDICATIONWIDGET_H_
 
 #include <QColor>
 #include <QWidget>
@@ -46,4 +46,4 @@ class ProcessingIndicationWidget : public QWidget {
 };
 
 
-#endif  // ifndef PROCESSING_INDICATION_WIDGET_H_
+#endif  // ifndef SCANTAILOR_CORE_PROCESSINGINDICATIONWIDGET_H_

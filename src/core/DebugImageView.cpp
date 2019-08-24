@@ -29,7 +29,7 @@ class DebugImageView::ImageLoadResult : public AbstractCommand<void> {
 
 class DebugImageView::ImageLoader : public AbstractCommand<BackgroundExecutor::TaskResultPtr> {
  public:
-  ImageLoader(DebugImageView* owner, const QString& file_path) : m_owner(owner), m_filePath(file_path) {}
+  ImageLoader(DebugImageView* owner, const QString& filePath) : m_owner(owner), m_filePath(filePath) {}
 
   BackgroundExecutor::TaskResultPtr operator()() override {
     QImage image(m_filePath);
@@ -44,11 +44,11 @@ class DebugImageView::ImageLoader : public AbstractCommand<BackgroundExecutor::T
 
 
 DebugImageView::DebugImageView(AutoRemovingFile file,
-                               const boost::function<QWidget*(const QImage&)>& image_view_factory,
+                               const boost::function<QWidget*(const QImage&)>& imageViewFactory,
                                QWidget* parent)
     : QStackedWidget(parent),
       m_file(file),
-      m_imageViewFactory(image_view_factory),
+      m_imageViewFactory(imageViewFactory),
       m_placeholderWidget(new ProcessingIndicationWidget(this)),
       m_isLive(false) {
   addWidget(m_placeholderWidget);
@@ -75,12 +75,12 @@ void DebugImageView::imageLoaded(const QImage& image) {
   }
 
   if (currentWidget() == m_placeholderWidget) {
-    std::unique_ptr<QWidget> image_view;
+    std::unique_ptr<QWidget> imageView;
     if (m_imageViewFactory.empty()) {
-      image_view = std::make_unique<BasicImageView>(image);
+      imageView = std::make_unique<BasicImageView>(image);
     } else {
-      image_view.reset(m_imageViewFactory(image));
+      imageView.reset(m_imageViewFactory(image));
     }
-    setCurrentIndex(addWidget(image_view.release()));
+    setCurrentIndex(addWidget(imageView.release()));
   }
 }

@@ -2,6 +2,19 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TextLineTracer.h"
+#include <Binarize.h>
+#include <BinaryImage.h>
+#include <Constants.h>
+#include <GaussBlur.h>
+#include <Grayscale.h>
+#include <LocalMinMaxGeneric.h>
+#include <Morphology.h>
+#include <RasterOp.h>
+#include <RasterOpGeneric.h>
+#include <SEDM.h>
+#include <Scale.h>
+#include <SeedFill.h>
+#include <Sobel.h>
 #include <QPainter>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
@@ -19,26 +32,13 @@
 #include "TextLineRefiner.h"
 #include "ToLineProjector.h"
 #include "TowardsLineTracer.h"
-#include <Binarize.h>
-#include <BinaryImage.h>
-#include <Constants.h>
-#include <GaussBlur.h>
-#include <Grayscale.h>
-#include <LocalMinMaxGeneric.h>
-#include <Morphology.h>
-#include <RasterOp.h>
-#include <RasterOpGeneric.h>
-#include <SEDM.h>
-#include <Scale.h>
-#include <SeedFill.h>
-#include <Sobel.h>
 
 using namespace imageproc;
 
 namespace dewarping {
 void TextLineTracer::trace(const GrayImage& input,
                            const Dpi& dpi,
-                           const QRect& content_rect,
+                           const QRect& contentRect,
                            DistortionModelBuilder& output,
                            const TaskStatus& status,
                            DebugImages* dbg) {
@@ -47,50 +47,50 @@ void TextLineTracer::trace(const GrayImage& input,
     dbg->add(downscaled, "downscaled");
   }
 
-  const int downscaled_width = downscaled.width();
-  const int downscaled_height = downscaled.height();
+  const int downscaledWidth = downscaled.width();
+  const int downscaledHeight = downscaled.height();
 
-  const double downscale_x_factor = double(downscaled_width) / input.width();
-  const double downscale_y_factor = double(downscaled_height) / input.height();
-  QTransform to_orig;
-  to_orig.scale(1.0 / downscale_x_factor, 1.0 / downscale_y_factor);
+  const double downscaleXFactor = double(downscaledWidth) / input.width();
+  const double downscaleYFactor = double(downscaledHeight) / input.height();
+  QTransform toOrig;
+  toOrig.scale(1.0 / downscaleXFactor, 1.0 / downscaleYFactor);
 
-  const QRect downscaled_content_rect(to_orig.inverted().mapRect(content_rect));
-  const Dpi downscaled_dpi(qRound(dpi.horizontal() * downscale_x_factor), qRound(dpi.vertical() * downscale_y_factor));
+  const QRect downscaledContentRect(toOrig.inverted().mapRect(contentRect));
+  const Dpi downscaledDpi(qRound(dpi.horizontal() * downscaleXFactor), qRound(dpi.vertical() * downscaleYFactor));
 
   BinaryImage binarized(binarizeWolf(downscaled, QSize(31, 31)));
   if (dbg) {
     dbg->add(binarized, "binarized");
   }
   // detectVertContentBounds() is sensitive to clutter and speckles, so let's try to remove it.
-  sanitizeBinaryImage(binarized, downscaled_content_rect);
+  sanitizeBinaryImage(binarized, downscaledContentRect);
   if (dbg) {
     dbg->add(binarized, "sanitized");
   }
 
-  std::pair<QLineF, QLineF> vert_bounds(detectVertContentBounds(binarized, dbg));
+  std::pair<QLineF, QLineF> vertBounds(detectVertContentBounds(binarized, dbg));
   if (dbg) {
-    dbg->add(visualizeVerticalBounds(binarized.toQImage(), vert_bounds), "vert_bounds");
+    dbg->add(visualizeVerticalBounds(binarized.toQImage(), vertBounds), "vertBounds");
   }
 
   std::list<std::vector<QPointF>> polylines;
-  extractTextLines(polylines, stretchGrayRange(downscaled), vert_bounds, dbg);
+  extractTextLines(polylines, stretchGrayRange(downscaled), vertBounds, dbg);
   if (dbg) {
     dbg->add(visualizePolylines(downscaled, polylines), "traced");
   }
 
-  filterShortCurves(polylines, vert_bounds.first, vert_bounds.second);
-  filterOutOfBoundsCurves(polylines, vert_bounds.first, vert_bounds.second);
+  filterShortCurves(polylines, vertBounds.first, vertBounds.second);
+  filterOutOfBoundsCurves(polylines, vertBounds.first, vertBounds.second);
   if (dbg) {
     dbg->add(visualizePolylines(downscaled, polylines), "filtered1");
   }
 
-  Vec2f unit_down_vector(calcAvgUnitVector(vert_bounds));
-  unit_down_vector /= std::sqrt(unit_down_vector.squaredNorm());
-  if (unit_down_vector[1] < 0) {
-    unit_down_vector = -unit_down_vector;
+  Vec2f unitDownVector(calcAvgUnitVector(vertBounds));
+  unitDownVector /= std::sqrt(unitDownVector.squaredNorm());
+  if (unitDownVector[1] < 0) {
+    unitDownVector = -unitDownVector;
   }
-  TextLineRefiner refiner(downscaled, Dpi(200, 200), unit_down_vector);
+  TextLineRefiner refiner(downscaled, Dpi(200, 200), unitDownVector);
   refiner.refine(polylines, /*iterations=*/100, dbg);
 
   filterEdgyCurves(polylines);
@@ -101,13 +101,13 @@ void TextLineTracer::trace(const GrayImage& input,
 
   // Transform back to original coordinates and output.
 
-  vert_bounds.first = to_orig.map(vert_bounds.first);
-  vert_bounds.second = to_orig.map(vert_bounds.second);
-  output.setVerticalBounds(vert_bounds.first, vert_bounds.second);
+  vertBounds.first = toOrig.map(vertBounds.first);
+  vertBounds.second = toOrig.map(vertBounds.second);
+  output.setVerticalBounds(vertBounds.first, vertBounds.second);
 
   for (std::vector<QPointF>& polyline : polylines) {
     for (QPointF& pt : polyline) {
-      pt = to_orig.map(pt);
+      pt = toOrig.map(pt);
     }
     output.addHorizontalCurve(polyline);
   }
@@ -115,99 +115,99 @@ void TextLineTracer::trace(const GrayImage& input,
 
 GrayImage TextLineTracer::downscale(const GrayImage& input, const Dpi& dpi) {
   // Downscale to 200 DPI.
-  QSize downscaled_size(input.size());
+  QSize downscaledSize(input.size());
   if ((dpi.horizontal() < 180) || (dpi.horizontal() > 220) || (dpi.vertical() < 180) || (dpi.vertical() > 220)) {
-    downscaled_size.setWidth(std::max<int>(1, input.width() * 200 / dpi.horizontal()));
-    downscaled_size.setHeight(std::max<int>(1, input.height() * 200 / dpi.vertical()));
+    downscaledSize.setWidth(std::max<int>(1, input.width() * 200 / dpi.horizontal()));
+    downscaledSize.setHeight(std::max<int>(1, input.height() * 200 / dpi.vertical()));
   }
 
-  return scaleToGray(input, downscaled_size);
+  return scaleToGray(input, downscaledSize);
 }
 
-void TextLineTracer::sanitizeBinaryImage(BinaryImage& image, const QRect& content_rect) {
+void TextLineTracer::sanitizeBinaryImage(BinaryImage& image, const QRect& contentRect) {
   // Kill connected components touching the borders.
   BinaryImage seed(image.size(), WHITE);
   seed.fillExcept(seed.rect().adjusted(1, 1, -1, -1), BLACK);
 
-  BinaryImage touching_border(seedFill(seed.release(), image, CONN8));
-  rasterOp<RopSubtract<RopDst, RopSrc>>(image, touching_border.release());
+  BinaryImage touchingBorder(seedFill(seed.release(), image, CONN8));
+  rasterOp<RopSubtract<RopDst, RopSrc>>(image, touchingBorder.release());
 
   // Poor man's despeckle.
-  BinaryImage content_seeds(openBrick(image, QSize(2, 3), WHITE));
-  rasterOp<RopOr<RopSrc, RopDst>>(content_seeds, openBrick(image, QSize(3, 2), WHITE));
-  image = seedFill(content_seeds.release(), image, CONN8);
+  BinaryImage contentSeeds(openBrick(image, QSize(2, 3), WHITE));
+  rasterOp<RopOr<RopSrc, RopDst>>(contentSeeds, openBrick(image, QSize(3, 2), WHITE));
+  image = seedFill(contentSeeds.release(), image, CONN8);
   // Clear margins.
-  image.fillExcept(content_rect, WHITE);
+  image.fillExcept(contentRect, WHITE);
 }
 
 /**
  * Returns false if the curve contains both significant convexities and concavities.
  */
 bool TextLineTracer::isCurvatureConsistent(const std::vector<QPointF>& polyline) {
-  const size_t num_nodes = polyline.size();
+  const size_t numNodes = polyline.size();
 
-  if (num_nodes <= 1) {
+  if (numNodes <= 1) {
     // Even though we can't say anything about curvature in this case,
     // we don't like such gegenerate curves, so we reject them.
     return false;
-  } else if (num_nodes == 2) {
+  } else if (numNodes == 2) {
     // These are fine.
     return true;
   }
   // Threshold angle between a polyline segment and a normal to the previous one.
-  const auto cos_threshold = static_cast<float>(std::cos((90.0f - 6.0f) * constants::DEG2RAD));
-  const float cos_sq_threshold = cos_threshold * cos_threshold;
-  bool significant_positive = false;
-  bool significant_negative = false;
+  const auto cosThreshold = static_cast<float>(std::cos((90.0f - 6.0f) * constants::DEG2RAD));
+  const float cosSqThreshold = cosThreshold * cosThreshold;
+  bool significantPositive = false;
+  bool significantNegative = false;
 
-  Vec2f prev_normal(polyline[1] - polyline[0]);
-  std::swap(prev_normal[0], prev_normal[1]);
-  prev_normal[0] = -prev_normal[0];
-  float prev_normal_sqlen = prev_normal.squaredNorm();
+  Vec2f prevNormal(polyline[1] - polyline[0]);
+  std::swap(prevNormal[0], prevNormal[1]);
+  prevNormal[0] = -prevNormal[0];
+  float prevNormalSqlen = prevNormal.squaredNorm();
 
-  for (size_t i = 1; i < num_nodes - 1; ++i) {
-    const Vec2f next_segment(polyline[i + 1] - polyline[i]);
-    const float next_segment_sqlen = next_segment.squaredNorm();
+  for (size_t i = 1; i < numNodes - 1; ++i) {
+    const Vec2f nextSegment(polyline[i + 1] - polyline[i]);
+    const float nextSegmentSqlen = nextSegment.squaredNorm();
 
-    float cos_sq = 0;
-    const float sqlen_mult = prev_normal_sqlen * next_segment_sqlen;
-    if (sqlen_mult > std::numeric_limits<float>::epsilon()) {
-      const float dot = prev_normal.dot(next_segment);
-      cos_sq = std::fabs(dot) * dot / sqlen_mult;
+    float cosSq = 0;
+    const float sqlenMult = prevNormalSqlen * nextSegmentSqlen;
+    if (sqlenMult > std::numeric_limits<float>::epsilon()) {
+      const float dot = prevNormal.dot(nextSegment);
+      cosSq = std::fabs(dot) * dot / sqlenMult;
     }
 
-    if (std::fabs(cos_sq) >= cos_sq_threshold) {
-      if (cos_sq > 0) {
-        significant_positive = true;
+    if (std::fabs(cosSq) >= cosSqThreshold) {
+      if (cosSq > 0) {
+        significantPositive = true;
       } else {
-        significant_negative = true;
+        significantNegative = true;
       }
     }
 
-    prev_normal[0] = -next_segment[1];
-    prev_normal[1] = next_segment[0];
-    prev_normal_sqlen = next_segment_sqlen;
+    prevNormal[0] = -nextSegment[1];
+    prevNormal[1] = nextSegment[0];
+    prevNormalSqlen = nextSegmentSqlen;
   }
 
-  return !(significant_positive && significant_negative);
+  return !(significantPositive && significantNegative);
 }  // TextLineTracer::isCurvatureConsistent
 
-bool TextLineTracer::isInsideBounds(const QPointF& pt, const QLineF& left_bound, const QLineF& right_bound) {
-  QPointF left_normal_inside(left_bound.normalVector().p2() - left_bound.p1());
-  if (left_normal_inside.x() < 0) {
-    left_normal_inside = -left_normal_inside;
+bool TextLineTracer::isInsideBounds(const QPointF& pt, const QLineF& leftBound, const QLineF& rightBound) {
+  QPointF leftNormalInside(leftBound.normalVector().p2() - leftBound.p1());
+  if (leftNormalInside.x() < 0) {
+    leftNormalInside = -leftNormalInside;
   }
-  const QPointF left_vec(pt - left_bound.p1());
-  if (left_normal_inside.x() * left_vec.x() + left_normal_inside.y() * left_vec.y() < 0) {
+  const QPointF leftVec(pt - leftBound.p1());
+  if (leftNormalInside.x() * leftVec.x() + leftNormalInside.y() * leftVec.y() < 0) {
     return false;
   }
 
-  QPointF right_normal_inside(right_bound.normalVector().p2() - right_bound.p1());
-  if (right_normal_inside.x() > 0) {
-    right_normal_inside = -right_normal_inside;
+  QPointF rightNormalInside(rightBound.normalVector().p2() - rightBound.p1());
+  if (rightNormalInside.x() > 0) {
+    rightNormalInside = -rightNormalInside;
   }
-  const QPointF right_vec(pt - right_bound.p1());
-  if (right_normal_inside.x() * right_vec.x() + right_normal_inside.y() * right_vec.y() < 0) {
+  const QPointF rightVec(pt - rightBound.p1());
+  if (rightNormalInside.x() * rightVec.x() + rightNormalInside.y() * rightVec.y() < 0) {
     return false;
   }
 
@@ -215,10 +215,10 @@ bool TextLineTracer::isInsideBounds(const QPointF& pt, const QLineF& left_bound,
 }
 
 void TextLineTracer::filterShortCurves(std::list<std::vector<QPointF>>& polylines,
-                                       const QLineF& left_bound,
-                                       const QLineF& right_bound) {
-  const ToLineProjector proj1(left_bound);
-  const ToLineProjector proj2(right_bound);
+                                       const QLineF& leftBound,
+                                       const QLineF& rightBound) {
+  const ToLineProjector proj1(leftBound);
+  const ToLineProjector proj2(rightBound);
 
   auto it(polylines.begin());
   const auto end(polylines.end());
@@ -226,11 +226,11 @@ void TextLineTracer::filterShortCurves(std::list<std::vector<QPointF>>& polyline
     assert(!it->empty());
     const QPointF front(it->front());
     const QPointF back(it->back());
-    const double front_proj_len = proj1.projectionDist(front);
-    const double back_proj_len = proj2.projectionDist(back);
-    const double chord_len = QLineF(front, back).length();
+    const double frontProjLen = proj1.projectionDist(front);
+    const double backProjLen = proj2.projectionDist(back);
+    const double chordLen = QLineF(front, back).length();
 
-    if (front_proj_len + back_proj_len > 0.3 * chord_len) {
+    if (frontProjLen + backProjLen > 0.3 * chordLen) {
       polylines.erase(it++);
     } else {
       ++it;
@@ -239,12 +239,12 @@ void TextLineTracer::filterShortCurves(std::list<std::vector<QPointF>>& polyline
 }
 
 void TextLineTracer::filterOutOfBoundsCurves(std::list<std::vector<QPointF>>& polylines,
-                                             const QLineF& left_bound,
-                                             const QLineF& right_bound) {
+                                             const QLineF& leftBound,
+                                             const QLineF& rightBound) {
   auto it(polylines.begin());
   const auto end(polylines.end());
   while (it != end) {
-    if (!isInsideBounds(it->front(), left_bound, right_bound) && !isInsideBounds(it->back(), left_bound, right_bound)) {
+    if (!isInsideBounds(it->front(), leftBound, rightBound) && !isInsideBounds(it->back(), leftBound, rightBound)) {
       polylines.erase(it++);
     } else {
       ++it;
@@ -274,105 +274,104 @@ void TextLineTracer::extractTextLines(std::list<std::vector<QPointF>>& out,
   const int height = image.height();
   const QSize size(image.size());
   const Vec2f direction(calcAvgUnitVector(bounds));
-  Grid<float> main_grid(image.width(), image.height(), 0);
-  Grid<float> aux_grid(image.width(), image.height(), 0);
+  Grid<float> mainGrid(image.width(), image.height(), 0);
+  Grid<float> auxGrid(image.width(), image.height(), 0);
 
   const float downscale = 1.0f / (255.0f * 8.0f);
-  horizontalSobel<float>(width, height, image.data(), image.stride(), _1 * downscale, aux_grid.data(),
-                         aux_grid.stride(), _1 = _2, _1, main_grid.data(), main_grid.stride(), _1 = _2);
-  verticalSobel<float>(width, height, image.data(), image.stride(), _1 * downscale, aux_grid.data(), aux_grid.stride(),
-                       _1 = _2, _1, main_grid.data(), main_grid.stride(), _1 = _1 * direction[0] + _2 * direction[1]);
+  horizontalSobel<float>(width, height, image.data(), image.stride(), _1 * downscale, auxGrid.data(), auxGrid.stride(),
+                         _1 = _2, _1, mainGrid.data(), mainGrid.stride(), _1 = _2);
+  verticalSobel<float>(width, height, image.data(), image.stride(), _1 * downscale, auxGrid.data(), auxGrid.stride(),
+                       _1 = _2, _1, mainGrid.data(), mainGrid.stride(), _1 = _1 * direction[0] + _2 * direction[1]);
   if (dbg) {
-    dbg->add(visualizeGradient(image, main_grid), "first_dir_deriv");
+    dbg->add(visualizeGradient(image, mainGrid), "first_dir_deriv");
   }
 
-  gaussBlurGeneric(size, 6.0f, 6.0f, main_grid.data(), main_grid.stride(), _1, main_grid.data(), main_grid.stride(),
+  gaussBlurGeneric(size, 6.0f, 6.0f, mainGrid.data(), mainGrid.stride(), _1, mainGrid.data(), mainGrid.stride(),
                    _1 = _2);
   if (dbg) {
-    dbg->add(visualizeGradient(image, main_grid), "first_dir_deriv_blurred");
+    dbg->add(visualizeGradient(image, mainGrid), "first_dir_deriv_blurred");
   }
 
-  horizontalSobel<float>(width, height, main_grid.data(), main_grid.stride(), _1, aux_grid.data(), aux_grid.stride(),
-                         _1 = _2, _1, aux_grid.data(), aux_grid.stride(), _1 = _2);
-  verticalSobel<float>(width, height, main_grid.data(), main_grid.stride(), _1, main_grid.data(), main_grid.stride(),
-                       _1 = _2, _1, main_grid.data(), main_grid.stride(), _1 = _2);
-  rasterOpGeneric(aux_grid.data(), aux_grid.stride(), size, main_grid.data(), main_grid.stride(),
+  horizontalSobel<float>(width, height, mainGrid.data(), mainGrid.stride(), _1, auxGrid.data(), auxGrid.stride(),
+                         _1 = _2, _1, auxGrid.data(), auxGrid.stride(), _1 = _2);
+  verticalSobel<float>(width, height, mainGrid.data(), mainGrid.stride(), _1, mainGrid.data(), mainGrid.stride(),
+                       _1 = _2, _1, mainGrid.data(), mainGrid.stride(), _1 = _2);
+  rasterOpGeneric(auxGrid.data(), auxGrid.stride(), size, mainGrid.data(), mainGrid.stride(),
                   _2 = _1 * direction[0] + _2 * direction[1]);
   if (dbg) {
-    dbg->add(visualizeGradient(image, main_grid), "second_dir_deriv");
+    dbg->add(visualizeGradient(image, mainGrid), "second_dir_deriv");
   }
 
   float max = 0;
-  rasterOpGeneric(main_grid.data(), main_grid.stride(), size, if_then(_1 > var(max), var(max) = _1));
+  rasterOpGeneric(mainGrid.data(), mainGrid.stride(), size, if_then(_1 > var(max), var(max) = _1));
   const float threshold = max * 15.0f / 255.0f;
 
-  BinaryImage initial_binarization(image.size());
-  rasterOpGeneric(initial_binarization, main_grid.data(), main_grid.stride(),
+  BinaryImage initialBinarization(image.size());
+  rasterOpGeneric(initialBinarization, mainGrid.data(), mainGrid.stride(),
                   if_then_else(_2 > threshold, _1 = uint32_t(1), _1 = uint32_t(0)));
   if (dbg) {
-    dbg->add(initial_binarization, "initial_binarization");
+    dbg->add(initialBinarization, "initialBinarization");
   }
 
-  rasterOpGeneric(main_grid.data(), main_grid.stride(), size, aux_grid.data(), aux_grid.stride(),
+  rasterOpGeneric(mainGrid.data(), mainGrid.stride(), size, auxGrid.data(), auxGrid.stride(),
                   _2 = bind((float (*)(float)) & std::fabs, _1));
   if (dbg) {
-    dbg->add(visualizeGradient(image, aux_grid), "abs");
+    dbg->add(visualizeGradient(image, auxGrid), "abs");
   }
 
-  gaussBlurGeneric(size, 12.0f, 12.0f, aux_grid.data(), aux_grid.stride(), _1, aux_grid.data(), aux_grid.stride(),
-                   _1 = _2);
+  gaussBlurGeneric(size, 12.0f, 12.0f, auxGrid.data(), auxGrid.stride(), _1, auxGrid.data(), auxGrid.stride(), _1 = _2);
   if (dbg) {
-    dbg->add(visualizeGradient(image, aux_grid), "blurred");
+    dbg->add(visualizeGradient(image, auxGrid), "blurred");
   }
 
-  rasterOpGeneric(main_grid.data(), main_grid.stride(), size, aux_grid.data(), aux_grid.stride(),
+  rasterOpGeneric(mainGrid.data(), mainGrid.stride(), size, auxGrid.data(), auxGrid.stride(),
                   _2 += _1 - bind((float (*)(float)) & std::fabs, _1));
   if (dbg) {
-    dbg->add(visualizeGradient(image, aux_grid), "+= diff");
+    dbg->add(visualizeGradient(image, auxGrid), "+= diff");
   }
 
-  BinaryImage post_binarization(image.size());
-  rasterOpGeneric(post_binarization, aux_grid.data(), aux_grid.stride(),
+  BinaryImage postBinarization(image.size());
+  rasterOpGeneric(postBinarization, auxGrid.data(), auxGrid.stride(),
                   if_then_else(_2 > threshold, _1 = uint32_t(1), _1 = uint32_t(0)));
   if (dbg) {
-    dbg->add(post_binarization, "post_binarization");
+    dbg->add(postBinarization, "postBinarization");
   }
 
   BinaryImage obstacles(image.size());
-  rasterOpGeneric(obstacles, aux_grid.data(), aux_grid.stride(),
+  rasterOpGeneric(obstacles, auxGrid.data(), auxGrid.stride(),
                   if_then_else(_2 < -threshold, _1 = uint32_t(1), _1 = uint32_t(0)));
   if (dbg) {
     dbg->add(obstacles, "obstacles");
   }
 
-  Grid<float>().swap(aux_grid);  // Save memory.
-  initial_binarization = closeWithObstacles(initial_binarization, obstacles, QSize(21, 21));
+  Grid<float>().swap(auxGrid);  // Save memory.
+  initialBinarization = closeWithObstacles(initialBinarization, obstacles, QSize(21, 21));
   if (dbg) {
-    dbg->add(initial_binarization, "initial_closed");
+    dbg->add(initialBinarization, "initial_closed");
   }
 
   obstacles.release();  // Save memory.
-  rasterOp<RopAnd<RopDst, RopSrc>>(post_binarization, initial_binarization);
+  rasterOp<RopAnd<RopDst, RopSrc>>(postBinarization, initialBinarization);
   if (dbg) {
-    dbg->add(post_binarization, "post &&= initial");
+    dbg->add(postBinarization, "post &&= initial");
   }
 
-  initial_binarization.release();  // Save memory.
-  const SEDM sedm(post_binarization);
+  initialBinarization.release();  // Save memory.
+  const SEDM sedm(postBinarization);
 
   std::vector<QPoint> seeds;
-  QLineF mid_line(calcMidLine(bounds.first, bounds.second));
-  findMidLineSeeds(sedm, mid_line, seeds);
+  QLineF midLine(calcMidLine(bounds.first, bounds.second));
+  findMidLineSeeds(sedm, midLine, seeds);
   if (dbg) {
-    dbg->add(visualizeMidLineSeeds(image, post_binarization, bounds, mid_line, seeds), "seeds");
+    dbg->add(visualizeMidLineSeeds(image, postBinarization, bounds, midLine, seeds), "seeds");
   }
 
-  post_binarization.release();  // Save memory.
+  postBinarization.release();  // Save memory.
   for (const QPoint seed : seeds) {
     std::vector<QPointF> polyline;
 
     {
-      TowardsLineTracer tracer(&sedm, &main_grid, bounds.first, seed);
+      TowardsLineTracer tracer(&sedm, &mainGrid, bounds.first, seed);
       while (const QPoint* pt = tracer.trace(10.0f)) {
         polyline.emplace_back(*pt);
       }
@@ -382,7 +381,7 @@ void TextLineTracer::extractTextLines(std::list<std::vector<QPointF>>& out,
     polyline.emplace_back(seed);
 
     {
-      TowardsLineTracer tracer(&sedm, &main_grid, bounds.second, seed);
+      TowardsLineTracer tracer(&sedm, &mainGrid, bounds.second, seed);
       while (const QPoint* pt = tracer.trace(10.0f)) {
         polyline.emplace_back(*pt);
       }
@@ -415,29 +414,29 @@ BinaryImage TextLineTracer::closeWithObstacles(const BinaryImage& image,
   return seedFill(image, mask, CONN4);
 }
 
-void TextLineTracer::findMidLineSeeds(const SEDM& sedm, QLineF mid_line, std::vector<QPoint>& seeds) {
-  lineBoundedByRect(mid_line, QRect(QPoint(0, 0), sedm.size()).adjusted(0, 0, -1, -1));
+void TextLineTracer::findMidLineSeeds(const SEDM& sedm, QLineF midLine, std::vector<QPoint>& seeds) {
+  lineBoundedByRect(midLine, QRect(QPoint(0, 0), sedm.size()).adjusted(0, 0, -1, -1));
 
-  const uint32_t* sedm_data = sedm.data();
-  const int sedm_stride = sedm.stride();
+  const uint32_t* sedmData = sedm.data();
+  const int sedmStride = sedm.stride();
 
-  QPoint prev_pt;
-  int32_t prev_level = 0;
+  QPoint prevPt;
+  int32_t prevLevel = 0;
   int dir = 1;  // Distance growing.
-  GridLineTraverser traverser(mid_line);
+  GridLineTraverser traverser(midLine);
   while (traverser.hasNext()) {
     const QPoint pt(traverser.next());
-    const int32_t level = sedm_data[pt.y() * sedm_stride + pt.x()];
-    if ((level - prev_level) * dir < 0) {
+    const int32_t level = sedmData[pt.y() * sedmStride + pt.x()];
+    if ((level - prevLevel) * dir < 0) {
       // Direction changed.
       if (dir > 0) {
-        seeds.push_back(prev_pt);
+        seeds.push_back(prevPt);
       }
       dir *= -1;
     }
 
-    prev_pt = pt;
-    prev_level = level;
+    prevPt = pt;
+    prevLevel = level;
   }
 }
 
@@ -481,46 +480,46 @@ QImage TextLineTracer::visualizeVerticalBounds(const QImage& background, const s
 QImage TextLineTracer::visualizeGradient(const QImage& background, const Grid<float>& grad) {
   const int width = grad.width();
   const int height = grad.height();
-  const int grad_stride = grad.stride();
+  const int gradStride = grad.stride();
   // First let's find the maximum and minimum values.
-  float min_value = NumericTraits<float>::max();
-  float max_value = NumericTraits<float>::min();
+  float minValue = NumericTraits<float>::max();
+  float maxValue = NumericTraits<float>::min();
 
-  const float* grad_line = grad.data();
+  const float* gradLine = grad.data();
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      const float value = grad_line[x];
-      if (value < min_value) {
-        min_value = value;
-      } else if (value > max_value) {
-        max_value = value;
+      const float value = gradLine[x];
+      if (value < minValue) {
+        minValue = value;
+      } else if (value > maxValue) {
+        maxValue = value;
       }
     }
-    grad_line += grad_stride;
+    gradLine += gradStride;
   }
 
-  float scale = std::max(max_value, -min_value);
+  float scale = std::max(maxValue, -minValue);
   if (scale > std::numeric_limits<float>::epsilon()) {
     scale = 255.0f / scale;
   }
 
   QImage overlay(width, height, QImage::Format_ARGB32_Premultiplied);
-  auto* overlay_line = (uint32_t*) overlay.bits();
-  const int overlay_stride = overlay.bytesPerLine() / 4;
+  auto* overlayLine = (uint32_t*) overlay.bits();
+  const int overlayStride = overlay.bytesPerLine() / 4;
 
-  grad_line = grad.data();
+  gradLine = grad.data();
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      const float value = grad_line[x] * scale;
+      const float value = gradLine[x] * scale;
       const int magnitude = qBound(0, static_cast<const int&>(std::round(std::fabs(value))), 255);
       if (value < 0) {
-        overlay_line[x] = qRgba(0, 0, magnitude, magnitude);
+        overlayLine[x] = qRgba(0, 0, magnitude, magnitude);
       } else {
-        overlay_line[x] = qRgba(magnitude, 0, 0, magnitude);
+        overlayLine[x] = qRgba(magnitude, 0, 0, magnitude);
       }
     }
-    grad_line += grad_stride;
-    overlay_line += overlay_stride;
+    gradLine += gradStride;
+    overlayLine += overlayStride;
   }
 
   QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
@@ -533,7 +532,7 @@ QImage TextLineTracer::visualizeGradient(const QImage& background, const Grid<fl
 QImage TextLineTracer::visualizeMidLineSeeds(const QImage& background,
                                              const BinaryImage& overlay,
                                              std::pair<QLineF, QLineF> bounds,
-                                             QLineF mid_line,
+                                             QLineF midLine,
                                              const std::vector<QPoint>& seeds) {
   QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
   QPainter painter(&canvas);
@@ -543,7 +542,7 @@ QImage TextLineTracer::visualizeMidLineSeeds(const QImage& background,
 
   lineBoundedByRect(bounds.first, background.rect());
   lineBoundedByRect(bounds.second, background.rect());
-  lineBoundedByRect(mid_line, background.rect());
+  lineBoundedByRect(midLine, background.rect());
 
   QPen pen(QColor(0x00, 0x00, 0xff, 180));
   pen.setWidthF(5.0);
@@ -553,7 +552,7 @@ QImage TextLineTracer::visualizeMidLineSeeds(const QImage& background,
 
   pen.setColor(QColor(0x00, 0xff, 0x00, 180));
   painter.setPen(pen);
-  painter.drawLine(mid_line);
+  painter.drawLine(midLine);
 
   painter.setPen(Qt::NoPen);
   painter.setBrush(QColor(0x2d, 0x00, 0x6d, 255));
@@ -568,7 +567,7 @@ QImage TextLineTracer::visualizeMidLineSeeds(const QImage& background,
 
 QImage TextLineTracer::visualizePolylines(const QImage& background,
                                           const std::list<std::vector<QPointF>>& polylines,
-                                          const std::pair<QLineF, QLineF>* vert_bounds) {
+                                          const std::pair<QLineF, QLineF>* vertBounds) {
   QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
   QPainter painter(&canvas);
   painter.setRenderHint(QPainter::Antialiasing);
@@ -582,9 +581,9 @@ QImage TextLineTracer::visualizePolylines(const QImage& background,
     }
   }
 
-  if (vert_bounds) {
-    painter.drawLine(vert_bounds->first);
-    painter.drawLine(vert_bounds->second);
+  if (vertBounds) {
+    painter.drawLine(vertBounds->first);
+    painter.drawLine(vertBounds->second);
   }
 
   return canvas;

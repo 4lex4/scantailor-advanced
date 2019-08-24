@@ -7,45 +7,44 @@
 namespace adiff {
 // Note:
 // 1. u in this file has the same meaning as in [1].
-// 2. sparse_map(i, j) corresponds to l(i, j) in [1].
+// 2. sparseMap(i, j) corresponds to l(i, j) in [1].
 
-Function<2>::Function(size_t num_non_zero_vars)
-    : value(), firstDerivs(num_non_zero_vars), secondDerivs(num_non_zero_vars) {}
+Function<2>::Function(size_t numNonZeroVars) : value(), firstDerivs(numNonZeroVars), secondDerivs(numNonZeroVars) {}
 
-Function<2>::Function(const SparseMap<2>& sparse_map)
-    : value(), firstDerivs(sparse_map.numNonZeroElements()), secondDerivs(sparse_map.numNonZeroElements()) {}
+Function<2>::Function(const SparseMap<2>& sparseMap)
+    : value(), firstDerivs(sparseMap.numNonZeroElements()), secondDerivs(sparseMap.numNonZeroElements()) {}
 
-Function<2>::Function(size_t arg_idx, double val, const SparseMap<2>& sparse_map)
-    : value(val), firstDerivs(sparse_map.numNonZeroElements()), secondDerivs(sparse_map.numNonZeroElements()) {
+Function<2>::Function(size_t argIdx, double val, const SparseMap<2>& sparseMap)
+    : value(val), firstDerivs(sparseMap.numNonZeroElements()), secondDerivs(sparseMap.numNonZeroElements()) {
   // An argument Xi is represented as a function:
   // f(X1, X2, ..., Xi, ...) = Xi
   // Derivatives are calculated accordingly.
 
-  const size_t num_vars = sparse_map.numVars();
+  const size_t numVars = sparseMap.numVars();
 
-  // arg_idx row
-  for (size_t i = 0; i < num_vars; ++i) {
-    const size_t u = sparse_map.nonZeroElementIdx(arg_idx, i);
-    if (u != sparse_map.ZERO_ELEMENT) {
+  // argIdx row
+  for (size_t i = 0; i < numVars; ++i) {
+    const size_t u = sparseMap.nonZeroElementIdx(argIdx, i);
+    if (u != sparseMap.ZERO_ELEMENT) {
       firstDerivs[u] = 1.0;
     }
   }
-  // arg_idx column
-  for (size_t i = 0; i < num_vars; ++i) {
-    const size_t u = sparse_map.nonZeroElementIdx(i, arg_idx);
-    if (u != sparse_map.ZERO_ELEMENT) {
+  // argIdx column
+  for (size_t i = 0; i < numVars; ++i) {
+    const size_t u = sparseMap.nonZeroElementIdx(i, argIdx);
+    if (u != sparseMap.ZERO_ELEMENT) {
       firstDerivs[u] = 1.0;
     }
   }
 }
 
-VecT<double> Function<2>::gradient(const SparseMap<2>& sparse_map) const {
-  const size_t num_vars = sparse_map.numVars();
-  VecT<double> grad(num_vars);
+VecT<double> Function<2>::gradient(const SparseMap<2>& sparseMap) const {
+  const size_t numVars = sparseMap.numVars();
+  VecT<double> grad(numVars);
 
-  for (size_t i = 0; i < num_vars; ++i) {
-    const size_t u = sparse_map.nonZeroElementIdx(i, i);
-    if (u != sparse_map.ZERO_ELEMENT) {
+  for (size_t i = 0; i < numVars; ++i) {
+    const size_t u = sparseMap.nonZeroElementIdx(i, i);
+    if (u != sparseMap.ZERO_ELEMENT) {
       grad[i] = firstDerivs[u];
     }
   }
@@ -53,21 +52,21 @@ VecT<double> Function<2>::gradient(const SparseMap<2>& sparse_map) const {
   return grad;
 }
 
-MatT<double> Function<2>::hessian(const SparseMap<2>& sparse_map) const {
-  const size_t num_vars = sparse_map.numVars();
-  MatT<double> hess(num_vars, num_vars);
+MatT<double> Function<2>::hessian(const SparseMap<2>& sparseMap) const {
+  const size_t numVars = sparseMap.numVars();
+  MatT<double> hess(numVars, numVars);
 
-  for (size_t i = 0; i < num_vars; ++i) {
-    for (size_t j = 0; j < num_vars; ++j) {
+  for (size_t i = 0; i < numVars; ++i) {
+    for (size_t j = 0; j < numVars; ++j) {
       double Fij = 0;
-      const size_t ij = sparse_map.nonZeroElementIdx(i, j);
-      if (ij != sparse_map.ZERO_ELEMENT) {
+      const size_t ij = sparseMap.nonZeroElementIdx(i, j);
+      if (ij != sparseMap.ZERO_ELEMENT) {
         if (i == j) {
           Fij = secondDerivs[ij];
         } else {
-          const size_t ii = sparse_map.nonZeroElementIdx(i, i);
-          const size_t jj = sparse_map.nonZeroElementIdx(j, j);
-          assert(ii != sparse_map.ZERO_ELEMENT && jj != sparse_map.ZERO_ELEMENT);
+          const size_t ii = sparseMap.nonZeroElementIdx(i, i);
+          const size_t jj = sparseMap.nonZeroElementIdx(j, j);
+          assert(ii != sparseMap.ZERO_ELEMENT && jj != sparseMap.ZERO_ELEMENT);
           Fij = 0.5 * (secondDerivs[ij] - (secondDerivs[ii] + secondDerivs[jj]));
         }
       }

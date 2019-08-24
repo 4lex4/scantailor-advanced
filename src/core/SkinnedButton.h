@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SKINNEDBUTTON_H_
-#define SKINNEDBUTTON_H_
+#ifndef SCANTAILOR_CORE_SKINNEDBUTTON_H_
+#define SCANTAILOR_CORE_SKINNEDBUTTON_H_
 
 #include <QIcon>
 #include <QToolButton>
@@ -40,9 +40,9 @@ class SkinnedButton : public QToolButton {
    *
    * Note that the sizes of all 3 images should be the same.
    */
-  SkinnedButton(const QIcon& normal_state_icon,
-                const QIcon& hover_state_icon,
-                const QIcon& pressed_state_icon,
+  SkinnedButton(const QIcon& normalStateIcon,
+                const QIcon& hoverStateIcon,
+                const QIcon& pressedStateIcon,
                 QWidget* parent = nullptr);
 
   /**
@@ -84,4 +84,4 @@ class SkinnedButton : public QToolButton {
 };
 
 
-#endif  // ifndef SKINNEDBUTTON_H_
+#endif  // ifndef SCANTAILOR_CORE_SKINNEDBUTTON_H_

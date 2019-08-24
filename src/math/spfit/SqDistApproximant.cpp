@@ -65,27 +65,27 @@ SqDistApproximant SqDistApproximant::weightedLineDistance(const QLineF& line, do
   return SqDistApproximant(line.p1(), u, v, 0, weight);
 }
 
-SqDistApproximant SqDistApproximant::curveDistance(const Vec2d& reference_point,
-                                                   const FrenetFrame& frenet_frame,
-                                                   double signed_curvature) {
-  return weightedCurveDistance(reference_point, frenet_frame, signed_curvature, 1);
+SqDistApproximant SqDistApproximant::curveDistance(const Vec2d& referencePoint,
+                                                   const FrenetFrame& frenetFrame,
+                                                   double signedCurvature) {
+  return weightedCurveDistance(referencePoint, frenetFrame, signedCurvature, 1);
 }
 
-SqDistApproximant SqDistApproximant::weightedCurveDistance(const Vec2d& reference_point,
-                                                           const FrenetFrame& frenet_frame,
-                                                           const double signed_curvature,
+SqDistApproximant SqDistApproximant::weightedCurveDistance(const Vec2d& referencePoint,
+                                                           const FrenetFrame& frenetFrame,
+                                                           const double signedCurvature,
                                                            const double weight) {
-  const double abs_curvature = std::fabs(signed_curvature);
+  const double absCurvature = std::fabs(signedCurvature);
   double m = 0;
 
-  if (abs_curvature > std::numeric_limits<double>::epsilon()) {
-    const Vec2d to_reference_point(reference_point - frenet_frame.origin());
-    const double p = 1.0 / abs_curvature;
-    const double d = std::fabs(frenet_frame.unitNormal().dot(to_reference_point));
+  if (absCurvature > std::numeric_limits<double>::epsilon()) {
+    const Vec2d toReferencePoint(referencePoint - frenetFrame.origin());
+    const double p = 1.0 / absCurvature;
+    const double d = std::fabs(frenetFrame.unitNormal().dot(toReferencePoint));
     m = d / (d + p);  // Formula 7 in [2].
   }
 
-  return SqDistApproximant(frenet_frame.origin(), frenet_frame.unitTangent(), frenet_frame.unitNormal(), m * weight,
+  return SqDistApproximant(frenetFrame.origin(), frenetFrame.unitTangent(), frenetFrame.unitNormal(), m * weight,
                            weight);
 }
 

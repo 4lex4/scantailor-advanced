@@ -17,9 +17,9 @@
 using namespace core;
 
 namespace output {
-OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
+OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor)
     : m_settings(std::move(settings)),
-      m_pageSelectionAccessor(page_selection_accessor),
+      m_pageSelectionAccessor(pageSelectionAccessor),
       m_despeckleLevel(1.0),
       m_lastTab(TAB_OUTPUT) {
   setupUi(this);
@@ -71,11 +71,11 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
 
 OptionsWidget::~OptionsWidget() = default;
 
-void OptionsWidget::preUpdateUI(const PageId& page_id) {
+void OptionsWidget::preUpdateUI(const PageId& pageId) {
   removeUiConnections();
 
-  const Params params = m_settings->getParams(page_id);
-  m_pageId = page_id;
+  const Params params = m_settings->getParams(pageId);
+  m_pageId = pageId;
   m_outputDpi = params.outputDpi();
   m_colorParams = params.colorParams();
   m_splittingOptions = params.splittingOptions();
@@ -236,15 +236,15 @@ void OptionsWidget::applyColorsButtonClicked() {
 }
 
 void OptionsWidget::dpiChanged(const std::set<PageId>& pages, const Dpi& dpi) {
-  for (const PageId& page_id : pages) {
-    m_settings->setDpi(page_id, dpi);
+  for (const PageId& pageId : pages) {
+    m_settings->setDpi(pageId, dpi);
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 
@@ -256,16 +256,16 @@ void OptionsWidget::dpiChanged(const std::set<PageId>& pages, const Dpi& dpi) {
 }
 
 void OptionsWidget::applyColorsConfirmed(const std::set<PageId>& pages) {
-  for (const PageId& page_id : pages) {
-    m_settings->setColorParams(page_id, m_colorParams);
-    m_settings->setPictureShapeOptions(page_id, m_pictureShapeOptions);
+  for (const PageId& pageId : pages) {
+    m_settings->setColorParams(pageId, m_colorParams);
+    m_settings->setPictureShapeOptions(pageId, m_pictureShapeOptions);
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 
@@ -284,15 +284,15 @@ void OptionsWidget::applySplittingButtonClicked() {
 }
 
 void OptionsWidget::applySplittingOptionsConfirmed(const std::set<PageId>& pages) {
-  for (const PageId& page_id : pages) {
-    m_settings->setSplittingOptions(page_id, m_splittingOptions);
+  for (const PageId& pageId : pages) {
+    m_settings->setSplittingOptions(pageId, m_splittingOptions);
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 
@@ -317,24 +317,24 @@ void OptionsWidget::despeckleSliderReleased() {
 }
 
 void OptionsWidget::despeckleSliderValueChanged(int value) {
-  const double new_value = 0.1 * value;
+  const double newValue = 0.1 * value;
 
-  const QString tooltip_text(QString::number(new_value));
-  despeckleSlider->setToolTip(tooltip_text);
+  const QString tooltipText(QString::number(newValue));
+  despeckleSlider->setToolTip(tooltipText);
 
   // Show the tooltip immediately.
   const QPoint center(despeckleSlider->rect().center());
-  QPoint tooltip_pos(despeckleSlider->mapFromGlobal(QCursor::pos()));
-  tooltip_pos.setY(center.y());
-  tooltip_pos.setX(qBound(0, tooltip_pos.x(), despeckleSlider->width()));
-  tooltip_pos = despeckleSlider->mapToGlobal(tooltip_pos);
-  QToolTip::showText(tooltip_pos, tooltip_text, despeckleSlider);
+  QPoint tooltipPos(despeckleSlider->mapFromGlobal(QCursor::pos()));
+  tooltipPos.setY(center.y());
+  tooltipPos.setX(qBound(0, tooltipPos.x(), despeckleSlider->width()));
+  tooltipPos = despeckleSlider->mapToGlobal(tooltipPos);
+  QToolTip::showText(tooltipPos, tooltipText, despeckleSlider);
 
   if (despeckleSlider->isSliderDown()) {
     return;
   }
 
-  handleDespeckleLevelChange(new_value, true);
+  handleDespeckleLevelChange(newValue, true);
 }
 
 void OptionsWidget::handleDespeckleLevelChange(const double level, const bool delay) {
@@ -366,15 +366,15 @@ void OptionsWidget::applyDespeckleButtonClicked() {
 }
 
 void OptionsWidget::applyDespeckleConfirmed(const std::set<PageId>& pages) {
-  for (const PageId& page_id : pages) {
-    m_settings->setDespeckleLevel(page_id, m_despeckleLevel);
+  for (const PageId& pageId : pages) {
+    m_settings->setDespeckleLevel(pageId, m_despeckleLevel);
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 
@@ -392,15 +392,15 @@ void OptionsWidget::changeDewarpingButtonClicked() {
 }
 
 void OptionsWidget::dewarpingChanged(const std::set<PageId>& pages, const DewarpingOptions& opt) {
-  for (const PageId& page_id : pages) {
-    m_settings->setDewarpingOptions(page_id, opt);
+  for (const PageId& pageId : pages) {
+    m_settings->setDewarpingOptions(pageId, opt);
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 
@@ -442,15 +442,15 @@ void OptionsWidget::applyDepthPerceptionButtonClicked() {
 }
 
 void OptionsWidget::applyDepthPerceptionConfirmed(const std::set<PageId>& pages) {
-  for (const PageId& page_id : pages) {
-    m_settings->setDepthPerception(page_id, m_depthPerception);
+  for (const PageId& pageId : pages) {
+    m_settings->setDepthPerception(pageId, m_depthPerception);
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 
@@ -461,16 +461,16 @@ void OptionsWidget::applyDepthPerceptionConfirmed(const std::set<PageId>& pages)
 
 void OptionsWidget::depthPerceptionChangedSlot(int val) {
   m_depthPerception.setValue(0.1 * val);
-  const QString tooltip_text(QString::number(m_depthPerception.value()));
-  depthPerceptionSlider->setToolTip(tooltip_text);
+  const QString tooltipText(QString::number(m_depthPerception.value()));
+  depthPerceptionSlider->setToolTip(tooltipText);
 
   // Show the tooltip immediately.
   const QPoint center(depthPerceptionSlider->rect().center());
-  QPoint tooltip_pos(depthPerceptionSlider->mapFromGlobal(QCursor::pos()));
-  tooltip_pos.setY(center.y());
-  tooltip_pos.setX(qBound(0, tooltip_pos.x(), depthPerceptionSlider->width()));
-  tooltip_pos = depthPerceptionSlider->mapToGlobal(tooltip_pos);
-  QToolTip::showText(tooltip_pos, tooltip_text, depthPerceptionSlider);
+  QPoint tooltipPos(depthPerceptionSlider->mapFromGlobal(QCursor::pos()));
+  tooltipPos.setY(center.y());
+  tooltipPos.setX(qBound(0, tooltipPos.x(), depthPerceptionSlider->width()));
+  tooltipPos = depthPerceptionSlider->mapToGlobal(tooltipPos);
+  QToolTip::showText(tooltipPos, tooltipText, depthPerceptionSlider);
 
   m_settings->setDepthPerception(m_pageId, m_depthPerception);
   // Propagate the signal.
@@ -478,28 +478,28 @@ void OptionsWidget::depthPerceptionChangedSlot(int val) {
 }
 
 void OptionsWidget::reloadIfNecessary() {
-  ZoneSet saved_picture_zones;
-  ZoneSet saved_fill_zones;
-  DewarpingOptions saved_dewarping_options;
-  dewarping::DistortionModel saved_distortion_model;
-  DepthPerception saved_depth_perception;
-  double saved_despeckle_level = 1.0;
+  ZoneSet savedPictureZones;
+  ZoneSet savedFillZones;
+  DewarpingOptions savedDewarpingOptions;
+  dewarping::DistortionModel savedDistortionModel;
+  DepthPerception savedDepthPerception;
+  double savedDespeckleLevel = 1.0;
 
-  std::unique_ptr<OutputParams> output_params(m_settings->getOutputParams(m_pageId));
-  if (output_params) {
-    saved_picture_zones = output_params->pictureZones();
-    saved_fill_zones = output_params->fillZones();
-    saved_dewarping_options = output_params->outputImageParams().dewarpingMode();
-    saved_distortion_model = output_params->outputImageParams().distortionModel();
-    saved_depth_perception = output_params->outputImageParams().depthPerception();
-    saved_despeckle_level = output_params->outputImageParams().despeckleLevel();
+  std::unique_ptr<OutputParams> outputParams(m_settings->getOutputParams(m_pageId));
+  if (outputParams) {
+    savedPictureZones = outputParams->pictureZones();
+    savedFillZones = outputParams->fillZones();
+    savedDewarpingOptions = outputParams->outputImageParams().dewarpingMode();
+    savedDistortionModel = outputParams->outputImageParams().distortionModel();
+    savedDepthPerception = outputParams->outputImageParams().depthPerception();
+    savedDespeckleLevel = outputParams->outputImageParams().despeckleLevel();
   }
 
-  if (!PictureZoneComparator::equal(saved_picture_zones, m_settings->pictureZonesForPage(m_pageId))) {
+  if (!PictureZoneComparator::equal(savedPictureZones, m_settings->pictureZonesForPage(m_pageId))) {
     emit reloadRequested();
 
     return;
-  } else if (!FillZoneComparator::equal(saved_fill_zones, m_settings->fillZonesForPage(m_pageId))) {
+  } else if (!FillZoneComparator::equal(savedFillZones, m_settings->fillZonesForPage(m_pageId))) {
     emit reloadRequested();
 
     return;
@@ -507,25 +507,25 @@ void OptionsWidget::reloadIfNecessary() {
 
   const Params params(m_settings->getParams(m_pageId));
 
-  if (saved_despeckle_level != params.despeckleLevel()) {
+  if (savedDespeckleLevel != params.despeckleLevel()) {
     emit reloadRequested();
 
     return;
   }
 
-  if ((saved_dewarping_options.dewarpingMode() == OFF) && (params.dewarpingOptions().dewarpingMode() == OFF)) {
-  } else if (saved_depth_perception.value() != params.depthPerception().value()) {
+  if ((savedDewarpingOptions.dewarpingMode() == OFF) && (params.dewarpingOptions().dewarpingMode() == OFF)) {
+  } else if (savedDepthPerception.value() != params.depthPerception().value()) {
     emit reloadRequested();
 
     return;
-  } else if ((saved_dewarping_options.dewarpingMode() == AUTO) && (params.dewarpingOptions().dewarpingMode() == AUTO)) {
-  } else if ((saved_dewarping_options.dewarpingMode() == MARGINAL)
+  } else if ((savedDewarpingOptions.dewarpingMode() == AUTO) && (params.dewarpingOptions().dewarpingMode() == AUTO)) {
+  } else if ((savedDewarpingOptions.dewarpingMode() == MARGINAL)
              && (params.dewarpingOptions().dewarpingMode() == MARGINAL)) {
-  } else if (!saved_distortion_model.matches(params.distortionModel())) {
+  } else if (!savedDistortionModel.matches(params.distortionModel())) {
     emit reloadRequested();
 
     return;
-  } else if ((saved_dewarping_options.dewarpingMode() == OFF) != (params.dewarpingOptions().dewarpingMode() == OFF)) {
+  } else if ((savedDewarpingOptions.dewarpingMode() == OFF) != (params.dewarpingOptions().dewarpingMode() == OFF)) {
     emit reloadRequested();
 
     return;
@@ -543,20 +543,20 @@ void OptionsWidget::updateDpiDisplay() {
 void OptionsWidget::updateColorsDisplay() {
   colorModeSelector->blockSignals(true);
 
-  const ColorMode color_mode = m_colorParams.colorMode();
-  const int color_mode_idx = colorModeSelector->findData(color_mode);
-  colorModeSelector->setCurrentIndex(color_mode_idx);
+  const ColorMode colorMode = m_colorParams.colorMode();
+  const int colorModeIdx = colorModeSelector->findData(colorMode);
+  colorModeSelector->setCurrentIndex(colorModeIdx);
 
-  bool threshold_options_visible = false;
-  bool picture_shape_visible = false;
-  bool splitting_options_visible = false;
-  switch (color_mode) {
+  bool thresholdOptionsVisible = false;
+  bool pictureShapeVisible = false;
+  bool splittingOptionsVisible = false;
+  switch (colorMode) {
     case MIXED:
-      picture_shape_visible = true;
-      splitting_options_visible = true;
+      pictureShapeVisible = true;
+      splittingOptionsVisible = true;
       // fall through
     case BLACK_AND_WHITE:
-      threshold_options_visible = true;
+      thresholdOptionsVisible = true;
       // fall through
     case COLOR_GRAYSCALE:
       break;
@@ -566,7 +566,7 @@ void OptionsWidget::updateColorsDisplay() {
   ColorCommonOptions colorCommonOptions(m_colorParams.colorCommonOptions());
   BlackWhiteOptions blackWhiteOptions(m_colorParams.blackWhiteOptions());
 
-  if (!blackWhiteOptions.normalizeIllumination() && color_mode == MIXED) {
+  if (!blackWhiteOptions.normalizeIllumination() && colorMode == MIXED) {
     colorCommonOptions.setNormalizeIllumination(false);
   }
   m_colorParams.setColorCommonOptions(colorCommonOptions);
@@ -577,21 +577,21 @@ void OptionsWidget::updateColorsDisplay() {
   fillOffcutCB->setChecked(colorCommonOptions.fillOffcut());
   fillOffcutCB->setVisible(true);
   equalizeIlluminationCB->setChecked(blackWhiteOptions.normalizeIllumination());
-  equalizeIlluminationCB->setVisible(color_mode != COLOR_GRAYSCALE);
+  equalizeIlluminationCB->setVisible(colorMode != COLOR_GRAYSCALE);
   equalizeIlluminationColorCB->setChecked(colorCommonOptions.normalizeIllumination());
-  equalizeIlluminationColorCB->setVisible(color_mode != BLACK_AND_WHITE);
-  equalizeIlluminationColorCB->setEnabled(color_mode == COLOR_GRAYSCALE || blackWhiteOptions.normalizeIllumination());
+  equalizeIlluminationColorCB->setVisible(colorMode != BLACK_AND_WHITE);
+  equalizeIlluminationColorCB->setEnabled(colorMode == COLOR_GRAYSCALE || blackWhiteOptions.normalizeIllumination());
   savitzkyGolaySmoothingCB->setChecked(blackWhiteOptions.isSavitzkyGolaySmoothingEnabled());
-  savitzkyGolaySmoothingCB->setVisible(threshold_options_visible);
+  savitzkyGolaySmoothingCB->setVisible(thresholdOptionsVisible);
   morphologicalSmoothingCB->setChecked(blackWhiteOptions.isMorphologicalSmoothingEnabled());
-  morphologicalSmoothingCB->setVisible(threshold_options_visible);
+  morphologicalSmoothingCB->setVisible(thresholdOptionsVisible);
 
   modePanel->setVisible(m_lastTab != TAB_DEWARPING);
-  pictureShapeOptions->setVisible(picture_shape_visible);
-  thresholdOptions->setVisible(threshold_options_visible);
-  despecklePanel->setVisible(threshold_options_visible && m_lastTab != TAB_DEWARPING);
+  pictureShapeOptions->setVisible(pictureShapeVisible);
+  thresholdOptions->setVisible(thresholdOptionsVisible);
+  despecklePanel->setVisible(thresholdOptionsVisible && m_lastTab != TAB_DEWARPING);
 
-  splittingOptions->setVisible(splitting_options_visible);
+  splittingOptions->setVisible(splittingOptionsVisible);
   splittingCB->setChecked(m_splittingOptions.isSplitOutput());
   switch (m_splittingOptions.getSplittingMode()) {
     case BLACK_AND_WHITE_FOREGROUND:
@@ -610,13 +610,13 @@ void OptionsWidget::updateColorsDisplay() {
   thresholdMethodBox->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
   binarizationOptions->setCurrentIndex((int) blackWhiteOptions.getBinarizationMethod());
 
-  fillingOptions->setVisible(color_mode != BLACK_AND_WHITE);
+  fillingOptions->setVisible(colorMode != BLACK_AND_WHITE);
   fillingColorBox->setCurrentIndex((int) colorCommonOptions.getFillingColor());
 
-  colorSegmentationCB->setVisible(threshold_options_visible);
-  segmenterOptionsWidget->setVisible(threshold_options_visible);
+  colorSegmentationCB->setVisible(thresholdOptionsVisible);
+  segmenterOptionsWidget->setVisible(thresholdOptionsVisible);
   segmenterOptionsWidget->setEnabled(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
-  if (threshold_options_visible) {
+  if (thresholdOptionsVisible) {
     posterizeCB->setEnabled(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
     posterizeOptionsWidget->setEnabled(blackWhiteOptions.getColorSegmenterOptions().isEnabled()
                                        && colorCommonOptions.getPosterizationOptions().isEnabled());
@@ -634,16 +634,16 @@ void OptionsWidget::updateColorsDisplay() {
   posterizeNormalizationCB->setChecked(colorCommonOptions.getPosterizationOptions().isNormalizationEnabled());
   posterizeForceBwCB->setChecked(colorCommonOptions.getPosterizationOptions().isForceBlackAndWhite());
 
-  if (picture_shape_visible) {
-    const int picture_shape_idx = pictureShapeSelector->findData(m_pictureShapeOptions.getPictureShape());
-    pictureShapeSelector->setCurrentIndex(picture_shape_idx);
+  if (pictureShapeVisible) {
+    const int pictureShapeIdx = pictureShapeSelector->findData(m_pictureShapeOptions.getPictureShape());
+    pictureShapeSelector->setCurrentIndex(pictureShapeIdx);
     pictureShapeSensitivitySB->setValue(m_pictureShapeOptions.getSensitivity());
     pictureShapeSensitivityOptions->setVisible(m_pictureShapeOptions.getPictureShape() == RECTANGULAR_SHAPE);
     higherSearchSensitivityCB->setChecked(m_pictureShapeOptions.isHigherSearchSensitivity());
     higherSearchSensitivityCB->setVisible(m_pictureShapeOptions.getPictureShape() != OFF_SHAPE);
   }
 
-  if (threshold_options_visible) {
+  if (thresholdOptionsVisible) {
     if (m_despeckleLevel != 0) {
       despeckleCB->setChecked(true);
       despeckleSlider->setValue(qRound(10 * m_despeckleLevel));
@@ -681,14 +681,14 @@ void OptionsWidget::updateDewarpingDisplay() {
   }
 
   if ((m_dewarpingOptions.dewarpingMode() == MANUAL) || (m_dewarpingOptions.dewarpingMode() == MARGINAL)) {
-    QString dewarping_status = dewarpingStatusLabel->text();
+    QString dewarpingStatus = dewarpingStatusLabel->text();
     if (m_dewarpingOptions.needPostDeskew()) {
-      const double deskew_angle = -std::round(m_dewarpingOptions.getPostDeskewAngle() * 100) / 100;
-      dewarping_status += " (" + tr("deskew") + ": " + QString::number(deskew_angle) + QChar(0x00B0) + ")";
+      const double deskewAngle = -std::round(m_dewarpingOptions.getPostDeskewAngle() * 100) / 100;
+      dewarpingStatus += " (" + tr("deskew") + ": " + QString::number(deskewAngle) + QChar(0x00B0) + ")";
     } else {
-      dewarping_status += " (" + tr("deskew disabled") + ")";
+      dewarpingStatus += " (" + tr("deskew disabled") + ")";
     }
-    dewarpingStatusLabel->setText(dewarping_status);
+    dewarpingStatusLabel->setText(dewarpingStatus);
   }
 
   depthPerceptionSlider->blockSignals(true);
@@ -973,18 +973,18 @@ void OptionsWidget::applyProcessingParamsClicked() {
 }
 
 void OptionsWidget::applyProcessingParamsConfirmed(const std::set<PageId>& pages) {
-  for (const PageId& page_id : pages) {
-    m_settings->setBlackOnWhite(page_id, m_settings->getParams(m_pageId).isBlackOnWhite());
-    OutputProcessingParams processingParams = m_settings->getOutputProcessingParams(page_id);
+  for (const PageId& pageId : pages) {
+    m_settings->setBlackOnWhite(pageId, m_settings->getParams(m_pageId).isBlackOnWhite());
+    OutputProcessingParams processingParams = m_settings->getOutputProcessingParams(pageId);
     processingParams.setBlackOnWhiteSetManually(true);
-    m_settings->setOutputProcessingParams(page_id, processingParams);
+    m_settings->setOutputProcessingParams(pageId, processingParams);
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 

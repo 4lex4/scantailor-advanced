@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ESTIMATE_BACKGROUND_H_
-#define ESTIMATE_BACKGROUND_H_
+#ifndef SCANTAILOR_CORE_ESTIMATEBACKGROUND_H_
+#define SCANTAILOR_CORE_ESTIMATEBACKGROUND_H_
 
 class ImageTransformation;
 class TaskStatus;
@@ -18,7 +18,7 @@ class GrayImage;
  * \brief Estimates a grayscale background of a scanned page.
  *
  * \param input The image of a page.
- * \param area_to_consider The area in \p input image coordinates to consider.
+ * \param areaToConsider The area in \p input image coordinates to consider.
  *        The resulting surface will only be valid in that area.
  *        This parameter can be an empty polygon, in which case all of the
  *        \p input image area is considered.
@@ -42,7 +42,7 @@ class GrayImage;
  *    provided they touch the edges, but it performs better without them.
  */
 imageproc::PolynomialSurface estimateBackground(const imageproc::GrayImage& input,
-                                                const QPolygonF& area_to_consider,
+                                                const QPolygonF& areaToConsider,
                                                 const TaskStatus& status,
                                                 DebugImages* dbg = nullptr);
 

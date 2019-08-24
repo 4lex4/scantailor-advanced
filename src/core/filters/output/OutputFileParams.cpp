@@ -9,10 +9,10 @@
 namespace output {
 OutputFileParams::OutputFileParams() : m_size(-1), m_modifiedTime(0) {}
 
-OutputFileParams::OutputFileParams(const QFileInfo& file_info) : m_size(-1), m_modifiedTime(0) {
-  if (file_info.exists()) {
-    m_size = file_info.size();
-    m_modifiedTime = file_info.lastModified().toTime_t();
+OutputFileParams::OutputFileParams(const QFileInfo& fileInfo) : m_size(-1), m_modifiedTime(0) {
+  if (fileInfo.exists()) {
+    m_size = fileInfo.size();
+    m_modifiedTime = fileInfo.lastModified().toTime_t();
   }
 }
 

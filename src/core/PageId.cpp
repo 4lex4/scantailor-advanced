@@ -6,12 +6,12 @@
 
 PageId::PageId() : m_subPage(SINGLE_PAGE) {}
 
-PageId::PageId(const ImageId& image_id, SubPage subpage) : m_imageId(image_id), m_subPage(subpage) {}
+PageId::PageId(const ImageId& imageId, SubPage subpage) : m_imageId(imageId), m_subPage(subpage) {}
 
-QString PageId::subPageToString(const SubPage sub_page) {
+QString PageId::subPageToString(const SubPage subPage) {
   const char* str = nullptr;
 
-  switch (sub_page) {
+  switch (subPage) {
     case SINGLE_PAGE:
       str = "single";
       break;
@@ -30,14 +30,14 @@ QString PageId::subPageToString(const SubPage sub_page) {
 
 PageId::SubPage PageId::subPageFromString(const QString& string, bool* ok) {
   bool recognized = true;
-  SubPage sub_page = SINGLE_PAGE;
+  SubPage subPage = SINGLE_PAGE;
 
   if (string == "single") {
-    sub_page = SINGLE_PAGE;
+    subPage = SINGLE_PAGE;
   } else if (string == "left") {
-    sub_page = LEFT_PAGE;
+    subPage = LEFT_PAGE;
   } else if (string == "right") {
-    sub_page = RIGHT_PAGE;
+    subPage = RIGHT_PAGE;
   } else {
     recognized = false;
   }
@@ -46,7 +46,7 @@ PageId::SubPage PageId::subPageFromString(const QString& string, bool* ok) {
     *ok = recognized;
   }
 
-  return sub_page;
+  return subPage;
 }
 
 bool operator==(const PageId& lhs, const PageId& rhs) {

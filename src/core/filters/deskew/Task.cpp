@@ -33,12 +33,12 @@ using namespace imageproc;
 class Task::UiUpdater : public FilterResult {
  public:
   UiUpdater(intrusive_ptr<Filter> filter,
-            std::unique_ptr<DebugImages> dbg_img,
+            std::unique_ptr<DebugImages> dbgImg,
             const QImage& image,
-            const PageId& page_id,
+            const PageId& pageId,
             const ImageTransformation& xform,
-            const OptionsWidget::UiData& ui_data,
-            bool batch_processing);
+            const OptionsWidget::UiData& uiData,
+            bool batchProcessing);
 
   void updateUI(FilterUiInterface* ui) override;
 
@@ -58,17 +58,17 @@ class Task::UiUpdater : public FilterResult {
 
 Task::Task(intrusive_ptr<Filter> filter,
            intrusive_ptr<Settings> settings,
-           intrusive_ptr<ImageSettings> image_settings,
-           intrusive_ptr<select_content::Task> next_task,
-           const PageId& page_id,
-           const bool batch_processing,
+           intrusive_ptr<ImageSettings> imageSettings,
+           intrusive_ptr<select_content::Task> nextTask,
+           const PageId& pageId,
+           const bool batchProcessing,
            const bool debug)
     : m_filter(std::move(filter)),
       m_settings(std::move(settings)),
-      m_imageSettings(std::move(image_settings)),
-      m_nextTask(std::move(next_task)),
-      m_pageId(page_id),
-      m_batchProcessing(batch_processing) {
+      m_imageSettings(std::move(imageSettings)),
+      m_nextTask(std::move(nextTask)),
+      m_pageId(pageId),
+      m_batchProcessing(batchProcessing) {
   if (debug) {
     m_dbg = std::make_unique<DebugImagesImpl>();
   }
@@ -84,70 +84,70 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
   std::unique_ptr<Params> params(m_settings->getPageParams(m_pageId));
   updateFilterData(status, data, (!params || !deps.matches(params->dependencies())));
 
-  OptionsWidget::UiData ui_data;
-  ui_data.setDependencies(deps);
+  OptionsWidget::UiData uiData;
+  uiData.setDependencies(deps);
 
   if (params) {
-    if ((!deps.matches(params->dependencies()) || (params->deskewAngle() != ui_data.effectiveDeskewAngle()))
+    if ((!deps.matches(params->dependencies()) || (params->deskewAngle() != uiData.effectiveDeskewAngle()))
         && (params->mode() == MODE_AUTO)) {
       params.reset();
     } else {
-      ui_data.setEffectiveDeskewAngle(params->deskewAngle());
-      ui_data.setMode(params->mode());
+      uiData.setEffectiveDeskewAngle(params->deskewAngle());
+      uiData.setMode(params->mode());
 
-      Params new_params(ui_data.effectiveDeskewAngle(), deps, ui_data.mode());
-      m_settings->setPageParams(m_pageId, new_params);
+      Params newParams(uiData.effectiveDeskewAngle(), deps, uiData.mode());
+      m_settings->setPageParams(m_pageId, newParams);
     }
   }
 
   if (!params) {
-    const QRectF image_area(data.xform().transformBack().mapRect(data.xform().resultingRect()));
-    const QRect bounded_image_area(image_area.toRect().intersected(data.origImage().rect()));
+    const QRectF imageArea(data.xform().transformBack().mapRect(data.xform().resultingRect()));
+    const QRect boundedImageArea(imageArea.toRect().intersected(data.origImage().rect()));
 
     status.throwIfCancelled();
 
-    if (bounded_image_area.isValid()) {
-      BinaryImage rotated_image(orthogonalRotation(
-          BinaryImage(data.grayImageBlackOnWhite(), bounded_image_area, data.bwThresholdBlackOnWhite()),
+    if (boundedImageArea.isValid()) {
+      BinaryImage rotatedImage(orthogonalRotation(
+          BinaryImage(data.grayImageBlackOnWhite(), boundedImageArea, data.bwThresholdBlackOnWhite()),
           data.xform().preRotation().toDegrees()));
       if (m_dbg) {
-        m_dbg->add(rotated_image, "bw_rotated");
+        m_dbg->add(rotatedImage, "bw_rotated");
       }
 
-      const QSize unrotated_dpm(Dpm(data.origImage()).toSize());
-      const Dpm rotated_dpm(data.xform().preRotation().rotate(unrotated_dpm));
-      cleanup(status, rotated_image, Dpi(rotated_dpm));
+      const QSize unrotatedDpm(Dpm(data.origImage()).toSize());
+      const Dpm rotatedDpm(data.xform().preRotation().rotate(unrotatedDpm));
+      cleanup(status, rotatedImage, Dpi(rotatedDpm));
       if (m_dbg) {
-        m_dbg->add(rotated_image, "after_cleanup");
+        m_dbg->add(rotatedImage, "after_cleanup");
       }
 
       status.throwIfCancelled();
 
-      SkewFinder skew_finder;
-      skew_finder.setResolutionRatio((double) rotated_dpm.horizontal() / rotated_dpm.vertical());
-      const Skew skew(skew_finder.findSkew(rotated_image));
+      SkewFinder skewFinder;
+      skewFinder.setResolutionRatio((double) rotatedDpm.horizontal() / rotatedDpm.vertical());
+      const Skew skew(skewFinder.findSkew(rotatedImage));
 
       if (skew.confidence() >= Skew::GOOD_CONFIDENCE) {
-        ui_data.setEffectiveDeskewAngle(-skew.angle());
+        uiData.setEffectiveDeskewAngle(-skew.angle());
       } else {
-        ui_data.setEffectiveDeskewAngle(0);
+        uiData.setEffectiveDeskewAngle(0);
       }
-      ui_data.setMode(MODE_AUTO);
+      uiData.setMode(MODE_AUTO);
 
-      Params new_params(ui_data.effectiveDeskewAngle(), deps, ui_data.mode());
-      m_settings->setPageParams(m_pageId, new_params);
+      Params newParams(uiData.effectiveDeskewAngle(), deps, uiData.mode());
+      m_settings->setPageParams(m_pageId, newParams);
 
       status.throwIfCancelled();
     }
   }
 
-  ImageTransformation new_xform(data.xform());
-  new_xform.setPostRotation(ui_data.effectiveDeskewAngle());
+  ImageTransformation newXform(data.xform());
+  newXform.setPostRotation(uiData.effectiveDeskewAngle());
 
   if (m_nextTask) {
-    return m_nextTask->process(status, FilterData(data, new_xform));
+    return m_nextTask->process(status, FilterData(data, newXform));
   } else {
-    return make_intrusive<UiUpdater>(m_filter, std::move(m_dbg), data.origImage(), m_pageId, new_xform, ui_data,
+    return make_intrusive<UiUpdater>(m_filter, std::move(m_dbg), data.origImage(), m_pageId, newXform, uiData,
                                      m_batchProcessing);
   }
 }  // Task::process
@@ -156,23 +156,23 @@ void Task::cleanup(const TaskStatus& status, BinaryImage& image, const Dpi& dpi)
   // We don't have to clean up every piece of garbage.
   // The only concern are the horizontal shadows, which we remove here.
 
-  Dpi reduced_dpi(dpi);
-  BinaryImage reduced_image;
+  Dpi reducedDpi(dpi);
+  BinaryImage reducedImage;
 
   {
     ReduceThreshold reductor(image);
-    while (reduced_dpi.horizontal() >= 200 && reduced_dpi.vertical() >= 200) {
+    while (reducedDpi.horizontal() >= 200 && reducedDpi.vertical() >= 200) {
       reductor.reduce(2);
-      reduced_dpi = Dpi(reduced_dpi.horizontal() / 2, reduced_dpi.vertical() / 2);
+      reducedDpi = Dpi(reducedDpi.horizontal() / 2, reducedDpi.vertical() / 2);
     }
-    reduced_image = reductor.image();
+    reducedImage = reductor.image();
   }
 
   status.throwIfCancelled();
 
-  const QSize brick(from150dpi(QSize(200, 14), reduced_dpi));
-  BinaryImage opened(openBrick(reduced_image, brick, BLACK));
-  reduced_image.release();
+  const QSize brick(from150dpi(QSize(200, 14), reducedDpi));
+  BinaryImage opened(openBrick(reducedImage, brick, BLACK));
+  reducedImage.release();
 
   status.throwIfCancelled();
 
@@ -189,18 +189,18 @@ void Task::cleanup(const TaskStatus& status, BinaryImage& image, const Dpi& dpi)
   rasterOp<RopSubtract<RopDst, RopSrc>>(image, garbage);
 }  // Task::cleanup
 
-int Task::from150dpi(int size, int target_dpi) {
-  const int new_size = (size * target_dpi + 75) / 150;
-  if (new_size < 1) {
+int Task::from150dpi(int size, int targetDpi) {
+  const int newSize = (size * targetDpi + 75) / 150;
+  if (newSize < 1) {
     return 1;
   }
 
-  return new_size;
+  return newSize;
 }
 
-QSize Task::from150dpi(const QSize& size, const Dpi& target_dpi) {
-  const int width = from150dpi(size.width(), target_dpi.horizontal());
-  const int height = from150dpi(size.height(), target_dpi.vertical());
+QSize Task::from150dpi(const QSize& size, const Dpi& targetDpi) {
+  const int width = from150dpi(size.width(), targetDpi.horizontal());
+  const int height = from150dpi(size.height(), targetDpi.vertical());
 
   return QSize(width, height);
 }
@@ -217,36 +217,36 @@ void Task::updateFilterData(const TaskStatus& status, FilterData& data, bool nee
     if (ApplicationSettings::getInstance().isBlackOnWhiteDetectionEnabled()) {
       isBlackOnWhite = BlackOnWhiteEstimator::isBlackOnWhite(data.grayImage(), data.xform(), status, m_dbg.get());
     }
-    ImageSettings::PageParams new_params(BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)), isBlackOnWhite);
+    ImageSettings::PageParams newParams(BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)), isBlackOnWhite);
 
-    m_imageSettings->setPageParams(m_pageId, new_params);
-    data.updateImageParams(new_params);
+    m_imageSettings->setPageParams(m_pageId, newParams);
+    data.updateImageParams(newParams);
   }
 }
 
 /*============================ Task::UiUpdater ==========================*/
 
 Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
-                           std::unique_ptr<DebugImages> dbg_img,
+                           std::unique_ptr<DebugImages> dbgImg,
                            const QImage& image,
-                           const PageId& page_id,
+                           const PageId& pageId,
                            const ImageTransformation& xform,
-                           const OptionsWidget::UiData& ui_data,
-                           const bool batch_processing)
+                           const OptionsWidget::UiData& uiData,
+                           const bool batchProcessing)
     : m_filter(std::move(filter)),
-      m_dbg(std::move(dbg_img)),
+      m_dbg(std::move(dbgImg)),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
-      m_pageId(page_id),
+      m_pageId(pageId),
       m_xform(xform),
-      m_uiData(ui_data),
-      m_batchProcessing(batch_processing) {}
+      m_uiData(uiData),
+      m_batchProcessing(batchProcessing) {}
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const opt_widget = m_filter->optionsWidget();
-  opt_widget->postUpdateUI(m_uiData);
-  ui->setOptionsWidget(opt_widget, ui->KEEP_OWNERSHIP);
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI(m_uiData);
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   ui->invalidateThumbnail(m_pageId);
 
@@ -257,9 +257,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   auto* view = new ImageView(m_image, m_downscaledImage, m_xform);
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_dbg.get());
 
-  QObject::connect(view, SIGNAL(manualDeskewAngleSet(double)), opt_widget,
-                   SLOT(manualDeskewAngleSetExternally(double)));
-  QObject::connect(opt_widget, SIGNAL(manualDeskewAngleSet(double)), view,
-                   SLOT(manualDeskewAngleSetExternally(double)));
+  QObject::connect(view, SIGNAL(manualDeskewAngleSet(double)), optWidget, SLOT(manualDeskewAngleSetExternally(double)));
+  QObject::connect(optWidget, SIGNAL(manualDeskewAngleSet(double)), view, SLOT(manualDeskewAngleSetExternally(double)));
 }
 }  // namespace deskew

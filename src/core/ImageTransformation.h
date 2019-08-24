@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGETRANSFORMATION_H_
-#define IMAGETRANSFORMATION_H_
+#ifndef SCANTAILOR_CORE_IMAGETRANSFORMATION_H_
+#define SCANTAILOR_CORE_IMAGETRANSFORMATION_H_
 
 #include <QPolygonF>
 #include <QRectF>
@@ -48,7 +48,7 @@ class ImageTransformation {
  public:
   // Member-wise copying is OK.
 
-  ImageTransformation(const QRectF& orig_image_rect, const Dpi& orig_dpi);
+  ImageTransformation(const QRectF& origImageRect, const Dpi& origDpi);
 
   ~ImageTransformation();
 
@@ -193,11 +193,11 @@ class ImageTransformation {
   const QRectF& resultingRect() const { return m_resultingRect; }
 
  private:
-  QTransform calcCropXform(const QPolygonF& crop_area);
+  QTransform calcCropXform(const QPolygonF& cropArea);
 
   QTransform calcPostRotateXform(double degrees);
 
-  QTransform calcPostScaleXform(const Dpi& target_dpi);
+  QTransform calcPostScaleXform(const Dpi& targetDpi);
 
   void resetPreCropArea();
 
@@ -231,4 +231,4 @@ class ImageTransformation {
 };
 
 
-#endif  // ifndef IMAGETRANSFORMATION_H_
+#endif  // ifndef SCANTAILOR_CORE_IMAGETRANSFORMATION_H_

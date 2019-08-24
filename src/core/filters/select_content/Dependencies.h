@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SELECT_CONTENT_DEPENDENCIES_H_
-#define SELECT_CONTENT_DEPENDENCIES_H_
+#ifndef SCANTAILOR_SELECT_CONTENT_DEPENDENCIES_H_
+#define SCANTAILOR_SELECT_CONTENT_DEPENDENCIES_H_
 
 #include <AutoManualMode.h>
 #include <QPolygonF>
@@ -22,14 +22,14 @@ class Dependencies {
  public:
   Dependencies() = default;
 
-  explicit Dependencies(const QPolygonF& rotated_page_outline);
+  explicit Dependencies(const QPolygonF& rotatedPageOutline);
 
-  explicit Dependencies(const QPolygonF& rotated_page_outline,
-                        AutoManualMode content_detection_mode,
-                        AutoManualMode page_detection_mode,
-                        bool fine_tune_corners);
+  explicit Dependencies(const QPolygonF& rotatedPageOutline,
+                        AutoManualMode contentDetectionMode,
+                        AutoManualMode pageDetectionMode,
+                        bool fineTuneCorners);
 
-  explicit Dependencies(const QDomElement& deps_el);
+  explicit Dependencies(const QDomElement& depsEl);
 
   ~Dependencies() = default;
 
@@ -37,20 +37,20 @@ class Dependencies {
 
   bool compatibleWith(const Dependencies& other) const;
 
-  bool compatibleWith(const Dependencies& other, bool* update_content_box, bool* update_page_box) const;
+  bool compatibleWith(const Dependencies& other, bool* updateContentBox, bool* updatePageBox) const;
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
-  void setContentDetectionMode(AutoManualMode content_detection_mode);
+  void setContentDetectionMode(AutoManualMode contentDetectionMode);
 
-  void setPageDetectionMode(AutoManualMode page_detection_mode);
+  void setPageDetectionMode(AutoManualMode pageDetectionMode);
 
  private:
   class Params {
    public:
     Params();
 
-    Params(AutoManualMode content_detection_mode, AutoManualMode page_detection_mode, bool fine_tune_corners);
+    Params(AutoManualMode contentDetectionMode, AutoManualMode pageDetectionMode, bool fineTuneCorners);
 
     explicit Params(const QDomElement& el);
 
@@ -62,9 +62,9 @@ class Dependencies {
 
     bool needUpdatePageBox(const Params& other) const;
 
-    void setContentDetectionMode(AutoManualMode content_detection_mode);
+    void setContentDetectionMode(AutoManualMode contentDetectionMode);
 
-    void setPageDetectionMode(AutoManualMode page_detection_mode);
+    void setPageDetectionMode(AutoManualMode pageDetectionMode);
 
    private:
     AutoManualMode m_contentDetectionMode;
@@ -76,4 +76,4 @@ class Dependencies {
   Params m_params;
 };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_DEPENDENCIES_H_
+#endif  // ifndef SCANTAILOR_SELECT_CONTENT_DEPENDENCIES_H_

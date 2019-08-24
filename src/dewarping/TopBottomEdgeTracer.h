@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DEWARPING_TOP_BOTTOM_EDGE_TRACER_H_
-#define DEWARPING_TOP_BOTTOM_EDGE_TRACER_H_
+#ifndef SCANTAILOR_DEWARPING_TOPBOTTOMEDGETRACER_H_
+#define SCANTAILOR_DEWARPING_TOPBOTTOMEDGETRACER_H_
 
 #include <QLineF>
 #include <QPointF>
@@ -60,7 +60,7 @@ class TopBottomEdgeTracer {
 
   static void propagateShortestPaths(const Vec2f& direction, PrioQueue& queue, Grid<GridNode>& grid);
 
-  static int initNeighbours(int* next_nbh_offsets, int* prev_nbh_indexes, int stride, const Vec2f& direction);
+  static int initNeighbours(int* nextNbhOffsets, int* prevNbhIndexes, int stride, const Vec2f& direction);
 
   static std::vector<QPoint> locateBestPathEndpoints(const Grid<GridNode>& grid, const QLineF& line);
 
@@ -70,18 +70,16 @@ class TopBottomEdgeTracer {
 
   static void gaussBlurGradient(Grid<GridNode>& grid);
 
-  static Vec2f downTheHillDirection(const QRectF& page_rect,
-                                    const std::vector<QPointF>& snake,
-                                    const Vec2f& bounds_dir);
+  static Vec2f downTheHillDirection(const QRectF& pageRect, const std::vector<QPointF>& snake, const Vec2f& boundsDir);
 
   static void downTheHillSnake(std::vector<QPointF>& snake, const Grid<GridNode>& grid, Vec2f dir);
 
   static void upTheHillSnake(std::vector<QPointF>& snake, const Grid<GridNode>& grid, Vec2f dir);
 
-  static int initDisplacementVectors(Vec2f vectors[], Vec2f valid_direction);
+  static int initDisplacementVectors(Vec2f vectors[], Vec2f validDirection);
 
   template <typename Extractor>
-  static float interpolatedGridValue(const Grid<GridNode>& grid, Extractor extractor, Vec2f pos, float default_value);
+  static float interpolatedGridValue(const Grid<GridNode>& grid, Extractor extractor, Vec2f pos, float defaultValue);
 
   static QImage visualizeGradient(const Grid<GridNode>& grid, const QImage* background = nullptr);
 
@@ -90,7 +88,7 @@ class TopBottomEdgeTracer {
   static QImage visualizePaths(const QImage& background,
                                const Grid<GridNode>& grid,
                                const std::pair<QLineF, QLineF>& bounds,
-                               const std::vector<QPoint>& path_endpoints);
+                               const std::vector<QPoint>& pathEndpoints);
 
   static QImage visualizePaths(const QImage& background,
                                const std::vector<std::vector<QPoint>>& paths,
@@ -105,4 +103,4 @@ class TopBottomEdgeTracer {
                                    const std::pair<QLineF, QLineF>& bounds);
 };
 }  // namespace dewarping
-#endif  // ifndef DEWARPING_TOP_BOTTOM_EDGE_TRACER_H_
+#endif  // ifndef SCANTAILOR_DEWARPING_TOPBOTTOMEDGETRACER_H_

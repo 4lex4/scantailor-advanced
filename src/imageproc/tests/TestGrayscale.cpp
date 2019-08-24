@@ -1,10 +1,10 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include <Grayscale.h>
 #include <QImage>
 #include <boost/test/auto_unit_test.hpp>
 #include <cstdlib>
-#include <Grayscale.h>
 #include "Utils.h"
 
 namespace imageproc {
@@ -33,10 +33,10 @@ BOOST_AUTO_TEST_CASE(test_mono_to_grayscale) {
     }
   }
 
-  const QImage mono_lsb(mono.convertToFormat(QImage::Format_MonoLSB));
+  const QImage monoLsb(mono.convertToFormat(QImage::Format_MonoLSB));
 
   BOOST_REQUIRE(toGrayscale(mono) == gray);
-  BOOST_CHECK(toGrayscale(mono_lsb) == gray);
+  BOOST_CHECK(toGrayscale(monoLsb) == gray);
 }
 
 BOOST_AUTO_TEST_CASE(test_argb32_to_grayscale) {

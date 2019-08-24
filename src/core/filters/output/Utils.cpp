@@ -8,16 +8,16 @@
 #include "Dpi.h"
 
 namespace output {
-QString Utils::automaskDir(const QString& out_dir) {
-  return QDir(out_dir).absoluteFilePath("cache/automask");
+QString Utils::automaskDir(const QString& outDir) {
+  return QDir(outDir).absoluteFilePath("cache/automask");
 }
 
-QString Utils::predespeckleDir(const QString& out_dir) {
-  return QDir(out_dir).absoluteFilePath("cache/predespeckle");
+QString Utils::predespeckleDir(const QString& outDir) {
+  return QDir(outDir).absoluteFilePath("cache/predespeckle");
 }
 
-QString Utils::specklesDir(const QString& out_dir) {
-  return QDir(out_dir).absoluteFilePath("cache/speckles");
+QString Utils::specklesDir(const QString& outDir) {
+  return QDir(outDir).absoluteFilePath("cache/speckles");
 }
 
 QTransform Utils::scaleFromToDpi(const Dpi& from, const Dpi& to) {
@@ -27,29 +27,29 @@ QTransform Utils::scaleFromToDpi(const Dpi& from, const Dpi& to) {
   return xform;
 }
 
-QString Utils::foregroundDir(const QString& out_dir) {
-  return QDir(out_dir).absoluteFilePath("foreground");
+QString Utils::foregroundDir(const QString& outDir) {
+  return QDir(outDir).absoluteFilePath("foreground");
 }
 
-QString Utils::backgroundDir(const QString& out_dir) {
-  return QDir(out_dir).absoluteFilePath("background");
+QString Utils::backgroundDir(const QString& outDir) {
+  return QDir(outDir).absoluteFilePath("background");
 }
 
-QString Utils::originalBackgroundDir(const QString& out_dir) {
-  return QDir(out_dir).absoluteFilePath("original_background");
+QString Utils::originalBackgroundDir(const QString& outDir) {
+  return QDir(outDir).absoluteFilePath("original_background");
 }
 
-QTransform Utils::rotate(double degrees, const QRect& image_rect) {
+QTransform Utils::rotate(double degrees, const QRect& imageRect) {
   if (degrees == 0.0) {
     return QTransform();
   }
 
-  QTransform rotate_xform;
-  const QPointF origin = QRectF(image_rect).center();
-  rotate_xform.translate(-origin.x(), -origin.y());
-  rotate_xform *= QTransform().rotate(degrees);
-  rotate_xform *= QTransform().translate(origin.x(), origin.y());
+  QTransform rotateXform;
+  const QPointF origin = QRectF(imageRect).center();
+  rotateXform.translate(-origin.x(), -origin.y());
+  rotateXform *= QTransform().rotate(degrees);
+  rotateXform *= QTransform().translate(origin.x(), origin.y());
 
-  return rotate_xform;
+  return rotateXform;
 }
 }  // namespace output

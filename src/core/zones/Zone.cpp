@@ -6,8 +6,8 @@
 
 Zone::Zone(const SerializableSpline& spline, const PropertySet& props) : m_spline(spline), m_props(props) {}
 
-Zone::Zone(const QDomElement& el, const PropertyFactory& prop_factory)
-    : m_spline(el.namedItem("spline").toElement()), m_props(el.namedItem("properties").toElement(), prop_factory) {}
+Zone::Zone(const QDomElement& el, const PropertyFactory& propFactory)
+    : m_spline(el.namedItem("spline").toElement()), m_props(el.namedItem("properties").toElement(), propFactory) {}
 
 QDomElement Zone::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));

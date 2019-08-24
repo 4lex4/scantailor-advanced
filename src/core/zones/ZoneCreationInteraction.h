@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ZONE_CREATION_INTERACTION_H_
-#define ZONE_CREATION_INTERACTION_H_
+#ifndef SCANTAILOR_ZONES_ZONECREATIONINTERACTION_H_
+#define SCANTAILOR_ZONES_ZONECREATIONINTERACTION_H_
 
 #include <QCoreApplication>
 #include <QDateTime>
@@ -75,4 +75,4 @@ class ZoneCreationInteraction : public InteractionHandler {
 };
 
 
-#endif  // ifndef ZONE_CREATION_INTERACTION_H_
+#endif  // ifndef SCANTAILOR_ZONES_ZONECREATIONINTERACTION_H_

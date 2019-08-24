@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEMETADATA_H_
-#define IMAGEMETADATA_H_
+#ifndef SCANTAILOR_CORE_IMAGEMETADATA_H_
+#define SCANTAILOR_CORE_IMAGEMETADATA_H_
 
 #include <QSize>
 #include "Dpi.h"
@@ -35,11 +35,11 @@ class ImageMetadata {
   bool operator!=(const ImageMetadata& other) const { return !(*this == other); }
 
  private:
-  static DpiStatus dpiStatus(int pixel_size, int dpi);
+  static DpiStatus dpiStatus(int pixelSize, int dpi);
 
   QSize m_size;
   Dpi m_dpi;
 };
 
 
-#endif  // ifndef IMAGEMETADATA_H_
+#endif  // ifndef SCANTAILOR_CORE_IMAGEMETADATA_H_

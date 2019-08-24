@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_BINARIZE_H_
-#define IMAGEPROC_BINARIZE_H_
+#ifndef SCANTAILOR_IMAGEPROC_BINARIZE_H_
+#define SCANTAILOR_IMAGEPROC_BINARIZE_H_
 
 #include <QSize>
 
@@ -28,11 +28,11 @@ BinaryImage binarizeOtsu(const QImage& src);
  * http://www.academypublisher.com/jcp/vol02/no08/jcp02084452.pdf
  *
  * \param src The source image.  May be in any format.
- * \param max_edge_width The maximum gradient length to consider.
- * \param min_edge_magnitude The minimum color difference in a gradient.
+ * \param maxEdgeWidth The maximum gradient length to consider.
+ * \param minEdgeMagnitude The minimum color difference in a gradient.
  * \return A black and white image.
  */
-BinaryImage binarizeMokji(const QImage& src, unsigned max_edge_width = 3, unsigned min_edge_magnitude = 20);
+BinaryImage binarizeMokji(const QImage& src, unsigned maxEdgeWidth = 3, unsigned minEdgeMagnitude = 20);
 
 /**
  * \brief Image binarization using Sauvola's local thresholding method.
@@ -40,7 +40,7 @@ BinaryImage binarizeMokji(const QImage& src, unsigned max_edge_width = 3, unsign
  * Sauvola, J. and M. Pietikainen. 2000. "Adaptive document image binarization".
  * http://www.mediateam.oulu.fi/publications/pdf/24.pdf
  */
-BinaryImage binarizeSauvola(const QImage& src, QSize window_size, double k = 0.34);
+BinaryImage binarizeSauvola(const QImage& src, QSize windowSize, double k = 0.34);
 
 /**
  * \brief Image binarization using Wolf's local thresholding method.
@@ -50,14 +50,14 @@ BinaryImage binarizeSauvola(const QImage& src, QSize window_size, double k = 0.3
  * http://liris.cnrs.fr/christian.wolf/papers/icpr2002v.pdf
  *
  * \param src The image to binarize.
- * \param window_size The dimensions of a pixel neighborhood to consider.
- * \param lower_bound The minimum possible gray level that can be made white.
- * \param upper_bound The maximum possible gray level that can be made black.
+ * \param windowSize The dimensions of a pixel neighborhood to consider.
+ * \param lowerBound The minimum possible gray level that can be made white.
+ * \param upperBound The maximum possible gray level that can be made black.
  */
 BinaryImage binarizeWolf(const QImage& src,
-                         QSize window_size,
-                         unsigned char lower_bound = 1,
-                         unsigned char upper_bound = 254,
+                         QSize windowSize,
+                         unsigned char lowerBound = 1,
+                         unsigned char upperBound = 254,
                          double k = 0.3);
 
 BinaryImage peakThreshold(const QImage& image);

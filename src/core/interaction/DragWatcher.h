@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DRAG_WATCHER_H_
-#define DRAG_WATCHER_H_
+#ifndef SCANTAILOR_INTERACTION_DRAGWATCHER_H_
+#define SCANTAILOR_INTERACTION_DRAGWATCHER_H_
 
 #include <QDateTime>
 #include <QPoint>
@@ -20,7 +20,7 @@ class QMouseEvent;
  */
 class DragWatcher : public InteractionHandler {
  public:
-  explicit DragWatcher(DragHandler& drag_handler);
+  explicit DragWatcher(DragHandler& dragHandler);
 
   bool haveSignificantDrag() const;
 
@@ -30,7 +30,7 @@ class DragWatcher : public InteractionHandler {
   void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
  private:
-  void updateState(QPoint mouse_pos);
+  void updateState(QPoint mousePos);
 
   DragHandler& m_dragHandler;
   QDateTime m_dragStartTime;
@@ -40,4 +40,4 @@ class DragWatcher : public InteractionHandler {
 };
 
 
-#endif  // ifndef DRAG_WATCHER_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_DRAGWATCHER_H_

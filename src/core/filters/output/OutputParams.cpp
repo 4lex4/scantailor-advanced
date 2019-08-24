@@ -7,24 +7,24 @@
 #include "PictureZonePropFactory.h"
 
 namespace output {
-OutputParams::OutputParams(const OutputImageParams& output_image_params,
-                           const OutputFileParams& output_file_params,
-                           const OutputFileParams& foreground_file_params,
-                           const OutputFileParams& background_file_params,
-                           const OutputFileParams& original_background_file_params,
-                           const OutputFileParams& automask_file_params,
-                           const OutputFileParams& speckles_file_params,
-                           const ZoneSet& picture_zones,
-                           const ZoneSet& fill_zones)
-    : m_outputImageParams(output_image_params),
-      m_outputFileParams(output_file_params),
-      m_foregroundFileParams(foreground_file_params),
-      m_backgroundFileParams(background_file_params),
-      m_originalBackgroundFileParams(original_background_file_params),
-      m_automaskFileParams(automask_file_params),
-      m_specklesFileParams(speckles_file_params),
-      m_pictureZones(picture_zones),
-      m_fillZones(fill_zones) {}
+OutputParams::OutputParams(const OutputImageParams& outputImageParams,
+                           const OutputFileParams& outputFileParams,
+                           const OutputFileParams& foregroundFileParams,
+                           const OutputFileParams& backgroundFileParams,
+                           const OutputFileParams& originalBackgroundFileParams,
+                           const OutputFileParams& automaskFileParams,
+                           const OutputFileParams& specklesFileParams,
+                           const ZoneSet& pictureZones,
+                           const ZoneSet& fillZones)
+    : m_outputImageParams(outputImageParams),
+      m_outputFileParams(outputFileParams),
+      m_foregroundFileParams(foregroundFileParams),
+      m_backgroundFileParams(backgroundFileParams),
+      m_originalBackgroundFileParams(originalBackgroundFileParams),
+      m_automaskFileParams(automaskFileParams),
+      m_specklesFileParams(specklesFileParams),
+      m_pictureZones(pictureZones),
+      m_fillZones(fillZones) {}
 
 OutputParams::OutputParams(const QDomElement& el)
     : m_outputImageParams(el.namedItem("image").toElement()),

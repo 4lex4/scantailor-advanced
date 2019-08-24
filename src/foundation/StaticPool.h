@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef STATIC_POOL_H_
-#define STATIC_POOL_H_
+#ifndef SCANTAILOR_FOUNDATION_STATICPOOL_H_
+#define SCANTAILOR_FOUNDATION_STATICPOOL_H_
 
 #include <cstddef>
 #include <stdexcept>
@@ -26,7 +26,7 @@ class StaticPoolBase {
    * This function was moved to the base class in order to have
    * just one instantiation of it for different sized pool of the same type.
    */
-  T* alloc(size_t num_elements);
+  T* alloc(size_t numElements);
 
  private:
   T* m_next;
@@ -53,16 +53,16 @@ class StaticPool : public StaticPoolBase<T> {
 
 
 template <typename T>
-T* StaticPoolBase<T>::alloc(size_t num_elements) {
-  if (num_elements > m_sizeRemaining) {
+T* StaticPoolBase<T>::alloc(size_t numElements) {
+  if (numElements > m_sizeRemaining) {
     throw std::runtime_error("StaticPool overflow");
   }
 
   T* sequence = m_next;
-  m_next += num_elements;
-  m_sizeRemaining -= num_elements;
+  m_next += numElements;
+  m_sizeRemaining -= numElements;
 
   return sequence;
 }
 
-#endif  // ifndef STATIC_POOL_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_STATICPOOL_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PROPERTY_SET_H_
-#define PROPERTY_SET_H_
+#ifndef SCANTAILOR_FOUNDATION_PROPERTYSET_H_
+#define SCANTAILOR_FOUNDATION_PROPERTYSET_H_
 
 #include <typeindex>
 #include <typeinfo>
@@ -116,4 +116,4 @@ inline void swap(PropertySet& o1, PropertySet& o2) {
   o1.swap(o2);
 }
 
-#endif  // ifndef PROPERTY_SET_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_PROPERTYSET_H_

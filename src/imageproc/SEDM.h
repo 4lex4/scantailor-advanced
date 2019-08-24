@@ -1,13 +1,13 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_SEDM_H_
-#define IMAGEPROC_SEDM_H_
+#ifndef SCANTAILOR_IMAGEPROC_SEDM_H_
+#define SCANTAILOR_IMAGEPROC_SEDM_H_
 
+#include <FlagOps.h>
 #include <QSize>
 #include <cstdint>
 #include <vector>
-#include <FlagOps.h>
 
 namespace imageproc {
 class BinaryImage;
@@ -83,13 +83,13 @@ class SEDM {
    * two pixels is the distance between their center points.
    *
    * \param image The image to compute the distance map from.
-   * \param dist_type Determines whether to compute distance
+   * \param distType Determines whether to compute distance
    *        to white or black pixels in the image.
    * \param borders Determines whether to compute
    *        distance to particular borders.  The borders
    *        are assumed to lie one pixel off the image area.
    */
-  explicit SEDM(const BinaryImage& image, DistType dist_type = DIST_TO_WHITE, Borders borders = DIST_TO_ALL_BORDERS);
+  explicit SEDM(const BinaryImage& image, DistType distType = DIST_TO_WHITE, Borders borders = DIST_TO_ALL_BORDERS);
 
   /**
    * \brief Build a distance map from a connectivity map.
@@ -153,7 +153,7 @@ class SEDM {
   BinaryImage findPeaksDestructive();
 
  private:
-  static uint32_t distSq(int x1, int x2, uint32_t dy_sq);
+  static uint32_t distSq(int x1, int x2, uint32_t dySq);
 
   void processColumns();
 
@@ -188,4 +188,4 @@ inline void swap(SEDM& o1, SEDM& o2) {
 
 DEFINE_FLAG_OPS(SEDM::Borders)
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_SEDM_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_SEDM_H_

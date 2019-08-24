@@ -26,18 +26,18 @@
 #include "Utils.h"
 
 namespace page_layout {
-Filter::Filter(intrusive_ptr<ProjectPages> pages, const PageSelectionAccessor& page_selection_accessor)
+Filter::Filter(intrusive_ptr<ProjectPages> pages, const PageSelectionAccessor& pageSelectionAccessor)
     : m_pages(std::move(pages)), m_settings(new Settings), m_selectedPageOrder(0) {
-  m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
+  m_optionsWidget.reset(new OptionsWidget(m_settings, pageSelectionAccessor));
 
-  const PageOrderOption::ProviderPtr default_order;
-  const auto order_by_width = make_intrusive<OrderByWidthProvider>(m_settings);
-  const auto order_by_height = make_intrusive<OrderByHeightProvider>(m_settings);
-  const auto order_by_deviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());
-  m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
-  m_pageOrderOptions.emplace_back(tr("Order by increasing width"), order_by_width);
-  m_pageOrderOptions.emplace_back(tr("Order by increasing height"), order_by_height);
-  m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), order_by_deviation);
+  const PageOrderOption::ProviderPtr defaultOrder;
+  const auto orderByWidth = make_intrusive<OrderByWidthProvider>(m_settings);
+  const auto orderByHeight = make_intrusive<OrderByHeightProvider>(m_settings);
+  const auto orderByDeviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());
+  m_pageOrderOptions.emplace_back(tr("Natural order"), defaultOrder);
+  m_pageOrderOptions.emplace_back(tr("Order by increasing width"), orderByWidth);
+  m_pageOrderOptions.emplace_back(tr("Order by increasing height"), orderByHeight);
+  m_pageOrderOptions.emplace_back(tr("Order by decreasing deviation"), orderByDeviation);
 }
 
 Filter::~Filter() = default;
@@ -71,55 +71,55 @@ void Filter::performRelinking(const AbstractRelinker& relinker) {
   m_settings->performRelinking(relinker);
 }
 
-void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
-  const Margins margins_mm(m_settings->getHardMarginsMM(page_info.id()));
-  const Alignment alignment(m_settings->getPageAlignment(page_info.id()));
-  m_optionsWidget->preUpdateUI(page_info, margins_mm, alignment);
+void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& pageInfo) {
+  const Margins marginsMm(m_settings->getHardMarginsMM(pageInfo.id()));
+  const Alignment alignment(m_settings->getPageAlignment(pageInfo.id()));
+  m_optionsWidget->preUpdateUI(pageInfo, marginsMm, alignment);
   ui->setOptionsWidget(m_optionsWidget.get(), ui->KEEP_OWNERSHIP);
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-  QDomElement filter_el(doc.createElement("page-layout"));
+  QDomElement filterEl(doc.createElement("page-layout"));
 
-  filter_el.setAttribute("showMiddleRect", m_settings->isShowingMiddleRectEnabled() ? "1" : "0");
+  filterEl.setAttribute("showMiddleRect", m_settings->isShowingMiddleRectEnabled() ? "1" : "0");
 
   if (!m_settings->guides().empty()) {
-    QDomElement guides_el(doc.createElement("guides"));
+    QDomElement guidesEl(doc.createElement("guides"));
     for (const Guide& guide : m_settings->guides()) {
-      guides_el.appendChild(guide.toXml(doc, "guide"));
+      guidesEl.appendChild(guide.toXml(doc, "guide"));
     }
-    filter_el.appendChild(guides_el);
+    filterEl.appendChild(guidesEl);
   }
 
   writer.enumPages(
-      [&](const PageId& page_id, int numeric_id) { this->writePageSettings(doc, filter_el, page_id, numeric_id); });
+      [&](const PageId& pageId, int numericId) { this->writePageSettings(doc, filterEl, pageId, numericId); });
 
-  return filter_el;
+  return filterEl;
 }
 
-void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const {
-  const std::unique_ptr<Params> params(m_settings->getPageParams(page_id));
+void Filter::writePageSettings(QDomDocument& doc, QDomElement& filterEl, const PageId& pageId, int numericId) const {
+  const std::unique_ptr<Params> params(m_settings->getPageParams(pageId));
   if (!params) {
     return;
   }
 
-  QDomElement page_el(doc.createElement("page"));
-  page_el.setAttribute("id", numeric_id);
-  page_el.appendChild(params->toXml(doc, "params"));
+  QDomElement pageEl(doc.createElement("page"));
+  pageEl.setAttribute("id", numericId);
+  pageEl.appendChild(params->toXml(doc, "params"));
 
-  filter_el.appendChild(page_el);
+  filterEl.appendChild(pageEl);
 }
 
-void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filters_el) {
+void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filtersEl) {
   m_settings->clear();
 
-  const QDomElement filter_el(filters_el.namedItem("page-layout").toElement());
+  const QDomElement filterEl(filtersEl.namedItem("page-layout").toElement());
 
-  m_settings->enableShowingMiddleRect(filter_el.attribute("showMiddleRect") == "1");
+  m_settings->enableShowingMiddleRect(filterEl.attribute("showMiddleRect") == "1");
 
-  const QDomElement guides_el = filter_el.namedItem("guides").toElement();
-  if (!guides_el.isNull()) {
-    QDomNode node(guides_el.firstChild());
+  const QDomElement guidesEl = filterEl.namedItem("guides").toElement();
+  if (!guidesEl.isNull()) {
+    QDomNode node(guidesEl.firstChild());
     for (; !node.isNull(); node = node.nextSibling()) {
       if (!node.isElement() || (node.nodeName() != "guide")) {
         continue;
@@ -128,13 +128,13 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
     }
   }
 
-  const QString page_tag_name("page");
-  QDomNode node(filter_el.firstChild());
+  const QString pageTagName("page");
+  QDomNode node(filterEl.firstChild());
   for (; !node.isNull(); node = node.nextSibling()) {
     if (!node.isElement()) {
       continue;
     }
-    if (node.nodeName() != page_tag_name) {
+    if (node.nodeName() != pageTagName) {
       continue;
     }
     const QDomElement el(node.toElement());
@@ -145,28 +145,28 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
       continue;
     }
 
-    const PageId page_id(reader.pageId(id));
-    if (page_id.isNull()) {
+    const PageId pageId(reader.pageId(id));
+    if (pageId.isNull()) {
       continue;
     }
 
-    const QDomElement params_el(el.namedItem("params").toElement());
-    if (params_el.isNull()) {
+    const QDomElement paramsEl(el.namedItem("params").toElement());
+    if (paramsEl.isNull()) {
       continue;
     }
 
-    const Params params(params_el);
-    m_settings->setPageParams(page_id, params);
+    const Params params(paramsEl);
+    m_settings->setPageParams(pageId, params);
   }
 }  // Filter::loadSettings
 
-void Filter::setContentBox(const PageId& page_id, const ImageTransformation& xform, const QRectF& content_rect) {
-  const QSizeF content_size_mm(Utils::calcRectSizeMM(xform, content_rect));
-  m_settings->setContentSizeMM(page_id, content_size_mm);
+void Filter::setContentBox(const PageId& pageId, const ImageTransformation& xform, const QRectF& contentRect) {
+  const QSizeF contentSizeMm(Utils::calcRectSizeMM(xform, contentRect));
+  m_settings->setContentSizeMM(pageId, contentSizeMm);
 }
 
-void Filter::invalidateContentBox(const PageId& page_id) {
-  m_settings->invalidateContentSize(page_id);
+void Filter::invalidateContentBox(const PageId& pageId) {
+  m_settings->invalidateContentSize(pageId);
 }
 
 bool Filter::checkReadyForOutput(const ProjectPages& pages, const PageId* ignore) {
@@ -175,25 +175,25 @@ bool Filter::checkReadyForOutput(const ProjectPages& pages, const PageId* ignore
   return m_settings->checkEverythingDefined(snapshot, ignore);
 }
 
-intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
-                                       intrusive_ptr<output::Task> next_task,
+intrusive_ptr<Task> Filter::createTask(const PageId& pageId,
+                                       intrusive_ptr<output::Task> nextTask,
                                        const bool batch,
                                        const bool debug) {
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), std::move(next_task), m_settings, page_id, batch, debug);
+  return make_intrusive<Task>(intrusive_ptr<Filter>(this), std::move(nextTask), m_settings, pageId, batch, debug);
 }
 
-intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task) {
-  return make_intrusive<CacheDrivenTask>(std::move(next_task), m_settings);
+intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> nextTask) {
+  return make_intrusive<CacheDrivenTask>(std::move(nextTask), m_settings);
 }
 
-void Filter::loadDefaultSettings(const PageInfo& page_info) {
-  if (!m_settings->isParamsNull(page_info.id())) {
+void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
+  if (!m_settings->isParamsNull(pageInfo.id())) {
     return;
   }
   const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
   const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
 
-  const UnitsConverter unitsConverter(page_info.metadata().dpi());
+  const UnitsConverter unitsConverter(pageInfo.metadata().dpi());
 
   const Margins& margins = pageLayoutParams.getHardMargins();
   double leftMargin = margins.left();
@@ -204,8 +204,8 @@ void Filter::loadDefaultSettings(const PageInfo& page_info) {
   unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getUnits(), MILLIMETRES);
 
   m_settings->setPageParams(
-      page_info.id(), Params(Margins(leftMargin, topMargin, rightMargin, bottomMargin), QRectF(), QRectF(), QSizeF(),
-                             pageLayoutParams.getAlignment(), pageLayoutParams.isAutoMargins()));
+      pageInfo.id(), Params(Margins(leftMargin, topMargin, rightMargin, bottomMargin), QRectF(), QRectF(), QSizeF(),
+                            pageLayoutParams.getAlignment(), pageLayoutParams.isAutoMargins()));
 }
 
 OptionsWidget* Filter::optionsWidget() {

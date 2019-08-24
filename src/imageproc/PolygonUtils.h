@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_POLYGONUTILS_H_
-#define IMAGEPROC_POLYGONUTILS_H_
+#ifndef SCANTAILOR_IMAGEPROC_POLYGONUTILS_H_
+#define SCANTAILOR_IMAGEPROC_POLYGONUTILS_H_
 
 #include <vector>
 
@@ -35,7 +35,7 @@ class PolygonUtils {
    */
   static bool fuzzyCompare(const QPolygonF& poly1, const QPolygonF& poly2);
 
-  static QPolygonF convexHull(std::vector<QPointF> point_cloud);
+  static QPolygonF convexHull(std::vector<QPointF> pointCloud);
 
  private:
   class Before;
@@ -58,4 +58,4 @@ class PolygonUtils {
   static const double ROUNDING_RECIP_MULTIPLIER;
 };
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_POLYGONUTILS_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_POLYGONUTILS_H_

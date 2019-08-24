@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_CONNECTIVITY_MAP_H_
-#define IMAGEPROC_CONNECTIVITY_MAP_H_
+#ifndef SCANTAILOR_IMAGEPROC_CONNECTIVITYMAP_H_
+#define SCANTAILOR_IMAGEPROC_CONNECTIVITYMAP_H_
 
 #include <QColor>
 #include <QSize>
@@ -55,7 +55,7 @@ class ConnectivityMap {
    *        but allows pixels to be represented by any data type.
    */
   template <typename T>
-  ConnectivityMap(QSize size, const T* data, int units_per_line, Connectivity conn);
+  ConnectivityMap(QSize size, const T* data, int unitsPerLine, Connectivity conn);
 
   ConnectivityMap(const ConnectivityMap& other);
 
@@ -191,14 +191,14 @@ class ConnectivityMap {
    * Updating the maximum label may be necessary after manually
    * altering the map.
    */
-  void setMaxLabel(uint32_t max_label) { m_maxLabel = max_label; }
+  void setMaxLabel(uint32_t maxLabel) { m_maxLabel = maxLabel; }
 
   /**
    * \brief Visualizes each label with a different color.
    *
-   * \param bg_color Background color.  Transparency is supported.
+   * \param bgColor Background color.  Transparency is supported.
    */
-  QImage visualized(QColor bg_color = Qt::black) const;
+  QImage visualized(QColor bgColor = Qt::black) const;
 
  private:
   void copyFromInfluenceMap(const InfluenceMap& imap);
@@ -211,13 +211,13 @@ class ConnectivityMap {
 
   void spreadMin8();
 
-  void processNeighbor(FastQueue<uint32_t*>& queue, uint32_t this_val, uint32_t* neighbor);
+  void processNeighbor(FastQueue<uint32_t*>& queue, uint32_t thisVal, uint32_t* neighbor);
 
   void processQueue4(FastQueue<uint32_t*>& queue);
 
   void processQueue8(FastQueue<uint32_t*>& queue);
 
-  void markUsedIds(std::vector<uint32_t>& used_map) const;
+  void markUsedIds(std::vector<uint32_t>& usedMap) const;
 
   void remapIds(const std::vector<uint32_t>& map);
 
@@ -237,7 +237,7 @@ inline void swap(ConnectivityMap& o1, ConnectivityMap& o2) {
 }
 
 template <typename T>
-ConnectivityMap::ConnectivityMap(const QSize size, const T* src, const int src_stride, const Connectivity conn)
+ConnectivityMap::ConnectivityMap(const QSize size, const T* src, const int srcStride, const Connectivity conn)
     : m_plainData(0), m_size(size), m_stride(0), m_maxLabel(0) {
   if (size.isEmpty()) {
     return;
@@ -251,7 +251,7 @@ ConnectivityMap::ConnectivityMap(const QSize size, const T* src, const int src_s
   m_plainData = &m_data[0] + 1 + m_stride;
 
   uint32_t* dst = m_plainData;
-  const int dst_stride = m_stride;
+  const int dstStride = m_stride;
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -259,11 +259,11 @@ ConnectivityMap::ConnectivityMap(const QSize size, const T* src, const int src_s
         dst[x] = UNTAGGED_FG;
       }
     }
-    src += src_stride;
-    dst += dst_stride;
+    src += srcStride;
+    dst += dstStride;
   }
 
   assignIds(conn);
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_CONNECTIVITY_MAP_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_CONNECTIVITYMAP_H_

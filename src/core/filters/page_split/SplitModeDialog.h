@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_SPLITMODEDIALOG_H_
-#define PAGE_SPLIT_SPLITMODEDIALOG_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_SPLITMODEDIALOG_H_
+#define SCANTAILOR_PAGE_SPLIT_SPLITMODEDIALOG_H_
 
 #include <QButtonGroup>
 #include <QDialog>
@@ -22,16 +22,16 @@ class SplitModeDialog : public QDialog, private Ui::SplitModeDialog {
   Q_OBJECT
  public:
   SplitModeDialog(QWidget* parent,
-                  const PageId& cur_page,
-                  const PageSelectionAccessor& page_selection_accessor,
-                  LayoutType layout_type,
-                  PageLayout::Type auto_detected_layout_type);
+                  const PageId& curPage,
+                  const PageSelectionAccessor& pageSelectionAccessor,
+                  LayoutType layoutType,
+                  PageLayout::Type autoDetectedLayoutType);
 
   ~SplitModeDialog() override;
 
  signals:
 
-  void accepted(const std::set<PageId>& pages, LayoutType layout_type, bool apply_cut);
+  void accepted(const std::set<PageId>& pages, LayoutType layoutType, bool applyCut);
 
  private slots:
 
@@ -44,7 +44,7 @@ class SplitModeDialog : public QDialog, private Ui::SplitModeDialog {
  private:
   LayoutType combinedLayoutType() const;
 
-  static QIcon iconFor(LayoutType layout_type);
+  static QIcon iconFor(LayoutType layoutType);
 
   PageSequence m_pages;
   std::set<PageId> m_selectedPages;
@@ -54,4 +54,4 @@ class SplitModeDialog : public QDialog, private Ui::SplitModeDialog {
   PageLayout::Type m_autoDetectedLayoutType;
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_SPLITMODEDIALOG_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_SPLITMODEDIALOG_H_

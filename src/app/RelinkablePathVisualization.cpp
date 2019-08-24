@@ -19,8 +19,8 @@ struct RelinkablePathVisualization::PathComponent {
   RelinkablePath::Type type;  // File or Dir.
   bool exists;
 
-  PathComponent(const QString& lbl, const QString& prefix_path, const QString& suffix_path, RelinkablePath::Type t)
-      : label(lbl), prefixPath(prefix_path), suffixPath(suffix_path), type(t), exists(false) {}
+  PathComponent(const QString& lbl, const QString& prefixPath, const QString& suffixPath, RelinkablePath::Type t)
+      : label(lbl), prefixPath(prefixPath), suffixPath(suffixPath), type(t), exists(false) {}
 };
 
 
@@ -57,47 +57,47 @@ void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool click
     return;
   }
 
-  // prefix_path is the path up to and including the current component.
-  QString prefix_path;
+  // prefixPath is the path up to and including the current component.
+  QString prefixPath;
 
   if (path.normalizedPath().startsWith(QLatin1String("//"))) {
     // That's the Windows \\host\path thing.
     components.front().prepend(QLatin1String("//"));
   } else if (path.normalizedPath().startsWith(QChar('/'))) {
     // Unix paths start with a slash.
-    prefix_path += QChar('/');
+    prefixPath += QChar('/');
   }
 
-  std::vector<PathComponent> path_components;
-  path_components.reserve(components.size());
+  std::vector<PathComponent> pathComponents;
+  pathComponents.reserve(components.size());
 
   for (QStringList::const_iterator it(components.begin()); it != components.end(); ++it) {
     const QString& component = *it;
 
-    if (!prefix_path.isEmpty() && !prefix_path.endsWith('/')) {
-      prefix_path += QChar('/');
+    if (!prefixPath.isEmpty() && !prefixPath.endsWith('/')) {
+      prefixPath += QChar('/');
     }
-    prefix_path += component;
+    prefixPath += component;
     // Rest of the path.
-    QString suffix_path;
+    QString suffixPath;
     for (QStringList::const_iterator it2(it); ++it2 != components.end();) {
-      if (!suffix_path.isEmpty()) {
-        suffix_path += QChar('/');
+      if (!suffixPath.isEmpty()) {
+        suffixPath += QChar('/');
       }
-      suffix_path += *it2;
+      suffixPath += *it2;
     }
 
-    path_components.emplace_back(component, prefix_path, suffix_path, RelinkablePath::Dir);
+    pathComponents.emplace_back(component, prefixPath, suffixPath, RelinkablePath::Dir);
   }
 
   // The last path component is either a file or a dir, while all the previous ones are dirs.
-  path_components.back().type = path.type();
+  pathComponents.back().type = path.type();
 
-  checkForExistence(path_components);
+  checkForExistence(pathComponents);
 
-  int component_idx = -1;
-  for (PathComponent& path_component : path_components) {
-    ++component_idx;
+  int componentIdx = -1;
+  for (PathComponent& path_component : pathComponents) {
+    ++componentIdx;
     auto* btn = new ComponentButton(this);
     m_layout->addWidget(btn);
     btn->setText(path_component.label.replace(QChar('/'), QChar('\\')));
@@ -108,7 +108,7 @@ void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool click
     stylePathComponentButton(btn, path_component.exists);
 
     connect(btn, &ComponentButton::clicked,
-            boost::bind(&RelinkablePathVisualization::onClicked, this, component_idx, path_component.prefixPath,
+            boost::bind(&RelinkablePathVisualization::onClicked, this, componentIdx, path_component.prefixPath,
                         path_component.suffixPath, path_component.type));
   }
 
@@ -116,12 +116,12 @@ void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool click
 }  // RelinkablePathVisualization::setPath
 
 void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn, bool exists) {
-  const QColor border_color = ColorSchemeManager::instance().getColorParam(
+  const QColor borderColor = ColorSchemeManager::instance().getColorParam(
       ColorScheme::RelinkablePathVisualizationBorder, palette().color(QPalette::Window).darker(150));
 
   QString style = "QAbstractButton {\n"
                     "	border: 2px solid "
-                    + border_color.name()
+                    + borderColor.name()
                     + ";\n"
                       "	border-radius: 0.5em;\n"
                       "	padding: 0.2em;\n"
@@ -154,8 +154,8 @@ void RelinkablePathVisualization::stylePathComponentButton(QAbstractButton* btn,
 }  // RelinkablePathVisualization::stylePathComponentButton
 
 void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
-  const int total_items = m_layout->count();  // Note that there is an extra stretch item.
-  for (int i = 0; i < total_items; ++i) {
+  const int totalItems = m_layout->count();  // Note that there is an extra stretch item.
+  for (int i = 0; i < totalItems; ++i) {
     QWidget* widget = m_layout->itemAt(i)->widget();
     if (!widget) {
       continue;
@@ -167,7 +167,7 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
     if (option.state & QStyle::State_MouseOver) {
       widget->setProperty("highlightEnforcer", true);
       // Update the forceHighlight attribute for all buttons.
-      for (int j = 0; j < total_items; ++j) {
+      for (int j = 0; j < totalItems; ++j) {
         widget = m_layout->itemAt(j)->widget();
         if (widget) {
           const bool highlight = j <= i;
@@ -182,7 +182,7 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
       widget->setProperty("highlightEnforcer", false);
 
       // Update the forceHighlight attribute for all buttons.
-      for (int j = 0; j < total_items; ++j) {
+      for (int j = 0; j < totalItems; ++j) {
         widget = m_layout->itemAt(j)->widget();
         if (widget) {
           const bool highlight = false;
@@ -197,23 +197,23 @@ void RelinkablePathVisualization::paintEvent(QPaintEvent* evt) {
   }
 }  // RelinkablePathVisualization::paintEvent
 
-void RelinkablePathVisualization::onClicked(int component_idx,
-                                            const QString& prefix_path,
-                                            const QString& suffix_path,
+void RelinkablePathVisualization::onClicked(int componentIdx,
+                                            const QString& prefixPath,
+                                            const QString& suffixPath,
                                             int type) {
   // We'd like highlighting to stick until this method returns.
 
-  for (int i = 0; i <= component_idx; ++i) {
+  for (int i = 0; i <= componentIdx; ++i) {
     QWidget* widget = m_layout->itemAt(i)->widget();
     if (widget) {
       widget->setProperty("stickHighlight", true);
     }
   }
 
-  emit clicked(prefix_path, suffix_path, type);
+  emit clicked(prefixPath, suffixPath, type);
   // Note that clear() or setPath() might have been called by a signal handler.
-  const int total_items = m_layout->count();  // Note that there is an extra stretch item.
-  for (int i = 0; i <= component_idx && i < total_items; ++i) {
+  const int totalItems = m_layout->count();  // Note that there is an extra stretch item.
+  for (int i = 0; i <= componentIdx && i < totalItems; ++i) {
     QWidget* widget = m_layout->itemAt(i)->widget();
     if (widget) {
       widget->setProperty("stickHighlight", false);

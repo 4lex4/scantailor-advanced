@@ -11,11 +11,11 @@
 namespace deskew {
 const double OptionsWidget::MAX_ANGLE = 45.0;
 
-OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor)
+OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor)
     : m_settings(std::move(settings)),
       m_ignoreAutoManualToggle(0),
       m_ignoreSpinBoxChanges(0),
-      m_pageSelectionAccessor(page_selection_accessor) {
+      m_pageSelectionAccessor(pageSelectionAccessor) {
   setupUi(this);
   angleSpinBox->setSuffix(QChar(0x00B0));  // the degree symbol
   angleSpinBox->setRange(-MAX_ANGLE, MAX_ANGLE);
@@ -48,8 +48,8 @@ void OptionsWidget::appliedTo(const std::set<PageId>& pages) {
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 }
@@ -74,12 +74,12 @@ void OptionsWidget::manualDeskewAngleSetExternally(const double degrees) {
   emit invalidateThumbnail(m_pageId);
 }
 
-void OptionsWidget::preUpdateUI(const PageId& page_id) {
+void OptionsWidget::preUpdateUI(const PageId& pageId) {
   removeUiConnections();
 
   ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
 
-  m_pageId = page_id;
+  m_pageId = pageId;
   setSpinBoxUnknownState();
   autoBtn->setChecked(true);
   autoBtn->setEnabled(false);
@@ -88,14 +88,14 @@ void OptionsWidget::preUpdateUI(const PageId& page_id) {
   setupUiConnections();
 }
 
-void OptionsWidget::postUpdateUI(const UiData& ui_data) {
+void OptionsWidget::postUpdateUI(const UiData& uiData) {
   removeUiConnections();
 
-  m_uiData = ui_data;
+  m_uiData = uiData;
   autoBtn->setEnabled(true);
   manualBtn->setEnabled(true);
-  updateModeIndication(ui_data.mode());
-  setSpinBoxKnownState(degreesToSpinBox(ui_data.effectiveDeskewAngle()));
+  updateModeIndication(uiData.mode());
+  setSpinBoxKnownState(degreesToSpinBox(uiData.effectiveDeskewAngle()));
 
   setupUiConnections();
 }
@@ -115,12 +115,12 @@ void OptionsWidget::spinBoxValueChanged(const double value) {
   emit invalidateThumbnail(m_pageId);
 }
 
-void OptionsWidget::modeChanged(const bool auto_mode) {
+void OptionsWidget::modeChanged(const bool autoMode) {
   if (m_ignoreAutoManualToggle) {
     return;
   }
 
-  if (auto_mode) {
+  if (autoMode) {
     m_uiData.setMode(MODE_AUTO);
     m_settings->clearPageParams(m_pageId);
     emit reloadRequested();
@@ -165,12 +165,12 @@ void OptionsWidget::commitCurrentParams() {
   m_settings->setPageParams(m_pageId, params);
 }
 
-double OptionsWidget::spinBoxToDegrees(const double sb_value) {
+double OptionsWidget::spinBoxToDegrees(const double sbValue) {
   // The spin box shows the angle in a usual geometric way,
   // with positive angles going counter-clockwise.
   // Internally, we operate with angles going clockwise,
   // because the Y axis points downwards in computer graphics.
-  return -sb_value;
+  return -sbValue;
 }
 
 double OptionsWidget::degreesToSpinBox(const double degrees) {

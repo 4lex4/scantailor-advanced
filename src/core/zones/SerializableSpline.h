@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SERIALIZABLE_SPLINE_H_
-#define SERIALIZABLE_SPLINE_H_
+#ifndef SCANTAILOR_ZONES_SERIALIZABLESPLINE_H_
+#define SCANTAILOR_ZONES_SERIALIZABLESPLINE_H_
 
 #include <QPointF>
 #include <QPolygonF>
@@ -36,4 +36,4 @@ class SerializableSpline {
 };
 
 
-#endif  // ifndef SERIALIZABLE_SPLINE_H_
+#endif  // ifndef SCANTAILOR_ZONES_SERIALIZABLESPLINE_H_

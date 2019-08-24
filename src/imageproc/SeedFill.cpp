@@ -9,13 +9,13 @@
 namespace imageproc {
 namespace {
 inline uint32_t fillWordHorizontally(uint32_t word, const uint32_t mask) {
-  uint32_t prev_word;
+  uint32_t prevWord;
 
   do {
-    prev_word = word;
+    prevWord = word;
     word |= (word << 1) | (word >> 1);
     word &= mask;
-  } while (word != prev_word);
+  } while (word != prevWord);
 
   return word;
 }
@@ -24,72 +24,72 @@ void seedFill4Iteration(BinaryImage& seed, const BinaryImage& mask) {
   const int w = seed.width();
   const int h = seed.height();
 
-  const int seed_wpl = seed.wordsPerLine();
-  const int mask_wpl = mask.wordsPerLine();
-  const int last_word_idx = (w - 1) >> 5;
-  const uint32_t last_word_mask = ~uint32_t(0) << (((last_word_idx + 1) << 5) - w);
+  const int seedWpl = seed.wordsPerLine();
+  const int maskWpl = mask.wordsPerLine();
+  const int lastWordIdx = (w - 1) >> 5;
+  const uint32_t lastWordMask = ~uint32_t(0) << (((lastWordIdx + 1) << 5) - w);
 
-  uint32_t* seed_line = seed.data();
-  const uint32_t* mask_line = mask.data();
-  const uint32_t* prev_line = seed_line;
+  uint32_t* seedLine = seed.data();
+  const uint32_t* maskLine = mask.data();
+  const uint32_t* prevLine = seedLine;
 
   // Top to bottom.
   for (int y = 0; y < h; ++y) {
-    uint32_t prev_word = 0;
+    uint32_t prevWord = 0;
 
     // Make sure offscreen bits are 0.
-    seed_line[last_word_idx] &= last_word_mask;
+    seedLine[lastWordIdx] &= lastWordMask;
     // Left to right (except the last word).
-    for (int i = 0; i <= last_word_idx; ++i) {
-      const uint32_t mask = mask_line[i];
-      uint32_t word = prev_word << 31;
-      word |= seed_line[i] | prev_line[i];
+    for (int i = 0; i <= lastWordIdx; ++i) {
+      const uint32_t mask = maskLine[i];
+      uint32_t word = prevWord << 31;
+      word |= seedLine[i] | prevLine[i];
       word &= mask;
       word = fillWordHorizontally(word, mask);
-      seed_line[i] = word;
-      prev_word = word;
+      seedLine[i] = word;
+      prevWord = word;
     }
 
-    // If we don't do this, prev_line[last_word_idx] on the next
+    // If we don't do this, prevLine[lastWordIdx] on the next
     // iteration may contain garbage in the off-screen area.
     // That garbage can easily leak back.
-    seed_line[last_word_idx] &= last_word_mask;
+    seedLine[lastWordIdx] &= lastWordMask;
 
-    prev_line = seed_line;
-    seed_line += seed_wpl;
-    mask_line += mask_wpl;
+    prevLine = seedLine;
+    seedLine += seedWpl;
+    maskLine += maskWpl;
   }
 
-  seed_line -= seed_wpl;
-  mask_line -= mask_wpl;
-  prev_line = seed_line;
+  seedLine -= seedWpl;
+  maskLine -= maskWpl;
+  prevLine = seedLine;
 
   // Bottom to top.
   for (int y = h - 1; y >= 0; --y) {
-    uint32_t prev_word = 0;
+    uint32_t prevWord = 0;
 
     // Make sure offscreen bits area 0.
-    seed_line[last_word_idx] &= last_word_mask;
+    seedLine[lastWordIdx] &= lastWordMask;
     // Right to left.
-    for (int i = last_word_idx; i >= 0; --i) {
-      const uint32_t mask = mask_line[i];
-      uint32_t word = prev_word >> 31;
-      word |= seed_line[i] | prev_line[i];
+    for (int i = lastWordIdx; i >= 0; --i) {
+      const uint32_t mask = maskLine[i];
+      uint32_t word = prevWord >> 31;
+      word |= seedLine[i] | prevLine[i];
       word &= mask;
       word = fillWordHorizontally(word, mask);
-      seed_line[i] = word;
-      prev_word = word;
+      seedLine[i] = word;
+      prevWord = word;
     }
-    // If we don't do this, prev_line[last_word_idx] on the next
+    // If we don't do this, prevLine[lastWordIdx] on the next
     // iteration may contain garbage in the off-screen area.
     // That garbage can easily leak back.
-    // Fortunately, garbage can't spread through prev_word,
+    // Fortunately, garbage can't spread through prevWord,
     // as only 1 bit is used from it, which can't be garbage.
-    seed_line[last_word_idx] &= last_word_mask;
+    seedLine[lastWordIdx] &= lastWordMask;
 
-    prev_line = seed_line;
-    seed_line -= seed_wpl;
-    mask_line -= mask_wpl;
+    prevLine = seedLine;
+    seedLine -= seedWpl;
+    maskLine -= maskWpl;
   }
 }  // seedFill4Iteration
 
@@ -97,103 +97,103 @@ void seedFill8Iteration(BinaryImage& seed, const BinaryImage& mask) {
   const int w = seed.width();
   const int h = seed.height();
 
-  const int seed_wpl = seed.wordsPerLine();
-  const int mask_wpl = mask.wordsPerLine();
-  const int last_word_idx = (w - 1) >> 5;
-  const uint32_t last_word_mask = ~uint32_t(0) << (((last_word_idx + 1) << 5) - w);
+  const int seedWpl = seed.wordsPerLine();
+  const int maskWpl = mask.wordsPerLine();
+  const int lastWordIdx = (w - 1) >> 5;
+  const uint32_t lastWordMask = ~uint32_t(0) << (((lastWordIdx + 1) << 5) - w);
 
-  uint32_t* seed_line = seed.data();
-  const uint32_t* mask_line = mask.data();
-  const uint32_t* prev_line = seed_line;
+  uint32_t* seedLine = seed.data();
+  const uint32_t* maskLine = mask.data();
+  const uint32_t* prevLine = seedLine;
 
-  // Note: we start with prev_line == seed_line, but in this case
-  // prev_line[i + 1] won't be clipped by its mask when we use it to
-  // update seed_line[i].  The wrong value may propagate further from
+  // Note: we start with prevLine == seedLine, but in this case
+  // prevLine[i + 1] won't be clipped by its mask when we use it to
+  // update seedLine[i].  The wrong value may propagate further from
   // there, so clipping we do on the anti-raster pass won't help.
   // That's why we clip the first line here.
-  for (int i = 0; i <= last_word_idx; ++i) {
-    seed_line[i] &= mask_line[i];
+  for (int i = 0; i <= lastWordIdx; ++i) {
+    seedLine[i] &= maskLine[i];
   }
 
   // Top to bottom.
   for (int y = 0; y < h; ++y) {
-    uint32_t prev_word = 0;
+    uint32_t prevWord = 0;
 
     // Make sure offscreen bits area 0.
-    seed_line[last_word_idx] &= last_word_mask;
+    seedLine[lastWordIdx] &= lastWordMask;
     // Left to right (except the last word).
     int i = 0;
-    for (; i < last_word_idx; ++i) {
-      const uint32_t mask = mask_line[i];
-      uint32_t word = prev_line[i];
+    for (; i < lastWordIdx; ++i) {
+      const uint32_t mask = maskLine[i];
+      uint32_t word = prevLine[i];
       word |= (word << 1) | (word >> 1);
-      word |= seed_line[i];
-      word |= prev_line[i + 1] >> 31;
-      word |= prev_word << 31;
+      word |= seedLine[i];
+      word |= prevLine[i + 1] >> 31;
+      word |= prevWord << 31;
       word &= mask;
       word = fillWordHorizontally(word, mask);
-      seed_line[i] = word;
-      prev_word = word;
+      seedLine[i] = word;
+      prevWord = word;
     }
     // Last word.
-    const uint32_t mask = mask_line[i] & last_word_mask;
-    uint32_t word = prev_line[i];
+    const uint32_t mask = maskLine[i] & lastWordMask;
+    uint32_t word = prevLine[i];
     word |= (word << 1) | (word >> 1);
-    word |= seed_line[i];
-    word |= prev_word << 31;
+    word |= seedLine[i];
+    word |= prevWord << 31;
     word &= mask;
     word = fillWordHorizontally(word, mask);
-    seed_line[i] = word;
+    seedLine[i] = word;
 
-    prev_line = seed_line;
-    seed_line += seed_wpl;
-    mask_line += mask_wpl;
+    prevLine = seedLine;
+    seedLine += seedWpl;
+    maskLine += maskWpl;
   }
 
-  seed_line -= seed_wpl;
-  mask_line -= mask_wpl;
-  prev_line = seed_line;
+  seedLine -= seedWpl;
+  maskLine -= maskWpl;
+  prevLine = seedLine;
 
   // Bottom to top.
   for (int y = h - 1; y >= 0; --y) {
-    uint32_t prev_word = 0;
+    uint32_t prevWord = 0;
 
     // Make sure offscreen bits area 0.
-    seed_line[last_word_idx] &= last_word_mask;
+    seedLine[lastWordIdx] &= lastWordMask;
     // Right to left (except the last word).
-    int i = last_word_idx;
+    int i = lastWordIdx;
     for (; i > 0; --i) {
-      const uint32_t mask = mask_line[i];
-      uint32_t word = prev_line[i];
+      const uint32_t mask = maskLine[i];
+      uint32_t word = prevLine[i];
       word |= (word << 1) | (word >> 1);
-      word |= seed_line[i];
-      word |= prev_line[i - 1] << 31;
-      word |= prev_word >> 31;
+      word |= seedLine[i];
+      word |= prevLine[i - 1] << 31;
+      word |= prevWord >> 31;
       word &= mask;
       word = fillWordHorizontally(word, mask);
-      seed_line[i] = word;
-      prev_word = word;
+      seedLine[i] = word;
+      prevWord = word;
     }
 
     // Last word.
-    const uint32_t mask = mask_line[i];
-    uint32_t word = prev_line[i];
+    const uint32_t mask = maskLine[i];
+    uint32_t word = prevLine[i];
     word |= (word << 1) | (word >> 1);
-    word |= seed_line[i];
-    word |= prev_word >> 31;
+    word |= seedLine[i];
+    word |= prevWord >> 31;
     word &= mask;
     word = fillWordHorizontally(word, mask);
-    seed_line[i] = word;
-    // If we don't do this, prev_line[last_word_idx] on the next
+    seedLine[i] = word;
+    // If we don't do this, prevLine[lastWordIdx] on the next
     // iteration may contain garbage in the off-screen area.
     // That garbage can easily leak back.
-    // Fortunately, garbage can't spread through prev_word,
+    // Fortunately, garbage can't spread through prevWord,
     // as only 1 bit is used from it, which can't be garbage.
-    seed_line[last_word_idx] &= last_word_mask;
+    seedLine[lastWordIdx] &= lastWordMask;
 
-    prev_line = seed_line;
-    seed_line -= seed_wpl;
-    mask_line -= mask_wpl;
+    prevLine = seedLine;
+    seedLine -= seedWpl;
+    maskLine -= maskWpl;
   }
 }  // seedFill8Iteration
 
@@ -205,22 +205,22 @@ inline uint8_t darkest(uint8_t lhs, uint8_t rhs) {
   return lhs < rhs ? lhs : rhs;
 }
 
-inline bool darker_than(uint8_t lhs, uint8_t rhs) {
+inline bool darkerThan(uint8_t lhs, uint8_t rhs) {
   return lhs < rhs;
 }
 
-void seedFillGrayHorLine(uint8_t* seed, const uint8_t* mask, const int line_len) {
-  assert(line_len > 0);
+void seedFillGrayHorLine(uint8_t* seed, const uint8_t* mask, const int lineLen) {
+  assert(lineLen > 0);
 
   *seed = lightest(*seed, *mask);
 
-  for (int i = 1; i < line_len; ++i) {
+  for (int i = 1; i < lineLen; ++i) {
     ++seed;
     ++mask;
     *seed = lightest(*mask, darkest(*seed, seed[-1]));
   }
 
-  for (int i = 1; i < line_len; ++i) {
+  for (int i = 1; i < lineLen; ++i) {
     --seed;
     --mask;
     *seed = lightest(*mask, darkest(*seed, seed[1]));
@@ -228,24 +228,24 @@ void seedFillGrayHorLine(uint8_t* seed, const uint8_t* mask, const int line_len)
 }
 
 void seedFillGrayVertLine(uint8_t* seed,
-                          const int seed_stride,
+                          const int seedStride,
                           const uint8_t* mask,
-                          const int mask_stride,
-                          const int line_len) {
-  assert(line_len > 0);
+                          const int maskStride,
+                          const int lineLen) {
+  assert(lineLen > 0);
 
   *seed = lightest(*seed, *mask);
 
-  for (int i = 1; i < line_len; ++i) {
-    seed += seed_stride;
-    mask += mask_stride;
-    *seed = lightest(*mask, darkest(*seed, seed[-seed_stride]));
+  for (int i = 1; i < lineLen; ++i) {
+    seed += seedStride;
+    mask += maskStride;
+    *seed = lightest(*mask, darkest(*seed, seed[-seedStride]));
   }
 
-  for (int i = 1; i < line_len; ++i) {
-    seed -= seed_stride;
-    mask -= mask_stride;
-    *seed = lightest(*mask, darkest(*seed, seed[seed_stride]));
+  for (int i = 1; i < lineLen; ++i) {
+    seed -= seedStride;
+    mask -= maskStride;
+    *seed = lightest(*mask, darkest(*seed, seed[seedStride]));
   }
 }
 
@@ -256,49 +256,49 @@ uint8_t seedFillGray4SlowIteration(GrayImage& seed, const GrayImage& mask) {
   const int w = seed.width();
   const int h = seed.height();
 
-  uint8_t* seed_line = seed.data();
-  const uint8_t* mask_line = mask.data();
-  const uint8_t* prev_line = seed_line;
+  uint8_t* seedLine = seed.data();
+  const uint8_t* maskLine = mask.data();
+  const uint8_t* prevLine = seedLine;
 
-  const int seed_stride = seed.stride();
-  const int mask_stride = mask.stride();
+  const int seedStride = seed.stride();
+  const int maskStride = mask.stride();
 
   uint8_t modified = 0;
 
   // Top to bottom.
   for (int y = 0; y < h; ++y) {
-    uint8_t prev_pixel = 0xff;
+    uint8_t prevPixel = 0xff;
     // Left to right.
     for (int x = 0; x < w; ++x) {
-      const uint8_t pixel = lightest(mask_line[x], darkest(prev_pixel, darkest(seed_line[x], prev_line[x])));
-      modified |= seed_line[x] ^ pixel;
-      seed_line[x] = pixel;
-      prev_pixel = pixel;
+      const uint8_t pixel = lightest(maskLine[x], darkest(prevPixel, darkest(seedLine[x], prevLine[x])));
+      modified |= seedLine[x] ^ pixel;
+      seedLine[x] = pixel;
+      prevPixel = pixel;
     }
 
-    prev_line = seed_line;
-    seed_line += seed_stride;
-    mask_line += mask_stride;
+    prevLine = seedLine;
+    seedLine += seedStride;
+    maskLine += maskStride;
   }
 
-  seed_line -= seed_stride;
-  mask_line -= mask_stride;
-  prev_line = seed_line;
+  seedLine -= seedStride;
+  maskLine -= maskStride;
+  prevLine = seedLine;
 
   // Bottom to top.
   for (int y = h - 1; y >= 0; --y) {
-    uint8_t prev_pixel = 0xff;
+    uint8_t prevPixel = 0xff;
     // Right to left.
     for (int x = w - 1; x >= 0; --x) {
-      const uint8_t pixel = lightest(mask_line[x], darkest(prev_pixel, darkest(seed_line[x], prev_line[x])));
-      modified |= seed_line[x] ^ pixel;
-      seed_line[x] = pixel;
-      prev_pixel = pixel;
+      const uint8_t pixel = lightest(maskLine[x], darkest(prevPixel, darkest(seedLine[x], prevLine[x])));
+      modified |= seedLine[x] ^ pixel;
+      seedLine[x] = pixel;
+      prevPixel = pixel;
     }
 
-    prev_line = seed_line;
-    seed_line -= seed_stride;
-    mask_line -= mask_stride;
+    prevLine = seedLine;
+    seedLine -= seedStride;
+    maskLine -= maskStride;
   }
 
   return modified;
@@ -311,90 +311,88 @@ uint8_t seedFillGray8SlowIteration(GrayImage& seed, const GrayImage& mask) {
   const int w = seed.width();
   const int h = seed.height();
 
-  uint8_t* seed_line = seed.data();
-  const uint8_t* mask_line = mask.data();
-  const uint8_t* prev_line = seed_line;
+  uint8_t* seedLine = seed.data();
+  const uint8_t* maskLine = mask.data();
+  const uint8_t* prevLine = seedLine;
 
-  const int seed_stride = seed.stride();
-  const int mask_stride = mask.stride();
+  const int seedStride = seed.stride();
+  const int maskStride = mask.stride();
 
   uint8_t modified = 0;
 
   // Some code below doesn't handle such cases.
   if (w == 1) {
-    seedFillGrayVertLine(seed_line, seed_stride, mask_line, mask_stride, h);
+    seedFillGrayVertLine(seedLine, seedStride, maskLine, maskStride, h);
 
     return 0;
   } else if (h == 1) {
-    seedFillGrayHorLine(seed_line, mask_line, w);
+    seedFillGrayHorLine(seedLine, maskLine, w);
 
     return 0;
   }
 
-  // The prev_line[x + 1] below actually refers to seed_line[x + 1]
-  // for the first line in raster order.  When working with seed_line[x],
-  // seed_line[x + 1] would not yet be clipped by its mask.  So, we
+  // The prevLine[x + 1] below actually refers to seedLine[x + 1]
+  // for the first line in raster order.  When working with seedLine[x],
+  // seedLine[x + 1] would not yet be clipped by its mask.  So, we
   // have to do it now.
   for (int x = 0; x < w; ++x) {
-    seed_line[x] = lightest(seed_line[x], mask_line[x]);
+    seedLine[x] = lightest(seedLine[x], maskLine[x]);
   }
 
   // Top to bottom.
   for (int y = 0; y < h; ++y) {
     int x = 0;
     // Leftmost pixel.
-    uint8_t pixel = lightest(mask_line[x], darkest(seed_line[x], darkest(prev_line[x], prev_line[x + 1])));
-    modified |= seed_line[x] ^ pixel;
-    seed_line[x] = pixel;
+    uint8_t pixel = lightest(maskLine[x], darkest(seedLine[x], darkest(prevLine[x], prevLine[x + 1])));
+    modified |= seedLine[x] ^ pixel;
+    seedLine[x] = pixel;
     // Left to right.
     while (++x < w - 1) {
-      pixel
-          = lightest(mask_line[x],
-                     darkest(darkest(darkest(seed_line[x], seed_line[x - 1]), darkest(prev_line[x], prev_line[x - 1])),
-                             prev_line[x + 1]));
-      modified |= seed_line[x] ^ pixel;
-      seed_line[x] = pixel;
+      pixel = lightest(maskLine[x],
+                       darkest(darkest(darkest(seedLine[x], seedLine[x - 1]), darkest(prevLine[x], prevLine[x - 1])),
+                               prevLine[x + 1]));
+      modified |= seedLine[x] ^ pixel;
+      seedLine[x] = pixel;
     }
     // Rightmost pixel.
-    pixel = lightest(mask_line[x],
-                     darkest(darkest(seed_line[x], seed_line[x - 1]), darkest(prev_line[x], prev_line[x - 1])));
-    modified |= seed_line[x] ^ pixel;
-    seed_line[x] = pixel;
+    pixel
+        = lightest(maskLine[x], darkest(darkest(seedLine[x], seedLine[x - 1]), darkest(prevLine[x], prevLine[x - 1])));
+    modified |= seedLine[x] ^ pixel;
+    seedLine[x] = pixel;
 
-    prev_line = seed_line;
-    seed_line += seed_stride;
-    mask_line += mask_stride;
+    prevLine = seedLine;
+    seedLine += seedStride;
+    maskLine += maskStride;
   }
 
-  seed_line -= seed_stride;
-  mask_line -= mask_stride;
-  prev_line = seed_line;
+  seedLine -= seedStride;
+  maskLine -= maskStride;
+  prevLine = seedLine;
 
   // Bottom to top.
   for (int y = h - 1; y >= 0; --y) {
     int x = w - 1;
     // Rightmost pixel.
-    uint8_t pixel = lightest(mask_line[x], darkest(seed_line[x], darkest(prev_line[x], prev_line[x - 1])));
-    modified |= seed_line[x] ^ pixel;
-    seed_line[x] = pixel;
+    uint8_t pixel = lightest(maskLine[x], darkest(seedLine[x], darkest(prevLine[x], prevLine[x - 1])));
+    modified |= seedLine[x] ^ pixel;
+    seedLine[x] = pixel;
     // Right to left.
     while (--x > 0) {
-      pixel
-          = lightest(mask_line[x],
-                     darkest(darkest(darkest(seed_line[x], seed_line[x + 1]), darkest(prev_line[x], prev_line[x + 1])),
-                             prev_line[x - 1]));
-      modified |= seed_line[x] ^ pixel;
-      seed_line[x] = pixel;
+      pixel = lightest(maskLine[x],
+                       darkest(darkest(darkest(seedLine[x], seedLine[x + 1]), darkest(prevLine[x], prevLine[x + 1])),
+                               prevLine[x - 1]));
+      modified |= seedLine[x] ^ pixel;
+      seedLine[x] = pixel;
     }
     // Leftmost pixel.
-    pixel = lightest(mask_line[x],
-                     darkest(darkest(seed_line[x], seed_line[x + 1]), darkest(prev_line[x], prev_line[x + 1])));
-    modified |= seed_line[x] ^ pixel;
-    seed_line[x] = pixel;
+    pixel
+        = lightest(maskLine[x], darkest(darkest(seedLine[x], seedLine[x + 1]), darkest(prevLine[x], prevLine[x + 1])));
+    modified |= seedLine[x] ^ pixel;
+    seedLine[x] = pixel;
 
-    prev_line = seed_line;
-    seed_line -= seed_stride;
-    mask_line -= mask_stride;
+    prevLine = seedLine;
+    seedLine -= seedStride;
+    maskLine -= maskStride;
   }
 
   return modified;

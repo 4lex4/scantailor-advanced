@@ -13,26 +13,26 @@
 
 namespace imageproc {
 namespace {
-int calcNumTerms(const int hor_degree, const int vert_degree) {
-  return (hor_degree + 1) * (vert_degree + 1);
+int calcNumTerms(const int horDegree, const int vertDegree) {
+  return (horDegree + 1) * (vertDegree + 1);
 }
 }  // anonymous namespace
 
-SavGolKernel::SavGolKernel(const QSize& size, const QPoint& origin, const int hor_degree, const int vert_degree)
-    : m_horDegree(hor_degree),
-      m_vertDegree(vert_degree),
+SavGolKernel::SavGolKernel(const QSize& size, const QPoint& origin, const int horDegree, const int vertDegree)
+    : m_horDegree(horDegree),
+      m_vertDegree(vertDegree),
       m_width(size.width()),
       m_height(size.height()),
-      m_numTerms(calcNumTerms(hor_degree, vert_degree)),
+      m_numTerms(calcNumTerms(horDegree, vertDegree)),
       m_numDataPoints(size.width() * size.height()) {
   if (size.isEmpty()) {
     throw std::invalid_argument("SavGolKernel: invalid size");
   }
-  if (hor_degree < 0) {
-    throw std::invalid_argument("SavGolKernel: invalid hor_degree");
+  if (horDegree < 0) {
+    throw std::invalid_argument("SavGolKernel: invalid horDegree");
   }
-  if (vert_degree < 0) {
-    throw std::invalid_argument("SavGolKernel: invalid vert_degree");
+  if (vertDegree < 0) {
+    throw std::invalid_argument("SavGolKernel: invalid vertDegree");
   }
   if (m_numTerms > m_numDataPoints) {
     throw std::invalid_argument("SavGolKernel: too high degree for this amount of data");

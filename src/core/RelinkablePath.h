@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef RELINKABLE_PATH_H_
-#define RELINKABLE_PATH_H_
+#ifndef SCANTAILOR_CORE_RELINKABLEPATH_H_
+#define SCANTAILOR_CORE_RELINKABLEPATH_H_
 
 #include <QString>
 
@@ -38,4 +38,4 @@ class RelinkablePath {
 };
 
 
-#endif  // ifndef RELINKABLE_PATH_H_
+#endif  // ifndef SCANTAILOR_CORE_RELINKABLEPATH_H_

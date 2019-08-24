@@ -16,39 +16,39 @@
 #include "filters/output/CacheDrivenTask.h"
 
 namespace page_layout {
-CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> next_task, intrusive_ptr<Settings> settings)
-    : m_nextTask(std::move(next_task)), m_settings(std::move(settings)) {}
+CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> nextTask, intrusive_ptr<Settings> settings)
+    : m_nextTask(std::move(nextTask)), m_settings(std::move(settings)) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;
 
-void CacheDrivenTask::process(const PageInfo& page_info,
+void CacheDrivenTask::process(const PageInfo& pageInfo,
                               AbstractFilterDataCollector* collector,
                               const ImageTransformation& xform,
-                              const QRectF& page_rect,
-                              const QRectF& content_rect) {
-  const std::unique_ptr<Params> params(m_settings->getPageParams(page_info.id()));
-  if (!params || (params->contentSizeMM().isEmpty() && !content_rect.isEmpty())) {
-    if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-      thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
-          thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), xform)));
+                              const QRectF& pageRect,
+                              const QRectF& contentRect) {
+  const std::unique_ptr<Params> params(m_settings->getPageParams(pageInfo.id()));
+  if (!params || (params->contentSizeMM().isEmpty() && !contentRect.isEmpty())) {
+    if (auto* thumbCol = dynamic_cast<ThumbnailCollector*>(collector)) {
+      thumbCol->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
+          thumbCol->thumbnailCache(), thumbCol->maxLogicalThumbSize(), pageInfo.imageId(), xform)));
     }
 
     return;
   }
 
-  Params new_params(
-      m_settings->updateContentSizeAndGetParams(page_info.id(), page_rect, content_rect, params->contentSizeMM()));
+  Params newParams(
+      m_settings->updateContentSizeAndGetParams(pageInfo.id(), pageRect, contentRect, params->contentSizeMM()));
 
-  const QRectF adapted_content_rect(Utils::adaptContentRect(xform, content_rect));
-  const QPolygonF content_rect_phys(xform.transformBack().map(adapted_content_rect));
-  const QPolygonF page_rect_phys(
-      Utils::calcPageRectPhys(xform, content_rect_phys, new_params, m_settings->getAggregateHardSizeMM()));
+  const QRectF adaptedContentRect(Utils::adaptContentRect(xform, contentRect));
+  const QPolygonF contentRectPhys(xform.transformBack().map(adaptedContentRect));
+  const QPolygonF pageRectPhys(
+      Utils::calcPageRectPhys(xform, contentRectPhys, newParams, m_settings->getAggregateHardSizeMM()));
 
-  ImageTransformation new_xform(xform);
-  new_xform.setPostCropArea(Utils::shiftToRoundedOrigin(new_xform.transform().map(page_rect_phys)));
+  ImageTransformation newXform(xform);
+  newXform.setPostCropArea(Utils::shiftToRoundedOrigin(newXform.transform().map(pageRectPhys)));
 
   if (m_nextTask) {
-    m_nextTask->process(page_info, collector, new_xform, content_rect_phys);
+    m_nextTask->process(pageInfo, collector, newXform, contentRectPhys);
 
     return;
   }
@@ -57,11 +57,11 @@ void CacheDrivenTask::process(const PageInfo& page_info,
   const double deviationCoef = settings.getMarginsDeviationCoef();
   const double deviationThreshold = settings.getMarginsDeviationThreshold();
 
-  if (auto* thumb_col = dynamic_cast<ThumbnailCollector*>(collector)) {
-    thumb_col->processThumbnail(std::unique_ptr<QGraphicsItem>(
-        new Thumbnail(thumb_col->thumbnailCache(), thumb_col->maxLogicalThumbSize(), page_info.imageId(), new_params,
-                      xform, content_rect_phys, xform.transform().map(page_rect_phys).boundingRect(),
-                      m_settings->deviationProvider().isDeviant(page_info.id(), deviationCoef, deviationThreshold))));
+  if (auto* thumbCol = dynamic_cast<ThumbnailCollector*>(collector)) {
+    thumbCol->processThumbnail(std::unique_ptr<QGraphicsItem>(
+        new Thumbnail(thumbCol->thumbnailCache(), thumbCol->maxLogicalThumbSize(), pageInfo.imageId(), newParams, xform,
+                      contentRectPhys, xform.transform().map(pageRectPhys).boundingRect(),
+                      m_settings->deviationProvider().isDeviant(pageInfo.id(), deviationCoef, deviationThreshold))));
   }
 }
 }  // namespace page_layout

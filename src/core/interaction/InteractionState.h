@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef INTERACTION_STATE_H_
-#define INTERACTION_STATE_H_
+#ifndef SCANTAILOR_INTERACTION_INTERACTIONSTATE_H_
+#define SCANTAILOR_INTERACTION_INTERACTIONSTATE_H_
 
 #include <QCursor>
 #include <QString>
@@ -82,7 +82,7 @@ class InteractionState {
   void updateProximity(Captor& captor,
                        const Proximity& proximity,
                        int priority = 0,
-                       Proximity proximity_threshold = Proximity());
+                       Proximity proximityThreshold = Proximity());
 
   bool proximityLeader(const Captor& captor) const;
 
@@ -94,7 +94,7 @@ class InteractionState {
 
   const QString& defaultStatusTip() const { return m_defaultStatusTip; }
 
-  void setDefaultStatusTip(const QString& status_tip) { m_defaultStatusTip = status_tip; }
+  void setDefaultStatusTip(const QString& statusTip) { m_defaultStatusTip = statusTip; }
 
   bool redrawRequested() const { return m_redrawRequested; }
 
@@ -118,4 +118,4 @@ class InteractionState {
 };
 
 
-#endif  // ifndef INTERACTION_STATE_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_INTERACTIONSTATE_H_

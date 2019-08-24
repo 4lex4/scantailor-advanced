@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_APPLYCOLORSDIALOG_H_
-#define OUTPUT_APPLYCOLORSDIALOG_H_
+#ifndef SCANTAILOR_OUTPUT_APPLYCOLORSDIALOG_H_
+#define SCANTAILOR_OUTPUT_APPLYCOLORSDIALOG_H_
 
 #include <QButtonGroup>
 #include <QDialog>
@@ -18,7 +18,7 @@ namespace output {
 class ApplyColorsDialog : public QDialog, private Ui::ApplyColorsDialog {
   Q_OBJECT
  public:
-  ApplyColorsDialog(QWidget* parent, const PageId& page_id, const PageSelectionAccessor& page_selection_accessor);
+  ApplyColorsDialog(QWidget* parent, const PageId& pageId, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~ApplyColorsDialog() override;
 
@@ -37,4 +37,4 @@ class ApplyColorsDialog : public QDialog, private Ui::ApplyColorsDialog {
   QButtonGroup* m_scopeGroup;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_APPLYCOLORSDIALOG_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_APPLYCOLORSDIALOG_H_

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SELECT_CONTENT_SETTINGS_H_
-#define SELECT_CONTENT_SETTINGS_H_
+#ifndef SCANTAILOR_SELECT_CONTENT_SETTINGS_H_
+#define SCANTAILOR_SELECT_CONTENT_SETTINGS_H_
 
 #include <DeviationProvider.h>
 #include <QMutex>
@@ -28,13 +28,13 @@ class Settings : public ref_countable {
 
   void performRelinking(const AbstractRelinker& relinker);
 
-  void setPageParams(const PageId& page_id, const Params& params);
+  void setPageParams(const PageId& pageId, const Params& params);
 
-  void clearPageParams(const PageId& page_id);
+  void clearPageParams(const PageId& pageId);
 
-  std::unique_ptr<Params> getPageParams(const PageId& page_id) const;
+  std::unique_ptr<Params> getPageParams(const PageId& pageId) const;
 
-  bool isParamsNull(const PageId& page_id) const;
+  bool isParamsNull(const PageId& pageId) const;
 
   QSizeF pageDetectionBox() const;
 
@@ -56,4 +56,4 @@ class Settings : public ref_countable {
   DeviationProvider<PageId> m_deviationProvider;
 };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_SETTINGS_H_
+#endif  // ifndef SCANTAILOR_SELECT_CONTENT_SETTINGS_H_

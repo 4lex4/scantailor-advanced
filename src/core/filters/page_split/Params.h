@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_PARAMS_H_
-#define PAGE_SPLIT_PARAMS_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_PARAMS_H_
+#define SCANTAILOR_PAGE_SPLIT_PARAMS_H_
 
 #include <QString>
 #include <utility>
@@ -18,7 +18,7 @@ class Params {
  public:
   // Member-wise copying is OK.
 
-  Params(const PageLayout& layout, const Dependencies& deps, AutoManualMode split_line_mode);
+  Params(const PageLayout& layout, const Dependencies& deps, AutoManualMode splitLineMode);
 
   explicit Params(const QDomElement& el);
 
@@ -44,4 +44,4 @@ class Params {
   AutoManualMode m_splitLineMode;
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_PARAMS_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_PARAMS_H_

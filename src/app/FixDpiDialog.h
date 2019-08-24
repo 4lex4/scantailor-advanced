@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef FIXDPIDIALOG_H_
-#define FIXDPIDIALOG_H_
+#ifndef SCANTAILOR_APP_FIXDPIDIALOG_H_
+#define SCANTAILOR_APP_FIXDPIDIALOG_H_
 
 #include <QDialog>
 #include <QItemSelection>
@@ -57,7 +57,7 @@ class FixDpiDialog : public QDialog, private Ui::FixDpiDialog {
 
   void updateDpiCombo();
 
-  void decorateDpiInputField(QLineEdit* field, ImageMetadata::DpiStatus dpi_status) const;
+  void decorateDpiInputField(QLineEdit* field, ImageMetadata::DpiStatus dpiStatus) const;
 
   std::unique_ptr<TreeModel> m_pages;
   std::unique_ptr<FilterModel> m_undefinedDpiPages;
@@ -69,4 +69,4 @@ class FixDpiDialog : public QDialog, private Ui::FixDpiDialog {
 };
 
 
-#endif  // ifndef FIXDPIDIALOG_H_
+#endif  // ifndef SCANTAILOR_APP_FIXDPIDIALOG_H_

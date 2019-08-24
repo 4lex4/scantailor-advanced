@@ -1,15 +1,15 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SPFIT_OPTIMIZATION_RESULT_H_
-#define SPFIT_OPTIMIZATION_RESULT_H_
+#ifndef SCANTAILOR_SPFIT_OPTIMIZATIONRESULT_H_
+#define SCANTAILOR_SPFIT_OPTIMIZATIONRESULT_H_
 
 #include <limits>
 
 namespace spfit {
 class OptimizationResult {
  public:
-  OptimizationResult(double force_before, double force_after);
+  OptimizationResult(double forceBefore, double forceAfter);
 
   double forceBefore() const { return m_forceBefore; }
 

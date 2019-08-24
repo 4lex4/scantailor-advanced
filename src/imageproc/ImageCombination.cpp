@@ -11,79 +11,79 @@ namespace imageproc {
 namespace impl {
 template <typename MixedPixel>
 void combineImagesMono(QImage& mixedImage, const BinaryImage& foreground) {
-  auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
-  const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
-  const uint32_t* foreground_line = foreground.data();
-  const int foreground_stride = foreground.wordsPerLine();
+  auto* mixedLine = reinterpret_cast<MixedPixel*>(mixedImage.bits());
+  const int mixedStride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
+  const uint32_t* foregroundLine = foreground.data();
+  const int foregroundStride = foreground.wordsPerLine();
   const int width = mixedImage.width();
   const int height = mixedImage.height();
   const uint32_t msb = uint32_t(1) << 31;
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (foreground_line[x >> 5] & (msb >> (x & 31))) {
-        uint32_t tmp = foreground_line[x >> 5];
+      if (foregroundLine[x >> 5] & (msb >> (x & 31))) {
+        uint32_t tmp = foregroundLine[x >> 5];
         tmp >>= (31 - (x & 31));
         tmp &= uint32_t(1);
 
         --tmp;
         tmp |= 0xff000000;
-        mixed_line[x] = static_cast<MixedPixel>(tmp);
+        mixedLine[x] = static_cast<MixedPixel>(tmp);
       }
     }
-    mixed_line += mixed_stride;
-    foreground_line += foreground_stride;
+    mixedLine += mixedStride;
+    foregroundLine += foregroundStride;
   }
 }
 
 template <typename MixedPixel>
 void combineImagesMono(QImage& mixedImage, const BinaryImage& foreground, const BinaryImage& mask) {
-  auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
-  const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
-  const uint32_t* foreground_line = foreground.data();
-  const int foreground_stride = foreground.wordsPerLine();
-  const uint32_t* mask_line = mask.data();
-  const int mask_stride = mask.wordsPerLine();
+  auto* mixedLine = reinterpret_cast<MixedPixel*>(mixedImage.bits());
+  const int mixedStride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
+  const uint32_t* foregroundLine = foreground.data();
+  const int foregroundStride = foreground.wordsPerLine();
+  const uint32_t* maskLine = mask.data();
+  const int maskStride = mask.wordsPerLine();
   const int width = mixedImage.width();
   const int height = mixedImage.height();
   const uint32_t msb = uint32_t(1) << 31;
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (mask_line[x >> 5] & (msb >> (x & 31))) {
-        uint32_t tmp = foreground_line[x >> 5];
+      if (maskLine[x >> 5] & (msb >> (x & 31))) {
+        uint32_t tmp = foregroundLine[x >> 5];
         tmp >>= (31 - (x & 31));
         tmp &= uint32_t(1);
 
         --tmp;
         tmp |= 0xff000000;
-        mixed_line[x] = static_cast<MixedPixel>(tmp);
+        mixedLine[x] = static_cast<MixedPixel>(tmp);
       }
     }
-    mixed_line += mixed_stride;
-    foreground_line += foreground_stride;
-    mask_line += mask_stride;
+    mixedLine += mixedStride;
+    foregroundLine += foregroundStride;
+    maskLine += maskStride;
   }
 }
 
 template <typename MixedPixel>
 void combineImagesColor(QImage& mixedImage, const QImage& foreground) {
-  auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
-  const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
-  const auto* foreground_line = reinterpret_cast<const MixedPixel*>(foreground.bits());
-  const int foreground_stride = foreground.bytesPerLine() / sizeof(MixedPixel);
+  auto* mixedLine = reinterpret_cast<MixedPixel*>(mixedImage.bits());
+  const int mixedStride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
+  const auto* foregroundLine = reinterpret_cast<const MixedPixel*>(foreground.bits());
+  const int foregroundStride = foreground.bytesPerLine() / sizeof(MixedPixel);
   const int width = mixedImage.width();
   const int height = mixedImage.height();
   const auto msb = uint32_t(0x00ffffff);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if ((foreground_line[x] & msb) != msb) {
-        mixed_line[x] = foreground_line[x];
+      if ((foregroundLine[x] & msb) != msb) {
+        mixedLine[x] = foregroundLine[x];
       }
     }
-    mixed_line += mixed_stride;
-    foreground_line += foreground_stride;
+    mixedLine += mixedStride;
+    foregroundLine += foregroundStride;
   }
 }
 
@@ -92,96 +92,96 @@ void combineImagesColor(QImage& mixedImage, const QImage& foreground);
 
 template <>
 void combineImagesColor<uint32_t, uint8_t>(QImage& mixedImage, const QImage& foreground) {
-  auto* mixed_line = reinterpret_cast<uint32_t*>(mixedImage.bits());
-  const int mixed_stride = mixedImage.bytesPerLine() / sizeof(uint32_t);
-  const auto* foreground_line = foreground.bits();
-  const int foreground_stride = foreground.bytesPerLine();
+  auto* mixedLine = reinterpret_cast<uint32_t*>(mixedImage.bits());
+  const int mixedStride = mixedImage.bytesPerLine() / sizeof(uint32_t);
+  const auto* foregroundLine = foreground.bits();
+  const int foregroundStride = foreground.bytesPerLine();
   const int width = mixedImage.width();
   const int height = mixedImage.height();
   const auto msb = uint32_t(0x00ffffff);
 
-  const QVector<QRgb> foreground_palette = foreground.colorTable();
+  const QVector<QRgb> foregroundPalette = foreground.colorTable();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      uint32_t color = foreground_palette[foreground_line[x]];
+      uint32_t color = foregroundPalette[foregroundLine[x]];
       if ((color & msb) != msb) {
-        mixed_line[x] = color;
+        mixedLine[x] = color;
       }
     }
-    mixed_line += mixed_stride;
-    foreground_line += foreground_stride;
+    mixedLine += mixedStride;
+    foregroundLine += foregroundStride;
   }
 }
 
-void mergePalettes(QVector<uint32_t>& mixed_palette, const QVector<uint32_t>& palette) {
-  std::unordered_set<uint32_t> mixed_colors(mixed_palette.begin(), mixed_palette.end());
+void mergePalettes(QVector<uint32_t>& mixedPalette, const QVector<uint32_t>& palette) {
+  std::unordered_set<uint32_t> mixedColors(mixedPalette.begin(), mixedPalette.end());
   for (uint32_t color : palette) {
-    if (mixed_colors.find(color) == mixed_colors.end()) {
-      mixed_palette.push_back(color);
-      mixed_colors.insert(color);
+    if (mixedColors.find(color) == mixedColors.end()) {
+      mixedPalette.push_back(color);
+      mixedColors.insert(color);
     }
   }
 }
 
 template <>
 void combineImagesColor<uint8_t, uint8_t>(QImage& mixedImage, const QImage& foreground) {
-  auto* mixed_line = mixedImage.bits();
-  const int mixed_stride = mixedImage.bytesPerLine();
-  const auto* foreground_line = foreground.bits();
-  const int foreground_stride = foreground.bytesPerLine();
+  auto* mixedLine = mixedImage.bits();
+  const int mixedStride = mixedImage.bytesPerLine();
+  const auto* foregroundLine = foreground.bits();
+  const int foregroundStride = foreground.bytesPerLine();
   const int width = mixedImage.width();
   const int height = mixedImage.height();
   const auto msb = uint32_t(0x00ffffff);
 
-  QVector<uint32_t> mixed_palette = mixedImage.colorTable();
-  const QVector<uint32_t> foreground_palette = foreground.colorTable();
-  if (mixed_palette.size() < 256) {
-    mergePalettes(mixed_palette, foreground_palette);
-    if (mixed_palette.size() > 256) {
-      mixed_palette.resize(256);
+  QVector<uint32_t> mixedPalette = mixedImage.colorTable();
+  const QVector<uint32_t> foregroundPalette = foreground.colorTable();
+  if (mixedPalette.size() < 256) {
+    mergePalettes(mixedPalette, foregroundPalette);
+    if (mixedPalette.size() > 256) {
+      mixedPalette.resize(256);
     }
-    mixedImage.setColorTable(mixed_palette);
+    mixedImage.setColorTable(mixedPalette);
   }
 
   std::unordered_map<uint32_t, uint8_t> colorToIndex;
-  for (int i = 0; i < mixed_palette.size(); ++i) {
-    colorToIndex[mixed_palette[i]] = static_cast<uint8_t>(i);
+  for (int i = 0; i < mixedPalette.size(); ++i) {
+    colorToIndex[mixedPalette[i]] = static_cast<uint8_t>(i);
   }
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      uint32_t color = foreground_palette[foreground_line[x]];
+      uint32_t color = foregroundPalette[foregroundLine[x]];
       if ((color & msb) != msb) {
-        mixed_line[x] = colorToIndex[color];
+        mixedLine[x] = colorToIndex[color];
       }
     }
-    mixed_line += mixed_stride;
-    foreground_line += foreground_stride;
+    mixedLine += mixedStride;
+    foregroundLine += foregroundStride;
   }
 }
 
 template <typename MixedPixel>
 void combineImagesColor(QImage& mixedImage, const QImage& foreground, const BinaryImage& mask) {
-  auto* mixed_line = reinterpret_cast<MixedPixel*>(mixedImage.bits());
-  const int mixed_stride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
-  const auto* foreground_line = reinterpret_cast<const MixedPixel*>(foreground.bits());
-  const int foreground_stride = foreground.bytesPerLine() / sizeof(MixedPixel);
-  const uint32_t* mask_line = mask.data();
-  const int mask_stride = mask.wordsPerLine();
+  auto* mixedLine = reinterpret_cast<MixedPixel*>(mixedImage.bits());
+  const int mixedStride = mixedImage.bytesPerLine() / sizeof(MixedPixel);
+  const auto* foregroundLine = reinterpret_cast<const MixedPixel*>(foreground.bits());
+  const int foregroundStride = foreground.bytesPerLine() / sizeof(MixedPixel);
+  const uint32_t* maskLine = mask.data();
+  const int maskStride = mask.wordsPerLine();
   const int width = mixedImage.width();
   const int height = mixedImage.height();
   const uint32_t msb = uint32_t(1) << 31;
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (mask_line[x >> 5] & (msb >> (x & 31))) {
-        mixed_line[x] = foreground_line[x];
+      if (maskLine[x >> 5] & (msb >> (x & 31))) {
+        mixedLine[x] = foregroundLine[x];
       }
     }
-    mixed_line += mixed_stride;
-    foreground_line += foreground_stride;
-    mask_line += mask_stride;
+    mixedLine += mixedStride;
+    foregroundLine += foregroundStride;
+    maskLine += maskStride;
   }
 }
 
@@ -190,90 +190,90 @@ void combineImagesColor(QImage& mixedImage, const QImage& foreground, const Bina
 
 template <>
 void combineImagesColor<uint32_t, uint8_t>(QImage& mixedImage, const QImage& foreground, const BinaryImage& mask) {
-  auto* mixed_line = reinterpret_cast<uint32_t*>(mixedImage.bits());
-  const int mixed_stride = mixedImage.bytesPerLine() / sizeof(uint32_t);
-  const auto* foreground_line = foreground.bits();
-  const int foreground_stride = foreground.bytesPerLine();
-  const uint32_t* mask_line = mask.data();
-  const int mask_stride = mask.wordsPerLine();
+  auto* mixedLine = reinterpret_cast<uint32_t*>(mixedImage.bits());
+  const int mixedStride = mixedImage.bytesPerLine() / sizeof(uint32_t);
+  const auto* foregroundLine = foreground.bits();
+  const int foregroundStride = foreground.bytesPerLine();
+  const uint32_t* maskLine = mask.data();
+  const int maskStride = mask.wordsPerLine();
   const int width = mixedImage.width();
   const int height = mixedImage.height();
   const uint32_t msb = uint32_t(1) << 31;
 
-  const QVector<QRgb> foreground_palette = foreground.colorTable();
+  const QVector<QRgb> foregroundPalette = foreground.colorTable();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (mask_line[x >> 5] & (msb >> (x & 31))) {
-        uint32_t color = foreground_palette[foreground_line[x]];
-        mixed_line[x] = color;
+      if (maskLine[x >> 5] & (msb >> (x & 31))) {
+        uint32_t color = foregroundPalette[foregroundLine[x]];
+        mixedLine[x] = color;
       }
     }
-    mixed_line += mixed_stride;
-    foreground_line += foreground_stride;
-    mask_line += mask_stride;
+    mixedLine += mixedStride;
+    foregroundLine += foregroundStride;
+    maskLine += maskStride;
   }
 }
 
 template <>
 void combineImagesColor<uint8_t, uint8_t>(QImage& mixedImage, const QImage& foreground, const BinaryImage& mask) {
-  auto* mixed_line = mixedImage.bits();
-  const int mixed_stride = mixedImage.bytesPerLine();
-  const auto* foreground_line = foreground.bits();
-  const int foreground_stride = foreground.bytesPerLine();
-  const uint32_t* mask_line = mask.data();
-  const int mask_stride = mask.wordsPerLine();
+  auto* mixedLine = mixedImage.bits();
+  const int mixedStride = mixedImage.bytesPerLine();
+  const auto* foregroundLine = foreground.bits();
+  const int foregroundStride = foreground.bytesPerLine();
+  const uint32_t* maskLine = mask.data();
+  const int maskStride = mask.wordsPerLine();
   const int width = mixedImage.width();
   const int height = mixedImage.height();
   const uint32_t msb = uint32_t(1) << 31;
 
-  QVector<uint32_t> mixed_palette = mixedImage.colorTable();
-  const QVector<uint32_t> foreground_palette = foreground.colorTable();
-  if (mixed_palette.size() < 256) {
-    mergePalettes(mixed_palette, foreground_palette);
-    if (mixed_palette.size() > 256) {
-      mixed_palette.resize(256);
+  QVector<uint32_t> mixedPalette = mixedImage.colorTable();
+  const QVector<uint32_t> foregroundPalette = foreground.colorTable();
+  if (mixedPalette.size() < 256) {
+    mergePalettes(mixedPalette, foregroundPalette);
+    if (mixedPalette.size() > 256) {
+      mixedPalette.resize(256);
     }
-    mixedImage.setColorTable(mixed_palette);
+    mixedImage.setColorTable(mixedPalette);
   }
 
   std::unordered_map<uint32_t, uint8_t> colorToIndex;
-  for (int i = 0; i < mixed_palette.size(); ++i) {
-    colorToIndex[mixed_palette[i]] = static_cast<uint8_t>(i);
+  for (int i = 0; i < mixedPalette.size(); ++i) {
+    colorToIndex[mixedPalette[i]] = static_cast<uint8_t>(i);
   }
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (mask_line[x >> 5] & (msb >> (x & 31))) {
-        uint32_t color = foreground_palette[foreground_line[x]];
-        mixed_line[x] = colorToIndex[color];
+      if (maskLine[x >> 5] & (msb >> (x & 31))) {
+        uint32_t color = foregroundPalette[foregroundLine[x]];
+        mixedLine[x] = colorToIndex[color];
       }
     }
-    mixed_line += mixed_stride;
-    foreground_line += foreground_stride;
-    mask_line += mask_stride;
+    mixedLine += mixedStride;
+    foregroundLine += foregroundStride;
+    maskLine += maskStride;
   }
 }
 
 template <typename MixedPixel>
-void applyMask(QImage& image, const BinaryImage& bw_mask, const BWColor filling_color = WHITE) {
-  auto* image_line = reinterpret_cast<MixedPixel*>(image.bits());
-  const int image_stride = image.bytesPerLine() / sizeof(MixedPixel);
-  const uint32_t* bw_mask_line = bw_mask.data();
-  const int bw_mask_stride = bw_mask.wordsPerLine();
+void applyMask(QImage& image, const BinaryImage& bwMask, const BWColor fillingColor = WHITE) {
+  auto* imageLine = reinterpret_cast<MixedPixel*>(image.bits());
+  const int imageStride = image.bytesPerLine() / sizeof(MixedPixel);
+  const uint32_t* bwMaskLine = bwMask.data();
+  const int bwMaskStride = bwMask.wordsPerLine();
   const int width = image.width();
   const int height = image.height();
   const uint32_t msb = uint32_t(1) << 31;
-  const auto fillingPixel = static_cast<MixedPixel>((filling_color == WHITE) ? 0xffffffff : 0x00000000);
+  const auto fillingPixel = static_cast<MixedPixel>((fillingColor == WHITE) ? 0xffffffff : 0x00000000);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      if (!(bw_mask_line[x >> 5] & (msb >> (x & 31)))) {
-        image_line[x] = fillingPixel;
+      if (!(bwMaskLine[x >> 5] & (msb >> (x & 31)))) {
+        imageLine[x] = fillingPixel;
       }
     }
-    image_line += image_stride;
-    bw_mask_line += bw_mask_stride;
+    imageLine += imageStride;
+    bwMaskLine += bwMaskStride;
   }
 }
 }  // namespace impl
@@ -350,11 +350,11 @@ void combineImagesColor(QImage& mixedImage, const QImage& foreground, const Bina
   }
 }
 
-void applyMask(QImage& image, const BinaryImage& bw_mask, const BWColor filling_color) {
+void applyMask(QImage& image, const BinaryImage& bwMask, const BWColor fillingColor) {
   if (image.format() == QImage::Format_Indexed8) {
-    applyMask<uint8_t>(image, bw_mask, filling_color);
+    applyMask<uint8_t>(image, bwMask, fillingColor);
   } else {
-    applyMask<uint32_t>(image, bw_mask, filling_color);
+    applyMask<uint32_t>(image, bwMask, fillingColor);
   }
 }
 }  // namespace impl
@@ -395,10 +395,10 @@ void combineImages(QImage& mixedImage, const QImage& foreground, const BinaryIma
   }
 }
 
-void applyMask(QImage& image, const BinaryImage& bw_mask, const BWColor filling_color) {
+void applyMask(QImage& image, const BinaryImage& bwMask, const BWColor fillingColor) {
   checkImageFormatSupported(image);
-  checkImagesHaveEqualSize(image, bw_mask);
+  checkImagesHaveEqualSize(image, bwMask);
 
-  impl::applyMask(image, bw_mask, filling_color);
+  impl::applyMask(image, bwMask, fillingColor);
 }
 }  // namespace imageproc

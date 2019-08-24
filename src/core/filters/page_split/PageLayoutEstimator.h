@@ -1,14 +1,14 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_PAGELAYOUTESTIMATOR_H_
-#define PAGE_SPLIT_PAGELAYOUTESTIMATOR_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_PAGELAYOUTESTIMATOR_H_
+#define SCANTAILOR_PAGE_SPLIT_PAGELAYOUTESTIMATOR_H_
 
+#include <VirtualFunction.h>
 #include <QLineF>
 #include <deque>
 #include <memory>
 #include "LayoutType.h"
-#include <VirtualFunction.h>
 
 class QRect;
 class QPoint;
@@ -31,42 +31,42 @@ class PageLayoutEstimator {
   /**
    * \brief Estimates the page layout according to the provided layout type.
    *
-   * \param layout_type The type of a layout to detect.  If set to
+   * \param layoutType The type of a layout to detect.  If set to
    *        something other than Rule::AUTO_DETECT, the returned
    *        layout will have the same type.
    * \param input The input image.  Will be converted to grayscale unless
    *        it's already grayscale.
-   * \param pre_xform The logical transformation applied to the input image.
+   * \param preXform The logical transformation applied to the input image.
    *        The resulting page layout will be in transformed coordinates.
-   * \param bw_threshold The global binarization threshold for the
+   * \param bwThreshold The global binarization threshold for the
    *        input image.
    * \param dbg An optional sink for debugging images.
    * \return The estimated PageLayout of type consistent with the
    *         requested layout type.
    */
-  static PageLayout estimatePageLayout(LayoutType layout_type,
+  static PageLayout estimatePageLayout(LayoutType layoutType,
                                        const QImage& input,
-                                       const ImageTransformation& pre_xform,
-                                       imageproc::BinaryThreshold bw_threshold,
+                                       const ImageTransformation& preXform,
+                                       imageproc::BinaryThreshold bwThreshold,
                                        DebugImages* dbg = nullptr);
 
  private:
-  static std::unique_ptr<PageLayout> tryCutAtFoldingLine(LayoutType layout_type,
+  static std::unique_ptr<PageLayout> tryCutAtFoldingLine(LayoutType layoutType,
                                                          const QImage& input,
-                                                         const ImageTransformation& pre_xform,
+                                                         const ImageTransformation& preXform,
                                                          DebugImages* dbg);
 
-  static PageLayout cutAtWhitespace(LayoutType layout_type,
+  static PageLayout cutAtWhitespace(LayoutType layoutType,
                                     const QImage& input,
-                                    const ImageTransformation& pre_xform,
-                                    imageproc::BinaryThreshold bw_threshold,
+                                    const ImageTransformation& preXform,
+                                    imageproc::BinaryThreshold bwThreshold,
                                     DebugImages* dbg);
 
-  static PageLayout cutAtWhitespaceDeskewed150(LayoutType layout_type,
-                                               int num_pages,
+  static PageLayout cutAtWhitespaceDeskewed150(LayoutType layoutType,
+                                               int numPages,
                                                const imageproc::BinaryImage& input,
-                                               bool left_offcut,
-                                               bool right_offcut,
+                                               bool leftOffcut,
+                                               bool rightOffcut,
                                                DebugImages* dbg);
 
   static imageproc::BinaryImage to300DpiBinary(const QImage& img,
@@ -86,14 +86,14 @@ class PageLayoutEstimator {
 
   static void removeInsignificantEdgeSpans(std::deque<Span>& spans);
 
-  static PageLayout processContentSpansSinglePage(LayoutType layout_type,
+  static PageLayout processContentSpansSinglePage(LayoutType layoutType,
                                                   const std::deque<Span>& spans,
                                                   int width,
                                                   int height,
-                                                  bool left_offcut,
-                                                  bool right_offcut);
+                                                  bool leftOffcut,
+                                                  bool rightOffcut);
 
-  static PageLayout processContentSpansTwoPages(LayoutType layout_type,
+  static PageLayout processContentSpansTwoPages(LayoutType layoutType,
                                                 const std::deque<Span>& spans,
                                                 int width,
                                                 int height);
@@ -103,4 +103,4 @@ class PageLayoutEstimator {
   static QLineF vertLine(double x);
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_PAGELAYOUTESTIMATOR_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_PAGELAYOUTESTIMATOR_H_

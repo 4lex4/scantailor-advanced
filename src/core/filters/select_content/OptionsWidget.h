@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SELECT_CONTENT_OPTIONSWIDGET_H_
-#define SELECT_CONTENT_OPTIONSWIDGET_H_
+#ifndef SCANTAILOR_SELECT_CONTENT_OPTIONSWIDGET_H_
+#define SCANTAILOR_SELECT_CONTENT_OPTIONSWIDGET_H_
 
 #include <AutoManualMode.h>
 #include <UnitsListener.h>
@@ -34,9 +34,9 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
     void setSizeCalc(const PhysSizeCalc& calc);
 
-    void setContentRect(const QRectF& content_rect);
+    void setContentRect(const QRectF& contentRect);
 
-    void setPageRect(const QRectF& content_rect);
+    void setPageRect(const QRectF& contentRect);
 
     const QRectF& contentRect() const;
 
@@ -54,7 +54,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
     bool isFineTuningCornersEnabled() const;
 
-    void setFineTuneCornersEnabled(bool fine_tune);
+    void setFineTuneCornersEnabled(bool fineTune);
 
     AutoManualMode contentDetectionMode() const;
 
@@ -71,21 +71,21 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
   };
 
 
-  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& page_selection_accessor);
+  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
-  void preUpdateUI(const PageInfo& page_info);
+  void preUpdateUI(const PageInfo& pageInfo);
 
-  void postUpdateUI(const UiData& ui_data);
+  void postUpdateUI(const UiData& uiData);
 
   void onUnitsChanged(Units units) override;
 
  public slots:
 
-  void manualContentRectSet(const QRectF& content_rect);
+  void manualContentRectSet(const QRectF& contentRect);
 
-  void manualPageRectSet(const QRectF& page_rect);
+  void manualPageRectSet(const QRectF& pageRect);
 
   void updatePageRectSize(const QSizeF& size);
 
@@ -99,7 +99,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   void showApplyToDialog();
 
-  void applySelection(const std::set<PageId>& pages, bool apply_content_box, bool apply_page_box);
+  void applySelection(const std::set<PageId>& pages, bool applyContentBox, bool applyPageBox);
 
   void contentDetectToggled(AutoManualMode mode);
 
@@ -134,4 +134,4 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
   std::list<QMetaObject::Connection> m_connectionList;
 };
 }  // namespace select_content
-#endif  // ifndef SELECT_CONTENT_OPTIONSWIDGET_H_
+#endif  // ifndef SCANTAILOR_SELECT_CONTENT_OPTIONSWIDGET_H_

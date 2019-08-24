@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ZOOM_HANDLER_H_
-#define ZOOM_HANDLER_H_
+#ifndef SCANTAILOR_INTERACTION_ZOOMHANDLER_H_
+#define SCANTAILOR_INTERACTION_ZOOMHANDLER_H_
 
 #include <QCoreApplication>
 #include <QPoint>
@@ -17,10 +17,10 @@ class ZoomHandler : public InteractionHandler {
  public:
   enum Focus { CENTER, CURSOR };
 
-  explicit ZoomHandler(ImageViewBase& image_view);
+  explicit ZoomHandler(ImageViewBase& imageView);
 
-  ZoomHandler(ImageViewBase& image_view,
-              const boost::function<bool(const InteractionState&)>& explicit_interaction_permitter);
+  ZoomHandler(ImageViewBase& imageView,
+              const boost::function<bool(const InteractionState&)>& explicitInteractionPermitter);
 
   Focus focus() const { return m_focus; }
 
@@ -39,4 +39,4 @@ class ZoomHandler : public InteractionHandler {
 };
 
 
-#endif  // ifndef ZOOM_HANDLER_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_ZOOMHANDLER_H_

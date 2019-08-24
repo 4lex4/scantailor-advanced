@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef FILENAME_DISAMBIGUATOR_H_
-#define FILENAME_DISAMBIGUATOR_H_
+#ifndef SCANTAILOR_CORE_FILENAMEDISAMBIGUATOR_H_
+#define SCANTAILOR_CORE_FILENAMEDISAMBIGUATOR_H_
 
 #include <boost/function.hpp>
 #include <memory>
@@ -31,7 +31,7 @@ class FileNameDisambiguator : public ref_countable {
   /**
    * \brief Load disambiguation information from XML.
    */
-  explicit FileNameDisambiguator(const QDomElement& disambiguator_el);
+  explicit FileNameDisambiguator(const QDomElement& disambiguatorEl);
 
   /**
    * \brief Load disambiguation information from XML with file path unpacking.
@@ -41,8 +41,8 @@ class FileNameDisambiguator : public ref_countable {
    * returning the full path.  If unpacker returns an empty string,
    * the record will be skipped.
    */
-  FileNameDisambiguator(const QDomElement& disambiguator_el,
-                        const boost::function<QString(const QString&)>& file_path_unpacker);
+  FileNameDisambiguator(const QDomElement& disambiguatorEl,
+                        const boost::function<QString(const QString&)>& filePathUnpacker);
 
   /**
    * \brief Serialize disambiguation information to XML.
@@ -59,11 +59,11 @@ class FileNameDisambiguator : public ref_countable {
    */
   QDomElement toXml(QDomDocument& doc,
                     const QString& name,
-                    const boost::function<QString(const QString&)>& file_path_packer) const;
+                    const boost::function<QString(const QString&)>& filePathPacker) const;
 
-  int getLabel(const QString& file_path) const;
+  int getLabel(const QString& filePath) const;
 
-  int registerFile(const QString& file_path);
+  int registerFile(const QString& filePath);
 
   void performRelinking(const AbstractRelinker& relinker);
 
@@ -74,4 +74,4 @@ class FileNameDisambiguator : public ref_countable {
 };
 
 
-#endif  // ifndef FILENAME_DISAMBIGUATOR_H_
+#endif  // ifndef SCANTAILOR_CORE_FILENAMEDISAMBIGUATOR_H_

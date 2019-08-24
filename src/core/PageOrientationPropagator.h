@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_ORIENTATION_PROPAGATOR_H_
-#define PAGE_ORIENTATION_PROPAGATOR_H_
+#ifndef SCANTAILOR_CORE_PAGEORIENTATIONPROPAGATOR_H_
+#define SCANTAILOR_CORE_PAGEORIENTATIONPROPAGATOR_H_
 
 #include <QSizeF>
 #include "intrusive_ptr.h"
@@ -25,7 +25,7 @@ class Filter;
  */
 class PageOrientationPropagator {
  public:
-  PageOrientationPropagator(intrusive_ptr<page_split::Filter> page_split_filter,
+  PageOrientationPropagator(intrusive_ptr<page_split::Filter> pageSplitFilter,
                             intrusive_ptr<CompositeCacheDrivenTask> task);
 
   ~PageOrientationPropagator();
@@ -40,4 +40,4 @@ class PageOrientationPropagator {
 };
 
 
-#endif  // ifndef PAGE_ORIENTATION_PROPAGATOR_H_
+#endif  // ifndef SCANTAILOR_CORE_PAGEORIENTATIONPROPAGATOR_H_

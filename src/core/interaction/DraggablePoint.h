@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DRAGGABLE_POINT_H_
-#define DRAGGABLE_POINT_H_
+#ifndef SCANTAILOR_INTERACTION_DRAGGABLEPOINT_H_
+#define SCANTAILOR_INTERACTION_DRAGGABLEPOINT_H_
 
 #include <QPointF>
 #include <boost/function.hpp>
@@ -12,7 +12,7 @@ class DraggablePoint : public DraggableObject {
  public:
   typedef boost::function<QPointF()> PositionCallback;
 
-  typedef boost::function<void(const QPointF& mouse_pos, Qt::KeyboardModifiers mask)> MoveRequestCallback;
+  typedef boost::function<void(const QPointF& mousePos, Qt::KeyboardModifiers mask)> MoveRequestCallback;
 
   DraggablePoint();
 
@@ -30,11 +30,11 @@ class DraggablePoint : public DraggableObject {
 
   int proximityPriority() const override;
 
-  Proximity proximity(const QPointF& mouse_pos) override;
+  Proximity proximity(const QPointF& mousePos) override;
 
-  void dragInitiated(const QPointF& mouse_pos) override;
+  void dragInitiated(const QPointF& mousePos) override;
 
-  void dragContinuation(const QPointF& mouse_pos, Qt::KeyboardModifiers mask) override;
+  void dragContinuation(const QPointF& mousePos, Qt::KeyboardModifiers mask) override;
 
   void setPositionCallback(const PositionCallback& callback) { m_positionCallback = callback; }
 
@@ -43,8 +43,8 @@ class DraggablePoint : public DraggableObject {
  protected:
   virtual QPointF pointPosition() const { return m_positionCallback(); }
 
-  virtual void pointMoveRequest(const QPointF& widget_pos, Qt::KeyboardModifiers mask) {
-    m_moveRequestCallback(widget_pos, mask);
+  virtual void pointMoveRequest(const QPointF& widgetPos, Qt::KeyboardModifiers mask) {
+    m_moveRequestCallback(widgetPos, mask);
   }
 
  private:
@@ -56,4 +56,4 @@ class DraggablePoint : public DraggableObject {
 };
 
 
-#endif  // ifndef DRAGGABLE_POINT_H_
+#endif  // ifndef SCANTAILOR_INTERACTION_DRAGGABLEPOINT_H_

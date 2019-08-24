@@ -8,11 +8,11 @@
 namespace output {
 const char ZoneCategoryProperty::m_propertyName[] = "ZoneCategoryProperty";
 
-ZoneCategoryProperty::ZoneCategoryProperty(ZoneCategoryProperty::ZoneCategory zone_category)
-    : m_zoneCategory(zone_category) {}
+ZoneCategoryProperty::ZoneCategoryProperty(ZoneCategoryProperty::ZoneCategory zoneCategory)
+    : m_zoneCategory(zoneCategory) {}
 
 ZoneCategoryProperty::ZoneCategoryProperty(const QDomElement& el)
-    : m_zoneCategory(zoneCategoryFromString(el.attribute("zone_category"))) {}
+    : m_zoneCategory(zoneCategoryFromString(el.attribute("zoneCategory"))) {}
 
 void ZoneCategoryProperty::registerIn(PropertyFactory& factory) {
   factory.registerProperty(m_propertyName, &ZoneCategoryProperty::construct);
@@ -25,7 +25,7 @@ intrusive_ptr<Property> ZoneCategoryProperty::clone() const {
 QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.setAttribute("type", m_propertyName);
-  el.setAttribute("zone_category", zoneCategoryToString(m_zoneCategory));
+  el.setAttribute("zoneCategory", zoneCategoryToString(m_zoneCategory));
 
   return el;
 }
@@ -42,10 +42,10 @@ ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategoryFromString(
   }
 }
 
-QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zone_category) {
+QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zoneCategory) {
   QString str;
 
-  switch (zone_category) {
+  switch (zoneCategory) {
     case MANUAL:
       str = "manual";
       break;
@@ -60,11 +60,11 @@ QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zone_category) {
   return str;
 }
 
-ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zone_category() const {
+ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategory() const {
   return m_zoneCategory;
 }
 
-void ZoneCategoryProperty::setZoneCategory(ZoneCategoryProperty::ZoneCategory zone_category) {
-  m_zoneCategory = zone_category;
+void ZoneCategoryProperty::setZoneCategory(ZoneCategoryProperty::ZoneCategory zoneCategory) {
+  m_zoneCategory = zoneCategory;
 }
 }  // namespace output

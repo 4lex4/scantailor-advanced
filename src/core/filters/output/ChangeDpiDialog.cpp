@@ -9,12 +9,12 @@
 namespace output {
 ChangeDpiDialog::ChangeDpiDialog(QWidget* parent,
                                  const Dpi& dpi,
-                                 const PageId& cur_page,
-                                 const PageSelectionAccessor& page_selection_accessor)
+                                 const PageId& curPage,
+                                 const PageSelectionAccessor& pageSelectionAccessor)
     : QDialog(parent),
-      m_pages(page_selection_accessor.allPages()),
-      m_selectedPages(page_selection_accessor.selectedPages()),
-      m_curPage(cur_page),
+      m_pages(pageSelectionAccessor.allPages()),
+      m_selectedPages(pageSelectionAccessor.selectedPages()),
+      m_curPage(curPage),
       m_scopeGroup(new QButtonGroup(this)) {
   setupUi(this);
   m_scopeGroup->addButton(thisPageRB);
@@ -29,23 +29,23 @@ ChangeDpiDialog::ChangeDpiDialog(QWidget* parent,
 
   static const int common_dpis[] = {300, 400, 600};
 
-  const int requested_dpi = std::max(dpi.horizontal(), dpi.vertical());
-  m_customDpiString = QString::number(requested_dpi);
+  const int requestedDpi = std::max(dpi.horizontal(), dpi.vertical());
+  m_customDpiString = QString::number(requestedDpi);
 
-  int selected_index = -1;
+  int selectedIndex = -1;
   for (const int cdpi : common_dpis) {
-    if (cdpi == requested_dpi) {
-      selected_index = dpiSelector->count();
+    if (cdpi == requestedDpi) {
+      selectedIndex = dpiSelector->count();
     }
-    const QString cdpi_str(QString::number(cdpi));
-    dpiSelector->addItem(cdpi_str, cdpi_str);
+    const QString cdpiStr(QString::number(cdpi));
+    dpiSelector->addItem(cdpiStr, cdpiStr);
   }
 
   m_customItemIdx = dpiSelector->count();
   dpiSelector->addItem(tr("Custom"), m_customDpiString);
 
-  if (selected_index != -1) {
-    dpiSelector->setCurrentIndex(selected_index);
+  if (selectedIndex != -1) {
+    dpiSelector->setCurrentIndex(selectedIndex);
   } else {
     dpiSelector->setCurrentIndex(m_customItemIdx);
     dpiSelector->setEditable(true);
@@ -80,14 +80,14 @@ void ChangeDpiDialog::dpiEditTextChanged(const QString& text) {
 }
 
 void ChangeDpiDialog::onSubmit() {
-  const QString dpi_str(dpiSelector->currentText());
-  if (dpi_str.isEmpty()) {
+  const QString dpiStr(dpiSelector->currentText());
+  if (dpiStr.isEmpty()) {
     QMessageBox::warning(this, tr("Error"), tr("DPI is not set."));
 
     return;
   }
 
-  const int dpi = dpi_str.toInt();
+  const int dpi = dpiStr.toInt();
   if (dpi < 72) {
     QMessageBox::warning(this, tr("Error"), tr("DPI is too low!"));
 

@@ -2,11 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DespeckleVisualization.h"
+#include <BinaryImage.h>
+#include <SEDM.h>
 #include <QPainter>
 #include "Dpi.h"
 #include "ImageViewBase.h"
-#include <BinaryImage.h>
-#include <SEDM.h>
 
 using namespace imageproc;
 
@@ -31,44 +31,44 @@ DespeckleVisualization::DespeckleVisualization(const QImage& output,
 void DespeckleVisualization::colorizeSpeckles(QImage& image, const imageproc::BinaryImage& speckles, const Dpi& dpi) {
   const int w = image.width();
   const int h = image.height();
-  auto* image_line = (uint32_t*) image.bits();
-  const int image_stride = image.bytesPerLine() / 4;
+  auto* imageLine = (uint32_t*) image.bits();
+  const int imageStride = image.bytesPerLine() / 4;
 
   const SEDM sedm(speckles, SEDM::DIST_TO_BLACK, SEDM::DIST_TO_NO_BORDERS);
-  const uint32_t* sedm_line = sedm.data();
-  const int sedm_stride = sedm.stride();
+  const uint32_t* sedmLine = sedm.data();
+  const int sedmStride = sedm.stride();
 
   const float radius = static_cast<float>(15.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600);
-  const float sq_radius = radius * radius;
+  const float sqRadius = radius * radius;
 
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
-      const uint32_t sq_dist = sedm_line[x];
-      if (sq_dist == 0) {
+      const uint32_t sqDist = sedmLine[x];
+      if (sqDist == 0) {
         // Speckle pixel.
-        image_line[x] = 0xffff0000;  // opaque red
+        imageLine[x] = 0xffff0000;  // opaque red
         continue;
-      } else if ((image_line[x] & 0x00ffffff) == 0x0) {
+      } else if ((imageLine[x] & 0x00ffffff) == 0x0) {
         // Non-speckle black pixel.
         continue;
       }
 
-      const float alpha_upper_bound = 0.8f;
-      const float scale = alpha_upper_bound / sq_radius;
-      const float alpha = alpha_upper_bound - scale * sq_dist;
+      const float alphaUpperBound = 0.8f;
+      const float scale = alphaUpperBound / sqRadius;
+      const float alpha = alphaUpperBound - scale * sqDist;
       if (alpha > 0) {
         const float alpha2 = 1.0f - alpha;
-        const float overlay_r = 255;
-        const float overlay_g = 0;
-        const float overlay_b = 0;
-        const float r = overlay_r * alpha + qRed(image_line[x]) * alpha2;
-        const float g = overlay_g * alpha + qGreen(image_line[x]) * alpha2;
-        const float b = overlay_b * alpha + qBlue(image_line[x]) * alpha2;
-        image_line[x] = qRgb(int(r), int(g), int(b));
+        const float overlayR = 255;
+        const float overlayG = 0;
+        const float overlayB = 0;
+        const float r = overlayR * alpha + qRed(imageLine[x]) * alpha2;
+        const float g = overlayG * alpha + qGreen(imageLine[x]) * alpha2;
+        const float b = overlayB * alpha + qBlue(imageLine[x]) * alpha2;
+        imageLine[x] = qRgb(int(r), int(g), int(b));
       }
     }
-    sedm_line += sedm_stride;
-    image_line += image_stride;
+    sedmLine += sedmStride;
+    imageLine += imageStride;
   }
 }
 

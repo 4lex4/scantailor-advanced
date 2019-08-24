@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef TIFFWRITER_H_
-#define TIFFWRITER_H_
+#ifndef SCANTAILOR_CORE_TIFFWRITER_H_
+#define SCANTAILOR_CORE_TIFFWRITER_H_
 
 #include <tiff.h>
 #include <cstddef>
@@ -18,11 +18,11 @@ class TiffWriter {
   /**
    * \brief Writes a QImage in TIFF format to a file.
    *
-   * \param file_path The full path to the file.
+   * \param filePath The full path to the file.
    * \param image The image to write.  Writing a null image will fail.
    * \return True on success, false on failure.
    */
-  static bool writeImage(const QString& file_path, const QImage& image);
+  static bool writeImage(const QString& filePath, const QImage& image);
 
   /**
    * \brief Writes a QImage in TIFF format to an IO device.
@@ -55,4 +55,4 @@ class TiffWriter {
 };
 
 
-#endif  // ifndef TIFFWRITER_H_
+#endif  // ifndef SCANTAILOR_CORE_TIFFWRITER_H_

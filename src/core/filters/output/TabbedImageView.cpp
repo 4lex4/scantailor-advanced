@@ -53,75 +53,71 @@ void TabbedImageView::tabChangedSlot(const int idx) {
   }
 }
 
-void TabbedImageView::setImageRectMap(std::unique_ptr<TabImageRectMap> tab_image_rect_map) {
-  m_tabImageRectMap = std::move(tab_image_rect_map);
+void TabbedImageView::setImageRectMap(std::unique_ptr<TabImageRectMap> tabImageRectMap) {
+  m_tabImageRectMap = std::move(tabImageRectMap);
 }
 
-void TabbedImageView::copyViewZoomAndPos(const int old_idx, const int new_idx) const {
+void TabbedImageView::copyViewZoomAndPos(const int oldIdx, const int newIdx) const {
   if (m_tabImageRectMap == nullptr) {
     return;
   }
 
-  if ((m_registry.find(widget(old_idx)) == m_registry.end())
-      || (m_registry.find(widget(new_idx)) == m_registry.end())) {
+  if ((m_registry.find(widget(oldIdx)) == m_registry.end()) || (m_registry.find(widget(newIdx)) == m_registry.end())) {
     return;
   }
-  const ImageViewTab old_view_tab = m_registry.at(widget(old_idx));
-  const ImageViewTab new_view_tab = m_registry.at(widget(new_idx));
+  const ImageViewTab oldViewTab = m_registry.at(widget(oldIdx));
+  const ImageViewTab newViewTab = m_registry.at(widget(newIdx));
 
-  if ((m_tabImageRectMap->find(old_view_tab) == m_tabImageRectMap->end())
-      || (m_tabImageRectMap->find(new_view_tab) == m_tabImageRectMap->end())) {
+  if ((m_tabImageRectMap->find(oldViewTab) == m_tabImageRectMap->end())
+      || (m_tabImageRectMap->find(newViewTab) == m_tabImageRectMap->end())) {
     return;
   }
-  const QRectF& old_view_rect = m_tabImageRectMap->at(old_view_tab);
-  const QRectF& new_view_rect = m_tabImageRectMap->at(new_view_tab);
+  const QRectF& oldViewRect = m_tabImageRectMap->at(oldViewTab);
+  const QRectF& newViewRect = m_tabImageRectMap->at(newViewTab);
 
-  auto* old_image_view = Utils::castOrFindChild<ImageViewBase*>(widget(old_idx));
-  auto* new_image_view = Utils::castOrFindChild<ImageViewBase*>(widget(new_idx));
-  if ((old_image_view == nullptr) || (new_image_view == nullptr)) {
+  auto* oldImageView = Utils::castOrFindChild<ImageViewBase*>(widget(oldIdx));
+  auto* newImageView = Utils::castOrFindChild<ImageViewBase*>(widget(newIdx));
+  if ((oldImageView == nullptr) || (newImageView == nullptr)) {
     return;
   }
-  if (old_image_view == new_image_view) {
+  if (oldImageView == newImageView) {
     return;
   }
 
-  if (old_image_view->zoomLevel() != 1.0) {
+  if (oldImageView->zoomLevel() != 1.0) {
     const QPointF view_focus
-        = getFocus(old_view_rect, *old_image_view->horizontalScrollBar(), *old_image_view->verticalScrollBar());
-    const double zoom_factor = std::max(new_view_rect.width(), new_view_rect.height())
-                               / std::max(old_view_rect.width(), old_view_rect.height());
-    new_image_view->setZoomLevel(qMax(1., old_image_view->zoomLevel() * zoom_factor));
-    setFocus(*new_image_view->horizontalScrollBar(), *new_image_view->verticalScrollBar(), new_view_rect, view_focus);
+        = getFocus(oldViewRect, *oldImageView->horizontalScrollBar(), *oldImageView->verticalScrollBar());
+    const double zoomFactor
+        = std::max(newViewRect.width(), newViewRect.height()) / std::max(oldViewRect.width(), oldViewRect.height());
+    newImageView->setZoomLevel(qMax(1., oldImageView->zoomLevel() * zoomFactor));
+    setFocus(*newImageView->horizontalScrollBar(), *newImageView->verticalScrollBar(), newViewRect, view_focus);
   }
 }
 
-QPointF TabbedImageView::getFocus(const QRectF& rect, const QScrollBar& hor_bar, const QScrollBar& ver_bar) const {
-  const int hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
-  const int ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
+QPointF TabbedImageView::getFocus(const QRectF& rect, const QScrollBar& horBar, const QScrollBar& verBar) const {
+  const int horBarLength = horBar.maximum() - horBar.minimum() + horBar.pageStep();
+  const int verBarLength = verBar.maximum() - verBar.minimum() + verBar.pageStep();
 
-  qreal x = ((hor_bar.value() + (hor_bar.pageStep() / 2.0)) / hor_bar_length) * rect.width() + rect.left();
-  qreal y = ((ver_bar.value() + (ver_bar.pageStep() / 2.0)) / ver_bar_length) * rect.height() + rect.top();
+  qreal x = ((horBar.value() + (horBar.pageStep() / 2.0)) / horBarLength) * rect.width() + rect.left();
+  qreal y = ((verBar.value() + (verBar.pageStep() / 2.0)) / verBarLength) * rect.height() + rect.top();
 
   return QPointF(x, y);
 }
 
-void TabbedImageView::setFocus(QScrollBar& hor_bar,
-                               QScrollBar& ver_bar,
-                               const QRectF& rect,
-                               const QPointF& focal) const {
-  const int hor_bar_length = hor_bar.maximum() - hor_bar.minimum() + hor_bar.pageStep();
-  const int ver_bar_length = ver_bar.maximum() - ver_bar.minimum() + ver_bar.pageStep();
+void TabbedImageView::setFocus(QScrollBar& horBar, QScrollBar& verBar, const QRectF& rect, const QPointF& focal) const {
+  const int horBarLength = horBar.maximum() - horBar.minimum() + horBar.pageStep();
+  const int verBarLength = verBar.maximum() - verBar.minimum() + verBar.pageStep();
 
   auto hor_value
-      = (int) std::round(((focal.x() - rect.left()) / rect.width()) * hor_bar_length - (hor_bar.pageStep() / 2.0));
+      = (int) std::round(((focal.x() - rect.left()) / rect.width()) * horBarLength - (horBar.pageStep() / 2.0));
   auto ver_value
-      = (int) std::round(((focal.y() - rect.top()) / rect.height()) * ver_bar_length - (ver_bar.pageStep() / 2.0));
+      = (int) std::round(((focal.y() - rect.top()) / rect.height()) * verBarLength - (verBar.pageStep() / 2.0));
 
-  hor_value = qBound(hor_bar.minimum(), hor_value, hor_bar.maximum());
-  ver_value = qBound(ver_bar.minimum(), ver_value, ver_bar.maximum());
+  hor_value = qBound(horBar.minimum(), hor_value, horBar.maximum());
+  ver_value = qBound(verBar.minimum(), ver_value, verBar.maximum());
 
-  hor_bar.setValue(hor_value);
-  ver_bar.setValue(ver_value);
+  horBar.setValue(hor_value);
+  verBar.setValue(ver_value);
 }
 
 void TabbedImageView::keyReleaseEvent(QKeyEvent* event) {

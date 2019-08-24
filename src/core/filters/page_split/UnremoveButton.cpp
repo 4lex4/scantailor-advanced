@@ -7,8 +7,8 @@
 #include <QPainter>
 
 namespace page_split {
-UnremoveButton::UnremoveButton(const PositionGetter& position_getter)
-    : m_positionGetter(position_getter),
+UnremoveButton::UnremoveButton(const PositionGetter& positionGetter)
+    : m_positionGetter(positionGetter),
       m_clickCallback(&UnremoveButton::noOp),
       m_defaultPixmap(IconProvider::getInstance().getIcon("trashed").pixmap(128, 128)),
       m_hoveredPixmap(IconProvider::getInstance().getIcon("untrash").pixmap(128, 128)),
@@ -27,11 +27,11 @@ void UnremoveButton::onPaint(QPainter& painter, const InteractionState& interact
   painter.drawPixmap(rect.topLeft(), pixmap);
 }
 
-void UnremoveButton::onProximityUpdate(const QPointF& screen_mouse_pos, InteractionState& interaction) {
+void UnremoveButton::onProximityUpdate(const QPointF& screenMousePos, InteractionState& interaction) {
   QRectF rect(m_defaultPixmap.rect());
   rect.moveCenter(m_positionGetter());
 
-  const bool hovered = rect.contains(screen_mouse_pos);
+  const bool hovered = rect.contains(screenMousePos);
   if (hovered != m_wasHovered) {
     m_wasHovered = hovered;
     interaction.setRedrawRequested(true);

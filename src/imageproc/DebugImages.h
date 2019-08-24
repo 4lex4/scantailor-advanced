@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DEBUG_IMAGES_H_
-#define DEBUG_IMAGES_H_
+#ifndef SCANTAILOR_IMAGEPROC_DEBUGIMAGES_H_
+#define SCANTAILOR_IMAGEPROC_DEBUGIMAGES_H_
 
 #include <QString>
 #include <boost/function.hpp>
@@ -25,13 +25,15 @@ class DebugImages {
 
   virtual void add(const QImage& image,
                    const QString& label,
-                   const boost::function<QWidget*(const QImage&)>& image_view_factory
-                   = boost::function<QWidget*(const QImage&)>()) = 0;
+                   const boost::function<QWidget*(const QImage&)>& imageViewFactory
+                   = boost::function<QWidget*(const QImage&)>())
+      = 0;
 
   virtual void add(const imageproc::BinaryImage& image,
                    const QString& label,
-                   const boost::function<QWidget*(const QImage&)>& image_view_factory
-                   = boost::function<QWidget*(const QImage&)>()) = 0;
+                   const boost::function<QWidget*(const QImage&)>& imageViewFactory
+                   = boost::function<QWidget*(const QImage&)>())
+      = 0;
 
   virtual bool empty() const = 0;
 
@@ -43,8 +45,9 @@ class DebugImages {
    * Returns a null AutoRemovingFile if image sequence is empty.
    */
   virtual AutoRemovingFile retrieveNext(QString* label = nullptr,
-                                        boost::function<QWidget*(const QImage&)>* image_view_factory = nullptr) = 0;
+                                        boost::function<QWidget*(const QImage&)>* imageViewFactory = nullptr)
+      = 0;
 };
 
 
-#endif  // ifndef DEBUG_IMAGES_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_DEBUGIMAGES_H_

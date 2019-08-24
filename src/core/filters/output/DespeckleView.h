@@ -2,15 +2,15 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 
-#ifndef OUTPUT_DESPECKLE_VIEW_H_
-#define OUTPUT_DESPECKLE_VIEW_H_
+#ifndef SCANTAILOR_OUTPUT_DESPECKLEVIEW_H_
+#define SCANTAILOR_OUTPUT_DESPECKLEVIEW_H_
 
+#include <BinaryImage.h>
 #include <QImage>
 #include <QStackedWidget>
 #include "DespeckleLevel.h"
 #include "DespeckleState.h"
 #include "Dpi.h"
-#include <BinaryImage.h>
 #include "intrusive_ptr.h"
 
 class DebugImages;
@@ -24,13 +24,13 @@ class DespeckleView : public QStackedWidget {
   Q_OBJECT
  public:
   /**
-   * \param despeckle_state Describes a particular despeckling.
+   * \param despeckleState Describes a particular despeckling.
    * \param visualization Optional despeckle visualization.
-   *        If null, it will be reconstructed from \p despeckle_state
+   *        If null, it will be reconstructed from \p despeckleState
    *        when this widget becomes visible.
    * \param debug Indicates whether debugging is turned on.
    */
-  DespeckleView(const DespeckleState& despeckle_state, const DespeckleVisualization& visualization, bool debug);
+  DespeckleView(const DespeckleState& despeckleState, const DespeckleVisualization& visualization, bool debug);
 
   ~DespeckleView() override;
 
@@ -55,9 +55,9 @@ class DespeckleView : public QStackedWidget {
 
   enum AnimationAction { RESET_ANIMATION, RESUME_ANIMATION };
 
-  void initiateDespeckling(AnimationAction anim_action);
+  void initiateDespeckling(AnimationAction animAction);
 
-  void despeckleDone(const DespeckleState& despeckle_state,
+  void despeckleDone(const DespeckleState& despeckleState,
                      const DespeckleVisualization& visualization,
                      DebugImages* dbg);
 
@@ -72,4 +72,4 @@ class DespeckleView : public QStackedWidget {
   bool m_debug;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_DESPECKLE_VIEW_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_DESPECKLEVIEW_H_

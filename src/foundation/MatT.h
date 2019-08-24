@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef MAT_T_H_
-#define MAT_T_H_
+#ifndef SCANTAILOR_FOUNDATION_MATT_H_
+#define SCANTAILOR_FOUNDATION_MATT_H_
 
 #include <boost/scoped_array.hpp>
 #include <cassert>
@@ -31,7 +31,7 @@ class MatT {
   /**
    * \brief Constructs a (rows)x(cols) matrix, initializing all elements to the provided value.
    */
-  MatT(size_t rows, size_t cols, T initial_value);
+  MatT(size_t rows, size_t cols, T initialValue);
 
   /**
    * \brief Construction from an array of elements of possibly different type.
@@ -115,10 +115,10 @@ MatT<T>::MatT(size_t rows, size_t cols)
 }
 
 template <typename T>
-MatT<T>::MatT(size_t rows, size_t cols, T initial_value) : m_rows(rows), m_cols(cols), m_data(new T[rows * cols]) {
+MatT<T>::MatT(size_t rows, size_t cols, T initialValue) : m_rows(rows), m_cols(cols), m_data(new T[rows * cols]) {
   const size_t len = rows * cols;
   for (size_t i = 0; i < len; ++i) {
-    m_data[i] = initial_value;
+    m_data[i] = initialValue;
   }
 }
 
@@ -134,9 +134,9 @@ MatT<T>::MatT(size_t rows, size_t cols, const OT* data) : m_rows(rows), m_cols(c
 template <typename T>
 MatT<T>::MatT(const MatT& other) : m_rows(other.rows()), m_cols(other.cols()), m_data(new T[m_rows * m_cols]) {
   const size_t len = m_rows * m_cols;
-  const T* other_data = other.data();
+  const T* otherData = other.data();
   for (size_t i = 0; i < len; ++i) {
-    m_data[i] = other_data[i];
+    m_data[i] = otherData[i];
   }
 }
 
@@ -144,9 +144,9 @@ template <typename T>
 template <typename OT>
 MatT<T>::MatT(const MatT<OT>& other) : m_rows(other.rows()), m_cols(other.cols()), m_data(new T[m_rows * m_cols]) {
   const size_t len = m_rows * m_cols;
-  const T* other_data = other.data();
+  const T* otherData = other.data();
   for (size_t i = 0; i < len; ++i) {
-    m_data[i] = other_data[i];
+    m_data[i] = otherData[i];
   }
 }
 
@@ -241,4 +241,4 @@ MatT<T> operator*(double scalar, const MatT<T>& mat) {
   return res;
 }
 
-#endif  // ifndef MAT_T_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_MATT_H_

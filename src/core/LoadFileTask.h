@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef LOADFILETASK_H_
-#define LOADFILETASK_H_
+#ifndef SCANTAILOR_CORE_LOADFILETASK_H_
+#define SCANTAILOR_CORE_LOADFILETASK_H_
 
 #include "BackgroundTask.h"
 #include "FilterResult.h"
@@ -26,9 +26,9 @@ class LoadFileTask : public BackgroundTask {
  public:
   LoadFileTask(Type type,
                const PageInfo& page,
-               intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+               intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
                intrusive_ptr<ProjectPages> pages,
-               intrusive_ptr<fix_orientation::Task> next_task);
+               intrusive_ptr<fix_orientation::Task> nextTask);
 
   ~LoadFileTask() override;
 
@@ -51,4 +51,4 @@ class LoadFileTask : public BackgroundTask {
 };
 
 
-#endif  // ifndef LOADFILETASK_H_
+#endif  // ifndef SCANTAILOR_CORE_LOADFILETASK_H_

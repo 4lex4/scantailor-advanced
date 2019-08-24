@@ -19,14 +19,13 @@
 #include "ThumbnailPixmapCache.h"
 
 namespace output {
-Filter::Filter(const PageSelectionAccessor& page_selection_accessor)
-    : m_settings(new Settings), m_selectedPageOrder(0) {
-  m_optionsWidget.reset(new OptionsWidget(m_settings, page_selection_accessor));
+Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor) : m_settings(new Settings), m_selectedPageOrder(0) {
+  m_optionsWidget.reset(new OptionsWidget(m_settings, pageSelectionAccessor));
 
-  const PageOrderOption::ProviderPtr default_order;
-  const auto order_by_completeness = make_intrusive<OrderByCompletenessProvider>();
-  m_pageOrderOptions.emplace_back(tr("Natural order"), default_order);
-  m_pageOrderOptions.emplace_back(tr("Order by completeness"), order_by_completeness);
+  const PageOrderOption::ProviderPtr defaultOrder;
+  const auto orderByCompleteness = make_intrusive<OrderByCompletenessProvider>();
+  m_pageOrderOptions.emplace_back(tr("Natural order"), defaultOrder);
+  m_pageOrderOptions.emplace_back(tr("Order by completeness"), orderByCompleteness);
 }
 
 Filter::~Filter() = default;
@@ -43,51 +42,51 @@ void Filter::performRelinking(const AbstractRelinker& relinker) {
   m_settings->performRelinking(relinker);
 }
 
-void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) {
-  m_optionsWidget->preUpdateUI(page_info.id());
+void Filter::preUpdateUI(FilterUiInterface* ui, const PageInfo& pageInfo) {
+  m_optionsWidget->preUpdateUI(pageInfo.id());
   ui->setOptionsWidget(m_optionsWidget.get(), ui->KEEP_OWNERSHIP);
 }
 
 QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc) const {
-  QDomElement filter_el(doc.createElement("output"));
+  QDomElement filterEl(doc.createElement("output"));
 
   writer.enumPages(
-      [&](const PageId& page_id, int numeric_id) { this->writePageSettings(doc, filter_el, page_id, numeric_id); });
+      [&](const PageId& pageId, int numericId) { this->writePageSettings(doc, filterEl, pageId, numericId); });
 
-  return filter_el;
+  return filterEl;
 }
 
-void Filter::writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const {
-  const Params params(m_settings->getParams(page_id));
+void Filter::writePageSettings(QDomDocument& doc, QDomElement& filterEl, const PageId& pageId, int numericId) const {
+  const Params params(m_settings->getParams(pageId));
 
-  QDomElement page_el(doc.createElement("page"));
-  page_el.setAttribute("id", numeric_id);
+  QDomElement pageEl(doc.createElement("page"));
+  pageEl.setAttribute("id", numericId);
 
-  page_el.appendChild(m_settings->pictureZonesForPage(page_id).toXml(doc, "zones"));
-  page_el.appendChild(m_settings->fillZonesForPage(page_id).toXml(doc, "fill-zones"));
-  page_el.appendChild(params.toXml(doc, "params"));
-  page_el.appendChild(m_settings->getOutputProcessingParams(page_id).toXml(doc, "processing-params"));
+  pageEl.appendChild(m_settings->pictureZonesForPage(pageId).toXml(doc, "zones"));
+  pageEl.appendChild(m_settings->fillZonesForPage(pageId).toXml(doc, "fill-zones"));
+  pageEl.appendChild(params.toXml(doc, "params"));
+  pageEl.appendChild(m_settings->getOutputProcessingParams(pageId).toXml(doc, "processing-params"));
 
-  std::unique_ptr<OutputParams> output_params(m_settings->getOutputParams(page_id));
-  if (output_params) {
-    page_el.appendChild(output_params->toXml(doc, "output-params"));
+  std::unique_ptr<OutputParams> outputParams(m_settings->getOutputParams(pageId));
+  if (outputParams) {
+    pageEl.appendChild(outputParams->toXml(doc, "output-params"));
   }
 
-  filter_el.appendChild(page_el);
+  filterEl.appendChild(pageEl);
 }
 
-void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filters_el) {
+void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filtersEl) {
   m_settings->clear();
 
-  const QDomElement filter_el(filters_el.namedItem("output").toElement());
+  const QDomElement filterEl(filtersEl.namedItem("output").toElement());
 
-  const QString page_tag_name("page");
-  QDomNode node(filter_el.firstChild());
+  const QString pageTagName("page");
+  QDomNode node(filterEl.firstChild());
   for (; !node.isNull(); node = node.nextSibling()) {
     if (!node.isElement()) {
       continue;
     }
-    if (node.nodeName() != page_tag_name) {
+    if (node.nodeName() != pageTagName) {
       continue;
     }
     const QDomElement el(node.toElement());
@@ -98,44 +97,44 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
       continue;
     }
 
-    const PageId page_id(reader.pageId(id));
-    if (page_id.isNull()) {
+    const PageId pageId(reader.pageId(id));
+    if (pageId.isNull()) {
       continue;
     }
 
-    const ZoneSet picture_zones(el.namedItem("zones").toElement(), m_pictureZonePropFactory);
-    if (!picture_zones.empty()) {
-      m_settings->setPictureZones(page_id, picture_zones);
+    const ZoneSet pictureZones(el.namedItem("zones").toElement(), m_pictureZonePropFactory);
+    if (!pictureZones.empty()) {
+      m_settings->setPictureZones(pageId, pictureZones);
     }
 
-    const ZoneSet fill_zones(el.namedItem("fill-zones").toElement(), m_fillZonePropFactory);
-    if (!fill_zones.empty()) {
-      m_settings->setFillZones(page_id, fill_zones);
+    const ZoneSet fillZones(el.namedItem("fill-zones").toElement(), m_fillZonePropFactory);
+    if (!fillZones.empty()) {
+      m_settings->setFillZones(pageId, fillZones);
     }
 
-    const QDomElement params_el(el.namedItem("params").toElement());
-    if (!params_el.isNull()) {
-      const Params params(params_el);
-      m_settings->setParams(page_id, params);
+    const QDomElement paramsEl(el.namedItem("params").toElement());
+    if (!paramsEl.isNull()) {
+      const Params params(paramsEl);
+      m_settings->setParams(pageId, params);
     }
 
-    const QDomElement output_processing_params_el(el.namedItem("processing-params").toElement());
-    if (!output_processing_params_el.isNull()) {
-      const OutputProcessingParams output_processing_params(output_processing_params_el);
-      m_settings->setOutputProcessingParams(page_id, output_processing_params);
+    const QDomElement outputProcessingParamsEl(el.namedItem("processing-params").toElement());
+    if (!outputProcessingParamsEl.isNull()) {
+      const OutputProcessingParams outputProcessingParams(outputProcessingParamsEl);
+      m_settings->setOutputProcessingParams(pageId, outputProcessingParams);
     }
 
-    const QDomElement output_params_el(el.namedItem("output-params").toElement());
-    if (!output_params_el.isNull()) {
-      const OutputParams output_params(output_params_el);
-      m_settings->setOutputParams(page_id, output_params);
+    const QDomElement outputParamsEl(el.namedItem("output-params").toElement());
+    if (!outputParamsEl.isNull()) {
+      const OutputParams outputParams(outputParamsEl);
+      m_settings->setOutputParams(pageId, outputParams);
     }
   }
 }  // Filter::loadSettings
 
-intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
-                                       intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                                       const OutputFileNameGenerator& out_file_name_gen,
+intrusive_ptr<Task> Filter::createTask(const PageId& pageId,
+                                       intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                                       const OutputFileNameGenerator& outFileNameGen,
                                        const bool batch,
                                        const bool debug) {
   ImageViewTab lastTab(TAB_OUTPUT);
@@ -143,26 +142,25 @@ intrusive_ptr<Task> Filter::createTask(const PageId& page_id,
     lastTab = m_optionsWidget->lastTab();
   }
 
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_settings, std::move(thumbnail_cache), page_id,
-                              out_file_name_gen, lastTab, batch, debug);
+  return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_settings, std::move(thumbnailCache), pageId,
+                              outFileNameGen, lastTab, batch, debug);
 }
 
-intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(const OutputFileNameGenerator& out_file_name_gen) {
-  return make_intrusive<CacheDrivenTask>(m_settings, out_file_name_gen);
+intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(const OutputFileNameGenerator& outFileNameGen) {
+  return make_intrusive<CacheDrivenTask>(m_settings, outFileNameGen);
 }
 
-void Filter::loadDefaultSettings(const PageInfo& page_info) {
-  if (!m_settings->isParamsNull(page_info.id())) {
+void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
+  if (!m_settings->isParamsNull(pageInfo.id())) {
     return;
   }
   const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
   const DefaultParams::OutputParams& outputParams = defaultParams.getOutputParams();
 
-  m_settings->setParams(
-      page_info.id(),
-      Params(outputParams.getDpi(), outputParams.getColorParams(), outputParams.getSplittingOptions(),
-             outputParams.getPictureShapeOptions(), dewarping::DistortionModel(), outputParams.getDepthPerception(),
-             outputParams.getDewarpingOptions(), outputParams.getDespeckleLevel()));
+  m_settings->setParams(pageInfo.id(), Params(outputParams.getDpi(), outputParams.getColorParams(),
+                                              outputParams.getSplittingOptions(), outputParams.getPictureShapeOptions(),
+                                              dewarping::DistortionModel(), outputParams.getDepthPerception(),
+                                              outputParams.getDewarpingOptions(), outputParams.getDespeckleLevel()));
 }
 
 OptionsWidget* Filter::optionsWidget() {

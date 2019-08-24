@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_THUMBNAIL_H_
-#define PAGE_SPLIT_THUMBNAIL_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_THUMBNAIL_H_
+#define SCANTAILOR_PAGE_SPLIT_THUMBNAIL_H_
 
 #include <QPixmap>
 #include "PageLayout.h"
@@ -19,23 +19,23 @@ class ImageTransformation;
 namespace page_split {
 class Thumbnail : public ThumbnailBase {
  public:
-  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-            const QSizeF& max_size,
-            const ImageId& image_id,
+  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+            const QSizeF& maxSize,
+            const ImageId& imageId,
             const ImageTransformation& xform,
             const PageLayout& layout,
-            bool left_half_removed,
-            bool right_half_removed);
+            bool leftHalfRemoved,
+            bool rightHalfRemoved);
 
   void prePaintOverImage(QPainter& painter,
-                         const QTransform& image_to_display,
-                         const QTransform& thumb_to_display) override;
+                         const QTransform& imageToDisplay,
+                         const QTransform& thumbToDisplay) override;
 
  private:
-  QPointF subPageCenter(const QPolygonF& left_page,
-                        const QPolygonF& right_page,
-                        const QTransform& image_to_display,
-                        int subpage_idx);
+  QPointF subPageCenter(const QPolygonF& leftPage,
+                        const QPolygonF& rightPage,
+                        const QTransform& imageToDisplay,
+                        int subpageIdx);
 
   PageLayout m_layout;
   QPixmap m_trashPixmap;
@@ -43,4 +43,4 @@ class Thumbnail : public ThumbnailBase {
   bool m_rightHalfRemoved;
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_THUMBNAIL_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_THUMBNAIL_H_

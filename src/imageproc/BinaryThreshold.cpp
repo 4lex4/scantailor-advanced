@@ -13,7 +13,7 @@ BinaryThreshold BinaryThreshold::otsuThreshold(const QImage& image) {
   return otsuThreshold(GrayscaleHistogram(image));
 }
 
-BinaryThreshold BinaryThreshold::otsuThreshold(const GrayscaleHistogram& pixels_by_color) {
+BinaryThreshold BinaryThreshold::otsuThreshold(const GrayscaleHistogram& pixelsByColor) {
   int32_t pixels_by_threshold[256];
   int64_t moment_by_threshold[256];
 
@@ -24,77 +24,77 @@ BinaryThreshold BinaryThreshold::otsuThreshold(const GrayscaleHistogram& pixels_
   // That is, pixels_by_threshold[10] holds the number of pixels
   // in the image that have a gray_level <= 10
 
-  pixels_by_threshold[0] = pixels_by_color[0];
+  pixels_by_threshold[0] = pixelsByColor[0];
   moment_by_threshold[0] = 0;
   for (int i = 1; i < 256; ++i) {
-    pixels_by_threshold[i] = pixels_by_threshold[i - 1] + pixels_by_color[i];
-    moment_by_threshold[i] = moment_by_threshold[i - 1] + int64_t(pixels_by_color[i]) * i;
+    pixels_by_threshold[i] = pixels_by_threshold[i - 1] + pixelsByColor[i];
+    moment_by_threshold[i] = moment_by_threshold[i - 1] + int64_t(pixelsByColor[i]) * i;
   }
 
-  const int total_pixels = pixels_by_threshold[255];
-  const int64_t total_moment = moment_by_threshold[255];
-  double max_variance = 0.0;
-  int first_best_threshold = -1;
-  int last_best_threshold = -1;
+  const int totalPixels = pixels_by_threshold[255];
+  const int64_t totalMoment = moment_by_threshold[255];
+  double maxVariance = 0.0;
+  int firstBestThreshold = -1;
+  int lastBestThreshold = -1;
   for (int i = 0; i < 256; ++i) {
-    const int pixels_below = pixels_by_threshold[i];
-    const int pixels_above = total_pixels - pixels_below;
-    if ((pixels_below > 0) && (pixels_above > 0)) {  // prevent division by zero
-      const int64_t moment_below = moment_by_threshold[i];
-      const int64_t moment_above = total_moment - moment_below;
-      const double mean_below = (double) moment_below / pixels_below;
-      const double mean_above = (double) moment_above / pixels_above;
-      const double mean_diff = mean_below - mean_above;
-      const double variance = mean_diff * mean_diff * pixels_below * pixels_above;
-      if (variance > max_variance) {
-        max_variance = variance;
-        first_best_threshold = i;
-        last_best_threshold = i;
-      } else if (variance == max_variance) {
-        last_best_threshold = i;
+    const int pixelsBelow = pixels_by_threshold[i];
+    const int pixelsAbove = totalPixels - pixelsBelow;
+    if ((pixelsBelow > 0) && (pixelsAbove > 0)) {  // prevent division by zero
+      const int64_t momentBelow = moment_by_threshold[i];
+      const int64_t momentAbove = totalMoment - momentBelow;
+      const double meanBelow = (double) momentBelow / pixelsBelow;
+      const double meanAbove = (double) momentAbove / pixelsAbove;
+      const double meanDiff = meanBelow - meanAbove;
+      const double variance = meanDiff * meanDiff * pixelsBelow * pixelsAbove;
+      if (variance > maxVariance) {
+        maxVariance = variance;
+        firstBestThreshold = i;
+        lastBestThreshold = i;
+      } else if (variance == maxVariance) {
+        lastBestThreshold = i;
       }
     }
   }
 
   // Compensate the "< threshold" vs "<= threshold" difference.
-  ++first_best_threshold;
-  ++last_best_threshold;
+  ++firstBestThreshold;
+  ++lastBestThreshold;
 
   // The middle between the two.
-  return BinaryThreshold((first_best_threshold + last_best_threshold) >> 1);
+  return BinaryThreshold((firstBestThreshold + lastBestThreshold) >> 1);
 }  // BinaryThreshold::otsuThreshold
 
 BinaryThreshold BinaryThreshold::peakThreshold(const QImage& image) {
   return peakThreshold(GrayscaleHistogram(image));
 }
 
-BinaryThreshold BinaryThreshold::peakThreshold(const GrayscaleHistogram& pixels_by_color) {
+BinaryThreshold BinaryThreshold::peakThreshold(const GrayscaleHistogram& pixelsByColor) {
   int ri = 255, li = 0;
-  int right_peak = pixels_by_color[ri];
-  int left_peak = pixels_by_color[li];
+  int rightPeak = pixelsByColor[ri];
+  int leftPeak = pixelsByColor[li];
 
   for (int i = 254; i >= 0; --i) {
-    if (pixels_by_color[i] <= right_peak) {
-      if (double(pixels_by_color[i]) < (double(right_peak) * 0.66)) {
+    if (pixelsByColor[i] <= rightPeak) {
+      if (double(pixelsByColor[i]) < (double(rightPeak) * 0.66)) {
         break;
       }
       continue;
     }
-    if (pixels_by_color[i] > right_peak) {
-      right_peak = pixels_by_color[i];
+    if (pixelsByColor[i] > rightPeak) {
+      rightPeak = pixelsByColor[i];
       ri = i;
     }
   }
 
   for (int i = 1; i <= 255; ++i) {
-    if (pixels_by_color[i] <= left_peak) {
-      if (double(pixels_by_color[i]) < (double(left_peak) * 0.66)) {
+    if (pixelsByColor[i] <= leftPeak) {
+      if (double(pixelsByColor[i]) < (double(leftPeak) * 0.66)) {
         break;
       }
       continue;
     }
-    if (pixels_by_color[i] > left_peak) {
-      left_peak = pixels_by_color[i];
+    if (pixelsByColor[i] > leftPeak) {
+      leftPeak = pixelsByColor[i];
       li = i;
     }
   }
@@ -102,9 +102,9 @@ BinaryThreshold BinaryThreshold::peakThreshold(const GrayscaleHistogram& pixels_
   auto threshold = static_cast<int>(li + (ri - li) * 0.75);
 
 #ifdef DEBUG
-  int otsuThreshold = BinaryThreshold::otsuThreshold(pixels_by_color);
-  std::cout << "li: " << li << " leftPeak: " << left_peak << std::endl;
-  std::cout << "ri: " << ri << " rightPeak: " << right_peak << std::endl;
+  int otsuThreshold = BinaryThreshold::otsuThreshold(pixelsByColor);
+  std::cout << "li: " << li << " leftPeak: " << leftPeak << std::endl;
+  std::cout << "ri: " << ri << " rightPeak: " << rightPeak << std::endl;
   std::cout << "threshold: " << threshold << std::endl;
   std::cout << "otsuThreshold: " << otsuThreshold << std::endl;
 #endif
@@ -113,48 +113,48 @@ BinaryThreshold BinaryThreshold::peakThreshold(const GrayscaleHistogram& pixels_
 }  // BinaryThreshold::peakThreshold
 
 BinaryThreshold BinaryThreshold::mokjiThreshold(const QImage& image,
-                                                const unsigned max_edge_width,
-                                                const unsigned min_edge_magnitude) {
-  if (max_edge_width < 1) {
-    throw std::invalid_argument("mokjiThreshold: invalud max_edge_width");
+                                                const unsigned maxEdgeWidth,
+                                                const unsigned minEdgeMagnitude) {
+  if (maxEdgeWidth < 1) {
+    throw std::invalid_argument("mokjiThreshold: invalud maxEdgeWidth");
   }
-  if (min_edge_magnitude < 1) {
-    throw std::invalid_argument("mokjiThreshold: invalid min_edge_magnitude");
+  if (minEdgeMagnitude < 1) {
+    throw std::invalid_argument("mokjiThreshold: invalid minEdgeMagnitude");
   }
 
   const GrayImage gray(image);
 
-  const int dilate_size = (max_edge_width + 1) * 2 - 1;
-  GrayImage dilated(dilateGray(gray, QSize(dilate_size, dilate_size)));
+  const int dilateSize = (maxEdgeWidth + 1) * 2 - 1;
+  GrayImage dilated(dilateGray(gray, QSize(dilateSize, dilateSize)));
 
   unsigned matrix[256][256];
   memset(matrix, 0, sizeof(matrix));
 
   const int w = image.width();
   const int h = image.height();
-  const unsigned char* src_line = gray.data();
-  const int src_stride = gray.stride();
-  const unsigned char* dilated_line = dilated.data();
-  const int dilated_stride = dilated.stride();
+  const unsigned char* srcLine = gray.data();
+  const int srcStride = gray.stride();
+  const unsigned char* dilatedLine = dilated.data();
+  const int dilatedStride = dilated.stride();
 
-  src_line += max_edge_width * src_stride;
-  dilated_line += max_edge_width * dilated_stride;
-  for (int y = max_edge_width; y < h - (int) max_edge_width; ++y) {
-    for (int x = max_edge_width; x < w - (int) max_edge_width; ++x) {
-      const unsigned pixel = src_line[x];
-      const unsigned darkest_neighbor = dilated_line[x];
-      assert(darkest_neighbor <= pixel);
+  srcLine += maxEdgeWidth * srcStride;
+  dilatedLine += maxEdgeWidth * dilatedStride;
+  for (int y = maxEdgeWidth; y < h - (int) maxEdgeWidth; ++y) {
+    for (int x = maxEdgeWidth; x < w - (int) maxEdgeWidth; ++x) {
+      const unsigned pixel = srcLine[x];
+      const unsigned darkestNeighbor = dilatedLine[x];
+      assert(darkestNeighbor <= pixel);
 
-      ++matrix[darkest_neighbor][pixel];
+      ++matrix[darkestNeighbor][pixel];
     }
-    src_line += src_stride;
-    dilated_line += dilated_stride;
+    srcLine += srcStride;
+    dilatedLine += dilatedStride;
   }
 
   unsigned nominator = 0;
   unsigned denominator = 0;
-  for (unsigned m = 0; m < 256 - min_edge_magnitude; ++m) {
-    for (unsigned n = m + min_edge_magnitude; n < 256; ++n) {
+  for (unsigned m = 0; m < 256 - minEdgeMagnitude; ++m) {
+    for (unsigned n = m + minEdgeMagnitude; n < 256; ++n) {
       assert(n >= m);
 
       const unsigned val = matrix[m][n];

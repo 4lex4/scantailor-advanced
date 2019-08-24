@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_LIGHTCOLORSCHEME_H
-#define SCANTAILOR_LIGHTCOLORSCHEME_H
+#ifndef SCANTAILOR_CORE_LIGHTCOLORSCHEME_H_
+#define SCANTAILOR_CORE_LIGHTCOLORSCHEME_H_
 
 #include <QPalette>
 #include <QString>
@@ -34,4 +34,4 @@ class LightColorScheme : public ColorScheme {
 };
 
 
-#endif  //SCANTAILOR_LIGHTCOLORSCHEME_H
+#endif  // SCANTAILOR_CORE_LIGHTCOLORSCHEME_H_

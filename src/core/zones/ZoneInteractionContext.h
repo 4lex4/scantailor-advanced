@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ZONE_INTERACTION_CONTEXT_H_
-#define ZONE_INTERACTION_CONTEXT_H_
+#ifndef SCANTAILOR_ZONES_ZONEINTERACTIONCONTEXT_H_
+#define SCANTAILOR_ZONES_ZONEINTERACTIONCONTEXT_H_
 
 #include <boost/function.hpp>
 #include "EditableSpline.h"
@@ -32,7 +32,7 @@ class ZoneInteractionContext {
 
   typedef boost::function<void(const EditableZoneSet::Zone& zone)> ShowPropertiesCommand;
 
-  ZoneInteractionContext(ImageViewBase& image_view, EditableZoneSet& zones);
+  ZoneInteractionContext(ImageViewBase& imageView, EditableZoneSet& zones);
 
   virtual ~ZoneInteractionContext();
 
@@ -127,4 +127,4 @@ class ZoneInteractionContext {
 };
 
 
-#endif  // ifndef ZONE_INTERACTION_CONTEXT_H_
+#endif  // ifndef SCANTAILOR_ZONES_ZONEINTERACTIONCONTEXT_H_

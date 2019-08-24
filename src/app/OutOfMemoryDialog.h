@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUT_OF_MEMORY_DIALOG_H_
-#define OUT_OF_MEMORY_DIALOG_H_
+#ifndef SCANTAILOR_APP_OUTOFMEMORYDIALOG_H_
+#define SCANTAILOR_APP_OUTOFMEMORYDIALOG_H_
 
 #include <QDialog>
 #include <QString>
@@ -18,12 +18,12 @@ class OutOfMemoryDialog : public QDialog {
  public:
   explicit OutOfMemoryDialog(QWidget* parent = nullptr);
 
-  void setParams(const QString& project_file,
+  void setParams(const QString& projectFile,
                  // may be empty
                  intrusive_ptr<StageSequence> stages,
                  intrusive_ptr<ProjectPages> pages,
-                 const SelectedPage& selected_page,
-                 const OutputFileNameGenerator& out_file_name_gen);
+                 const SelectedPage& selectedPage,
+                 const OutputFileNameGenerator& outFileNameGen);
 
  private slots:
 
@@ -32,7 +32,7 @@ class OutOfMemoryDialog : public QDialog {
   void saveProjectAs();
 
  private:
-  bool saveProjectWithFeedback(const QString& project_file);
+  bool saveProjectWithFeedback(const QString& projectFile);
 
   void showSaveSuccessScreen();
 
@@ -45,4 +45,4 @@ class OutOfMemoryDialog : public QDialog {
 };
 
 
-#endif  // ifndef OUT_OF_MEMORY_DIALOG_H_
+#endif  // ifndef SCANTAILOR_APP_OUTOFMEMORYDIALOG_H_

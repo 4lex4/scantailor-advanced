@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ADIFF_FUNCTION_H_
-#define ADIFF_FUNCTION_H_
+#ifndef SCANTAILOR_ADIFF_FUNCTION_H_
+#define SCANTAILOR_ADIFF_FUNCTION_H_
 
 #include <cstddef>
 #include "MatT.h"
@@ -41,25 +41,25 @@ class Function<2> {
   /**
    * Constructs the "f(x1, x2, ...) = 0" function.
    */
-  explicit Function(size_t num_non_zero_vars);
+  explicit Function(size_t numNonZeroVars);
 
   /**
    * Constructs the "f(x1, x2, ...) = 0" function.
    */
-  explicit Function(const SparseMap<2>& sparse_map);
+  explicit Function(const SparseMap<2>& sparseMap);
 
   /**
    * Constructs a function representing an argument.
    *
-   * \param arg_idx Argument number.
+   * \param argIdx Argument number.
    * \param val Argument value.
-   * \param sparse_map Tells which derivatives to compute.
+   * \param sparseMap Tells which derivatives to compute.
    */
-  Function(size_t arg_idx, double val, const SparseMap<2>& sparse_map);
+  Function(size_t argIdx, double val, const SparseMap<2>& sparseMap);
 
-  VecT<double> gradient(const SparseMap<2>& sparse_map) const;
+  VecT<double> gradient(const SparseMap<2>& sparseMap) const;
 
-  MatT<double> hessian(const SparseMap<2>& sparse_map) const;
+  MatT<double> hessian(const SparseMap<2>& sparseMap) const;
 
   void swap(Function& other);
 
@@ -87,4 +87,4 @@ Function<2> operator*(double scalar, const Function<2>& f);
 
 Function<2> operator/(const Function<2>& num, const Function<2>& den);
 }  // namespace adiff
-#endif  // ifndef ADIFF_FUNCTION_H_
+#endif  // ifndef SCANTAILOR_ADIFF_FUNCTION_H_

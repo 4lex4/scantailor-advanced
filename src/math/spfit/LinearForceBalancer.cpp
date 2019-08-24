@@ -5,19 +5,19 @@
 #include <cmath>
 
 namespace spfit {
-LinearForceBalancer::LinearForceBalancer(double internal_external_ratio)
-    : m_currentRatio(internal_external_ratio),
-      m_targetRatio(internal_external_ratio),
+LinearForceBalancer::LinearForceBalancer(double internalExternalRatio)
+    : m_currentRatio(internalExternalRatio),
+      m_targetRatio(internalExternalRatio),
       m_rateOfChange(0),
       m_iterationsToTarget(0) {}
 
-void LinearForceBalancer::setCurrentRatio(double internal_external_ratio) {
-  m_currentRatio = internal_external_ratio;
+void LinearForceBalancer::setCurrentRatio(double internalExternalRatio) {
+  m_currentRatio = internalExternalRatio;
   recalcRateOfChange();
 }
 
-void LinearForceBalancer::setTargetRatio(double internal_external_ratio) {
-  m_targetRatio = internal_external_ratio;
+void LinearForceBalancer::setTargetRatio(double internalExternalRatio) {
+  m_targetRatio = internalExternalRatio;
   recalcRateOfChange();
 }
 
@@ -26,12 +26,12 @@ void LinearForceBalancer::setIterationsToTarget(int iterations) {
   recalcRateOfChange();
 }
 
-double LinearForceBalancer::calcInternalForceWeight(double internal_force, double external_force) const {
+double LinearForceBalancer::calcInternalForceWeight(double internalForce, double externalForce) const {
   // (internal * lambda) / external = ratio
   // internal * lambda = external * ratio
   double lambda = 0;
-  if (std::fabs(internal_force) > 1e-6) {
-    lambda = m_currentRatio * external_force / internal_force;
+  if (std::fabs(internalForce) > 1e-6) {
+    lambda = m_currentRatio * externalForce / internalForce;
   }
 
   return lambda;

@@ -14,24 +14,24 @@
 
 namespace page_split {
 ImageView::ImageView(const QImage& image,
-                     const QImage& downscaled_image,
+                     const QImage& downscaledImage,
                      const ImageTransformation& xform,
                      const PageLayout& layout,
                      intrusive_ptr<ProjectPages> pages,
-                     const ImageId& image_id,
-                     bool left_half_removed,
-                     bool right_half_removed)
-    : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
+                     const ImageId& imageId,
+                     bool leftHalfRemoved,
+                     bool rightHalfRemoved)
+    : ImageViewBase(image, downscaledImage, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
       m_pages(std::move(pages)),
-      m_imageId(image_id),
+      m_imageId(imageId),
       m_leftUnremoveButton(boost::bind(&ImageView::leftPageCenter, this)),
       m_rightUnremoveButton(boost::bind(&ImageView::rightPageCenter, this)),
       m_dragHandler(*this),
       m_zoomHandler(*this),
       m_handlePixmap(IconProvider::getInstance().getIcon("aqua-sphere").pixmap(16, 16)),
       m_virtLayout(layout),
-      m_leftPageRemoved(left_half_removed),
-      m_rightPageRemoved(right_half_removed) {
+      m_leftPageRemoved(leftHalfRemoved),
+      m_rightPageRemoved(rightHalfRemoved) {
   setMouseTracking(true);
 
   m_leftUnremoveButton.setClickCallback(boost::bind(&ImageView::unremoveLeftPage, this));
@@ -55,13 +55,13 @@ ImageView::~ImageView() = default;
 
 void ImageView::setupCuttersInteraction() {
   const QString tip(tr("Drag the line or the handles."));
-  const double hit_radius = std::max<double>(0.5 * m_handlePixmap.width(), 15.0);
-  const int num_cutters = m_virtLayout.numCutters();
-  for (int i = 0; i < num_cutters; ++i) {  // Loop over lines.
+  const double hitRadius = std::max<double>(0.5 * m_handlePixmap.width(), 15.0);
+  const int numCutters = m_virtLayout.numCutters();
+  for (int i = 0; i < numCutters; ++i) {  // Loop over lines.
     m_lineInteractors[i].setObject(&m_lineSegments[0]);
 
     for (int j = 0; j < 2; ++j) {  // Loop over handles.
-      m_handles[i][j].setHitRadius(hit_radius);
+      m_handles[i][j].setHitRadius(hitRadius);
       m_handles[i][j].setPositionCallback(boost::bind(&ImageView::handlePosition, this, i, j));
       m_handles[i][j].setMoveRequestCallback(boost::bind(&ImageView::handleMoveRequest, this, i, j, _1));
       m_handles[i][j].setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
@@ -83,7 +83,7 @@ void ImageView::setupCuttersInteraction() {
   }
 
   // Turn off cutters we don't need anymore.
-  for (int i = num_cutters; i < 2; ++i) {
+  for (int i = numCutters; i < 2; ++i) {
     for (int j = 0; j < 2; ++j) {
       m_handleInteractors[i][j].unlink();
     }
@@ -102,12 +102,12 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
   painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
   painter.setPen(Qt::NoPen);
-  const QRectF virt_rect(virtualDisplayRect());
+  const QRectF virtRect(virtualDisplayRect());
 
   switch (m_virtLayout.type()) {
     case PageLayout::SINGLE_PAGE_UNCUT:
       painter.setBrush(QColor(0, 0, 255, 50));
-      painter.drawRect(virt_rect);
+      painter.drawRect(virtRect);
 
       return;  // No Split Line will be drawn.
     case PageLayout::SINGLE_PAGE_CUT:
@@ -131,8 +131,8 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
   painter.setPen(pen);
   painter.setBrush(Qt::NoBrush);
 
-  const int num_cutters = m_virtLayout.numCutters();
-  for (int i = 0; i < num_cutters; ++i) {
+  const int numCutters = m_virtLayout.numCutters();
+  for (int i = 0; i < numCutters; ++i) {
     const QLineF cutter(widgetCutterLine(i));
     painter.drawLine(cutter);
 
@@ -150,39 +150,39 @@ PageLayout ImageView::widgetLayout() const {
   return m_virtLayout.transformed(virtualToWidget());
 }
 
-QLineF ImageView::widgetCutterLine(const int line_idx) const {
-  const QRectF widget_rect(virtualToWidget().mapRect(virtualDisplayRect()));
-  QRectF reduced_widget_rect(reducedWidgetArea());
-  reduced_widget_rect.setLeft(widget_rect.left());
-  reduced_widget_rect.setRight(widget_rect.right());
+QLineF ImageView::widgetCutterLine(const int lineIdx) const {
+  const QRectF widgetRect(virtualToWidget().mapRect(virtualDisplayRect()));
+  QRectF reducedWidgetRect(reducedWidgetArea());
+  reducedWidgetRect.setLeft(widgetRect.left());
+  reducedWidgetRect.setRight(widgetRect.right());
   // The reason we restore original left and right boundaries is that
   // we want to allow cutter handles to go off-screen horizontally
   // but not vertically.
-  QLineF line(customInscribedCutterLine(widgetLayout().cutterLine(line_idx), reduced_widget_rect));
+  QLineF line(customInscribedCutterLine(widgetLayout().cutterLine(lineIdx), reducedWidgetRect));
 
-  if (m_handleInteractors[line_idx][1].interactionInProgress(interactionState())) {
-    line.setP1(virtualToWidget().map(virtualCutterLine(line_idx).p1()));
-  } else if (m_handleInteractors[line_idx][0].interactionInProgress(interactionState())) {
-    line.setP2(virtualToWidget().map(virtualCutterLine(line_idx).p2()));
+  if (m_handleInteractors[lineIdx][1].interactionInProgress(interactionState())) {
+    line.setP1(virtualToWidget().map(virtualCutterLine(lineIdx).p1()));
+  } else if (m_handleInteractors[lineIdx][0].interactionInProgress(interactionState())) {
+    line.setP2(virtualToWidget().map(virtualCutterLine(lineIdx).p2()));
   }
 
   return line;
 }
 
-QLineF ImageView::virtualCutterLine(int line_idx) const {
-  const QRectF virt_rect(virtualDisplayRect());
+QLineF ImageView::virtualCutterLine(int lineIdx) const {
+  const QRectF virtRect(virtualDisplayRect());
 
-  QRectF widget_rect(virtualToWidget().mapRect(virt_rect));
+  QRectF widgetRect(virtualToWidget().mapRect(virtRect));
   const double delta = 0.5 * m_handlePixmap.width();
-  widget_rect.adjust(0.0, delta, 0.0, -delta);
+  widgetRect.adjust(0.0, delta, 0.0, -delta);
 
-  QRectF reduced_virt_rect(widgetToVirtual().mapRect(widget_rect));
-  reduced_virt_rect.setLeft(virt_rect.left());
-  reduced_virt_rect.setRight(virt_rect.right());
+  QRectF reducedVirtRect(widgetToVirtual().mapRect(widgetRect));
+  reducedVirtRect.setLeft(virtRect.left());
+  reducedVirtRect.setRight(virtRect.right());
   // The reason we restore original left and right boundaries is that
   // we want to allow cutter handles to go off-screen horizontally
   // but not vertically.
-  return customInscribedCutterLine(m_virtLayout.cutterLine(line_idx), reduced_virt_rect);
+  return customInscribedCutterLine(m_virtLayout.cutterLine(lineIdx), reducedVirtRect);
 }
 
 QRectF ImageView::reducedWidgetArea() const {
@@ -199,126 +199,126 @@ QRectF ImageView::reducedWidgetArea() const {
 QLineF ImageView::customInscribedCutterLine(const QLineF& line, const QRectF& rect) {
   if (line.p1().y() == line.p2().y()) {
     // This should not happen, but if it does, we need to handle it gracefully.
-    qreal middle_x = 0.5 * (line.p1().x() + line.p2().x());
-    middle_x = qBound(rect.left(), middle_x, rect.right());
+    qreal middleX = 0.5 * (line.p1().x() + line.p2().x());
+    middleX = qBound(rect.left(), middleX, rect.right());
 
-    return QLineF(QPointF(middle_x, rect.top()), QPointF(middle_x, rect.bottom()));
+    return QLineF(QPointF(middleX, rect.top()), QPointF(middleX, rect.bottom()));
   }
 
-  QPointF top_pt;
-  QPointF bottom_pt;
+  QPointF topPt;
+  QPointF bottomPt;
 
-  line.intersect(QLineF(rect.topLeft(), rect.topRight()), &top_pt);
-  line.intersect(QLineF(rect.bottomLeft(), rect.bottomRight()), &bottom_pt);
+  line.intersect(QLineF(rect.topLeft(), rect.topRight()), &topPt);
+  line.intersect(QLineF(rect.bottomLeft(), rect.bottomRight()), &bottomPt);
 
-  const double top_x = qBound(rect.left(), top_pt.x(), rect.right());
-  const double bottom_x = qBound(rect.left(), bottom_pt.x(), rect.right());
+  const double topX = qBound(rect.left(), topPt.x(), rect.right());
+  const double bottomX = qBound(rect.left(), bottomPt.x(), rect.right());
 
-  return QLineF(QPointF(top_x, rect.top()), QPointF(bottom_x, rect.bottom()));
+  return QLineF(QPointF(topX, rect.top()), QPointF(bottomX, rect.bottom()));
 }
 
-QPointF ImageView::handlePosition(int line_idx, int handle_idx) const {
-  const QLineF line(widgetCutterLine(line_idx));
+QPointF ImageView::handlePosition(int lineIdx, int handleIdx) const {
+  const QLineF line(widgetCutterLine(lineIdx));
 
-  return handle_idx == 0 ? line.p1() : line.p2();
+  return handleIdx == 0 ? line.p1() : line.p2();
 }
 
-void ImageView::handleMoveRequest(int line_idx, int handle_idx, const QPointF& pos) {
-  const QRectF valid_area(getOccupiedWidgetRect());
+void ImageView::handleMoveRequest(int lineIdx, int handleIdx, const QPointF& pos) {
+  const QRectF validArea(getOccupiedWidgetRect());
 
-  qreal min_x_top = valid_area.left();
-  qreal max_x_top = valid_area.right();
-  qreal min_x_bottom = valid_area.left();
-  qreal max_x_bottom = valid_area.right();
+  qreal minXTop = validArea.left();
+  qreal maxXTop = validArea.right();
+  qreal minXBottom = validArea.left();
+  qreal maxXBottom = validArea.right();
 
   // preventing intersection with other cutters
   for (int i = 0; i < m_virtLayout.numCutters(); i++) {
-    if (i != line_idx) {
-      QPointF p_top_i;
-      QPointF p_bottom_i;
+    if (i != lineIdx) {
+      QPointF pTopI;
+      QPointF pBottomI;
       QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
-      anotherLine.intersect(QLineF(valid_area.topLeft(), valid_area.topRight()), &p_top_i);
-      anotherLine.intersect(QLineF(valid_area.bottomLeft(), valid_area.bottomRight()), &p_bottom_i);
+      anotherLine.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
+      anotherLine.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
 
-      if ((p_top_i.x() < min_x_top) || (p_top_i.x() > max_x_top) || (p_bottom_i.x() < min_x_bottom)
-          || (p_bottom_i.x() > max_x_bottom)) {
+      if ((pTopI.x() < minXTop) || (pTopI.x() > maxXTop) || (pBottomI.x() < minXBottom)
+          || (pBottomI.x() > maxXBottom)) {
         continue;
       }
 
-      if (line_idx > i) {
-        min_x_top = p_top_i.x();
-        min_x_bottom = p_bottom_i.x();
+      if (lineIdx > i) {
+        minXTop = pTopI.x();
+        minXBottom = pBottomI.x();
       } else {
-        max_x_top = p_top_i.x();
-        max_x_bottom = p_bottom_i.x();
+        maxXTop = pTopI.x();
+        maxXBottom = pBottomI.x();
       }
     }
   }
 
-  QLineF virt_line(virtualCutterLine(line_idx));
-  if (handle_idx == 0) {
-    const QPointF wpt(qBound(min_x_top, pos.x(), max_x_top), valid_area.top());
-    virt_line.setP1(widgetToVirtual().map(wpt));
+  QLineF virtLine(virtualCutterLine(lineIdx));
+  if (handleIdx == 0) {
+    const QPointF wpt(qBound(minXTop, pos.x(), maxXTop), validArea.top());
+    virtLine.setP1(widgetToVirtual().map(wpt));
   } else {
-    const QPointF wpt(qBound(min_x_bottom, pos.x(), max_x_bottom), valid_area.bottom());
-    virt_line.setP2(widgetToVirtual().map(wpt));
+    const QPointF wpt(qBound(minXBottom, pos.x(), maxXBottom), validArea.bottom());
+    virtLine.setP2(widgetToVirtual().map(wpt));
   }
 
-  m_virtLayout.setCutterLine(line_idx, virt_line);
+  m_virtLayout.setCutterLine(lineIdx, virtLine);
   update();
 }
 
-QLineF ImageView::linePosition(int line_idx) const {
-  return widgetCutterLine(line_idx);
+QLineF ImageView::linePosition(int lineIdx) const {
+  return widgetCutterLine(lineIdx);
 }
 
-void ImageView::lineMoveRequest(int line_idx, QLineF line) {
+void ImageView::lineMoveRequest(int lineIdx, QLineF line) {
   // Intersect with top and bottom.
-  const QRectF valid_area(getOccupiedWidgetRect());
-  QPointF p_top;
-  QPointF p_bottom;
-  line.intersect(QLineF(valid_area.topLeft(), valid_area.topRight()), &p_top);
-  line.intersect(QLineF(valid_area.bottomLeft(), valid_area.bottomRight()), &p_bottom);
+  const QRectF validArea(getOccupiedWidgetRect());
+  QPointF pTop;
+  QPointF pBottom;
+  line.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTop);
+  line.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottom);
 
-  qreal min_x_top = valid_area.left();
-  qreal max_x_top = valid_area.right();
-  qreal min_x_bottom = valid_area.left();
-  qreal max_x_bottom = valid_area.right();
+  qreal minXTop = validArea.left();
+  qreal maxXTop = validArea.right();
+  qreal minXBottom = validArea.left();
+  qreal maxXBottom = validArea.right();
 
   // preventing intersection with other cutters
   for (int i = 0; i < m_virtLayout.numCutters(); i++) {
-    if (i != line_idx) {
-      QPointF p_top_i;
-      QPointF p_bottom_i;
+    if (i != lineIdx) {
+      QPointF pTopI;
+      QPointF pBottomI;
       QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
-      anotherLine.intersect(QLineF(valid_area.topLeft(), valid_area.topRight()), &p_top_i);
-      anotherLine.intersect(QLineF(valid_area.bottomLeft(), valid_area.bottomRight()), &p_bottom_i);
+      anotherLine.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
+      anotherLine.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
 
-      if ((p_top_i.x() < min_x_top) || (p_top_i.x() > max_x_top) || (p_bottom_i.x() < min_x_bottom)
-          || (p_bottom_i.x() > max_x_bottom)) {
+      if ((pTopI.x() < minXTop) || (pTopI.x() > maxXTop) || (pBottomI.x() < minXBottom)
+          || (pBottomI.x() > maxXBottom)) {
         continue;
       }
 
-      if (line_idx > i) {
-        min_x_top = p_top_i.x();
-        min_x_bottom = p_bottom_i.x();
+      if (lineIdx > i) {
+        minXTop = pTopI.x();
+        minXBottom = pBottomI.x();
       } else {
-        max_x_top = p_top_i.x();
-        max_x_bottom = p_bottom_i.x();
+        maxXTop = pTopI.x();
+        maxXBottom = pBottomI.x();
       }
     }
   }
 
   // Limit movement.
-  const double left = qMax(min_x_top - p_top.x(), min_x_bottom - p_bottom.x());
-  const double right = qMax(p_top.x() - max_x_top, p_bottom.x() - max_x_bottom);
+  const double left = qMax(minXTop - pTop.x(), minXBottom - pBottom.x());
+  const double right = qMax(pTop.x() - maxXTop, pBottom.x() - maxXBottom);
   if ((left > right) && (left > 0.0)) {
     line.translate(left, 0.0);
   } else if (right > 0.0) {
     line.translate(-right, 0.0);
   }
 
-  m_virtLayout.setCutterLine(line_idx, widgetToVirtual().map(line));
+  m_virtLayout.setCutterLine(lineIdx, widgetToVirtual().map(line));
   update();
 }
 
@@ -333,29 +333,29 @@ void ImageView::dragFinished() {
 }
 
 QPointF ImageView::leftPageCenter() const {
-  QRectF left_rect(m_virtLayout.leftPageOutline().boundingRect());
-  QRectF right_rect(m_virtLayout.rightPageOutline().boundingRect());
+  QRectF leftRect(m_virtLayout.leftPageOutline().boundingRect());
+  QRectF rightRect(m_virtLayout.rightPageOutline().boundingRect());
 
-  const double x_mid = 0.5 * (left_rect.right() + right_rect.left());
-  left_rect.setRight(x_mid);
-  right_rect.setLeft(x_mid);
+  const double xMid = 0.5 * (leftRect.right() + rightRect.left());
+  leftRect.setRight(xMid);
+  rightRect.setLeft(xMid);
 
-  return virtualToWidget().map(left_rect.center());
+  return virtualToWidget().map(leftRect.center());
 }
 
 QPointF ImageView::rightPageCenter() const {
-  QRectF left_rect(m_virtLayout.leftPageOutline().boundingRect());
-  QRectF right_rect(m_virtLayout.rightPageOutline().boundingRect());
+  QRectF leftRect(m_virtLayout.leftPageOutline().boundingRect());
+  QRectF rightRect(m_virtLayout.rightPageOutline().boundingRect());
 
-  const double x_mid = 0.5 * (left_rect.right() + right_rect.left());
-  left_rect.setRight(x_mid);
-  right_rect.setLeft(x_mid);
+  const double xMid = 0.5 * (leftRect.right() + rightRect.left());
+  leftRect.setRight(xMid);
+  rightRect.setLeft(xMid);
 
-  return virtualToWidget().map(right_rect.center());
+  return virtualToWidget().map(rightRect.center());
 }
 
 void ImageView::unremoveLeftPage() {
-  PageInfo page_info(m_pages->unremovePage(PageId(m_imageId, PageId::LEFT_PAGE)));
+  PageInfo pageInfo(m_pages->unremovePage(PageId(m_imageId, PageId::LEFT_PAGE)));
   m_leftUnremoveButton.unlink();
   m_leftPageRemoved = false;
 
@@ -363,12 +363,12 @@ void ImageView::unremoveLeftPage() {
 
   // We need invalidateThumbnail(PageInfo) rather than (PageId),
   // as we are updating page removal status.
-  page_info.setId(PageId(m_imageId, PageId::SINGLE_PAGE));
-  emit invalidateThumbnail(page_info);
+  pageInfo.setId(PageId(m_imageId, PageId::SINGLE_PAGE));
+  emit invalidateThumbnail(pageInfo);
 }
 
 void ImageView::unremoveRightPage() {
-  PageInfo page_info(m_pages->unremovePage(PageId(m_imageId, PageId::RIGHT_PAGE)));
+  PageInfo pageInfo(m_pages->unremovePage(PageId(m_imageId, PageId::RIGHT_PAGE)));
   m_rightUnremoveButton.unlink();
   m_rightPageRemoved = false;
 
@@ -376,7 +376,7 @@ void ImageView::unremoveRightPage() {
 
   // We need invalidateThumbnail(PageInfo) rather than (PageId),
   // as we are updating page removal status.
-  page_info.setId(PageId(m_imageId, PageId::SINGLE_PAGE));
-  emit invalidateThumbnail(page_info);
+  pageInfo.setId(PageId(m_imageId, PageId::SINGLE_PAGE));
+  emit invalidateThumbnail(pageInfo);
 }
 }  // namespace page_split

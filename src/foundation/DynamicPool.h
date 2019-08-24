@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DYNAMIC_POOL_H_
-#define DYNAMIC_POOL_H_
+#ifndef SCANTAILOR_FOUNDATION_DYNAMICPOOL_H_
+#define SCANTAILOR_FOUNDATION_DYNAMICPOOL_H_
 
 #include <boost/intrusive/list.hpp>
 #include <boost/scoped_array.hpp>
@@ -30,7 +30,7 @@ class DynamicPool {
    * If T is a POD type, the returned objects are uninitialized,
    * otherwise they are default-constructed.
    */
-  T* alloc(size_t num_elements);
+  T* alloc(size_t numElements);
 
  private:
   enum { OVERALLOCATION_FACTOR = 3 };
@@ -60,7 +60,7 @@ class DynamicPool {
 
   typedef boost::intrusive::list<Chunk, boost::intrusive::constant_time_size<false>> ChunkList;
 
-  static size_t adviseChunkSize(size_t num_elements);
+  static size_t adviseChunkSize(size_t numElements);
 
   ChunkList m_chunkList;
 };
@@ -72,40 +72,40 @@ DynamicPool<T>::~DynamicPool() {
 }
 
 template <typename T>
-T* DynamicPool<T>::alloc(size_t num_elements) {
+T* DynamicPool<T>::alloc(size_t numElements) {
   Chunk* chunk = 0;
 
   if (!m_chunkList.empty()) {
     chunk = &m_chunkList.back();
-    if (chunk->remainingElements < num_elements) {
+    if (chunk->remainingElements < numElements) {
       chunk = 0;
     }
   }
 
   if (!chunk) {
     // Create a new chunk.
-    const size_t chunk_size = adviseChunkSize(num_elements);
-    boost::scoped_array<T> data(new T[chunk_size]);
+    const size_t chunkSize = adviseChunkSize(numElements);
+    boost::scoped_array<T> data(new T[chunkSize]);
     chunk = &*m_chunkList.insert(m_chunkList.end(), *new Chunk);
-    chunk->init(data, chunk_size);
+    chunk->init(data, chunkSize);
   }
 
   // Allocate from chunk.
   T* data = chunk->pData;
-  chunk->pData += num_elements;
-  chunk->remainingElements -= num_elements;
+  chunk->pData += numElements;
+  chunk->remainingElements -= numElements;
 
   return data;
 }
 
 template <typename T>
-size_t DynamicPool<T>::adviseChunkSize(size_t num_elements) {
-  size_t factor = OVERALLOCATION_LIMIT / num_elements;
+size_t DynamicPool<T>::adviseChunkSize(size_t numElements) {
+  size_t factor = OVERALLOCATION_LIMIT / numElements;
   if (factor > (size_t) OVERALLOCATION_FACTOR) {
     factor = OVERALLOCATION_FACTOR;
   }
 
-  return num_elements * (factor + 1);
+  return numElements * (factor + 1);
 }
 
-#endif  // ifndef DYNAMIC_POOL_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_DYNAMICPOOL_H_

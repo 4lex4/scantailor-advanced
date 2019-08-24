@@ -6,9 +6,9 @@
 #include <utility>
 #include "CompositeCacheDrivenTask.h"
 #include "OrthogonalRotation.h"
+#include "PageOrientationCollector.h"
 #include "PageSequence.h"
 #include "ProjectPages.h"
-#include "PageOrientationCollector.h"
 #include "filters/page_split/Filter.h"
 
 class PageOrientationPropagator::Collector : public PageOrientationCollector {
@@ -22,9 +22,9 @@ class PageOrientationPropagator::Collector : public PageOrientationCollector {
 };
 
 
-PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::Filter> page_split_filter,
+PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::Filter> pageSplitFilter,
                                                      intrusive_ptr<CompositeCacheDrivenTask> task)
-    : m_pageSplitFilter(std::move(page_split_filter)), m_task(std::move(task)) {}
+    : m_pageSplitFilter(std::move(pageSplitFilter)), m_task(std::move(task)) {}
 
 PageOrientationPropagator::~PageOrientationPropagator() = default;
 

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef OUTPUT_FILTER_H_
-#define OUTPUT_FILTER_H_
+#ifndef SCANTAILOR_OUTPUT_FILTER_H_
+#define SCANTAILOR_OUTPUT_FILTER_H_
 
 #include <QCoreApplication>
 #include <QImage>
@@ -31,7 +31,7 @@ class Filter : public AbstractFilter {
 
   Q_DECLARE_TR_FUNCTIONS(output::Filter)
  public:
-  explicit Filter(const PageSelectionAccessor& page_selection_accessor);
+  explicit Filter(const PageSelectionAccessor& pageSelectionAccessor);
 
   ~Filter() override;
 
@@ -41,21 +41,21 @@ class Filter : public AbstractFilter {
 
   void performRelinking(const AbstractRelinker& relinker) override;
 
-  void preUpdateUI(FilterUiInterface* ui, const PageInfo& page_info) override;
+  void preUpdateUI(FilterUiInterface* ui, const PageInfo& pageInfo) override;
 
   QDomElement saveSettings(const ProjectWriter& writer, QDomDocument& doc) const override;
 
-  void loadSettings(const ProjectReader& reader, const QDomElement& filters_el) override;
+  void loadSettings(const ProjectReader& reader, const QDomElement& filtersEl) override;
 
-  void loadDefaultSettings(const PageInfo& page_info) override;
+  void loadDefaultSettings(const PageInfo& pageInfo) override;
 
-  intrusive_ptr<Task> createTask(const PageId& page_id,
-                                 intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                                 const OutputFileNameGenerator& out_file_name_gen,
+  intrusive_ptr<Task> createTask(const PageId& pageId,
+                                 intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                                 const OutputFileNameGenerator& outFileNameGen,
                                  bool batch,
                                  bool debug);
 
-  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(const OutputFileNameGenerator& out_file_name_gen);
+  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(const OutputFileNameGenerator& outFileNameGen);
 
   OptionsWidget* optionsWidget();
 
@@ -66,7 +66,7 @@ class Filter : public AbstractFilter {
   void selectPageOrder(int option) override;
 
  private:
-  void writePageSettings(QDomDocument& doc, QDomElement& filter_el, const PageId& page_id, int numeric_id) const;
+  void writePageSettings(QDomDocument& doc, QDomElement& filterEl, const PageId& pageId, int numericId) const;
 
   intrusive_ptr<Settings> m_settings;
   SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
@@ -76,4 +76,4 @@ class Filter : public AbstractFilter {
   int m_selectedPageOrder;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_FILTER_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_FILTER_H_

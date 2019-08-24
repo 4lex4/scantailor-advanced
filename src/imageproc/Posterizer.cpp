@@ -30,15 +30,15 @@ QVector<QRgb> paletteFromRgb(const QImage& image) {
   const int width = image.width();
   const int height = image.height();
 
-  const auto* img_line = reinterpret_cast<const uint32_t*>(image.bits());
-  const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
+  const auto* imgLine = reinterpret_cast<const uint32_t*>(image.bits());
+  const int imgStride = image.bytesPerLine() / sizeof(uint32_t);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      uint32_t color = img_line[x];
+      uint32_t color = imgLine[x];
       colorSet.insert(color);
     }
-    img_line += img_stride;
+    imgLine += imgStride;
   }
 
   QVector<QRgb> palette(colorSet.size());
@@ -82,11 +82,11 @@ QImage Posterizer::convertToIndexed(const QImage& image, const QVector<QRgb>& pa
   const int width = image.width();
   const int height = image.height();
 
-  const auto* img_line = reinterpret_cast<const uint32_t*>(image.bits());
-  const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
+  const auto* imgLine = reinterpret_cast<const uint32_t*>(image.bits());
+  const int imgStride = image.bytesPerLine() / sizeof(uint32_t);
 
-  uint8_t* dst_line = dst.bits();
-  const int dst_stride = dst.bytesPerLine();
+  uint8_t* dstLine = dst.bits();
+  const int dstStride = dst.bytesPerLine();
 
   std::unordered_map<uint32_t, uint8_t> colorToIndex;
   for (int i = 0; i < palette.size(); ++i) {
@@ -95,10 +95,10 @@ QImage Posterizer::convertToIndexed(const QImage& image, const QVector<QRgb>& pa
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      dst_line[x] = colorToIndex[img_line[x]];
+      dstLine[x] = colorToIndex[imgLine[x]];
     }
-    img_line += img_stride;
-    dst_line += dst_stride;
+    imgLine += imgStride;
+    dstLine += dstStride;
   }
 
   dst.setDotsPerMeterX(image.dotsPerMeterX());
@@ -114,18 +114,18 @@ std::unordered_map<uint32_t, int> paletteFromIndexedWithStatistics(const QImage&
   const int width = image.width();
   const int height = image.height();
 
-  const uint8_t* img_line = image.bits();
-  const int img_stride = image.bytesPerLine();
+  const uint8_t* imgLine = image.bits();
+  const int imgStride = image.bytesPerLine();
 
   QVector<QRgb> colorTable = image.colorTable();
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      uint8_t colorIndex = img_line[x];
+      uint8_t colorIndex = imgLine[x];
       uint32_t color = colorTable[colorIndex];
       ++palette[color];
     }
-    img_line += img_stride;
+    imgLine += imgStride;
   }
 
   return palette;
@@ -137,15 +137,15 @@ std::unordered_map<uint32_t, int> paletteFromRgbWithStatistics(const QImage& ima
   const int width = image.width();
   const int height = image.height();
 
-  const auto* img_line = reinterpret_cast<const uint32_t*>(image.bits());
-  const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
+  const auto* imgLine = reinterpret_cast<const uint32_t*>(image.bits());
+  const int imgStride = image.bytesPerLine() / sizeof(uint32_t);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      uint32_t color = img_line[x];
+      uint32_t color = imgLine[x];
       ++palette[color];
     }
-    img_line += img_stride;
+    imgLine += imgStride;
   }
 
   return palette;
@@ -164,18 +164,18 @@ void remapColorsInIndexedImage(QImage& image, const std::unordered_map<uint32_t,
     const int width = image.width();
     const int height = image.height();
 
-    uint8_t* img_line = image.bits();
-    const int img_stride = image.bytesPerLine();
+    uint8_t* imgLine = image.bits();
+    const int imgStride = image.bytesPerLine();
 
     QVector<QRgb> colorTable = image.colorTable();
 
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
-        uint32_t color = colorTable[img_line[x]];
+        uint32_t color = colorTable[imgLine[x]];
         uint32_t newColor = colorMap.at(color);
-        img_line[x] = colorToIndexMap[newColor];
+        imgLine[x] = colorToIndexMap[newColor];
       }
-      img_line += img_stride;
+      imgLine += imgStride;
     }
   }
 
@@ -191,15 +191,15 @@ void remapColorsInRgbImage(QImage& image, const std::unordered_map<uint32_t, uin
   const int width = image.width();
   const int height = image.height();
 
-  auto* img_line = reinterpret_cast<uint32_t*>(image.bits());
-  const int img_stride = image.bytesPerLine() / sizeof(uint32_t);
+  auto* imgLine = reinterpret_cast<uint32_t*>(image.bits());
+  const int imgStride = image.bytesPerLine() / sizeof(uint32_t);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
-      uint32_t color = img_line[x];
-      img_line[x] = colorMap.at(color);
+      uint32_t color = imgLine[x];
+      imgLine[x] = colorMap.at(color);
     }
-    img_line += img_stride;
+    imgLine += imgStride;
   }
 }
 
@@ -222,8 +222,8 @@ std::unordered_map<uint32_t, uint32_t> normalizePalette(const QImage& image,
   const int pixelCount = image.width() * image.height();
   const double threshold = 0.0005;  // mustn't be larger than (1 / 256)
 
-  int min_level = 255;
-  int max_level = 0;
+  int minLevel = 255;
+  int maxLevel = 0;
   {
     // Build RGB histogram from colors with statistics
     int red_hist[256] = {};
@@ -256,16 +256,16 @@ std::unordered_map<uint32_t, uint32_t> normalizePalette(const QImage& image,
       if (((double(red_hist[level]) / pixelCount) >= threshold)
           || ((double(green_hist[level]) / pixelCount) >= threshold)
           || ((double(blue_hist[level]) / pixelCount) >= threshold)) {
-        if (level < min_level) {
-          min_level = level;
+        if (level < minLevel) {
+          minLevel = level;
         }
-        if (level > max_level) {
-          max_level = level;
+        if (level > maxLevel) {
+          maxLevel = level;
         }
       }
     }
 
-    assert(max_level >= min_level);
+    assert(maxLevel >= minLevel);
   }
 
   std::unordered_map<uint32_t, uint32_t> colorToNormalizedMap;
@@ -280,9 +280,9 @@ std::unordered_map<uint32_t, uint32_t> normalizePalette(const QImage& image,
       continue;
     }
 
-    int normalizedRed = qRound((double(qRed(color) - min_level) / (max_level - min_level)) * 255);
-    int normalizedGreen = qRound((double(qGreen(color) - min_level) / (max_level - min_level)) * 255);
-    int normalizedBlue = qRound((double(qBlue(color) - min_level) / (max_level - min_level)) * 255);
+    int normalizedRed = qRound((double(qRed(color) - minLevel) / (maxLevel - minLevel)) * 255);
+    int normalizedGreen = qRound((double(qGreen(color) - minLevel) / (maxLevel - minLevel)) * 255);
+    int normalizedBlue = qRound((double(qBlue(color) - minLevel) / (maxLevel - minLevel)) * 255);
     normalizedRed = qBound(0, normalizedRed, 255);
     normalizedGreen = qBound(0, normalizedGreen, 255);
     normalizedBlue = qBound(0, normalizedBlue, 255);
@@ -349,11 +349,11 @@ QImage Posterizer::posterize(const QImage& image) const {
     const double levelStride = 255.0 / m_level;
     for (const auto& colorAndStat : paletteStatMap) {
       const uint32_t color = colorAndStat.first;
-      const uint32_t normalized_color = colorToNormalizedMap[color];
+      const uint32_t normalizedColor = colorToNormalizedMap[color];
 
-      const auto redGroupIdx = static_cast<int>(qRed(normalized_color) / levelStride);
-      const auto blueGroupIdx = static_cast<int>(qGreen(normalized_color) / levelStride);
-      const auto greenGroupIdx = static_cast<int>(qBlue(normalized_color) / levelStride);
+      const auto redGroupIdx = static_cast<int>(qRed(normalizedColor) / levelStride);
+      const auto blueGroupIdx = static_cast<int>(qGreen(normalizedColor) / levelStride);
+      const auto greenGroupIdx = static_cast<int>(qBlue(normalizedColor) / levelStride);
 
       auto group = static_cast<uint32_t>((redGroupIdx << 16) | (greenGroupIdx << 8) | (blueGroupIdx));
 

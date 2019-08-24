@@ -3,10 +3,10 @@
 
 #include "OrderByCompletenessProvider.h"
 
-bool OrderByCompletenessProvider::precedes(const PageId&, bool lhs_incomplete, const PageId&, bool rhs_incomplete) const {
-  if (lhs_incomplete != rhs_incomplete) {
+bool OrderByCompletenessProvider::precedes(const PageId&, bool lhsIncomplete, const PageId&, bool rhsIncomplete) const {
+  if (lhsIncomplete != rhsIncomplete) {
     // Incomplete pages go to the back.
-    return rhs_incomplete;
+    return rhsIncomplete;
   }
   return true;
 }

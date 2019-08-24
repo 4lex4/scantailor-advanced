@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_SOBEL_H_
-#define IMAGEPROC_SOBEL_H_
+#ifndef SCANTAILOR_IMAGEPROC_SOBEL_H_
+#define SCANTAILOR_IMAGEPROC_SOBEL_H_
 
 /**
  * \file
@@ -24,14 +24,14 @@ namespace imageproc {
  *        will cause this function to return without doing anything.
  * \param src Pointer or a random access iterator to the top-left corner
  *        of the source grid.
- * \param src_stride The distance from a point on the source grid to the
+ * \param srcStride The distance from a point on the source grid to the
  *        point directly below it, in terms of iterator difference.
- * \param src_reader A functor that gets passed a dereferenced iterator
+ * \param srcReader A functor that gets passed a dereferenced iterator
  *        to the source grid and returns some type convertable to T.
  *        It's called like this:
  *        \code
  *        SrcIt src_it = ...;
- *        const T var(src_reader(*src_it));
+ *        const T var(srcReader(*src_it));
  *        \endcode
  *        Consider using boost::lambda for constructing such a functor,
  *        possibly combined with one of the functors from ValueConf.h
@@ -42,24 +42,24 @@ namespace imageproc {
  *        is supported, provided it's able to store signed values.
  *        Having all 3 to be the same is supported as well, subject
  *        to the same condition.
- * \param tmp_stride The distance from a point on the temporary grid to the
+ * \param tmpStride The distance from a point on the temporary grid to the
  *        point directly below it, in terms of iterator difference.
- * \param tmp_writer A functor that writes a value to the temporary grid.
+ * \param tmpWriter A functor that writes a value to the temporary grid.
  *        It's called like this:
  *        \code
  *        TmpIt tmp_it = ...;
  *        T val = ...;
- *        tmp_writer(*tmp_it, val);
+ *        tmpWriter(*tmp_it, val);
  *        \endcode
- * \param tmp_reader A functor that gets passed a dereferenced iterator
+ * \param tmpReader A functor that gets passed a dereferenced iterator
  *        to the temporary grid and returns some type convertable to T.
- *        See \p src_reader for more info.
+ *        See \p srcReader for more info.
  * \param dst Pointer or a random access iterator to the top-left corner
  *        of the destination grid.
- * \param dst_stride The distance from a point on the destination grid to the
+ * \param dstStride The distance from a point on the destination grid to the
  *        point directly below it, in terms of iterator difference.
- * \param dst_writer A functor that writes a value to the destination grid.
- *        See \p tmp_writer for more info.
+ * \param dstWriter A functor that writes a value to the destination grid.
+ *        See \p tmpWriter for more info.
  */
 template <typename T,
           typename SrcIt,
@@ -72,15 +72,15 @@ template <typename T,
 void horizontalSobel(int width,
                      int height,
                      SrcIt src,
-                     int src_stride,
-                     SrcReader src_reader,
+                     int srcStride,
+                     SrcReader srcReader,
                      TmpIt tmp,
-                     int tmp_stride,
-                     TmpWriter tmp_writer,
-                     TmpReader tmp_reader,
+                     int tmpStride,
+                     TmpWriter tmpWriter,
+                     TmpReader tmpReader,
                      DstIt dst,
-                     int dst_stride,
-                     DstWriter dst_writer);
+                     int dstStride,
+                     DstWriter dstWriter);
 
 
 /**
@@ -97,15 +97,15 @@ template <typename T,
 void verticalSobel(int width,
                    int height,
                    SrcIt src,
-                   int src_stride,
-                   SrcReader src_reader,
+                   int srcStride,
+                   SrcReader srcReader,
                    TmpIt tmp,
-                   int tmp_stride,
-                   TmpWriter tmp_writer,
-                   TmpReader tmp_reader,
+                   int tmpStride,
+                   TmpWriter tmpWriter,
+                   TmpReader tmpReader,
                    DstIt dst,
-                   int dst_stride,
-                   DstWriter dst_writer);
+                   int dstStride,
+                   DstWriter dstWriter);
 
 
 template <typename T,
@@ -119,70 +119,70 @@ template <typename T,
 void horizontalSobel(const int width,
                      const int height,
                      SrcIt src,
-                     int src_stride,
-                     SrcReader src_reader,
+                     int srcStride,
+                     SrcReader srcReader,
                      TmpIt tmp,
-                     const int tmp_stride,
-                     TmpWriter tmp_writer,
-                     TmpReader tmp_reader,
+                     const int tmpStride,
+                     TmpWriter tmpWriter,
+                     TmpReader tmpReader,
                      DstIt dst,
-                     const int dst_stride,
-                     DstWriter dst_writer) {
+                     const int dstStride,
+                     DstWriter dstWriter) {
   if ((width <= 0) || (height <= 0)) {
     return;
   }
 
   // Vertical pre-accumulation pass: mid = top + mid*2 + bottom
   for (int x = 0; x < width; ++x) {
-    SrcIt p_src(src + x);
-    TmpIt p_tmp(tmp + x);
+    SrcIt pSrc(src + x);
+    TmpIt pTmp(tmp + x);
 
-    T top(src_reader(*p_src));
+    T top(srcReader(*pSrc));
     if (height == 1) {
-      tmp_writer(*p_tmp, top + top + top + top);
+      tmpWriter(*pTmp, top + top + top + top);
       continue;
     }
 
-    T mid(src_reader(p_src[src_stride]));
-    tmp_writer(*p_tmp, top + top + top + mid);
+    T mid(srcReader(pSrc[srcStride]));
+    tmpWriter(*pTmp, top + top + top + mid);
 
     for (int y = 1; y < height - 1; ++y) {
-      p_src += src_stride;
-      p_tmp += tmp_stride;
-      const T bottom(src_reader(p_src[src_stride]));
-      tmp_writer(*p_tmp, top + mid + mid + bottom);
+      pSrc += srcStride;
+      pTmp += tmpStride;
+      const T bottom(srcReader(pSrc[srcStride]));
+      tmpWriter(*pTmp, top + mid + mid + bottom);
       top = mid;
       mid = bottom;
     }
 
-    p_src += src_stride;
-    p_tmp += tmp_stride;
-    tmp_writer(*p_tmp, top + mid + mid + mid);
+    pSrc += srcStride;
+    pTmp += tmpStride;
+    tmpWriter(*pTmp, top + mid + mid + mid);
   }
 
   // Horizontal pass: mid = right - left
   for (int y = 0; y < height; ++y) {
-    T left(tmp_reader(*tmp));
+    T left(tmpReader(*tmp));
 
     if (width == 1) {
-      dst_writer(*dst, left - left);
+      dstWriter(*dst, left - left);
     } else {
-      T mid(tmp_reader(tmp[1]));
-      dst_writer(dst[0], mid - left);
+      T mid(tmpReader(tmp[1]));
+      dstWriter(dst[0], mid - left);
 
       int x = 1;
       for (; x < width - 1; ++x) {
-        const T right(tmp_reader(tmp[x + 1]));
-        dst_writer(dst[x], right - left);
+        const T right(tmpReader(tmp[x + 1]));
+        dstWriter(dst[x], right - left);
         left = mid;
         mid = right;
       }
 
-      dst_writer(dst[x], mid - left);
+      dstWriter(dst[x], mid - left);
     }
 
-    tmp += tmp_stride;
-    dst += dst_stride;
+    tmp += tmpStride;
+    dst += dstStride;
   }
 }  // horizontalSobel
 
@@ -197,72 +197,72 @@ template <typename T,
 void verticalSobel(const int width,
                    const int height,
                    SrcIt src,
-                   int src_stride,
-                   SrcReader src_reader,
+                   int srcStride,
+                   SrcReader srcReader,
                    TmpIt tmp,
-                   const int tmp_stride,
-                   TmpWriter tmp_writer,
-                   TmpReader tmp_reader,
+                   const int tmpStride,
+                   TmpWriter tmpWriter,
+                   TmpReader tmpReader,
                    DstIt dst,
-                   const int dst_stride,
-                   DstWriter dst_writer) {
+                   const int dstStride,
+                   DstWriter dstWriter) {
   if ((width <= 0) || (height <= 0)) {
     return;
   }
 
-  const TmpIt tmp_orig(tmp);
+  const TmpIt tmpOrig(tmp);
 
   // Horizontal pre-accumulation pass: mid = left + mid*2 + right
   for (int y = 0; y < height; ++y) {
-    T left(src_reader(*src));
+    T left(srcReader(*src));
 
     if (width == 1) {
-      tmp_writer(*tmp, left + left + left + left);
+      tmpWriter(*tmp, left + left + left + left);
     } else {
-      T mid(src_reader(src[1]));
-      tmp_writer(tmp[0], left + left + left + mid);
+      T mid(srcReader(src[1]));
+      tmpWriter(tmp[0], left + left + left + mid);
 
       int x = 1;
       for (; x < width - 1; ++x) {
-        const T right(src_reader(src[x + 1]));
-        tmp_writer(tmp[x], left + mid + mid + right);
+        const T right(srcReader(src[x + 1]));
+        tmpWriter(tmp[x], left + mid + mid + right);
         left = mid;
         mid = right;
       }
 
-      tmp_writer(tmp[x], left + mid + mid + mid);
+      tmpWriter(tmp[x], left + mid + mid + mid);
     }
-    src += src_stride;
-    tmp += tmp_stride;
+    src += srcStride;
+    tmp += tmpStride;
   }
 
   // Vertical pass: mid = bottom - top
   for (int x = 0; x < width; ++x) {
-    TmpIt p_tmp(tmp_orig + x);
-    TmpIt p_dst(dst + x);
+    TmpIt pTmp(tmpOrig + x);
+    TmpIt pDst(dst + x);
 
-    T top(tmp_reader(*p_tmp));
+    T top(tmpReader(*pTmp));
     if (height == 1) {
-      dst_writer(*p_dst, top - top);
+      dstWriter(*pDst, top - top);
       continue;
     }
 
-    T mid(tmp_reader(p_tmp[tmp_stride]));
-    dst_writer(*p_dst, mid - top);
+    T mid(tmpReader(pTmp[tmpStride]));
+    dstWriter(*pDst, mid - top);
 
     for (int y = 1; y < height - 1; ++y) {
-      p_tmp += tmp_stride;
-      p_dst += dst_stride;
-      const T bottom(tmp_reader(p_tmp[tmp_stride]));
-      dst_writer(*p_dst, bottom - top);
+      pTmp += tmpStride;
+      pDst += dstStride;
+      const T bottom(tmpReader(pTmp[tmpStride]));
+      dstWriter(*pDst, bottom - top);
       top = mid;
       mid = bottom;
     }
 
-    p_tmp += tmp_stride;
-    p_dst += dst_stride;
-    dst_writer(*p_dst, mid - top);
+    pTmp += tmpStride;
+    pDst += dstStride;
+    dstWriter(*pDst, mid - top);
   }
 }  // verticalSobel
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_SOBEL_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_SOBEL_H_

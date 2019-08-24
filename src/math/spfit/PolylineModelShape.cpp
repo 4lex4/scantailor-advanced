@@ -20,100 +20,100 @@ PolylineModelShape::PolylineModelShape(const std::vector<QPointF>& polyline) {
     spline.appendControlPoint(pt, -1);
   }
 
-  const int num_control_points = spline.numControlPoints();
-  const double scale = 1.0 / (num_control_points - 1);
-  for (int i = 0; i < num_control_points; ++i) {
+  const int numControlPoints = spline.numControlPoints();
+  const double scale = 1.0 / (numControlPoints - 1);
+  for (int i = 0; i < numControlPoints; ++i) {
     m_vertices.push_back(spline.pointAndDtsAt(i * scale));
   }
 }
 
 SqDistApproximant PolylineModelShape::localSqDistApproximant(const QPointF& pt,
-                                                             FittableSpline::SampleFlags sample_flags) const {
+                                                             FittableSpline::SampleFlags sampleFlags) const {
   if (m_vertices.empty()) {
     return SqDistApproximant();
   }
 
   // First, find the point on the polyline closest to pt.
-  QPointF best_foot_point;
-  double best_sqdist = NumericTraits<double>::max();
-  double segment_t = -1;
-  int segment_idx = -1;  // If best_foot_point is on a segment, its index goes here.
-  int vertex_idx = -1;   // If best_foot_point is a vertex, its index goes here.
+  QPointF bestFootPoint;
+  double bestSqdist = NumericTraits<double>::max();
+  double segmentT = -1;
+  int segmentIdx = -1;  // If bestFootPoint is on a segment, its index goes here.
+  int vertexIdx = -1;   // If bestFootPoint is a vertex, its index goes here.
   // Project pt to each segment.
-  const int num_segments = int(m_vertices.size()) - 1;
-  for (int i = 0; i < num_segments; ++i) {
+  const int numSegments = int(m_vertices.size()) - 1;
+  for (int i = 0; i < numSegments; ++i) {
     const QPointF pt1(m_vertices[i].point);
     const QPointF pt2(m_vertices[i + 1].point);
     const QLineF segment(pt1, pt2);
     const double s = ToLineProjector(segment).projectionScalar(pt);
     if ((s > 0) && (s < 1)) {
-      const QPointF foot_point(segment.pointAt(s));
-      const Vec2d vec(pt - foot_point);
+      const QPointF footPoint(segment.pointAt(s));
+      const Vec2d vec(pt - footPoint);
       const double sqdist = vec.squaredNorm();
-      if (sqdist < best_sqdist) {
-        best_sqdist = sqdist;
-        best_foot_point = foot_point;
-        segment_idx = i;
-        segment_t = s;
-        vertex_idx = -1;
+      if (sqdist < bestSqdist) {
+        bestSqdist = sqdist;
+        bestFootPoint = footPoint;
+        segmentIdx = i;
+        segmentT = s;
+        vertexIdx = -1;
       }
     }
   }
   // Check if pt is closer to a vertex than to any segment.
-  const auto num_points = static_cast<int>(m_vertices.size());
-  for (int i = 0; i < num_points; ++i) {
+  const auto numPoints = static_cast<int>(m_vertices.size());
+  for (int i = 0; i < numPoints; ++i) {
     const QPointF vtx(m_vertices[i].point);
     const Vec2d vec(pt - vtx);
     const double sqdist = vec.squaredNorm();
-    if (sqdist < best_sqdist) {
-      best_sqdist = sqdist;
-      best_foot_point = vtx;
-      vertex_idx = i;
-      segment_idx = -1;
+    if (sqdist < bestSqdist) {
+      bestSqdist = sqdist;
+      bestFootPoint = vtx;
+      vertexIdx = i;
+      segmentIdx = -1;
     }
   }
 
-  if (segment_idx != -1) {
+  if (segmentIdx != -1) {
     // The foot point is on a line segment.
-    assert(segment_t >= 0 && segment_t <= 1);
+    assert(segmentT >= 0 && segmentT <= 1);
 
-    const XSpline::PointAndDerivs& pd1 = m_vertices[segment_idx];
-    const XSpline::PointAndDerivs& pd2 = m_vertices[segment_idx + 1];
-    const FrenetFrame frenet_frame(best_foot_point, pd2.point - pd1.point);
+    const XSpline::PointAndDerivs& pd1 = m_vertices[segmentIdx];
+    const XSpline::PointAndDerivs& pd2 = m_vertices[segmentIdx + 1];
+    const FrenetFrame frenetFrame(bestFootPoint, pd2.point - pd1.point);
 
     const double k1 = pd1.signedCurvature();
     const double k2 = pd2.signedCurvature();
-    const double weighted_k = k1 + segment_t * (k2 - k1);
+    const double weightedK = k1 + segmentT * (k2 - k1);
 
-    return calcApproximant(pt, sample_flags, DEFAULT_FLAGS, frenet_frame, weighted_k);
+    return calcApproximant(pt, sampleFlags, DEFAULT_FLAGS, frenetFrame, weightedK);
   } else {
     // The foot point is a vertex of the polyline.
-    assert(vertex_idx != -1);
+    assert(vertexIdx != -1);
 
-    const XSpline::PointAndDerivs& pd = m_vertices[vertex_idx];
-    const FrenetFrame frenet_frame(best_foot_point, pd.firstDeriv);
+    const XSpline::PointAndDerivs& pd = m_vertices[vertexIdx];
+    const FrenetFrame frenetFrame(bestFootPoint, pd.firstDeriv);
 
-    Flags polyline_flags = DEFAULT_FLAGS;
-    if (vertex_idx == 0) {
-      polyline_flags |= POLYLINE_FRONT;
+    Flags polylineFlags = DEFAULT_FLAGS;
+    if (vertexIdx == 0) {
+      polylineFlags |= POLYLINE_FRONT;
     }
-    if (vertex_idx == int(m_vertices.size()) - 1) {
-      polyline_flags |= POLYLINE_BACK;
+    if (vertexIdx == int(m_vertices.size()) - 1) {
+      polylineFlags |= POLYLINE_BACK;
     }
 
-    return calcApproximant(pt, sample_flags, polyline_flags, frenet_frame, pd.signedCurvature());
+    return calcApproximant(pt, sampleFlags, polylineFlags, frenetFrame, pd.signedCurvature());
   }
 }  // PolylineModelShape::localSqDistApproximant
 
 SqDistApproximant PolylineModelShape::calcApproximant(const QPointF& pt,
-                                                      const FittableSpline::SampleFlags sample_flags,
-                                                      const Flags polyline_flags,
-                                                      const FrenetFrame& frenet_frame,
-                                                      const double signed_curvature) const {
-  if (sample_flags & (FittableSpline::HEAD_SAMPLE | FittableSpline::TAIL_SAMPLE)) {
-    return SqDistApproximant::pointDistance(frenet_frame.origin());
+                                                      const FittableSpline::SampleFlags sampleFlags,
+                                                      const Flags polylineFlags,
+                                                      const FrenetFrame& frenetFrame,
+                                                      const double signedCurvature) const {
+  if (sampleFlags & (FittableSpline::HEAD_SAMPLE | FittableSpline::TAIL_SAMPLE)) {
+    return SqDistApproximant::pointDistance(frenetFrame.origin());
   } else {
-    return SqDistApproximant::curveDistance(pt, frenet_frame, signed_curvature);
+    return SqDistApproximant::curveDistance(pt, frenetFrame, signedCurvature);
   }
 }
 }  // namespace spfit

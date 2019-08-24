@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_BITOPS_H_
-#define IMAGEPROC_BITOPS_H_
+#ifndef SCANTAILOR_IMAGEPROC_BITOPS_H_
+#define SCANTAILOR_IMAGEPROC_BITOPS_H_
 
 namespace imageproc {
 namespace detail {
@@ -28,16 +28,16 @@ class NonZeroBits<T, 1> {
 template <typename T, int TotalBytes, int Offset, bool Done = false>
 struct ReverseBytes {
   static T result(const T val) {
-    const int left_shift = (TotalBytes - Offset - 1) * 8;
-    const int right_shift = Offset * 8;
+    const int leftShift = (TotalBytes - Offset - 1) * 8;
+    const int rightShift = Offset * 8;
 
     typedef unsigned char Byte;
-    const Byte left_byte = static_cast<Byte>(val >> left_shift);
-    const Byte right_byte = static_cast<Byte>(val >> right_shift);
+    const Byte leftByte = static_cast<Byte>(val >> leftShift);
+    const Byte rightByte = static_cast<Byte>(val >> rightShift);
 
     T res(ReverseBytes<T, TotalBytes, Offset + 1, Offset == TotalBytes / 2>::result(val));
-    res |= T(reversedBits[left_byte]) << right_shift;
-    res |= T(reversedBits[right_byte]) << left_shift;
+    res |= T(reversedBits[leftByte]) << rightShift;
+    res |= T(reversedBits[rightByte]) << leftShift;
 
     return res;
   }
@@ -132,11 +132,11 @@ T reverseBits(const T val) {
 
 template <typename T>
 int countMostSignificantZeroes(const T val) {
-  static const int total_bits = sizeof(T) * 8;
-  int zeroes = total_bits;
+  static const int totalBits = sizeof(T) * 8;
+  int zeroes = totalBits;
 
   if (val) {
-    zeroes = detail::MostSignificantZeroes<T, total_bits / 2>::reduce(val, zeroes);
+    zeroes = detail::MostSignificantZeroes<T, totalBits / 2>::reduce(val, zeroes);
   }
 
   return zeroes;
@@ -144,14 +144,14 @@ int countMostSignificantZeroes(const T val) {
 
 template <typename T>
 int countLeastSignificantZeroes(const T val) {
-  static const int total_bits = sizeof(T) * 8;
-  int zeroes = total_bits;
+  static const int totalBits = sizeof(T) * 8;
+  int zeroes = totalBits;
 
   if (val) {
-    zeroes = detail::LeastSignificantZeroes<T, total_bits / 2>::reduce(val, zeroes);
+    zeroes = detail::LeastSignificantZeroes<T, totalBits / 2>::reduce(val, zeroes);
   }
 
   return zeroes;
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_BITOPS_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_BITOPS_H_

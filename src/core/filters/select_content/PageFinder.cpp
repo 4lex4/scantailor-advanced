@@ -18,33 +18,33 @@ using namespace imageproc;
 
 QRectF PageFinder::findPageBox(const TaskStatus& status,
                                const FilterData& data,
-                               bool fine_tune,
+                               bool fineTune,
                                const QSizeF& box,
                                double tolerance,
                                DebugImages* dbg) {
-  ImageTransformation xform_150dpi(data.xform());
-  xform_150dpi.preScaleToDpi(Dpi(150, 150));
+  ImageTransformation xform150dpi(data.xform());
+  xform150dpi.preScaleToDpi(Dpi(150, 150));
 
-  if (xform_150dpi.resultingRect().toRect().isEmpty()) {
+  if (xform150dpi.resultingRect().toRect().isEmpty()) {
     return QRectF();
   }
 
   double to150 = 150.0 / 25.4;
-  auto exp_width = int(to150 * box.width());
-  auto exp_height = int(to150 * box.height());
+  auto expWidth = int(to150 * box.width());
+  auto expHeight = int(to150 * box.height());
 
 #ifdef DEBUG
   std::cout << "dpi: " << data.xform().origDpi().horizontal() << std::endl;
   std::cout << "tolerance: " << tolerance << std::endl;
-  std::cout << "exp_width = " << exp_width << "; exp_height" << exp_height << std::endl;
+  std::cout << "expWidth = " << expWidth << "; expHeight" << expHeight << std::endl;
 #endif
 
   const GrayImage dataGrayImage = data.grayImageBlackOnWhite();
-  const uint8_t darkest_gray_level = darkestGrayLevel(dataGrayImage);
-  const QColor outside_color(darkest_gray_level, darkest_gray_level, darkest_gray_level);
+  const uint8_t darkestGrayLevel = imageproc::darkestGrayLevel(dataGrayImage);
+  const QColor outsideColor(darkestGrayLevel, darkestGrayLevel, darkestGrayLevel);
 
-  QImage gray150(transformToGray(dataGrayImage, xform_150dpi.transform(), xform_150dpi.resultingRect().toRect(),
-                                 OutsidePixels::assumeColor(outside_color)));
+  QImage gray150(transformToGray(dataGrayImage, xform150dpi.transform(), xform150dpi.resultingRect().toRect(),
+                                 OutsidePixels::assumeColor(outsideColor)));
   if (dbg) {
     dbg->add(gray150, "gray150");
   }
@@ -67,52 +67,52 @@ QRectF PageFinder::findPageBox(const TaskStatus& status,
     dbg->add(bwimages[4], "WolfThreshold");
   }
 
-  QRect content_rect(0, 0, 0, 0);
-  double err_width = 1.0;
-  double err_height = 1.0;
+  QRect contentRect(0, 0, 0, 0);
+  double errWidth = 1.0;
+  double errHeight = 1.0;
 
   if (box.isEmpty()) {
     QImage bwimg(bwimages[3].toQImage());
-    content_rect = detectBorders(bwimg);
-    if (fine_tune) {
-      fineTuneCorners(bwimg, content_rect, QSize(0, 0), 1.0);
+    contentRect = detectBorders(bwimg);
+    if (fineTune) {
+      fineTuneCorners(bwimg, contentRect, QSize(0, 0), 1.0);
     }
   } else {
     for (uint32_t i = 0; i < bwimages.size(); ++i) {
       QImage bwimg(bwimages[i].toQImage());
       rects.push_back(QRect(detectBorders(bwimg)));
-      if (fine_tune) {
-        fineTuneCorners(bwimg, rects[i], QSize(exp_width, exp_height), tolerance);
+      if (fineTune) {
+        fineTuneCorners(bwimg, rects[i], QSize(expWidth, expHeight), tolerance);
       }
 #ifdef DEBUG
       std::cout << "width = " << rects[i].width() << "; height=" << rects[i].height() << std::endl;
 #endif
 
-      double err_w = double(std::abs(exp_width - rects[i].width())) / double(exp_width);
-      double err_h = double(std::abs(exp_height - rects[i].height())) / double(exp_height);
+      double errW = double(std::abs(expWidth - rects[i].width())) / double(expWidth);
+      double errH = double(std::abs(expHeight - rects[i].height())) / double(expHeight);
 #ifdef DEBUG
-      std::cout << "err_w=" << err_w << "; err_h" << err_h << std::endl;
+      std::cout << "errW=" << errW << "; errH" << errH << std::endl;
 #endif
 
-      if (err_w < err_width) {
-        content_rect.setLeft(rects[i].left());
-        content_rect.setRight(rects[i].right());
-        err_width = err_w;
+      if (errW < errWidth) {
+        contentRect.setLeft(rects[i].left());
+        contentRect.setRight(rects[i].right());
+        errWidth = errW;
       }
-      if (err_h < err_height) {
-        content_rect.setTop(rects[i].top());
-        content_rect.setBottom(rects[i].bottom());
-        err_height = err_h;
+      if (errH < errHeight) {
+        contentRect.setTop(rects[i].top());
+        contentRect.setBottom(rects[i].bottom());
+        errHeight = errH;
       }
     }
   }
 #ifdef DEBUG
-  std::cout << "width = " << content_rect.width() << "; height=" << content_rect.height() << std::endl;
+  std::cout << "width = " << contentRect.width() << "; height=" << contentRect.height() << std::endl;
 #endif
 
-  QTransform combined_xform(xform_150dpi.transform().inverted());
-  combined_xform *= data.xform().transform();
-  QRectF result = combined_xform.map(QRectF(content_rect)).boundingRect();
+  QTransform combinedXform(xform150dpi.transform().inverted());
+  combinedXform *= data.xform().transform();
+  QRectF result = combinedXform.map(QRectF(contentRect)).boundingRect();
 
   return result;
 }  // PageFinder::findPageBox
@@ -134,16 +134,16 @@ QRect PageFinder::detectBorders(const QImage& img) {
  * shift edge while points around mid are black
  */
 int PageFinder::detectEdge(const QImage& img, int start, int end, int inc, int mid, Qt::Orientation orient) {
-  int min_size = 10;
+  int minSize = 10;
   int gap = 0;
   int i = start, edge = start;
   int ms = 0;
   int me = 2 * mid;
-  auto min_bp = int(double(me - ms) * 0.95);
+  auto minBp = int(double(me - ms) * 0.95);
   Qt::GlobalColor black = Qt::color1;
 
   while (i != end) {
-    int black_pixels = 0;
+    int blackPixels = 0;
 
     for (int j = ms; j != me; j++) {
       int x = i, y = j;
@@ -153,18 +153,18 @@ int PageFinder::detectEdge(const QImage& img, int start, int end, int inc, int m
       }
       int pixel = img.pixelIndex(x, y);
       if (pixel == black) {
-        ++black_pixels;
+        ++blackPixels;
       }
     }
 
-    if (black_pixels < min_bp) {
+    if (blackPixels < minBp) {
       ++gap;
     } else {
       gap = 0;
       edge = i;
     }
 
-    if (gap > min_size) {
+    if (gap > minSize) {
       break;
     }
 
@@ -197,23 +197,23 @@ void PageFinder::fineTuneCorners(const QImage& img, QRect& rect, const QSize& si
 bool PageFinder::fineTuneCorner(const QImage& img,
                                 int& x,
                                 int& y,
-                                int max_x,
-                                int max_y,
-                                int inc_x,
-                                int inc_y,
+                                int maxX,
+                                int maxY,
+                                int incX,
+                                int incY,
                                 const QSize& size,
                                 double tolerance) {
-  auto width_t = static_cast<int>(size.width() * (1.0 - tolerance));
-  auto height_t = static_cast<int>(size.height() * (1.0 - tolerance));
+  auto widthT = static_cast<int>(size.width() * (1.0 - tolerance));
+  auto heightT = static_cast<int>(size.height() * (1.0 - tolerance));
 
   Qt::GlobalColor black = Qt::color1;
   int pixel = img.pixelIndex(x, y);
-  int tx = x + inc_x;
-  int ty = y + inc_y;
-  int w = std::abs(max_x - x);
-  int h = std::abs(max_y - y);
+  int tx = x + incX;
+  int ty = y + incY;
+  int w = std::abs(maxX - x);
+  int h = std::abs(maxY - y);
 
-  if ((!size.isEmpty()) && ((w < width_t) || (h < height_t))) {
+  if ((!size.isEmpty()) && ((w < widthT) || (h < heightT))) {
     return true;
   }
   if ((pixel != black) || (tx < 0) || (tx > (img.width() - 1)) || (ty < 0) || (ty > (img.height() - 1))) {

@@ -2,8 +2,8 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 
-#ifndef OUTPUT_DESPECKLE_VISUALIZATION_H_
-#define OUTPUT_DESPECKLE_VISUALIZATION_H_
+#ifndef SCANTAILOR_OUTPUT_DESPECKLEVISUALIZATION_H_
+#define SCANTAILOR_OUTPUT_DESPECKLEVISUALIZATION_H_
 
 #include <QImage>
 
@@ -44,4 +44,4 @@ class DespeckleVisualization {
   QImage m_downscaledImage;
 };
 }  // namespace output
-#endif  // ifndef OUTPUT_DESPECKLE_VISUALIZATION_H_
+#endif  // ifndef SCANTAILOR_OUTPUT_DESPECKLEVISUALIZATION_H_

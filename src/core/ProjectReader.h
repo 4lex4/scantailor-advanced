@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PROJECTREADER_H_
-#define PROJECTREADER_H_
+#ifndef SCANTAILOR_CORE_PROJECTREADER_H_
+#define SCANTAILOR_CORE_PROJECTREADER_H_
 
 #include <QDomDocument>
 #include <QString>
@@ -43,9 +43,9 @@ class ProjectReader {
 
   const intrusive_ptr<FileNameDisambiguator>& namingDisambiguator() const { return m_disambiguator; }
 
-  ImageId imageId(int numeric_id) const;
+  ImageId imageId(int numericId) const;
 
-  PageId pageId(int numeric_id) const;
+  PageId pageId(int numericId) const;
 
  private:
   struct FileRecord {
@@ -54,8 +54,7 @@ class ProjectReader {
 
     FileRecord() : compatMultiPage(false) {}
 
-    FileRecord(const QString& file_path, bool compat_multi_page)
-        : filePath(file_path), compatMultiPage(compat_multi_page) {}
+    FileRecord(const QString& filePath, bool compatMultiPage) : filePath(filePath), compatMultiPage(compatMultiPage) {}
   };
 
   typedef std::unordered_map<int, QString> DirMap;
@@ -63,21 +62,21 @@ class ProjectReader {
   typedef std::unordered_map<int, ImageInfo> ImageMap;
   typedef std::unordered_map<int, PageId> PageMap;
 
-  void processDirectories(const QDomElement& dirs_el);
+  void processDirectories(const QDomElement& dirsEl);
 
-  void processFiles(const QDomElement& files_el);
+  void processFiles(const QDomElement& filesEl);
 
-  void processImages(const QDomElement& images_el, Qt::LayoutDirection layout_direction);
+  void processImages(const QDomElement& imagesEl, Qt::LayoutDirection layoutDirection);
 
-  ImageMetadata processImageMetadata(const QDomElement& image_el);
+  ImageMetadata processImageMetadata(const QDomElement& imageEl);
 
-  void processPages(const QDomElement& pages_el);
+  void processPages(const QDomElement& pagesEl);
 
   QString getDirPath(int id) const;
 
   FileRecord getFileRecord(int id) const;
 
-  QString expandFilePath(const QString& path_shorthand) const;
+  QString expandFilePath(const QString& pathShorthand) const;
 
   ImageInfo getImageInfo(int id) const;
 
@@ -94,4 +93,4 @@ class ProjectReader {
 };
 
 
-#endif  // ifndef PROJECTREADER_H_
+#endif  // ifndef SCANTAILOR_CORE_PROJECTREADER_H_

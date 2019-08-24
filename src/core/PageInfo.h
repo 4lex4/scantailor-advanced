@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGEINFO_H_
-#define PAGEINFO_H_
+#ifndef SCANTAILOR_CORE_PAGEINFO_H_
+#define SCANTAILOR_CORE_PAGEINFO_H_
 
 #include "ImageMetadata.h"
 #include "PageId.h"
@@ -12,11 +12,11 @@ class PageInfo {
  public:
   PageInfo();
 
-  PageInfo(const PageId& page_id,
+  PageInfo(const PageId& pageId,
            const ImageMetadata& metadata,
-           int image_sub_pages,
-           bool left_half_removed,
-           bool right_half_removed);
+           int imageSubPages,
+           bool leftHalfRemoved,
+           bool rightHalfRemoved);
 
   bool isNull() const { return m_pageId.isNull(); }
 
@@ -43,4 +43,4 @@ class PageInfo {
 };
 
 
-#endif  // ifndef PAGEINFO_H_
+#endif  // ifndef SCANTAILOR_CORE_PAGEINFO_H_

@@ -42,8 +42,8 @@ class DespeckleView::TaskCancelHandle : public TaskStatus, public ref_countable 
 class DespeckleView::DespeckleTask : public AbstractCommand<BackgroundExecutor::TaskResultPtr> {
  public:
   DespeckleTask(DespeckleView* owner,
-                const DespeckleState& despeckle_state,
-                intrusive_ptr<TaskCancelHandle> cancel_handle,
+                const DespeckleState& despeckleState,
+                intrusive_ptr<TaskCancelHandle> cancelHandle,
                 double level,
                 bool debug);
 
@@ -61,10 +61,10 @@ class DespeckleView::DespeckleTask : public AbstractCommand<BackgroundExecutor::
 class DespeckleView::DespeckleResult : public AbstractCommand<void> {
  public:
   DespeckleResult(QPointer<DespeckleView> owner,
-                  intrusive_ptr<TaskCancelHandle> cancel_handle,
-                  const DespeckleState& despeckle_state,
+                  intrusive_ptr<TaskCancelHandle> cancelHandle,
+                  const DespeckleState& despeckleState,
                   const DespeckleVisualization& visualization,
-                  std::unique_ptr<DebugImages> debug_images);
+                  std::unique_ptr<DebugImages> debugImages);
 
   // This method is called from the main thread.
   void operator()() override;
@@ -80,12 +80,12 @@ class DespeckleView::DespeckleResult : public AbstractCommand<void> {
 
 /*============================ DespeckleView ==============================*/
 
-DespeckleView::DespeckleView(const DespeckleState& despeckle_state,
+DespeckleView::DespeckleView(const DespeckleState& despeckleState,
                              const DespeckleVisualization& visualization,
                              bool debug)
-    : m_despeckleState(despeckle_state),
+    : m_despeckleState(despeckleState),
       m_processingIndicator(new ProcessingIndicationWidget(this)),
-      m_despeckleLevel(despeckle_state.level()),
+      m_despeckleLevel(despeckleState.level()),
       m_debug(debug) {
   addWidget(m_processingIndicator);
 
@@ -101,12 +101,12 @@ DespeckleView::~DespeckleView() {
   cancelBackgroundTask();
 }
 
-void DespeckleView::despeckleLevelChanged(const double new_level, bool* handled) {
-  if (new_level == m_despeckleLevel) {
+void DespeckleView::despeckleLevelChanged(const double newLevel, bool* handled) {
+  if (newLevel == m_despeckleLevel) {
     return;
   }
 
-  m_despeckleLevel = new_level;
+  m_despeckleLevel = newLevel;
 
   if (isVisible()) {
     *handled = true;
@@ -133,9 +133,9 @@ void DespeckleView::showEvent(QShowEvent* evt) {
   }
 }
 
-void DespeckleView::initiateDespeckling(const AnimationAction anim_action) {
+void DespeckleView::initiateDespeckling(const AnimationAction animAction) {
   removeImageViewWidget();
-  if (anim_action == RESET_ANIMATION) {
+  if (animAction == RESET_ANIMATION) {
     m_processingIndicator->resetAnimation();
   } else {
     m_processingIndicator->processingRestartedEffect();
@@ -151,12 +151,12 @@ void DespeckleView::initiateDespeckling(const AnimationAction anim_action) {
   ImageViewBase::backgroundExecutor().enqueueTask(task);
 }
 
-void DespeckleView::despeckleDone(const DespeckleState& despeckle_state,
+void DespeckleView::despeckleDone(const DespeckleState& despeckleState,
                                   const DespeckleVisualization& visualization,
                                   DebugImages* dbg) {
   assert(!visualization.isNull());
 
-  m_despeckleState = despeckle_state;
+  m_despeckleState = despeckleState;
 
   removeImageViewWidget();
 
@@ -164,14 +164,14 @@ void DespeckleView::despeckleDone(const DespeckleState& despeckle_state,
       = std::make_unique<BasicImageView>(visualization.image(), visualization.downscaledImage(), OutputMargins());
 
   if (dbg && !dbg->empty()) {
-    auto tab_widget = std::make_unique<TabbedDebugImages>();
-    tab_widget->addTab(widget.release(), "Main");
+    auto tabWidget = std::make_unique<TabbedDebugImages>();
+    tabWidget->addTab(widget.release(), "Main");
     AutoRemovingFile file;
     QString label;
     while (!(file = dbg->retrieveNext(&label)).get().isNull()) {
-      tab_widget->addTab(new DebugImageView(file), label);
+      tabWidget->addTab(new DebugImageView(file), label);
     }
-    widget = std::move(tab_widget);
+    widget = std::move(tabWidget);
   }
 
   setCurrentIndex(addWidget(widget.release()));
@@ -198,13 +198,13 @@ void DespeckleView::removeImageViewWidget() {
 /*============================= DespeckleTask ==========================*/
 
 DespeckleView::DespeckleTask::DespeckleTask(DespeckleView* owner,
-                                            const DespeckleState& despeckle_state,
-                                            intrusive_ptr<TaskCancelHandle> cancel_handle,
+                                            const DespeckleState& despeckleState,
+                                            intrusive_ptr<TaskCancelHandle> cancelHandle,
                                             const double level,
                                             const bool debug)
     : m_owner(owner),
-      m_despeckleState(despeckle_state),
-      m_cancelHandle(std::move(cancel_handle)),
+      m_despeckleState(despeckleState),
+      m_cancelHandle(std::move(cancelHandle)),
       m_despeckleLevel(level) {
   if (debug) {
     m_dbg = std::make_unique<DebugImagesImpl>();
@@ -232,14 +232,14 @@ BackgroundExecutor::TaskResultPtr DespeckleView::DespeckleTask::operator()() {
 /*======================== DespeckleResult ===========================*/
 
 DespeckleView::DespeckleResult::DespeckleResult(QPointer<DespeckleView> owner,
-                                                intrusive_ptr<TaskCancelHandle> cancel_handle,
-                                                const DespeckleState& despeckle_state,
+                                                intrusive_ptr<TaskCancelHandle> cancelHandle,
+                                                const DespeckleState& despeckleState,
                                                 const DespeckleVisualization& visualization,
-                                                std::unique_ptr<DebugImages> debug_images)
+                                                std::unique_ptr<DebugImages> debugImages)
     : m_owner(std::move(owner)),
-      m_cancelHandle(std::move(cancel_handle)),
-      m_dbg(std::move(debug_images)),
-      m_despeckleState(despeckle_state),
+      m_cancelHandle(std::move(cancelHandle)),
+      m_dbg(std::move(debugImages)),
+      m_despeckleState(despeckleState),
       m_visualization(visualization) {}
 
 void DespeckleView::DespeckleResult::operator()() {

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_SKEWFINDER_H_
-#define IMAGEPROC_SKEWFINDER_H_
+#ifndef SCANTAILOR_IMAGEPROC_SKEWFINDER_H_
+#define SCANTAILOR_IMAGEPROC_SKEWFINDER_H_
 
 #include "NonCopyable.h"
 
@@ -66,20 +66,20 @@ class SkewFinder {
   /**
    * \brief Set the maximum skew angle, in degrees.
    *
-   * The range between 0 and max_angle degrees both clockwise
+   * The range between 0 and maxAngle degrees both clockwise
    * and counter-clockwise will be checked.
    * \note The angle can't exceed 45 degrees.
    */
-  void setMaxAngle(double max_angle = DEFAULT_MAX_ANGLE);
+  void setMaxAngle(double maxAngle = DEFAULT_MAX_ANGLE);
 
   /**
    * \brief Set the minimum skew angle, in degrees.
    *
-   * Any skew angle less than min_angle degrees will be rejected
+   * Any skew angle less than minAngle degrees will be rejected
    * and zero angle returned.
    * \note The minimum angle can't exceed the maximum skew angle.
    */
-  void setMinAngle(double min_angle = DEFAULT_MIN_ANGLE);
+  void setMinAngle(double minAngle = DEFAULT_MIN_ANGLE);
 
   /**
    * \brief Set the desired accuracy.
@@ -147,4 +147,4 @@ class SkewFinder {
   int m_fineReduction;
 };
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_SKEWFINDER_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_SKEWFINDER_H_

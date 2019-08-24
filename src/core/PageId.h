@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGEID_H_
-#define PAGEID_H_
+#ifndef SCANTAILOR_CORE_PAGEID_H_
+#define SCANTAILOR_CORE_PAGEID_H_
 
 #include "ImageId.h"
 
@@ -26,7 +26,7 @@ class PageId {
    *       to be able to use lower_bound() to find the first page with
    *       a matching image id.
    */
-  explicit PageId(const ImageId& image_id, SubPage subpage = SINGLE_PAGE);
+  explicit PageId(const ImageId& imageId, SubPage subpage = SINGLE_PAGE);
 
   bool isNull() const { return m_imageId.isNull(); }
 
@@ -38,7 +38,7 @@ class PageId {
 
   QString subPageAsString() const { return subPageToString(m_subPage); }
 
-  static QString subPageToString(SubPage sub_page);
+  static QString subPageToString(SubPage subPage);
 
   static SubPage subPageFromString(const QString& string, bool* ok = nullptr);
 
@@ -63,4 +63,4 @@ struct hash<PageId> {
 };
 }  // namespace std
 
-#endif  // ifndef PAGEID_H_
+#endif  // ifndef SCANTAILOR_CORE_PAGEID_H_

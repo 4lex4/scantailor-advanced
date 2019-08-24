@@ -45,17 +45,17 @@ int main(int argc, char* argv[]) {
   }
   IconProvider::getInstance().setIconPack(StyledIconPack::createDefault());
 
-  auto* main_wnd = new MainWindow();
-  main_wnd->setAttribute(Qt::WA_DeleteOnClose);
+  auto* mainWnd = new MainWindow();
+  mainWnd->setAttribute(Qt::WA_DeleteOnClose);
   if (settings.value("mainWindow/maximized") == false) {
-    main_wnd->show();
+    mainWnd->show();
   } else {
-    // main_wnd->showMaximized();  // Doesn't work for Windows.
-    QTimer::singleShot(0, main_wnd, &QMainWindow::showMaximized);
+    // mainWnd->showMaximized();  // Doesn't work for Windows.
+    QTimer::singleShot(0, mainWnd, &QMainWindow::showMaximized);
   }
 
   if (args.size() > 1) {
-    main_wnd->openProject(args.at(1));
+    mainWnd->openProject(args.at(1));
   }
 
   return Application::exec();

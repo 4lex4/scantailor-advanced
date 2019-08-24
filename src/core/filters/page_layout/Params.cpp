@@ -6,18 +6,18 @@
 #include "XmlUnmarshaller.h"
 
 namespace page_layout {
-Params::Params(const Margins& hard_margins_mm,
-               const QRectF& page_rect,
-               const QRectF& content_rect,
-               const QSizeF& content_size_mm,
+Params::Params(const Margins& hardMarginsMm,
+               const QRectF& pageRect,
+               const QRectF& contentRect,
+               const QSizeF& contentSizeMm,
                const Alignment& alignment,
-               const bool auto_margins)
-    : m_hardMarginsMM(hard_margins_mm),
-      m_contentRect(content_rect),
-      m_pageRect(page_rect),
-      m_contentSizeMM(content_size_mm),
+               const bool autoMargins)
+    : m_hardMarginsMM(hardMarginsMm),
+      m_contentRect(contentRect),
+      m_pageRect(pageRect),
+      m_contentSizeMM(contentSizeMm),
       m_alignment(alignment),
-      m_autoMargins(auto_margins) {}
+      m_autoMargins(autoMargins) {}
 
 Params::Params(const QDomElement& el)
     : m_hardMarginsMM(el.namedItem("hardMarginsMM").toElement()),

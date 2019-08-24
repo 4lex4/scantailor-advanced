@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SPAN_H_
-#define SPAN_H_
+#ifndef SCANTAILOR_FOUNDATION_SPAN_H_
+#define SCANTAILOR_FOUNDATION_SPAN_H_
 
 /**
  * \brief Represents a [from, to) range in one-dimensional space.
@@ -80,4 +80,4 @@ class Span {
 };
 
 
-#endif  // ifndef SPAN_H_
+#endif  // ifndef SCANTAILOR_FOUNDATION_SPAN_H_

@@ -3,13 +3,13 @@
 
 #include "ProcessingTaskQueue.h"
 
-ProcessingTaskQueue::Entry::Entry(const PageInfo& page_info, const BackgroundTaskPtr& tsk)
-    : pageInfo(page_info), task(tsk), takenForProcessing(false) {}
+ProcessingTaskQueue::Entry::Entry(const PageInfo& pageInfo, const BackgroundTaskPtr& tsk)
+    : pageInfo(pageInfo), task(tsk), takenForProcessing(false) {}
 
 ProcessingTaskQueue::ProcessingTaskQueue() = default;
 
-void ProcessingTaskQueue::addProcessingTask(const PageInfo& page_info, const BackgroundTaskPtr& task) {
-  m_queue.emplace_back(page_info, task);
+void ProcessingTaskQueue::addProcessingTask(const PageInfo& pageInfo, const BackgroundTaskPtr& task) {
+  m_queue.emplace_back(pageInfo, task);
   m_pageToSelectWhenDone = PageInfo();
 }
 
@@ -53,18 +53,18 @@ void ProcessingTaskQueue::processingFinished(const BackgroundTaskPtr& task) {
   }
 
 
-  const bool removing_selected_page = (m_selectedPage.id() == it->pageInfo.id());
+  const bool removingSelectedPage = (m_selectedPage.id() == it->pageInfo.id());
 
-  auto next_it(it);
-  ++next_it;
+  auto nextIt(it);
+  ++nextIt;
 
-  if ((next_it == end) && m_pageToSelectWhenDone.isNull()) {
+  if ((nextIt == end) && m_pageToSelectWhenDone.isNull()) {
     m_pageToSelectWhenDone = it->pageInfo;
   }
 
   m_queue.erase(it);
 
-  if (removing_selected_page) {
+  if (removingSelectedPage) {
     if (!m_queue.empty()) {
       m_selectedPage = m_queue.front().pageInfo;
     } else if (!m_pageToSelectWhenDone.isNull()) {

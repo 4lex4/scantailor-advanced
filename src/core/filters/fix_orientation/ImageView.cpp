@@ -5,8 +5,8 @@
 #include "ImagePresentation.h"
 
 namespace fix_orientation {
-ImageView::ImageView(const QImage& image, const QImage& downscaled_image, const ImageTransformation& xform)
-    : ImageViewBase(image, downscaled_image, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
+ImageView::ImageView(const QImage& image, const QImage& downscaledImage, const ImageTransformation& xform)
+    : ImageViewBase(image, downscaledImage, ImagePresentation(xform.transform(), xform.resultingPreCropArea())),
       m_dragHandler(*this),
       m_zoomHandler(*this),
       m_xform(xform) {

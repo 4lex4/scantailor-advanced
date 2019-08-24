@@ -23,7 +23,7 @@ using namespace imageproc;
 class LoadFileTask::ErrorResult : public FilterResult {
   Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
  public:
-  explicit ErrorResult(const QString& file_path);
+  explicit ErrorResult(const QString& filePath);
 
   void updateUI(FilterUiInterface* ui) override;
 
@@ -37,15 +37,15 @@ class LoadFileTask::ErrorResult : public FilterResult {
 
 LoadFileTask::LoadFileTask(Type type,
                            const PageInfo& page,
-                           intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
+                           intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
                            intrusive_ptr<ProjectPages> pages,
-                           intrusive_ptr<fix_orientation::Task> next_task)
+                           intrusive_ptr<fix_orientation::Task> nextTask)
     : BackgroundTask(type),
-      m_thumbnailCache(std::move(thumbnail_cache)),
+      m_thumbnailCache(std::move(thumbnailCache)),
       m_imageId(page.imageId()),
       m_imageMetadata(page.metadata()),
       m_pages(std::move(pages)),
-      m_nextTask(std::move(next_task)) {
+      m_nextTask(std::move(nextTask)) {
   assert(m_nextTask);
 }
 
@@ -106,16 +106,16 @@ void LoadFileTask::convertToSupportedFormat(QImage& image) const {
 
 /*======================= LoadFileTask::ErrorResult ======================*/
 
-LoadFileTask::ErrorResult::ErrorResult(const QString& file_path)
-    : m_filePath(QDir::toNativeSeparators(file_path)), m_fileExists(QFile::exists(file_path)) {}
+LoadFileTask::ErrorResult::ErrorResult(const QString& filePath)
+    : m_filePath(QDir::toNativeSeparators(filePath)), m_fileExists(QFile::exists(filePath)) {}
 
 void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
   class ErrWidget : public ErrorWidget {
    public:
-    ErrWidget(intrusive_ptr<AbstractCommand<void>> relinking_dialog_requester,
+    ErrWidget(intrusive_ptr<AbstractCommand<void>> relinkingDialogRequester,
               const QString& text,
               Qt::TextFormat fmt = Qt::AutoText)
-        : ErrorWidget(text, fmt), m_relinkingDialogRequester(std::move(relinking_dialog_requester)) {}
+        : ErrorWidget(text, fmt), m_relinkingDialogRequester(std::move(relinkingDialogRequester)) {}
 
    private:
     void linkActivated(const QString&) override { (*m_relinkingDialogRequester)(); }
@@ -124,18 +124,18 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
   };
 
 
-  QString err_msg;
+  QString errMsg;
   Qt::TextFormat fmt = Qt::AutoText;
   if (m_fileExists) {
-    err_msg = tr("The following file could not be loaded:\n%1").arg(m_filePath);
+    errMsg = tr("The following file could not be loaded:\n%1").arg(m_filePath);
     fmt = Qt::PlainText;
   } else {
-    err_msg = tr("The following file doesn't exist:<br>%1<br>"
-                 "<br>"
-                 "Use the <a href=\"#relink\">Relinking Tool</a> to locate it.")
-                  .arg(m_filePath.toHtmlEscaped());
+    errMsg = tr("The following file doesn't exist:<br>%1<br>"
+                "<br>"
+                "Use the <a href=\"#relink\">Relinking Tool</a> to locate it.")
+                 .arg(m_filePath.toHtmlEscaped());
     fmt = Qt::RichText;
   }
-  ui->setImageWidget(new ErrWidget(ui->relinkingDialogRequester(), err_msg, fmt), ui->TRANSFER_OWNERSHIP);
+  ui->setImageWidget(new ErrWidget(ui->relinkingDialogRequester(), errMsg, fmt), ui->TRANSFER_OWNERSHIP);
   ui->setOptionsWidget(new FilterOptionsWidget, ui->TRANSFER_OWNERSHIP);
 }  // LoadFileTask::ErrorResult::updateUI

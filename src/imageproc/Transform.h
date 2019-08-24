@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_TRANSFORM_H_
-#define IMAGEPROC_TRANSFORM_H_
+#ifndef SCANTAILOR_IMAGEPROC_TRANSFORM_H_
+#define SCANTAILOR_IMAGEPROC_TRANSFORM_H_
 
 #include <QColor>
 #include <QSizeF>
@@ -63,7 +63,7 @@ class OutsidePixels {
  * \param src The source image.
  * \param xform The transformation from source to destination.
  *        Only affine transformations are supported.
- * \param dst_rect The area in source image coordinates to return
+ * \param dstRect The area in source image coordinates to return
  *        as a destination image.
  * \param background_color Used to fill areas not represented in the source image.
  * \param weak_background If set to true, \p background_color is only taken
@@ -73,7 +73,7 @@ class OutsidePixels {
  *        that may also influence that target pixel are ignored.\n
  *        If set to false, source image pixels and background pixels are
  *        treated equally.
- * \param min_mapping_area Defines the minimum rectangle in the source image
+ * \param minMappingArea Defines the minimum rectangle in the source image
  *        that maps to a destination pixel.  This can be used to control
  *        smoothing.
  * \return The transformed image.  It's format may differ from the
@@ -83,9 +83,9 @@ class OutsidePixels {
  */
 QImage transform(const QImage& src,
                  const QTransform& xform,
-                 const QRect& dst_rect,
-                 OutsidePixels outside_pixels,
-                 const QSizeF& min_mapping_area = QSizeF(0.9, 0.9));
+                 const QRect& dstRect,
+                 OutsidePixels outsidePixels,
+                 const QSizeF& minMappingArea = QSizeF(0.9, 0.9));
 
 /**
  * \brief Apply an affine transformation to the image.
@@ -95,8 +95,8 @@ QImage transform(const QImage& src,
  */
 GrayImage transformToGray(const QImage& src,
                           const QTransform& xform,
-                          const QRect& dst_rect,
-                          OutsidePixels outside_pixels,
-                          const QSizeF& min_mapping_area = QSizeF(0.9, 0.9));
+                          const QRect& dstRect,
+                          OutsidePixels outsidePixels,
+                          const QSizeF& minMappingArea = QSizeF(0.9, 0.9));
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_TRANSFORM_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_TRANSFORM_H_

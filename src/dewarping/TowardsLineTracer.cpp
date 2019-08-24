@@ -2,13 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TowardsLineTracer.h"
+#include <SEDM.h>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <cassert>
 #include "NumericTraits.h"
 #include "SidesOfLine.h"
-#include <SEDM.h>
 
 using namespace imageproc;
 
@@ -16,7 +16,7 @@ namespace dewarping {
 TowardsLineTracer::TowardsLineTracer(const imageproc::SEDM* dm,
                                      const Grid<float>* pm,
                                      const QLineF& line,
-                                     const QPoint& initial_pos)
+                                     const QPoint& initialPos)
     : m_dmData(dm->data()),
       m_dmStride(dm->stride()),
       m_pmData(pm->data()),
@@ -24,10 +24,10 @@ TowardsLineTracer::TowardsLineTracer(const imageproc::SEDM* dm,
       m_rect(QPoint(0, 0), dm->size()),
       m_line(line),
       m_normalTowardsLine(m_line.normalVector().p2() - m_line.p1()),
-      m_lastOutputPos(initial_pos),
+      m_lastOutputPos(initialPos),
       m_numSteps(0),
       m_finished(false) {
-  if (sidesOfLine(m_line, initial_pos, line.p1() + m_normalTowardsLine) > 0) {
+  if (sidesOfLine(m_line, initialPos, line.p1() + m_normalTowardsLine) > 0) {
     // It points the wrong way -> fix that.
     m_normalTowardsLine = -m_normalTowardsLine;
   }
@@ -35,78 +35,78 @@ TowardsLineTracer::TowardsLineTracer(const imageproc::SEDM* dm,
   setupSteps();
 }
 
-const QPoint* TowardsLineTracer::trace(const float max_dist) {
+const QPoint* TowardsLineTracer::trace(const float maxDist) {
   if (m_finished) {
     return nullptr;
   }
 
-  const int max_sqdist = qRound(max_dist * max_dist);
+  const int maxSqdist = qRound(maxDist * maxDist);
 
-  QPoint cur_pos(m_lastOutputPos);
-  QPoint last_content_pos(-1, -1);
+  QPoint curPos(m_lastOutputPos);
+  QPoint lastContentPos(-1, -1);
 
-  const uint32_t* p_dm = m_dmData + cur_pos.y() * m_dmStride + cur_pos.x();
-  const float* p_pm = m_pmData + cur_pos.y() * m_pmStride + cur_pos.x();
+  const uint32_t* pDm = m_dmData + curPos.y() * m_dmStride + curPos.x();
+  const float* pPm = m_pmData + curPos.y() * m_pmStride + curPos.x();
 
   while (true) {
-    int best_dm_idx = -1;
-    int best_pm_idx = -1;
-    uint32_t best_squared_dist = 0;
-    float best_probability = NumericTraits<float>::min();
+    int bestDmIdx = -1;
+    int bestPmIdx = -1;
+    uint32_t bestSquaredDist = 0;
+    float bestProbability = NumericTraits<float>::min();
 
     for (int i = 0; i < m_numSteps; ++i) {
       const Step& step = m_steps[i];
-      const QPoint new_pos(cur_pos + step.vec);
-      if (!m_rect.contains(new_pos)) {
+      const QPoint newPos(curPos + step.vec);
+      if (!m_rect.contains(newPos)) {
         continue;
       }
 
-      const uint32_t sqd = p_dm[step.dmOffset];
-      if (sqd > best_squared_dist) {
-        best_squared_dist = sqd;
-        best_dm_idx = i;
+      const uint32_t sqd = pDm[step.dmOffset];
+      if (sqd > bestSquaredDist) {
+        bestSquaredDist = sqd;
+        bestDmIdx = i;
       }
-      const float probability = p_pm[step.pmOffset];
-      if (probability > best_probability) {
-        best_probability = probability;
-        best_pm_idx = i;
+      const float probability = pPm[step.pmOffset];
+      if (probability > bestProbability) {
+        bestProbability = probability;
+        bestPmIdx = i;
       }
     }
 
-    if (best_dm_idx == -1) {
+    if (bestDmIdx == -1) {
       m_finished = true;
       break;
     }
-    assert(best_pm_idx != -1);
+    assert(bestPmIdx != -1);
 
-    int best_idx = best_pm_idx;
-    if (p_dm[m_steps[best_dm_idx].dmOffset] > *p_dm) {
-      best_idx = best_dm_idx;
+    int bestIdx = bestPmIdx;
+    if (pDm[m_steps[bestDmIdx].dmOffset] > *pDm) {
+      bestIdx = bestDmIdx;
     }
 
-    Step& step = m_steps[best_idx];
+    Step& step = m_steps[bestIdx];
 
-    if (sidesOfLine(m_line, cur_pos + step.vec, m_lastOutputPos) < 0) {
-      // Note that this has to be done before we update cur_pos,
+    if (sidesOfLine(m_line, curPos + step.vec, m_lastOutputPos) < 0) {
+      // Note that this has to be done before we update curPos,
       // as it will be used after breaking from this loop.
       m_finished = true;
       break;
     }
 
-    cur_pos += step.vec;
-    p_dm += step.dmOffset;
-    p_pm += step.pmOffset;
+    curPos += step.vec;
+    pDm += step.dmOffset;
+    pPm += step.pmOffset;
 
-    const QPoint vec(cur_pos - m_lastOutputPos);
-    if (vec.x() * vec.x() + vec.y() * vec.y() > max_sqdist) {
-      m_lastOutputPos = cur_pos;
+    const QPoint vec(curPos - m_lastOutputPos);
+    if (vec.x() * vec.x() + vec.y() * vec.y() > maxSqdist) {
+      m_lastOutputPos = curPos;
 
       return &m_lastOutputPos;
     }
   }
 
-  if (m_lastOutputPos != cur_pos) {
-    m_lastOutputPos = cur_pos;
+  if (m_lastOutputPos != curPos) {
+    m_lastOutputPos = curPos;
 
     return &m_lastOutputPos;
   } else {

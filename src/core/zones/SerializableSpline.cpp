@@ -16,14 +16,14 @@ SerializableSpline::SerializableSpline(const EditableSpline& spline) {
 }
 
 SerializableSpline::SerializableSpline(const QDomElement& el) {
-  const QString point_str("point");
+  const QString pointStr("point");
 
   QDomNode node(el.firstChild());
   for (; !node.isNull(); node = node.nextSibling()) {
     if (!node.isElement()) {
       continue;
     }
-    if (node.nodeName() != point_str) {
+    if (node.nodeName() != pointStr) {
       continue;
     }
 
@@ -40,10 +40,10 @@ SerializableSpline::SerializableSpline(const QPolygonF& polygon) {
 QDomElement SerializableSpline::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
 
-  const QString point_str("point");
+  const QString pointStr("point");
   XmlMarshaller marshaller(doc);
   for (const QPointF& pt : m_points) {
-    el.appendChild(marshaller.pointF(pt, point_str));
+    el.appendChild(marshaller.pointF(pt, pointStr));
   }
 
   return el;

@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_DEPENDENCIES_H_
-#define PAGE_SPLIT_DEPENDENCIES_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_DEPENDENCIES_H_
+#define SCANTAILOR_PAGE_SPLIT_DEPENDENCIES_H_
 
 #include <QSize>
 #include "LayoutType.h"
@@ -27,7 +27,7 @@ class Dependencies {
 
   explicit Dependencies(const QDomElement& el);
 
-  Dependencies(const QSize& image_size, OrthogonalRotation rotation, LayoutType layout_type);
+  Dependencies(const QSize& imageSize, OrthogonalRotation rotation, LayoutType layoutType);
 
   void setLayoutType(LayoutType type);
 
@@ -37,7 +37,7 @@ class Dependencies {
 
   bool isNull() const;
 
-  QDomElement toXml(QDomDocument& doc, const QString& tag_name) const;
+  QDomElement toXml(QDomDocument& doc, const QString& tagName) const;
 
  private:
   QSize m_imageSize;
@@ -45,4 +45,4 @@ class Dependencies {
   LayoutType m_layoutType;
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_DEPENDENCIES_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_DEPENDENCIES_H_

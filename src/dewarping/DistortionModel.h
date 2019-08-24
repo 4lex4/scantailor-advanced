@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DEWARPING_DISTORTION_MODEL_H_
-#define DEWARPING_DISTORTION_MODEL_H_
+#ifndef SCANTAILOR_DEWARPING_DISTORTIONMODEL_H_
+#define SCANTAILOR_DEWARPING_DISTORTIONMODEL_H_
 
 #include "Curve.h"
 
@@ -47,8 +47,8 @@ class DistortionModel {
    * will be mapped to our curved quadrilateral.
    */
   QRectF modelDomain(const CylindricalSurfaceDewarper& dewarper,
-                     const QTransform& to_output,
-                     const QRectF& output_content_rect) const;
+                     const QTransform& toOutput,
+                     const QRectF& outputContentRect) const;
 
  private:
   /**
@@ -64,4 +64,4 @@ class DistortionModel {
   Curve m_bottomCurve;
 };
 }  // namespace dewarping
-#endif  // ifndef DEWARPING_DISTORTION_MODEL_H_
+#endif  // ifndef SCANTAILOR_DEWARPING_DISTORTIONMODEL_H_

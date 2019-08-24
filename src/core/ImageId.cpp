@@ -4,9 +4,9 @@
 #include "ImageId.h"
 #include <QFileInfo>
 
-ImageId::ImageId(const QString& file_path, const int page) : m_filePath(file_path), m_page(page) {}
+ImageId::ImageId(const QString& filePath, const int page) : m_filePath(filePath), m_page(page) {}
 
-ImageId::ImageId(const QFileInfo& file_info, const int page) : m_filePath(file_info.absoluteFilePath()), m_page(page) {}
+ImageId::ImageId(const QFileInfo& fileInfo, const int page) : m_filePath(fileInfo.absoluteFilePath()), m_page(page) {}
 
 bool operator==(const ImageId& lhs, const ImageId& rhs) {
   return ((lhs.page() == rhs.page()) && (lhs.filePath() == rhs.filePath()));

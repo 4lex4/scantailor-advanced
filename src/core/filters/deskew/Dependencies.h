@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef DESKEW_DEPENDENCIES_H_
-#define DESKEW_DEPENDENCIES_H_
+#ifndef SCANTAILOR_DESKEW_DEPENDENCIES_H_
+#define SCANTAILOR_DESKEW_DEPENDENCIES_H_
 
 #include <QPolygonF>
 #include "OrthogonalRotation.h"
@@ -23,9 +23,9 @@ class Dependencies {
 
   Dependencies();
 
-  Dependencies(const QPolygonF& page_outline, OrthogonalRotation rotation);
+  Dependencies(const QPolygonF& pageOutline, OrthogonalRotation rotation);
 
-  explicit Dependencies(const QDomElement& deps_el);
+  explicit Dependencies(const QDomElement& depsEl);
 
   ~Dependencies();
 
@@ -38,4 +38,4 @@ class Dependencies {
   OrthogonalRotation m_rotation;
 };
 }  // namespace deskew
-#endif  // ifndef DESKEW_DEPENDENCIES_H_
+#endif  // ifndef SCANTAILOR_DESKEW_DEPENDENCIES_H_

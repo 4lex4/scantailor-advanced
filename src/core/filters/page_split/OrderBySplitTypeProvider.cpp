@@ -9,48 +9,48 @@ namespace page_split {
 OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> settings)
     : m_settings(std::move(settings)) {}
 
-bool OrderBySplitTypeProvider::precedes(const PageId& lhs_page,
-                                        const bool lhs_incomplete,
-                                        const PageId& rhs_page,
-                                        const bool rhs_incomplete) const {
-  if (lhs_incomplete != rhs_incomplete) {
+bool OrderBySplitTypeProvider::precedes(const PageId& lhsPage,
+                                        const bool lhsIncomplete,
+                                        const PageId& rhsPage,
+                                        const bool rhsIncomplete) const {
+  if (lhsIncomplete != rhsIncomplete) {
     // Pages with question mark go to the bottom.
-    return rhs_incomplete;
-  } else if (lhs_incomplete) {
-    assert(rhs_incomplete);
+    return rhsIncomplete;
+  } else if (lhsIncomplete) {
+    assert(rhsIncomplete);
     // Two pages with question marks are ordered naturally.
-    return lhs_page < rhs_page;
+    return lhsPage < rhsPage;
   }
 
-  assert(!lhs_incomplete);
-  assert(!rhs_incomplete);
+  assert(!lhsIncomplete);
+  assert(!rhsIncomplete);
 
-  const Settings::Record lhs_record(m_settings->getPageRecord(lhs_page.imageId()));
-  const Settings::Record rhs_record(m_settings->getPageRecord(rhs_page.imageId()));
+  const Settings::Record lhsRecord(m_settings->getPageRecord(lhsPage.imageId()));
+  const Settings::Record rhsRecord(m_settings->getPageRecord(rhsPage.imageId()));
 
-  const Params* lhs_params = lhs_record.params();
-  const Params* rhs_params = rhs_record.params();
+  const Params* lhsParams = lhsRecord.params();
+  const Params* rhsParams = rhsRecord.params();
 
-  int lhs_layout_type = lhs_record.combinedLayoutType();
-  if (lhs_params) {
-    lhs_layout_type = lhs_params->pageLayout().toLayoutType();
+  int lhsLayoutType = lhsRecord.combinedLayoutType();
+  if (lhsParams) {
+    lhsLayoutType = lhsParams->pageLayout().toLayoutType();
   }
-  if (lhs_layout_type == AUTO_LAYOUT_TYPE) {
-    lhs_layout_type = 100;  // To force it below pages with known layout.
-  }
-
-  int rhs_layout_type = rhs_record.combinedLayoutType();
-  if (rhs_params) {
-    rhs_layout_type = rhs_params->pageLayout().toLayoutType();
-  }
-  if (rhs_layout_type == AUTO_LAYOUT_TYPE) {
-    rhs_layout_type = 100;  // To force it below pages with known layout.
+  if (lhsLayoutType == AUTO_LAYOUT_TYPE) {
+    lhsLayoutType = 100;  // To force it below pages with known layout.
   }
 
-  if (lhs_layout_type == rhs_layout_type) {
-    return lhs_page < rhs_page;
+  int rhsLayoutType = rhsRecord.combinedLayoutType();
+  if (rhsParams) {
+    rhsLayoutType = rhsParams->pageLayout().toLayoutType();
+  }
+  if (rhsLayoutType == AUTO_LAYOUT_TYPE) {
+    rhsLayoutType = 100;  // To force it below pages with known layout.
+  }
+
+  if (lhsLayoutType == rhsLayoutType) {
+    return lhsPage < rhsPage;
   } else {
-    return lhs_layout_type < rhs_layout_type;
+    return lhsLayoutType < rhsLayoutType;
   }
 }  // OrderBySplitTypeProvider::precedes
 }  // namespace page_split

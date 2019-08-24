@@ -1,14 +1,14 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include <Grayscale.h>
+#include <Transform.h>
 #include <QImage>
 #include <QSize>
 #include <boost/test/auto_unit_test.hpp>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
-#include <Grayscale.h>
-#include <Transform.h>
 #include "Utils.h"
 
 namespace imageproc {
@@ -18,12 +18,12 @@ using namespace utils;
 BOOST_AUTO_TEST_SUITE(TransformTestSuite)
 
 BOOST_AUTO_TEST_CASE(test_null_image) {
-  const QImage null_img;
-  const QTransform null_xform;
-  const QRect unit_rect(0, 0, 1, 1);
+  const QImage nullImg;
+  const QTransform nullXform;
+  const QRect unitRect(0, 0, 1, 1);
   const QColor bgcolor(0xff, 0xff, 0xff);
-  const OutsidePixels outside_pixels(OutsidePixels::assumeColor(bgcolor));
-  BOOST_CHECK(transformToGray(null_img, null_xform, unit_rect, outside_pixels).isNull());
+  const OutsidePixels outsidePixels(OutsidePixels::assumeColor(bgcolor));
+  BOOST_CHECK(transformToGray(nullImg, nullXform, unitRect, outsidePixels).isNull());
 }
 
 BOOST_AUTO_TEST_CASE(test_random_image) {
@@ -37,10 +37,10 @@ BOOST_AUTO_TEST_CASE(test_random_image) {
   }
 
   const QColor bgcolor(0xff, 0xff, 0xff);
-  const OutsidePixels outside_pixels(OutsidePixels::assumeColor(bgcolor));
+  const OutsidePixels outsidePixels(OutsidePixels::assumeColor(bgcolor));
 
-  const QTransform null_xform;
-  BOOST_CHECK(transformToGray(img, null_xform, img.rect(), outside_pixels) == img);
+  const QTransform nullXform;
+  BOOST_CHECK(transformToGray(img, nullXform, img.rect(), outsidePixels) == img);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

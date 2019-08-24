@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_SEEDFILL_GENERIC_H_
-#define IMAGEPROC_SEEDFILL_GENERIC_H_
+#ifndef SCANTAILOR_IMAGEPROC_SEEDFILLGENERIC_H_
+#define SCANTAILOR_IMAGEPROC_SEEDFILLGENERIC_H_
 
 #include <QSize>
 #include <cassert>
@@ -15,17 +15,17 @@ namespace imageproc {
 namespace detail {
 namespace seed_fill_generic {
 struct HTransition {
-  int west_delta;  // -1 or 0
-  int east_delta;  // 1 or 0
+  int westDelta;  // -1 or 0
+  int eastDelta;  // 1 or 0
 
-  HTransition(int west_delta_, int east_delta_) : west_delta(west_delta_), east_delta(east_delta_) {}
+  HTransition(int westDelta_, int eastDelta_) : westDelta(westDelta_), eastDelta(eastDelta_) {}
 };
 
 struct VTransition {
-  int north_mask;  // 0 or ~0
-  int south_mask;  // 0 or ~0
+  int northMask;  // 0 or ~0
+  int southMask;  // 0 or ~0
 
-  VTransition(int north_mask_, int south_mask_) : north_mask(north_mask_), south_mask(south_mask_) {}
+  VTransition(int northMask_, int southMask_) : northMask(northMask_), southMask(southMask_) {}
 };
 
 template <typename T>
@@ -43,385 +43,383 @@ void initHorTransitions(std::vector<HTransition>& transitions, int width);
 void initVertTransitions(std::vector<VTransition>& transitions, int height);
 
 template <typename T, typename SpreadOp, typename MaskOp>
-void seedFillSingleLine(SpreadOp spread_op,
-                        MaskOp mask_op,
-                        const int line_len,
+void seedFillSingleLine(SpreadOp spreadOp,
+                        MaskOp maskOp,
+                        const int lineLen,
                         T* seed,
-                        const int seed_stride,
+                        const int seedStride,
                         const T* mask,
-                        const int mask_stride) {
-  if (line_len == 0) {
+                        const int maskStride) {
+  if (lineLen == 0) {
     return;
   }
 
-  *seed = mask_op(*seed, *mask);
+  *seed = maskOp(*seed, *mask);
 
-  for (int i = 1; i < line_len; ++i) {
-    seed += seed_stride;
-    mask += mask_stride;
-    *seed = mask_op(*mask, spread_op(*seed, seed[-seed_stride]));
+  for (int i = 1; i < lineLen; ++i) {
+    seed += seedStride;
+    mask += maskStride;
+    *seed = maskOp(*mask, spreadOp(*seed, seed[-seedStride]));
   }
 
-  for (int i = 1; i < line_len; ++i) {
-    seed -= seed_stride;
-    mask -= mask_stride;
-    *seed = mask_op(*mask, spread_op(*seed, seed[seed_stride]));
+  for (int i = 1; i < lineLen; ++i) {
+    seed -= seedStride;
+    mask -= maskStride;
+    *seed = maskOp(*mask, spreadOp(*seed, seed[seedStride]));
   }
 }
 
 template <typename T, typename SpreadOp, typename MaskOp>
-inline void processNeighbor(SpreadOp spread_op,
-                            MaskOp mask_op,
+inline void processNeighbor(SpreadOp spreadOp,
+                            MaskOp maskOp,
                             FastQueue<Position<T>>& queue,
-                            uint32_t* in_queue_line,
-                            const T this_val,
+                            uint32_t* inQueueLine,
+                            const T thisVal,
                             T* const neighbor,
-                            const T* const neighbor_mask,
-                            const Position<T>& base_pos,
-                            const int x_delta,
-                            const int y_delta) {
-  const T new_val(mask_op(*neighbor_mask, spread_op(this_val, *neighbor)));
-  if (new_val != *neighbor) {
-    *neighbor = new_val;
-    const int x = base_pos.x + x_delta;
-    const int y = base_pos.y + y_delta;
-    uint32_t& in_queue_word = in_queue_line[x >> 5];
-    const uint32_t in_queue_mask = (uint32_t(1) << 31) >> (x & 31);
-    if (!(in_queue_word & in_queue_mask)) {  // If not already in the queue.
-      queue.push(Position<T>(neighbor, neighbor_mask, x, y));
-      in_queue_word |= in_queue_mask;  // Mark as already in the queue.
+                            const T* const neighborMask,
+                            const Position<T>& basePos,
+                            const int xDelta,
+                            const int yDelta) {
+  const T newVal(maskOp(*neighborMask, spreadOp(thisVal, *neighbor)));
+  if (newVal != *neighbor) {
+    *neighbor = newVal;
+    const int x = basePos.x + xDelta;
+    const int y = basePos.y + yDelta;
+    uint32_t& inQueueWord = inQueueLine[x >> 5];
+    const uint32_t inQueueMask = (uint32_t(1) << 31) >> (x & 31);
+    if (!(inQueueWord & inQueueMask)) {  // If not already in the queue.
+      queue.push(Position<T>(neighbor, neighborMask, x, y));
+      inQueueWord |= inQueueMask;  // Mark as already in the queue.
     }
   }
 }
 
 template <typename T, typename SpreadOp, typename MaskOp>
-void spread4(SpreadOp spread_op,
-             MaskOp mask_op,
+void spread4(SpreadOp spreadOp,
+             MaskOp maskOp,
              FastQueue<Position<T>>& queue,
-             uint32_t* const in_queue_data,
-             const int in_queue_stride,
-             const HTransition* h_transitions,
-             const VTransition* v_transitions,
-             const int seed_stride,
-             const int mask_stride) {
+             uint32_t* const inQueueData,
+             const int inQueueStride,
+             const HTransition* hTransitions,
+             const VTransition* vTransitions,
+             const int seedStride,
+             const int maskStride) {
   while (!queue.empty()) {
     const Position<T> pos(queue.front());
     queue.pop();
 
-    const T this_val(*pos.seed);
-    const HTransition ht(h_transitions[pos.x]);
-    const VTransition vt(v_transitions[pos.y]);
-    uint32_t* const in_queue_line = in_queue_data + in_queue_stride * pos.y;
+    const T thisVal(*pos.seed);
+    const HTransition ht(hTransitions[pos.x]);
+    const VTransition vt(vTransitions[pos.y]);
+    uint32_t* const inQueueLine = inQueueData + inQueueStride * pos.y;
     T* seed;
     const T* mask;
 
     // Western neighbor.
-    seed = pos.seed + ht.west_delta;
-    mask = pos.mask + ht.west_delta;
-    processNeighbor(spread_op, mask_op, queue, in_queue_line, this_val, seed, mask, pos, ht.west_delta, 0);
+    seed = pos.seed + ht.westDelta;
+    mask = pos.mask + ht.westDelta;
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine, thisVal, seed, mask, pos, ht.westDelta, 0);
 
     // Eastern neighbor.
-    seed = pos.seed + ht.east_delta;
-    mask = pos.mask + ht.east_delta;
-    processNeighbor(spread_op, mask_op, queue, in_queue_line, this_val, seed, mask, pos, ht.east_delta, 0);
+    seed = pos.seed + ht.eastDelta;
+    mask = pos.mask + ht.eastDelta;
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine, thisVal, seed, mask, pos, ht.eastDelta, 0);
 
     // Northern neighbor.
-    seed = pos.seed - (seed_stride & vt.north_mask);
-    mask = pos.mask - (mask_stride & vt.north_mask);
-    processNeighbor(spread_op, mask_op, queue, in_queue_line - (in_queue_stride & vt.north_mask), this_val, seed, mask,
-                    pos, 0, -1 & vt.north_mask);
+    seed = pos.seed - (seedStride & vt.northMask);
+    mask = pos.mask - (maskStride & vt.northMask);
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine - (inQueueStride & vt.northMask), thisVal, seed, mask, pos, 0,
+                    -1 & vt.northMask);
 
     // Southern neighbor.
-    seed = pos.seed + (seed_stride & vt.south_mask);
-    mask = pos.mask + (mask_stride & vt.south_mask);
-    processNeighbor(spread_op, mask_op, queue, in_queue_line + (in_queue_stride & vt.south_mask), this_val, seed, mask,
-                    pos, 0, 1 & vt.south_mask);
+    seed = pos.seed + (seedStride & vt.southMask);
+    mask = pos.mask + (maskStride & vt.southMask);
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine + (inQueueStride & vt.southMask), thisVal, seed, mask, pos, 0,
+                    1 & vt.southMask);
   }
 }  // spread4
 
 template <typename T, typename SpreadOp, typename MaskOp>
-void spread8(SpreadOp spread_op,
-             MaskOp mask_op,
+void spread8(SpreadOp spreadOp,
+             MaskOp maskOp,
              FastQueue<Position<T>>& queue,
-             uint32_t* const in_queue_data,
-             const int in_queue_stride,
-             const HTransition* h_transitions,
-             const VTransition* v_transitions,
-             const int seed_stride,
-             const int mask_stride) {
+             uint32_t* const inQueueData,
+             const int inQueueStride,
+             const HTransition* hTransitions,
+             const VTransition* vTransitions,
+             const int seedStride,
+             const int maskStride) {
   while (!queue.empty()) {
     const Position<T> pos(queue.front());
     queue.pop();
 
-    const T this_val(*pos.seed);
-    const HTransition ht(h_transitions[pos.x]);
-    const VTransition vt(v_transitions[pos.y]);
-    uint32_t* const in_queue_line = in_queue_data + in_queue_stride * pos.y;
+    const T thisVal(*pos.seed);
+    const HTransition ht(hTransitions[pos.x]);
+    const VTransition vt(vTransitions[pos.y]);
+    uint32_t* const inQueueLine = inQueueData + inQueueStride * pos.y;
     T* seed;
     const T* mask;
 
     // Northern neighbor.
-    seed = pos.seed - (seed_stride & vt.north_mask);
-    mask = pos.mask - (mask_stride & vt.north_mask);
-    processNeighbor(spread_op, mask_op, queue, in_queue_line - (in_queue_stride & vt.north_mask), this_val, seed, mask,
-                    pos, 0, -1 & vt.north_mask);
+    seed = pos.seed - (seedStride & vt.northMask);
+    mask = pos.mask - (maskStride & vt.northMask);
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine - (inQueueStride & vt.northMask), thisVal, seed, mask, pos, 0,
+                    -1 & vt.northMask);
 
     // North-Western neighbor.
-    seed = pos.seed - (seed_stride & vt.north_mask) + ht.west_delta;
-    mask = pos.mask - (mask_stride & vt.north_mask) + ht.west_delta;
-    processNeighbor(spread_op, mask_op, queue, in_queue_line - (in_queue_stride & vt.north_mask), this_val, seed, mask,
-                    pos, ht.west_delta, -1 & vt.north_mask);
+    seed = pos.seed - (seedStride & vt.northMask) + ht.westDelta;
+    mask = pos.mask - (maskStride & vt.northMask) + ht.westDelta;
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine - (inQueueStride & vt.northMask), thisVal, seed, mask, pos,
+                    ht.westDelta, -1 & vt.northMask);
 
     // North-Eastern neighbor.
-    seed = pos.seed - (seed_stride & vt.north_mask) + ht.east_delta;
-    mask = pos.mask - (mask_stride & vt.north_mask) + ht.east_delta;
-    processNeighbor(spread_op, mask_op, queue, in_queue_line - (in_queue_stride & vt.north_mask), this_val, seed, mask,
-                    pos, ht.east_delta, -1 & vt.north_mask);
+    seed = pos.seed - (seedStride & vt.northMask) + ht.eastDelta;
+    mask = pos.mask - (maskStride & vt.northMask) + ht.eastDelta;
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine - (inQueueStride & vt.northMask), thisVal, seed, mask, pos,
+                    ht.eastDelta, -1 & vt.northMask);
 
     // Eastern neighbor.
-    seed = pos.seed + ht.east_delta;
-    mask = pos.mask + ht.east_delta;
-    processNeighbor(spread_op, mask_op, queue, in_queue_line, this_val, seed, mask, pos, ht.east_delta, 0);
+    seed = pos.seed + ht.eastDelta;
+    mask = pos.mask + ht.eastDelta;
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine, thisVal, seed, mask, pos, ht.eastDelta, 0);
 
     // Western neighbor.
-    seed = pos.seed + ht.west_delta;
-    mask = pos.mask + ht.west_delta;
-    processNeighbor(spread_op, mask_op, queue, in_queue_line, this_val, seed, mask, pos, ht.west_delta, 0);
+    seed = pos.seed + ht.westDelta;
+    mask = pos.mask + ht.westDelta;
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine, thisVal, seed, mask, pos, ht.westDelta, 0);
 
     // Southern neighbor.
-    seed = pos.seed + (seed_stride & vt.south_mask);
-    mask = pos.mask + (mask_stride & vt.south_mask);
-    processNeighbor(spread_op, mask_op, queue, in_queue_line + (in_queue_stride & vt.south_mask), this_val, seed, mask,
-                    pos, 0, 1 & vt.south_mask);
+    seed = pos.seed + (seedStride & vt.southMask);
+    mask = pos.mask + (maskStride & vt.southMask);
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine + (inQueueStride & vt.southMask), thisVal, seed, mask, pos, 0,
+                    1 & vt.southMask);
 
     // South-Eastern neighbor.
-    seed = pos.seed + (seed_stride & vt.south_mask) + ht.east_delta;
-    mask = pos.mask + (mask_stride & vt.south_mask) + ht.east_delta;
-    processNeighbor(spread_op, mask_op, queue, in_queue_line + (in_queue_stride & vt.south_mask), this_val, seed, mask,
-                    pos, ht.east_delta, 1 & vt.south_mask);
+    seed = pos.seed + (seedStride & vt.southMask) + ht.eastDelta;
+    mask = pos.mask + (maskStride & vt.southMask) + ht.eastDelta;
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine + (inQueueStride & vt.southMask), thisVal, seed, mask, pos,
+                    ht.eastDelta, 1 & vt.southMask);
 
     // South-Western neighbor.
-    seed = pos.seed + (seed_stride & vt.south_mask) + ht.west_delta;
-    mask = pos.mask + (seed_stride & vt.south_mask) + ht.west_delta;
-    processNeighbor(spread_op, mask_op, queue, in_queue_line + (in_queue_stride & vt.south_mask), this_val, seed, mask,
-                    pos, ht.west_delta, 1 & vt.south_mask);
+    seed = pos.seed + (seedStride & vt.southMask) + ht.westDelta;
+    mask = pos.mask + (seedStride & vt.southMask) + ht.westDelta;
+    processNeighbor(spreadOp, maskOp, queue, inQueueLine + (inQueueStride & vt.southMask), thisVal, seed, mask, pos,
+                    ht.westDelta, 1 & vt.southMask);
   }
 }  // spread8
 
 template <typename T, typename SpreadOp, typename MaskOp>
-void seedFill4(SpreadOp spread_op,
-               MaskOp mask_op,
+void seedFill4(SpreadOp spreadOp,
+               MaskOp maskOp,
                T* const seed,
-               const int seed_stride,
+               const int seedStride,
                const QSize size,
                const T* const mask,
-               const int mask_stride) {
+               const int maskStride) {
   const int w = size.width();
   const int h = size.height();
 
-  T* seed_line = seed;
-  const T* mask_line = mask;
-  T* prev_line = seed_line;
+  T* seedLine = seed;
+  const T* maskLine = mask;
+  T* prevLine = seedLine;
 
   // Top to bottom.
   for (int y = 0; y < h; ++y) {
     int x = 0;
 
     // First item in line.
-    T prev(mask_op(mask_line[x], spread_op(seed_line[x], prev_line[x])));
-    seed_line[x] = prev;
+    T prev(maskOp(maskLine[x], spreadOp(seedLine[x], prevLine[x])));
+    seedLine[x] = prev;
 
     // Other items, left to right.
     while (++x < w) {
-      prev = mask_op(mask_line[x], spread_op(prev, spread_op(seed_line[x], prev_line[x])));
-      seed_line[x] = prev;
+      prev = maskOp(maskLine[x], spreadOp(prev, spreadOp(seedLine[x], prevLine[x])));
+      seedLine[x] = prev;
     }
 
-    prev_line = seed_line;
-    seed_line += seed_stride;
-    mask_line += mask_stride;
+    prevLine = seedLine;
+    seedLine += seedStride;
+    maskLine += maskStride;
   }
 
-  seed_line -= seed_stride;
-  mask_line -= mask_stride;
+  seedLine -= seedStride;
+  maskLine -= maskStride;
 
   FastQueue<Position<T>> queue;
-  BinaryImage in_queue(size, WHITE);
-  uint32_t* const in_queue_data = in_queue.data();
-  const int in_queue_stride = in_queue.wordsPerLine();
-  std::vector<HTransition> h_transitions;
-  std::vector<VTransition> v_transitions;
-  initHorTransitions(h_transitions, w);
-  initVertTransitions(v_transitions, h);
+  BinaryImage inQueue(size, WHITE);
+  uint32_t* const inQueueData = inQueue.data();
+  const int inQueueStride = inQueue.wordsPerLine();
+  std::vector<HTransition> hTransitions;
+  std::vector<VTransition> vTransitions;
+  initHorTransitions(hTransitions, w);
+  initVertTransitions(vTransitions, h);
 
   // Bottom to top.
-  uint32_t* in_queue_line = in_queue_data + in_queue_stride * (h - 1);
+  uint32_t* inQueueLine = inQueueData + inQueueStride * (h - 1);
   for (int y = h - 1; y >= 0; --y) {
-    const VTransition vt(v_transitions[y]);
+    const VTransition vt(vTransitions[y]);
 
     // Right to left.
     for (int x = w - 1; x >= 0; --x) {
-      const HTransition ht(h_transitions[x]);
+      const HTransition ht(hTransitions[x]);
 
-      T* const p_base_seed = seed_line + x;
-      const T* const p_base_mask = mask_line + x;
+      T* const pBaseSeed = seedLine + x;
+      const T* const pBaseMask = maskLine + x;
 
-      T* const p_east_seed = p_base_seed + ht.east_delta;
-      T* const p_south_seed = p_base_seed + (seed_stride & vt.south_mask);
+      T* const pEastSeed = pBaseSeed + ht.eastDelta;
+      T* const pSouthSeed = pBaseSeed + (seedStride & vt.southMask);
 
-      const T new_val(mask_op(*p_base_mask, spread_op(*p_base_seed, spread_op(*p_east_seed, *p_south_seed))));
-      if (new_val == *p_base_seed) {
+      const T newVal(maskOp(*pBaseMask, spreadOp(*pBaseSeed, spreadOp(*pEastSeed, *pSouthSeed))));
+      if (newVal == *pBaseSeed) {
         continue;
       }
 
-      *p_base_seed = new_val;
+      *pBaseSeed = newVal;
 
-      const Position<T> pos(p_base_seed, p_base_mask, x, y);
-      const T* p_east_mask = p_base_mask + ht.east_delta;
-      const T* p_south_mask = p_base_mask + (mask_stride & vt.south_mask);
+      const Position<T> pos(pBaseSeed, pBaseMask, x, y);
+      const T* pEastMask = pBaseMask + ht.eastDelta;
+      const T* pSouthMask = pBaseMask + (maskStride & vt.southMask);
 
       // Eastern neighbor.
-      processNeighbor(spread_op, mask_op, queue, in_queue_line, new_val, p_east_seed, p_east_mask, pos, ht.east_delta,
-                      0);
+      processNeighbor(spreadOp, maskOp, queue, inQueueLine, newVal, pEastSeed, pEastMask, pos, ht.eastDelta, 0);
 
       // Southern neighbor.
-      processNeighbor(spread_op, mask_op, queue, in_queue_line + (in_queue_stride & vt.south_mask), new_val,
-                      p_south_seed, p_south_mask, pos, 0, 1 & vt.south_mask);
+      processNeighbor(spreadOp, maskOp, queue, inQueueLine + (inQueueStride & vt.southMask), newVal, pSouthSeed,
+                      pSouthMask, pos, 0, 1 & vt.southMask);
     }
 
-    seed_line -= seed_stride;
-    mask_line -= mask_stride;
-    in_queue_line -= in_queue_stride;
+    seedLine -= seedStride;
+    maskLine -= maskStride;
+    inQueueLine -= inQueueStride;
   }
 
-  spread4(spread_op, mask_op, queue, in_queue_data, in_queue_stride, &h_transitions[0], &v_transitions[0], seed_stride,
-          mask_stride);
+  spread4(spreadOp, maskOp, queue, inQueueData, inQueueStride, &hTransitions[0], &vTransitions[0], seedStride,
+          maskStride);
 }  // seedFill4
 
 template <typename T, typename SpreadOp, typename MaskOp>
-void seedFill8(SpreadOp spread_op,
-               MaskOp mask_op,
+void seedFill8(SpreadOp spreadOp,
+               MaskOp maskOp,
                T* const seed,
-               const int seed_stride,
+               const int seedStride,
                const QSize size,
                const T* const mask,
-               const int mask_stride) {
+               const int maskStride) {
   const int w = size.width();
   const int h = size.height();
 
   // Some code below doesn't handle such cases.
   if (w == 1) {
-    seedFillSingleLine(spread_op, mask_op, h, seed, seed_stride, mask, mask_stride);
+    seedFillSingleLine(spreadOp, maskOp, h, seed, seedStride, mask, maskStride);
     return;
   } else if (h == 1) {
-    seedFillSingleLine(spread_op, mask_op, w, seed, 1, mask, 1);
+    seedFillSingleLine(spreadOp, maskOp, w, seed, 1, mask, 1);
     return;
   }
 
-  T* seed_line = seed;
-  const T* mask_line = mask;
+  T* seedLine = seed;
+  const T* maskLine = mask;
 
   // Note: we usually process the first line by assigning
-  // prev_line = seed_line, but in this case prev_line[x + 1]
-  // won't be clipped by its mask when we use it to update seed_line[x].
+  // prevLine = seedLine, but in this case prevLine[x + 1]
+  // won't be clipped by its mask when we use it to update seedLine[x].
   // The wrong value may propagate further from there, so clipping
   // we do on the anti-raster pass won't help.
   // That's why we process the first line separately.
-  seed_line[0] = mask_op(seed_line[0], mask_line[0]);
+  seedLine[0] = maskOp(seedLine[0], maskLine[0]);
   for (int x = 1; x < w; ++x) {
-    seed_line[x] = mask_op(mask_line[x], spread_op(seed_line[x], seed_line[x - 1]));
+    seedLine[x] = maskOp(maskLine[x], spreadOp(seedLine[x], seedLine[x - 1]));
   }
 
-  T* prev_line = seed_line;
+  T* prevLine = seedLine;
 
   // Top to bottom.
   for (int y = 1; y < h; ++y) {
-    seed_line += seed_stride;
-    mask_line += mask_stride;
+    seedLine += seedStride;
+    maskLine += maskStride;
 
     int x = 0;
 
     // Leftmost pixel.
-    seed_line[x] = mask_op(mask_line[x], spread_op(seed_line[x], spread_op(prev_line[x], prev_line[x + 1])));
+    seedLine[x] = maskOp(maskLine[x], spreadOp(seedLine[x], spreadOp(prevLine[x], prevLine[x + 1])));
 
     // Left to right.
     while (++x < w - 1) {
-      seed_line[x] = mask_op(mask_line[x], spread_op(spread_op(spread_op(seed_line[x], seed_line[x - 1]),
-                                                               spread_op(prev_line[x], prev_line[x - 1])),
-                                                     prev_line[x + 1]));
+      seedLine[x]
+          = maskOp(maskLine[x],
+                   spreadOp(spreadOp(spreadOp(seedLine[x], seedLine[x - 1]), spreadOp(prevLine[x], prevLine[x - 1])),
+                            prevLine[x + 1]));
     }
 
     // Rightmost pixel.
-    seed_line[x] = mask_op(
-        mask_line[x], spread_op(spread_op(seed_line[x], seed_line[x - 1]), spread_op(prev_line[x], prev_line[x - 1])));
+    seedLine[x]
+        = maskOp(maskLine[x], spreadOp(spreadOp(seedLine[x], seedLine[x - 1]), spreadOp(prevLine[x], prevLine[x - 1])));
 
-    prev_line = seed_line;
+    prevLine = seedLine;
   }
 
   FastQueue<Position<T>> queue;
-  BinaryImage in_queue(size, WHITE);
-  uint32_t* const in_queue_data = in_queue.data();
-  const int in_queue_stride = in_queue.wordsPerLine();
-  std::vector<HTransition> h_transitions;
-  std::vector<VTransition> v_transitions;
-  initHorTransitions(h_transitions, w);
-  initVertTransitions(v_transitions, h);
+  BinaryImage inQueue(size, WHITE);
+  uint32_t* const inQueueData = inQueue.data();
+  const int inQueueStride = inQueue.wordsPerLine();
+  std::vector<HTransition> hTransitions;
+  std::vector<VTransition> vTransitions;
+  initHorTransitions(hTransitions, w);
+  initVertTransitions(vTransitions, h);
 
   // Bottom to top.
-  uint32_t* in_queue_line = in_queue_data + in_queue_stride * (h - 1);
+  uint32_t* inQueueLine = inQueueData + inQueueStride * (h - 1);
   for (int y = h - 1; y >= 0; --y) {
-    const VTransition vt(v_transitions[y]);
+    const VTransition vt(vTransitions[y]);
 
     for (int x = w - 1; x >= 0; --x) {
-      const HTransition ht(h_transitions[x]);
+      const HTransition ht(hTransitions[x]);
 
-      T* const p_base_seed = seed_line + x;
-      const T* const p_base_mask = mask_line + x;
+      T* const pBaseSeed = seedLine + x;
+      const T* const pBaseMask = maskLine + x;
 
-      T* const p_east_seed = p_base_seed + ht.east_delta;
-      T* const p_south_seed = p_base_seed + (seed_stride & vt.south_mask);
-      T* const p_south_west_seed = p_south_seed + ht.west_delta;
-      T* const p_south_east_seed = p_south_seed + ht.east_delta;
+      T* const pEastSeed = pBaseSeed + ht.eastDelta;
+      T* const pSouthSeed = pBaseSeed + (seedStride & vt.southMask);
+      T* const pSouthWestSeed = pSouthSeed + ht.westDelta;
+      T* const pSouthEastSeed = pSouthSeed + ht.eastDelta;
 
-      const T new_val
-          = mask_op(*p_base_mask, spread_op(*p_base_seed, spread_op(spread_op(*p_east_seed, *p_south_east_seed),
-                                                                    spread_op(*p_south_seed, *p_south_west_seed))));
-      if (new_val == *p_base_seed) {
+      const T newVal = maskOp(*pBaseMask, spreadOp(*pBaseSeed, spreadOp(spreadOp(*pEastSeed, *pSouthEastSeed),
+                                                                        spreadOp(*pSouthSeed, *pSouthWestSeed))));
+      if (newVal == *pBaseSeed) {
         continue;
       }
 
-      *p_base_seed = new_val;
+      *pBaseSeed = newVal;
 
-      const Position<T> pos(p_base_seed, p_base_mask, x, y);
-      const T* p_east_mask = p_base_mask + ht.east_delta;
-      const T* p_south_mask = p_base_mask + (mask_stride & vt.south_mask);
-      const T* p_south_west_mask = p_south_mask + ht.west_delta;
-      const T* p_south_east_mask = p_south_mask + ht.east_delta;
+      const Position<T> pos(pBaseSeed, pBaseMask, x, y);
+      const T* pEastMask = pBaseMask + ht.eastDelta;
+      const T* pSouthMask = pBaseMask + (maskStride & vt.southMask);
+      const T* pSouthWestMask = pSouthMask + ht.westDelta;
+      const T* pSouthEastMask = pSouthMask + ht.eastDelta;
 
       // Eastern neighbor.
-      processNeighbor(spread_op, mask_op, queue, in_queue_line, new_val, p_east_seed, p_east_mask, pos, ht.east_delta,
-                      0);
+      processNeighbor(spreadOp, maskOp, queue, inQueueLine, newVal, pEastSeed, pEastMask, pos, ht.eastDelta, 0);
 
       // South-eastern neighbor.
-      processNeighbor(spread_op, mask_op, queue, in_queue_line + (in_queue_stride & vt.south_mask), new_val,
-                      p_south_east_seed, p_south_east_mask, pos, ht.east_delta, 1 & vt.south_mask);
+      processNeighbor(spreadOp, maskOp, queue, inQueueLine + (inQueueStride & vt.southMask), newVal, pSouthEastSeed,
+                      pSouthEastMask, pos, ht.eastDelta, 1 & vt.southMask);
 
       // Southern neighbor.
-      processNeighbor(spread_op, mask_op, queue, in_queue_line + (in_queue_stride & vt.south_mask), new_val,
-                      p_south_seed, p_south_mask, pos, 0, 1 & vt.south_mask);
+      processNeighbor(spreadOp, maskOp, queue, inQueueLine + (inQueueStride & vt.southMask), newVal, pSouthSeed,
+                      pSouthMask, pos, 0, 1 & vt.southMask);
 
       // South-western neighbor.
-      processNeighbor(spread_op, mask_op, queue, in_queue_line + (in_queue_stride & vt.south_mask), new_val,
-                      p_south_west_seed, p_south_west_mask, pos, ht.west_delta, 1 & vt.south_mask);
+      processNeighbor(spreadOp, maskOp, queue, inQueueLine + (inQueueStride & vt.southMask), newVal, pSouthWestSeed,
+                      pSouthWestMask, pos, ht.westDelta, 1 & vt.southMask);
     }
 
-    seed_line -= seed_stride;
-    mask_line -= mask_stride;
-    in_queue_line -= in_queue_stride;
+    seedLine -= seedStride;
+    maskLine -= maskStride;
+    inQueueLine -= inQueueStride;
   }
 
-  spread8(spread_op, mask_op, queue, in_queue_data, in_queue_stride, &h_transitions[0], &v_transitions[0], seed_stride,
-          mask_stride);
+  spread8(spreadOp, maskOp, queue, inQueueData, inQueueStride, &hTransitions[0], &vTransitions[0], seedStride,
+          maskStride);
 }  // seedFill8
 }  // namespace seed_fill_generic
 }  // namespace detail
@@ -432,23 +430,23 @@ void seedFill8(SpreadOp spread_op,
  * [code]
  * do {
  *   foreach (<point at x, y>) {
- *     val = mask_op(mask[x, y], seed[x, y]);
+ *     val = maskOp(mask[x, y], seed[x, y]);
  *     foreach (<neighbor at nx, ny>) {
- *       seed[nx, ny] = mask_op(mask[nx, ny], spread_op(seed[nx, ny], val));
+ *       seed[nx, ny] = maskOp(mask[nx, ny], spreadOp(seed[nx, ny], val));
  *     }
  *   }
  * } while (<changes to seed were made on this iteration>);
  * [/code]
  *
- * \param spread_op A functor or a pointer to a free function that can be called with
+ * \param spreadOp A functor or a pointer to a free function that can be called with
  *        two arguments of type T and return the bigger or the smaller of the two.
- * \param mask_op Same as spread_op, but the opposite operation.
+ * \param maskOp Same as spreadOp, but the opposite operation.
  * \param conn Determines whether to spread values to 4 or 8 eight immediate neighbors.
  * \param[in,out] seed Pointer to the seed buffer.
- * \param seed_stride The size of a row in the seed buffer, in terms of the number of T objects.
+ * \param seedStride The size of a row in the seed buffer, in terms of the number of T objects.
  * \param size Dimensions of the seed and the mask buffers.
  * \param mask Pointer to the mask data.
- * \param mask_stride The size of a row in the mask buffer, in terms of the number of T objects.
+ * \param maskStride The size of a row in the mask buffer, in terms of the number of T objects.
  *
  * This code is an implementation of the hybrid grayscale restoration algorithm described in:
  * Morphological Grayscale Reconstruction in Image Analysis:
@@ -456,25 +454,25 @@ void seedFill8(SpreadOp spread_op,
  * November 1991, IEEE Transactions on Image Processing, Vol. 2, No. 2, pp. 176-201, April 1993.\n
  */
 template <typename T, typename SpreadOp, typename MaskOp>
-void seedFillGenericInPlace(SpreadOp spread_op,
-                            MaskOp mask_op,
+void seedFillGenericInPlace(SpreadOp spreadOp,
+                            MaskOp maskOp,
                             Connectivity conn,
                             T* seed,
-                            int seed_stride,
+                            int seedStride,
                             QSize size,
                             const T* mask,
-                            int mask_stride) {
+                            int maskStride) {
   if (size.isEmpty()) {
     return;
   }
 
   if (conn == CONN4) {
-    detail::seed_fill_generic::seedFill4(spread_op, mask_op, seed, seed_stride, size, mask, mask_stride);
+    detail::seed_fill_generic::seedFill4(spreadOp, maskOp, seed, seedStride, size, mask, maskStride);
   } else {
     assert(conn == CONN8);
-    detail::seed_fill_generic::seedFill8(spread_op, mask_op, seed, seed_stride, size, mask, mask_stride);
+    detail::seed_fill_generic::seedFill8(spreadOp, maskOp, seed, seedStride, size, mask, maskStride);
   }
 }
 }  // namespace imageproc
 
-#endif  // ifndef IMAGEPROC_SEEDFILL_GENERIC_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_SEEDFILLGENERIC_H_

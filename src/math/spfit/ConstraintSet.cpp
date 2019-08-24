@@ -10,18 +10,18 @@ ConstraintSet::ConstraintSet(const FittableSpline* spline) : m_spline(spline) {
   assert(spline);
 }
 
-void ConstraintSet::constrainControlPoint(int cp_idx, const QPointF& pos) {
-  assert(cp_idx >= 0 && cp_idx < m_spline->numControlPoints());
-  const QPointF cp(m_spline->controlPointPosition(cp_idx));
+void ConstraintSet::constrainControlPoint(int cpIdx, const QPointF& pos) {
+  assert(cpIdx >= 0 && cpIdx < m_spline->numControlPoints());
+  const QPointF cp(m_spline->controlPointPosition(cpIdx));
 
   // Fix x coordinate.
   LinearFunction f(m_spline->numControlPoints() * 2);
-  f.a[cp_idx * 2] = 1;
+  f.a[cpIdx * 2] = 1;
   f.b = cp.x() - pos.x();
   m_constraints.push_back(f);
   // Fix y coordinate.
-  f.a[cp_idx * 2] = 0;
-  f.a[cp_idx * 2 + 1] = 1;
+  f.a[cpIdx * 2] = 0;
+  f.a[cpIdx * 2 + 1] = 1;
   f.b = cp.y() - pos.y();
   m_constraints.push_back(f);
 }
@@ -34,11 +34,11 @@ void ConstraintSet::constrainSplinePoint(double t, const QPointF& pos) {
   LinearFunction f(m_spline->numControlPoints() * 2);
   f.b = -pos.x();
   for (const FittableSpline::LinearCoefficient& coeff : coeffs) {
-    const int cp_idx = coeff.controlPointIdx;
-    f.a[cp_idx * 2] = coeff.coeff;
+    const int cpIdx = coeff.controlPointIdx;
+    f.a[cpIdx * 2] = coeff.coeff;
 
     // Because we want a function from control point displacements, not positions.
-    f.b += m_spline->controlPointPosition(cp_idx).x() * coeff.coeff;
+    f.b += m_spline->controlPointPosition(cpIdx).x() * coeff.coeff;
   }
   m_constraints.push_back(f);
 
@@ -46,19 +46,19 @@ void ConstraintSet::constrainSplinePoint(double t, const QPointF& pos) {
   f.a.fill(0);
   f.b = -pos.y();
   for (const FittableSpline::LinearCoefficient& coeff : coeffs) {
-    const int cp_idx = coeff.controlPointIdx;
-    f.a[cp_idx * 2 + 1] = coeff.coeff;
+    const int cpIdx = coeff.controlPointIdx;
+    f.a[cpIdx * 2 + 1] = coeff.coeff;
     // Because we want a function from control point displacements, not positions.
-    f.b += m_spline->controlPointPosition(cp_idx).y() * coeff.coeff;
+    f.b += m_spline->controlPointPosition(cpIdx).y() * coeff.coeff;
   }
   m_constraints.push_back(f);
 }
 
-void ConstraintSet::constrainControlPoint(int cp_idx, const QLineF& line) {
-  assert(cp_idx >= 0 && cp_idx < m_spline->numControlPoints());
+void ConstraintSet::constrainControlPoint(int cpIdx, const QLineF& line) {
+  assert(cpIdx >= 0 && cpIdx < m_spline->numControlPoints());
 
   if (line.p1() == line.p2()) {
-    constrainControlPoint(cp_idx, line.p1());
+    constrainControlPoint(cpIdx, line.p1());
 
     return;
   }
@@ -75,12 +75,12 @@ void ConstraintSet::constrainControlPoint(int cp_idx, const QLineF& line) {
   // L(cp) + (p1.y * dx - p1.x * dy) = 0
 
   LinearFunction f(m_spline->numControlPoints() * 2);
-  f.a[cp_idx * 2] = dy;
-  f.a[cp_idx * 2 + 1] = -dx;
+  f.a[cpIdx * 2] = dy;
+  f.a[cpIdx * 2 + 1] = -dx;
   f.b = line.p1().y() * dx - line.p1().x() * dy;
 
   // Make it a function of control point displacements, not control points themselves.
-  const QPointF cp(m_spline->controlPointPosition(cp_idx));
+  const QPointF cp(m_spline->controlPointPosition(cpIdx));
   f.b += cp.x() * dy;
   f.b += cp.y() * dx;
 

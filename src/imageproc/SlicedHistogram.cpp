@@ -40,27 +40,27 @@ void SlicedHistogram::processHorizontalLines(const BinaryImage& image, const QRe
   const int top = area.top();
   const int bottom = area.bottom();
   const int wpl = image.wordsPerLine();
-  const int first_word_idx = area.left() >> 5;
-  const int last_word_idx = area.right() >> 5;  // area.right() is within area
-  const uint32_t first_word_mask = ~uint32_t(0) >> (area.left() & 31);
-  const int last_word_unused_bits = (last_word_idx << 5) + 31 - area.right();
-  const uint32_t last_word_mask = ~uint32_t(0) << last_word_unused_bits;
+  const int firstWordIdx = area.left() >> 5;
+  const int lastWordIdx = area.right() >> 5;  // area.right() is within area
+  const uint32_t firstWordMask = ~uint32_t(0) >> (area.left() & 31);
+  const int lastWordUnusedBits = (lastWordIdx << 5) + 31 - area.right();
+  const uint32_t lastWordMask = ~uint32_t(0) << lastWordUnusedBits;
   const uint32_t* line = image.data() + top * wpl;
 
-  if (first_word_idx == last_word_idx) {
-    const uint32_t mask = first_word_mask & last_word_mask;
+  if (firstWordIdx == lastWordIdx) {
+    const uint32_t mask = firstWordMask & lastWordMask;
     for (int y = top; y <= bottom; ++y, line += wpl) {
-      const int count = countNonZeroBits(line[first_word_idx] & mask);
+      const int count = countNonZeroBits(line[firstWordIdx] & mask);
       m_data.push_back(count);
     }
   } else {
     for (int y = top; y <= bottom; ++y, line += wpl) {
-      int idx = first_word_idx;
-      int count = countNonZeroBits(line[idx] & first_word_mask);
-      for (++idx; idx != last_word_idx; ++idx) {
+      int idx = firstWordIdx;
+      int count = countNonZeroBits(line[idx] & firstWordMask);
+      for (++idx; idx != lastWordIdx; ++idx) {
         count += countNonZeroBits(line[idx]);
       }
-      count += countNonZeroBits(line[idx] & last_word_mask);
+      count += countNonZeroBits(line[idx] & lastWordMask);
       m_data.push_back(count);
     }
   }
@@ -72,14 +72,14 @@ void SlicedHistogram::processVerticalLines(const BinaryImage& image, const QRect
   const int right = area.right();
   const int height = area.height();
   const int wpl = image.wordsPerLine();
-  const uint32_t* const top_line = image.data() + area.top() * wpl;
+  const uint32_t* const topLine = image.data() + area.top() * wpl;
 
   for (int x = area.left(); x <= right; ++x) {
-    const uint32_t* pword = top_line + (x >> 5);
-    const int least_significant_zeroes = 31 - (x & 31);
+    const uint32_t* pword = topLine + (x >> 5);
+    const int leastSignificantZeroes = 31 - (x & 31);
     int count = 0;
     for (int i = 0; i < height; ++i, pword += wpl) {
-      count += (*pword >> least_significant_zeroes) & 1;
+      count += (*pword >> leastSignificantZeroes) & 1;
     }
     m_data.push_back(count);
   }

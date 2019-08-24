@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_LAYOUT_THUMBNAIL_H_
-#define PAGE_LAYOUT_THUMBNAIL_H_
+#ifndef SCANTAILOR_PAGE_LAYOUT_THUMBNAIL_H_
+#define SCANTAILOR_PAGE_LAYOUT_THUMBNAIL_H_
 
 #include <QRectF>
 #include <QTransform>
@@ -17,18 +17,16 @@ class ImageId;
 namespace page_layout {
 class Thumbnail : public ThumbnailBase {
  public:
-  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-            const QSizeF& max_size,
-            const ImageId& image_id,
+  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+            const QSizeF& maxSize,
+            const ImageId& imageId,
             const Params& params,
             const ImageTransformation& xform,
-            const QPolygonF& phys_content_rect,
+            const QPolygonF& physContentRect,
             const QRectF& displayArea,
             bool deviant);
 
-  void paintOverImage(QPainter& painter,
-                      const QTransform& image_to_display,
-                      const QTransform& thumb_to_display) override;
+  void paintOverImage(QPainter& painter, const QTransform& imageToDisplay, const QTransform& thumbToDisplay) override;
 
  private:
   Params m_params;

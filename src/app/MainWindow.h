@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef MAINWINDOW_H_
-#define MAINWINDOW_H_
+#ifndef SCANTAILOR_APP_MAINWINDOW_H_
+#define SCANTAILOR_APP_MAINWINDOW_H_
 
 #include <QMainWindow>
 #include <QObjectCleanupHandler>
@@ -86,7 +86,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
  public slots:
 
-  void openProject(const QString& project_file);
+  void openProject(const QString& projectFile);
 
  private:
   enum MainAreaAction { UPDATE_MAIN_AREA, CLEAR_MAIN_AREA };
@@ -107,14 +107,14 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void goPrevSelectedPage();
 
-  void goToPage(const PageId& page_id,
-                ThumbnailSequence::SelectionAction selection_action = ThumbnailSequence::RESET_SELECTION);
+  void goToPage(const PageId& pageId,
+                ThumbnailSequence::SelectionAction selectionAction = ThumbnailSequence::RESET_SELECTION);
 
-  void currentPageChanged(const PageInfo& page_info, const QRectF& thumb_rect, ThumbnailSequence::SelectionFlags flags);
+  void currentPageChanged(const PageInfo& pageInfo, const QRectF& thumbRect, ThumbnailSequence::SelectionFlags flags);
 
-  void pageContextMenuRequested(const PageInfo& page_info, const QPoint& screen_pos, bool selected);
+  void pageContextMenuRequested(const PageInfo& pageInfo, const QPoint& screenPos, bool selected);
 
-  void pastLastPageContextMenuRequested(const QPoint& screen_pos);
+  void pastLastPageContextMenuRequested(const QPoint& screenPos);
 
   void thumbViewFocusToggled(bool checked);
 
@@ -140,11 +140,11 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void startBatchProcessing();
 
-  void stopBatchProcessing(MainAreaAction main_area = UPDATE_MAIN_AREA);
+  void stopBatchProcessing(MainAreaAction mainArea = UPDATE_MAIN_AREA);
 
-  void invalidateThumbnail(const PageId& page_id) override;
+  void invalidateThumbnail(const PageId& pageId) override;
 
-  void invalidateThumbnail(const PageInfo& page_info);
+  void invalidateThumbnail(const PageInfo& pageInfo);
 
   void invalidateAllThumbnails() override;
 
@@ -193,15 +193,15 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void setImageWidget(QWidget* widget,
                       Ownership ownership,
-                      DebugImages* debug_images = nullptr,
+                      DebugImages* debugImages = nullptr,
                       bool overlay = false) override;
 
   intrusive_ptr<AbstractCommand<void>> relinkingDialogRequester() override;
 
   void switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
-                          const QString& out_dir,
-                          const QString& project_file_path = QString(),
-                          const ProjectReader* project_reader = nullptr);
+                          const QString& outDir,
+                          const QString& projectFilePath = QString(),
+                          const ProjectReader* projectReader = nullptr);
 
   void updateThumbViewMinWidth();
 
@@ -217,8 +217,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void updateSortOptions();
 
-  void resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& page_order_provider,
-                          ThumbnailSequence::SelectionAction selection_action = ThumbnailSequence::RESET_SELECTION);
+  void resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& pageOrderProvider,
+                          ThumbnailSequence::SelectionAction selectionAction = ThumbnailSequence::RESET_SELECTION);
 
   void removeWidgetsFromLayout(QLayout* layout);
 
@@ -234,13 +234,13 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   bool isBelowSelectContent() const;
 
-  bool isBelowSelectContent(int filter_idx) const;
+  bool isBelowSelectContent(int filterIdx) const;
 
-  bool isBelowFixOrientation(int filter_idx) const;
+  bool isBelowFixOrientation(int filterIdx) const;
 
   bool isOutputFilter() const;
 
-  bool isOutputFilter(int filter_idx) const;
+  bool isOutputFilter(int filterIdx) const;
 
   PageView getCurrentView() const;
 
@@ -256,21 +256,21 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void closeProjectWithoutSaving();
 
-  bool saveProjectWithFeedback(const QString& project_file);
+  bool saveProjectWithFeedback(const QString& projectFile);
 
-  void showInsertFileDialog(BeforeOrAfter before_or_after, const ImageId& existig);
+  void showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId& existig);
 
   void showRemovePagesDialog(const std::set<PageId>& pages);
 
-  void insertImage(const ImageInfo& new_image, BeforeOrAfter before_or_after, ImageId existing);
+  void insertImage(const ImageInfo& newImage, BeforeOrAfter beforeOrAfter, ImageId existing);
 
   void removeFromProject(const std::set<PageId>& pages);
 
   void eraseOutputFiles(const std::set<PageId>& pages);
 
-  BackgroundTaskPtr createCompositeTask(const PageInfo& page, int last_filter_idx, bool batch, bool debug);
+  BackgroundTaskPtr createCompositeTask(const PageInfo& page, int lastFilterIdx, bool batch, bool debug);
 
-  intrusive_ptr<CompositeCacheDrivenTask> createCompositeCacheDrivenTask(int last_filter_idx);
+  intrusive_ptr<CompositeCacheDrivenTask> createCompositeCacheDrivenTask(int lastFilterIdx);
 
   void createBatchProcessingWidget();
 
@@ -282,7 +282,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void setDockWidgetsVisible(bool state);
 
-  void scaleThumbnails(const QWheelEvent* wheel_event);
+  void scaleThumbnails(const QWheelEvent* wheelEvent);
 
   void updateMaxLogicalThumbSize();
 
@@ -324,4 +324,4 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 };
 
 
-#endif  // ifndef MAINWINDOW_H_
+#endif  // ifndef SCANTAILOR_APP_MAINWINDOW_H_

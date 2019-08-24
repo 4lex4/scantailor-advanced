@@ -1,15 +1,15 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#include <QImage>
-#include <algorithm>
-#include <boost/test/auto_unit_test.hpp>
-#include <list>
 #include <BWColor.h>
 #include <BinaryImage.h>
 #include <ConnComp.h>
 #include <ConnCompEraserExt.h>
 #include <RasterOp.h>
+#include <QImage>
+#include <algorithm>
+#include <boost/test/auto_unit_test.hpp>
+#include <list>
 #include "Utils.h"
 
 namespace imageproc {
@@ -97,10 +97,10 @@ BOOST_AUTO_TEST_CASE(test_small_image) {
   ConnComp cc;
   ConnCompEraserExt eraser4(img, CONN4);
   while (!(cc = eraser4.nextConnComp()).isNull()) {
-    const BinaryImage cc_img(eraser4.computeConnCompImage());
-    const auto it(std::find(c4i.begin(), c4i.end(), cc_img));
+    const BinaryImage ccImg(eraser4.computeConnCompImage());
+    const auto it(std::find(c4i.begin(), c4i.end(), ccImg));
     if (it != c4i.end()) {
-      BOOST_CHECK(checkAlignedImage(eraser4, cc_img));
+      BOOST_CHECK(checkAlignedImage(eraser4, ccImg));
       c4i.erase(it);
     } else {
       BOOST_ERROR("Incorrect 4-connected block found.");
@@ -110,10 +110,10 @@ BOOST_AUTO_TEST_CASE(test_small_image) {
 
   ConnCompEraserExt eraser8(img, CONN8);
   while (!(cc = eraser8.nextConnComp()).isNull()) {
-    const BinaryImage cc_img(eraser8.computeConnCompImage());
-    const auto it(std::find(c8i.begin(), c8i.end(), cc_img));
+    const BinaryImage ccImg(eraser8.computeConnCompImage());
+    const auto it(std::find(c8i.begin(), c8i.end(), ccImg));
     if (it != c8i.end()) {
-      BOOST_CHECK(checkAlignedImage(eraser8, cc_img));
+      BOOST_CHECK(checkAlignedImage(eraser8, ccImg));
       c8i.erase(it);
     } else {
       BOOST_ERROR("Incorrect 8-connected block found.");

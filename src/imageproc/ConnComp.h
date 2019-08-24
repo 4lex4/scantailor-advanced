@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_CONNCOMP_H_
-#define IMAGEPROC_CONNCOMP_H_
+#ifndef SCANTAILOR_IMAGEPROC_CONNCOMP_H_
+#define SCANTAILOR_IMAGEPROC_CONNCOMP_H_
 
 #include <QRect>
 
@@ -14,7 +14,7 @@ class ConnComp {
  public:
   ConnComp() : m_pixCount(0) {}
 
-  ConnComp(const QPoint& seed, const QRect& rect, int pix_count) : m_seed(seed), m_rect(rect), m_pixCount(pix_count) {}
+  ConnComp(const QPoint& seed, const QRect& rect, int pixCount) : m_seed(seed), m_rect(rect), m_pixCount(pixCount) {}
 
   bool isNull() const { return m_rect.isNull(); }
 
@@ -40,4 +40,4 @@ class ConnComp {
   int m_pixCount;
 };
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_CONNCOMP_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_CONNCOMP_H_

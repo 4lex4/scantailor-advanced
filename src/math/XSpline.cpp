@@ -132,16 +132,16 @@ void XSpline::setControlPointTension(int idx, double tension) {
 }
 
 QPointF XSpline::pointAt(double t) const {
-  const int num_segments = numSegments();
-  assert(num_segments > 0);
+  const int numSegments = this->numSegments();
+  assert(numSegments > 0);
   assert(t >= 0 && t <= 1);
 
   if (t == 1.0) {
     // If we went with the branch below, we would end up with
-    // segment == num_segments, which is an error.
-    return pointAtImpl(num_segments - 1, 1.0);
+    // segment == numSegments, which is an error.
+    return pointAtImpl(numSegments - 1, 1.0);
   } else {
-    const double t2 = t * num_segments;
+    const double t2 = t * numSegments;
     const double segment = std::floor(t2);
 
     return pointAtImpl((int) segment, t2 - segment);
@@ -150,10 +150,10 @@ QPointF XSpline::pointAt(double t) const {
 
 QPointF XSpline::pointAtImpl(int segment, double t) const {
   LinearCoefficient coeffs[4];
-  const int num_coeffs = linearCombinationFor(coeffs, segment, t);
+  const int numCoeffs = linearCombinationFor(coeffs, segment, t);
 
   QPointF pt(0, 0);
-  for (int i = 0; i < num_coeffs; ++i) {
+  for (int i = 0; i < numCoeffs; ++i) {
     const LinearCoefficient& c = coeffs[i];
     pt += m_controlPoints[c.controlPointIdx].pos * c.coeff;
   }
@@ -163,109 +163,108 @@ QPointF XSpline::pointAtImpl(int segment, double t) const {
 
 void XSpline::sample(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
                      const SamplingParams& params,
-                     double from_t,
-                     double to_t) const {
+                     double fromT,
+                     double toT) const {
   if (m_controlPoints.empty()) {
     return;
   }
 
-  double max_sqdist_to_spline = params.maxDistFromSpline;
-  if (max_sqdist_to_spline != NumericTraits<double>::max()) {
-    max_sqdist_to_spline *= params.maxDistFromSpline;
+  double maxSqdistToSpline = params.maxDistFromSpline;
+  if (maxSqdistToSpline != NumericTraits<double>::max()) {
+    maxSqdistToSpline *= params.maxDistFromSpline;
   }
 
-  double max_sqdist_between_samples = params.maxDistBetweenSamples;
-  if (max_sqdist_between_samples != NumericTraits<double>::max()) {
-    max_sqdist_between_samples *= params.maxDistBetweenSamples;
+  double maxSqdistBetweenSamples = params.maxDistBetweenSamples;
+  if (maxSqdistBetweenSamples != NumericTraits<double>::max()) {
+    maxSqdistBetweenSamples *= params.maxDistBetweenSamples;
   }
 
-  const QPointF from_pt(pointAt(from_t));
-  const QPointF to_pt(pointAt(to_t));
-  sink(from_pt, from_t, HEAD_SAMPLE);
+  const QPointF fromPt(pointAt(fromT));
+  const QPointF toPt(pointAt(toT));
+  sink(fromPt, fromT, HEAD_SAMPLE);
 
-  const int num_segments = numSegments();
-  if (num_segments == 0) {
+  const int numSegments = this->numSegments();
+  if (numSegments == 0) {
     return;
   }
-  const double r_num_segments = 1.0 / num_segments;
+  const double rNumSegments = 1.0 / numSegments;
 
-  maybeAddMoreSamples(sink, max_sqdist_to_spline, max_sqdist_between_samples, num_segments, r_num_segments, from_t,
-                      from_pt, to_t, to_pt);
+  maybeAddMoreSamples(sink, maxSqdistToSpline, maxSqdistBetweenSamples, numSegments, rNumSegments, fromT, fromPt, toT,
+                      toPt);
 
-  sink(to_pt, to_t, TAIL_SAMPLE);
+  sink(toPt, toT, TAIL_SAMPLE);
 }  // XSpline::sample
 
 void XSpline::maybeAddMoreSamples(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
-                                  double max_sqdist_to_spline,
-                                  double max_sqdist_between_samples,
-                                  double num_segments,
-                                  double r_num_segments,
-                                  double prev_t,
-                                  const QPointF& prev_pt,
-                                  double next_t,
-                                  const QPointF& next_pt) const {
-  const double prev_next_sqdist = Vec2d(next_pt - prev_pt).squaredNorm();
-  if (prev_next_sqdist < 1e-6) {
+                                  double maxSqdistToSpline,
+                                  double maxSqdistBetweenSamples,
+                                  double numSegments,
+                                  double rNumSegments,
+                                  double prevT,
+                                  const QPointF& prevPt,
+                                  double nextT,
+                                  const QPointF& nextPt) const {
+  const double prevNextSqdist = Vec2d(nextPt - prevPt).squaredNorm();
+  if (prevNextSqdist < 1e-6) {
     // Too close. Projecting anything on such a small line segment is dangerous.
     return;
   }
 
   SampleFlags flags = DEFAULT_SAMPLE;
-  double mid_t = 0.5 * (prev_t + next_t);
-  const double nearby_junction_t = std::floor(mid_t * num_segments + 0.5) * r_num_segments;
+  double midT = 0.5 * (prevT + nextT);
+  const double nearbyJunctionT = std::floor(midT * numSegments + 0.5) * rNumSegments;
 
-  // If nearby_junction_t is between prev_t and next_t, make it our mid_t.
-  if (((nearby_junction_t - prev_t) * (next_t - prev_t) > 0)
-      && ((nearby_junction_t - next_t) * (prev_t - next_t) > 0)) {
-    mid_t = nearby_junction_t;
+  // If nearbyJunctionT is between prevT and nextT, make it our midT.
+  if (((nearbyJunctionT - prevT) * (nextT - prevT) > 0) && ((nearbyJunctionT - nextT) * (prevT - nextT) > 0)) {
+    midT = nearbyJunctionT;
     flags = JUNCTION_SAMPLE;
   }
 
-  const QPointF mid_pt(pointAt(mid_t));
+  const QPointF midPt(pointAt(midT));
 
   if (flags != JUNCTION_SAMPLE) {
-    const QPointF projection(ToLineProjector(QLineF(prev_pt, next_pt)).projectionPoint(mid_pt));
+    const QPointF projection(ToLineProjector(QLineF(prevPt, nextPt)).projectionPoint(midPt));
 
-    if (prev_next_sqdist <= max_sqdist_between_samples) {
-      if (Vec2d(mid_pt - projection).squaredNorm() <= max_sqdist_to_spline) {
+    if (prevNextSqdist <= maxSqdistBetweenSamples) {
+      if (Vec2d(midPt - projection).squaredNorm() <= maxSqdistToSpline) {
         return;
       }
     }
   }
 
-  maybeAddMoreSamples(sink, max_sqdist_to_spline, max_sqdist_between_samples, num_segments, r_num_segments, prev_t,
-                      prev_pt, mid_t, mid_pt);
+  maybeAddMoreSamples(sink, maxSqdistToSpline, maxSqdistBetweenSamples, numSegments, rNumSegments, prevT, prevPt, midT,
+                      midPt);
 
-  sink(mid_pt, mid_t, flags);
+  sink(midPt, midT, flags);
 
-  maybeAddMoreSamples(sink, max_sqdist_to_spline, max_sqdist_between_samples, num_segments, r_num_segments, mid_t,
-                      mid_pt, next_t, next_pt);
+  maybeAddMoreSamples(sink, maxSqdistToSpline, maxSqdistBetweenSamples, numSegments, rNumSegments, midT, midPt, nextT,
+                      nextPt);
 }  // XSpline::maybeAddMoreSamples
 
 void XSpline::linearCombinationAt(double t, std::vector<LinearCoefficient>& coeffs) const {
   assert(t >= 0 && t <= 1);
 
-  const int num_segments = numSegments();
-  assert(num_segments > 0);
+  const int numSegments = this->numSegments();
+  assert(numSegments > 0);
 
-  int num_coeffs = 4;
-  coeffs.resize(num_coeffs);
+  int numCoeffs = 4;
+  coeffs.resize(numCoeffs);
   LinearCoefficient static_coeffs[4];
 
   if (t == 1.0) {
     // If we went with the branch below, we would end up with
-    // segment == num_segments, which is an error.
-    num_coeffs = linearCombinationFor(static_coeffs, num_segments - 1, 1.0);
+    // segment == numSegments, which is an error.
+    numCoeffs = linearCombinationFor(static_coeffs, numSegments - 1, 1.0);
   } else {
-    const double t2 = t * num_segments;
+    const double t2 = t * numSegments;
     const double segment = std::floor(t2);
-    num_coeffs = linearCombinationFor(static_coeffs, (int) segment, t2 - segment);
+    numCoeffs = linearCombinationFor(static_coeffs, (int) segment, t2 - segment);
   }
 
-  for (int i = 0; i < num_coeffs; ++i) {
+  for (int i = 0; i < numCoeffs; ++i) {
     coeffs[i] = static_coeffs[i];
   }
-  coeffs.resize(num_coeffs);
+  coeffs.resize(numCoeffs);
 }
 
 int XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double t) const {
@@ -304,23 +303,23 @@ int XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double
 
   A /= A.sum();
 
-  int out_idx = 0;
+  int outIdx = 0;
 
   if (idxs[0] == idxs[1]) {
-    coeffs[out_idx++] = LinearCoefficient(idxs[0], A[0] + A[1]);
+    coeffs[outIdx++] = LinearCoefficient(idxs[0], A[0] + A[1]);
   } else {
-    coeffs[out_idx++] = LinearCoefficient(idxs[0], A[0]);
-    coeffs[out_idx++] = LinearCoefficient(idxs[1], A[1]);
+    coeffs[outIdx++] = LinearCoefficient(idxs[0], A[0]);
+    coeffs[outIdx++] = LinearCoefficient(idxs[1], A[1]);
   }
 
   if (idxs[2] == idxs[3]) {
-    coeffs[out_idx++] = LinearCoefficient(idxs[2], A[2] + A[3]);
+    coeffs[outIdx++] = LinearCoefficient(idxs[2], A[2] + A[3]);
   } else {
-    coeffs[out_idx++] = LinearCoefficient(idxs[2], A[2]);
-    coeffs[out_idx++] = LinearCoefficient(idxs[3], A[3]);
+    coeffs[outIdx++] = LinearCoefficient(idxs[2], A[2]);
+    coeffs[outIdx++] = LinearCoefficient(idxs[3], A[3]);
   }
 
-  return out_idx;
+  return outIdx;
 }  // XSpline::linearCombinationFor
 
 XSpline::PointAndDerivs XSpline::pointAndDtsAt(double t) const {
@@ -341,15 +340,15 @@ XSpline::PointAndDerivs XSpline::pointAndDtsAt(double t) const {
 XSpline::DecomposedDerivs XSpline::decomposedDerivs(const double t) const {
   assert(t >= 0 && t <= 1);
 
-  const int num_segments = numSegments();
-  assert(num_segments > 0);
+  const int numSegments = this->numSegments();
+  assert(numSegments > 0);
 
   if (t == 1.0) {
     // If we went with the branch below, we would end up with
-    // segment == num_segments, which is an error.
-    return decomposedDerivsImpl(num_segments - 1, 1.0);
+    // segment == numSegments, which is an error.
+    return decomposedDerivsImpl(numSegments - 1, 1.0);
   } else {
-    const double t2 = t * num_segments;
+    const double t2 = t * numSegments;
     const double segment = std::floor(t2);
 
     return decomposedDerivsImpl((int) segment, t2 - segment);
@@ -380,9 +379,9 @@ XSpline::DecomposedDerivs XSpline::decomposedDerivsImpl(const int segment, const
   // Rather we want it with respect to the t that's passed to
   // decomposedDerivs(), ranging from 0 to 1 across all segments.
   // Let's call the latter capital T.  Their relationship is:
-  // t = T*num_segments - C
-  // dt/dT = num_segments
-  const double dtdT = numSegments();
+  // t = T*numSegments - C
+  // dt/dT = numSegments
+  const double dtdT = this->numSegments();
 
   Vec4d A;
   Vec4d dA;   // First derivatives with respect to T.
@@ -457,154 +456,154 @@ XSpline::DecomposedDerivs XSpline::decomposedDerivsImpl(const int segment, const
   const double sum = A.sum();
   const double sum2 = sum * sum;
   const double sum4 = sum2 * sum2;
-  const double d_sum = dA.sum();
-  const double dd_sum = ddA.sum();
+  const double dSum = dA.sum();
+  const double ddSum = ddA.sum();
 
   for (int i = 0; i < 4; ++i) {
     derivs.zeroDerivCoeffs[i] = A[i] / sum;
 
-    const double d1 = dA[i] * sum - A[i] * d_sum;
+    const double d1 = dA[i] * sum - A[i] * dSum;
     derivs.firstDerivCoeffs[i] = d1 / sum2;  // Derivative of: A[i] / sum
     // Derivative of: dA[i] * sum
-    const double dd1 = ddA[i] * sum + dA[i] * d_sum;
+    const double dd1 = ddA[i] * sum + dA[i] * dSum;
 
-    // Derivative of: A[i] * d_sum
-    const double dd2 = dA[i] * d_sum + A[i] * dd_sum;
+    // Derivative of: A[i] * dSum
+    const double dd2 = dA[i] * dSum + A[i] * ddSum;
 
-    // Derivative of (dA[i] * sum - A[i] * d_sum) / sum2
-    const double dd3 = ((dd1 - dd2) * sum2 - d1 * (2 * sum * d_sum)) / sum4;
+    // Derivative of (dA[i] * sum - A[i] * dSum) / sum2
+    const double dd3 = ((dd1 - dd2) * sum2 - d1 * (2 * sum * dSum)) / sum4;
     derivs.secondDerivCoeffs[i] = dd3;
   }
   // Merge / throw away some control points.
-  int write_idx = 0;
-  int merge_idx = 0;
-  int read_idx = 1;
+  int writeIdx = 0;
+  int mergeIdx = 0;
+  int readIdx = 1;
   const int end = 4;
   while (true) {
-    assert(merge_idx != read_idx);
-    for (; read_idx != end && derivs.controlPoints[read_idx] == derivs.controlPoints[merge_idx]; ++read_idx) {
+    assert(mergeIdx != readIdx);
+    for (; readIdx != end && derivs.controlPoints[readIdx] == derivs.controlPoints[mergeIdx]; ++readIdx) {
       // Merge
-      derivs.zeroDerivCoeffs[merge_idx] += derivs.zeroDerivCoeffs[read_idx];
-      derivs.firstDerivCoeffs[merge_idx] += derivs.firstDerivCoeffs[read_idx];
-      derivs.secondDerivCoeffs[merge_idx] += derivs.secondDerivCoeffs[read_idx];
+      derivs.zeroDerivCoeffs[mergeIdx] += derivs.zeroDerivCoeffs[readIdx];
+      derivs.firstDerivCoeffs[mergeIdx] += derivs.firstDerivCoeffs[readIdx];
+      derivs.secondDerivCoeffs[mergeIdx] += derivs.secondDerivCoeffs[readIdx];
     }
 
-    if (derivs.hasNonZeroCoeffs(merge_idx)) {
+    if (derivs.hasNonZeroCoeffs(mergeIdx)) {
       // Copy
-      derivs.zeroDerivCoeffs[write_idx] = derivs.zeroDerivCoeffs[merge_idx];
-      derivs.firstDerivCoeffs[write_idx] = derivs.firstDerivCoeffs[merge_idx];
-      derivs.secondDerivCoeffs[write_idx] = derivs.secondDerivCoeffs[merge_idx];
-      derivs.controlPoints[write_idx] = derivs.controlPoints[merge_idx];
-      ++write_idx;
+      derivs.zeroDerivCoeffs[writeIdx] = derivs.zeroDerivCoeffs[mergeIdx];
+      derivs.firstDerivCoeffs[writeIdx] = derivs.firstDerivCoeffs[mergeIdx];
+      derivs.secondDerivCoeffs[writeIdx] = derivs.secondDerivCoeffs[mergeIdx];
+      derivs.controlPoints[writeIdx] = derivs.controlPoints[mergeIdx];
+      ++writeIdx;
     }
 
-    if (read_idx == end) {
+    if (readIdx == end) {
       break;
     }
 
-    merge_idx = read_idx;
-    ++read_idx;
+    mergeIdx = readIdx;
+    ++readIdx;
   }
-  derivs.numControlPoints = write_idx;
+  derivs.numControlPoints = writeIdx;
 
   return derivs;
 }  // XSpline::decomposedDerivsImpl
 
 QuadraticFunction XSpline::controlPointsAttractionForce() const {
-  return controlPointsAttractionForce(0, numSegments());
+  return controlPointsAttractionForce(0, this->numSegments());
 }
 
-QuadraticFunction XSpline::controlPointsAttractionForce(int seg_begin, int seg_end) const {
+QuadraticFunction XSpline::controlPointsAttractionForce(int segBegin, int segEnd) const {
   using namespace adiff;
 
-  assert(seg_begin >= 0 && seg_begin <= numSegments());
-  assert(seg_end >= 0 && seg_end <= numSegments());
-  assert(seg_begin <= seg_end);
+  assert(segBegin >= 0 && segBegin <= this->numSegments());
+  assert(segEnd >= 0 && segEnd <= this->numSegments());
+  assert(segBegin <= segEnd);
 
-  const int num_control_points = numControlPoints();
+  const int numControlPoints = this->numControlPoints();
 
-  SparseMap<2> sparse_map(num_control_points * 2);
-  sparse_map.markAllNonZero();
+  SparseMap<2> sparseMap(numControlPoints * 2);
+  sparseMap.markAllNonZero();
 
-  Function<2> force(sparse_map);
-  if (seg_begin != seg_end) {
-    Function<2> prev_x(seg_begin * 2, m_controlPoints[seg_begin].pos.x(), sparse_map);
-    Function<2> prev_y(seg_begin * 2 + 1, m_controlPoints[seg_begin].pos.y(), sparse_map);
+  Function<2> force(sparseMap);
+  if (segBegin != segEnd) {
+    Function<2> prevX(segBegin * 2, m_controlPoints[segBegin].pos.x(), sparseMap);
+    Function<2> prevY(segBegin * 2 + 1, m_controlPoints[segBegin].pos.y(), sparseMap);
 
-    for (int i = seg_begin + 1; i <= seg_end; ++i) {
-      Function<2> next_x(i * 2, m_controlPoints[i].pos.x(), sparse_map);
-      Function<2> next_y(i * 2 + 1, m_controlPoints[i].pos.y(), sparse_map);
+    for (int i = segBegin + 1; i <= segEnd; ++i) {
+      Function<2> nextX(i * 2, m_controlPoints[i].pos.x(), sparseMap);
+      Function<2> nextY(i * 2 + 1, m_controlPoints[i].pos.y(), sparseMap);
 
-      const Function<2> dx(next_x - prev_x);
-      const Function<2> dy(next_y - prev_y);
+      const Function<2> dx(nextX - prevX);
+      const Function<2> dy(nextY - prevY);
       force += dx * dx + dy * dy;
 
-      next_x.swap(prev_x);
-      next_y.swap(prev_y);
+      nextX.swap(prevX);
+      nextY.swap(prevY);
     }
   }
 
-  QuadraticFunction f(num_control_points * 2);
-  f.A = 0.5 * force.hessian(sparse_map);
-  f.b = force.gradient(sparse_map);
+  QuadraticFunction f(numControlPoints * 2);
+  f.A = 0.5 * force.hessian(sparseMap);
+  f.b = force.gradient(sparseMap);
   f.c = force.value;
 
   return f;
 }  // XSpline::controlPointsAttractionForce
 
 QuadraticFunction XSpline::junctionPointsAttractionForce() const {
-  return junctionPointsAttractionForce(0, numSegments());
+  return junctionPointsAttractionForce(0, this->numSegments());
 }
 
-QuadraticFunction XSpline::junctionPointsAttractionForce(int seg_begin, int seg_end) const {
+QuadraticFunction XSpline::junctionPointsAttractionForce(int segBegin, int segEnd) const {
   using namespace adiff;
 
-  assert(seg_begin >= 0 && seg_begin <= numSegments());
-  assert(seg_end >= 0 && seg_end <= numSegments());
-  assert(seg_begin <= seg_end);
+  assert(segBegin >= 0 && segBegin <= this->numSegments());
+  assert(segEnd >= 0 && segEnd <= this->numSegments());
+  assert(segBegin <= segEnd);
 
-  const int num_control_points = numControlPoints();
+  const int numControlPoints = this->numControlPoints();
 
-  SparseMap<2> sparse_map(num_control_points * 2);
-  sparse_map.markAllNonZero();
+  SparseMap<2> sparseMap(numControlPoints * 2);
+  sparseMap.markAllNonZero();
 
-  Function<2> force(sparse_map);
+  Function<2> force(sparseMap);
 
-  if (seg_begin != seg_end) {
-    QPointF pt(pointAt(controlPointIndexToT(seg_begin)));
+  if (segBegin != segEnd) {
+    QPointF pt(pointAt(controlPointIndexToT(segBegin)));
     std::vector<LinearCoefficient> coeffs;
-    Function<2> prev_x(0);
-    Function<2> prev_y(0);
+    Function<2> prevX(0);
+    Function<2> prevY(0);
 
-    for (int i = seg_begin; i <= seg_end; ++i) {
-      Function<2> next_x(sparse_map);
-      Function<2> next_y(sparse_map);
+    for (int i = segBegin; i <= segEnd; ++i) {
+      Function<2> nextX(sparseMap);
+      Function<2> nextY(sparseMap);
 
       linearCombinationAt(controlPointIndexToT(i), coeffs);
       for (const LinearCoefficient& coeff : coeffs) {
         const QPointF cp(m_controlPoints[coeff.controlPointIdx].pos);
-        Function<2> x(coeff.controlPointIdx * 2, cp.x(), sparse_map);
-        Function<2> y(coeff.controlPointIdx * 2 + 1, cp.y(), sparse_map);
+        Function<2> x(coeff.controlPointIdx * 2, cp.x(), sparseMap);
+        Function<2> y(coeff.controlPointIdx * 2 + 1, cp.y(), sparseMap);
         x *= coeff.coeff;
         y *= coeff.coeff;
-        next_x += x;
-        next_y += y;
+        nextX += x;
+        nextY += y;
       }
 
-      if (i != seg_begin) {
-        const Function<2> dx(next_x - prev_x);
-        const Function<2> dy(next_y - prev_y);
+      if (i != segBegin) {
+        const Function<2> dx(nextX - prevX);
+        const Function<2> dy(nextY - prevY);
         force += dx * dx + dy * dy;
       }
 
-      next_x.swap(prev_x);
-      next_y.swap(prev_y);
+      nextX.swap(prevX);
+      nextY.swap(prevY);
     }
   }
 
-  QuadraticFunction f(num_control_points * 2);
-  f.A = 0.5 * force.hessian(sparse_map);
-  f.b = force.gradient(sparse_map);
+  QuadraticFunction f(numControlPoints * 2);
+  f.A = 0.5 * force.hessian(sparseMap);
+  f.b = force.gradient(sparseMap);
   f.c = force.value;
 
   return f;
@@ -619,8 +618,8 @@ QPointF XSpline::pointClosestTo(const QPointF to, double* t, double accuracy) co
     return QPointF();
   }
 
-  const int num_segments = numSegments();
-  if (num_segments == 0) {
+  const int numSegments = this->numSegments();
+  if (numSegments == 0) {
     if (t) {
       *t = 0;
     }
@@ -628,56 +627,56 @@ QPointF XSpline::pointClosestTo(const QPointF to, double* t, double accuracy) co
     return m_controlPoints.front().pos;
   }
 
-  QPointF prev_pt(pointAtImpl(0, 0));
-  QPointF next_pt;
+  QPointF prevPt(pointAtImpl(0, 0));
+  QPointF nextPt;
   // Find the closest segment.
-  int best_segment = 0;
-  double best_sqdist = Vec2d(to - prev_pt).squaredNorm();
-  for (int seg = 0; seg < num_segments; ++seg, prev_pt = next_pt) {
-    next_pt = pointAtImpl(seg, 1.0);
+  int bestSegment = 0;
+  double bestSqdist = Vec2d(to - prevPt).squaredNorm();
+  for (int seg = 0; seg < numSegments; ++seg, prevPt = nextPt) {
+    nextPt = pointAtImpl(seg, 1.0);
 
-    const double sqdist = sqDistToLine(to, QLineF(prev_pt, next_pt));
-    if (sqdist < best_sqdist) {
-      best_segment = seg;
-      best_sqdist = sqdist;
+    const double sqdist = sqDistToLine(to, QLineF(prevPt, nextPt));
+    if (sqdist < bestSqdist) {
+      bestSegment = seg;
+      bestSqdist = sqdist;
     }
   }
   // Continue with a binary search.
-  const double sq_accuracy = accuracy * accuracy;
-  double prev_t = 0;
-  double next_t = 1;
-  prev_pt = pointAtImpl(best_segment, prev_t);
-  next_pt = pointAtImpl(best_segment, next_t);
+  const double sqAccuracy = accuracy * accuracy;
+  double prevT = 0;
+  double nextT = 1;
+  prevPt = pointAtImpl(bestSegment, prevT);
+  nextPt = pointAtImpl(bestSegment, nextT);
 
-  while (Vec2d(prev_pt - next_pt).squaredNorm() > sq_accuracy) {
-    const double mid_t = 0.5 * (prev_t + next_t);
-    const QPointF mid_pt(pointAtImpl(best_segment, mid_t));
+  while (Vec2d(prevPt - nextPt).squaredNorm() > sqAccuracy) {
+    const double midT = 0.5 * (prevT + nextT);
+    const QPointF midPt(pointAtImpl(bestSegment, midT));
 
-    const ToLineProjector projector(QLineF(prev_pt, next_pt));
+    const ToLineProjector projector(QLineF(prevPt, nextPt));
     const double pt = projector.projectionScalar(to);
-    const double pm = projector.projectionScalar(mid_pt);
+    const double pm = projector.projectionScalar(midPt);
     if (pt < pm) {
-      next_t = mid_t;
-      next_pt = mid_pt;
+      nextT = midT;
+      nextPt = midPt;
     } else {
-      prev_t = mid_t;
-      prev_pt = mid_pt;
+      prevT = midT;
+      prevPt = midPt;
     }
   }
 
-  // Take the closest of prev_pt and next_pt.
-  if (Vec2d(to - prev_pt).squaredNorm() < Vec2d(to - next_pt).squaredNorm()) {
+  // Take the closest of prevPt and nextPt.
+  if (Vec2d(to - prevPt).squaredNorm() < Vec2d(to - nextPt).squaredNorm()) {
     if (t) {
-      *t = (best_segment + prev_t) / num_segments;
+      *t = (bestSegment + prevT) / numSegments;
     }
 
-    return prev_pt;
+    return prevPt;
   } else {
     if (t) {
-      *t = (best_segment + next_t) / num_segments;
+      *t = (bestSegment + nextT) / numSegments;
     }
 
-    return next_pt;
+    return nextPt;
   }
 }  // XSpline::pointClosestTo
 
@@ -685,11 +684,11 @@ QPointF XSpline::pointClosestTo(const QPointF to, double accuracy) const {
   return pointClosestTo(to, nullptr, accuracy);
 }
 
-std::vector<QPointF> XSpline::toPolyline(const SamplingParams& params, double from_t, double to_t) const {
+std::vector<QPointF> XSpline::toPolyline(const SamplingParams& params, double fromT, double toT) const {
   std::vector<QPointF> polyline;
 
   auto sink = [&polyline](const QPointF& pt, double, SampleFlags) { polyline.push_back(pt); };
-  sample(ProxyFunction<decltype(sink), void, const QPointF&, double, SampleFlags>(sink), params, from_t, to_t);
+  sample(ProxyFunction<decltype(sink), void, const QPointF&, double, SampleFlags>(sink), params, fromT, toT);
 
   return polyline;
 }
@@ -734,12 +733,12 @@ XSpline::TensionDerivedParams::TensionDerivedParams(const double tension1, const
   T3m = t2 - s2;
 
   // q's lie in [0 .. 0.5]
-  const double s_1 = -0.5 * std::min<double>(tension1, 0);
-  const double s_2 = -0.5 * std::min<double>(tension2, 0);
-  q[0] = s_1;
-  q[1] = s_2;
-  q[2] = s_1;
-  q[3] = s_2;
+  const double s1_ = -0.5 * std::min<double>(tension1, 0);
+  const double s2_ = -0.5 * std::min<double>(tension2, 0);
+  q[0] = s1_;
+  q[1] = s2_;
+  q[2] = s1_;
+  q[3] = s2_;
   // Formula 17 in [1]:
   p[0] = 2.0 * square(t0 - T0p);
   p[1] = 2.0 * square(t1 - T1p);

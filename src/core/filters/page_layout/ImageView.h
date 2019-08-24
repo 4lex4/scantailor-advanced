@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_LAYOUT_IMAGEVIEW_H_
-#define PAGE_LAYOUT_IMAGEVIEW_H_
+#ifndef SCANTAILOR_PAGE_LAYOUT_IMAGEVIEW_H_
+#define SCANTAILOR_PAGE_LAYOUT_IMAGEVIEW_H_
 
 #include <imageproc/BinaryImage.h>
 #include <interaction/DraggableLineSegment.h>
@@ -39,27 +39,27 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   Q_OBJECT
  public:
   ImageView(const intrusive_ptr<Settings>& settings,
-            const PageId& page_id,
+            const PageId& pageId,
             const QImage& image,
-            const QImage& downscaled_image,
-            const imageproc::GrayImage& gray_image,
+            const QImage& downscaledImage,
+            const imageproc::GrayImage& grayImage,
             const ImageTransformation& xform,
-            const QRectF& adapted_content_rect,
-            const OptionsWidget& opt_widget);
+            const QRectF& adaptedContentRect,
+            const OptionsWidget& optWidget);
 
   ~ImageView() override;
 
  signals:
 
-  void invalidateThumbnail(const PageId& page_id);
+  void invalidateThumbnail(const PageId& pageId);
 
   void invalidateAllThumbnails();
 
-  void marginsSetLocally(const Margins& margins_mm);
+  void marginsSetLocally(const Margins& marginsMm);
 
  public slots:
 
-  void marginsSetExternally(const Margins& margins_mm);
+  void marginsSetExternally(const Margins& marginsMm);
 
   void leftRightLinkToggled(bool linked);
 
@@ -113,23 +113,23 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   void onMouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) override;
 
-  Proximity cornerProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
+  Proximity cornerProximity(int edgeMask, const QRectF* box, const QPointF& mousePos) const;
 
-  Proximity edgeProximity(int edge_mask, const QRectF* box, const QPointF& mouse_pos) const;
+  Proximity edgeProximity(int edgeMask, const QRectF* box, const QPointF& mousePos) const;
 
-  void dragInitiated(const QPointF& mouse_pos);
+  void dragInitiated(const QPointF& mousePos);
 
-  void innerRectDragContinuation(int edge_mask, const QPointF& mouse_pos);
+  void innerRectDragContinuation(int edgeMask, const QPointF& mousePos);
 
-  void middleRectDragContinuation(int edge_mask, const QPointF& mouse_pos);
+  void middleRectDragContinuation(int edgeMask, const QPointF& mousePos);
 
   void dragFinished();
 
-  void recalcBoxesAndFit(const Margins& margins_mm);
+  void recalcBoxesAndFit(const Margins& marginsMm);
 
-  void updatePresentationTransform(FitMode fit_mode);
+  void updatePresentationTransform(FitMode fitMode);
 
-  void forceNonNegativeHardMargins(QRectF& middle_rect) const;
+  void forceNonNegativeHardMargins(QRectF& middleRect) const;
 
   Margins calcHardMarginsMM() const;
 
@@ -137,9 +137,9 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   QSizeF origRectToSizeMM(const QRectF& rect) const;
 
-  AggregateSizeChanged commitHardMargins(const Margins& margins_mm);
+  AggregateSizeChanged commitHardMargins(const Margins& marginsMm);
 
-  void invalidateThumbnails(AggregateSizeChanged agg_size_changed);
+  void invalidateThumbnails(AggregateSizeChanged aggSizeChanged);
 
   void setupContextMenuInteraction();
 
@@ -175,11 +175,11 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   void forceInscribeGuides();
 
-  Proximity rectProximity(const QRectF& box, const QPointF& mouse_pos) const;
+  Proximity rectProximity(const QRectF& box, const QPointF& mousePos) const;
 
-  void innerRectMoveRequest(const QPointF& mouse_pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
+  void innerRectMoveRequest(const QPointF& mousePos, Qt::KeyboardModifiers mask = Qt::NoModifier);
 
-  void buildContentImage(const imageproc::GrayImage& gray_image, const ImageTransformation& xform);
+  void buildContentImage(const imageproc::GrayImage& grayImage, const ImageTransformation& xform);
 
   void attachContentToNearestGuide(const QPointF& pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
 
@@ -301,4 +301,4 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   const bool m_nullContentRect;
 };
 }  // namespace page_layout
-#endif  // ifndef PAGE_LAYOUT_IMAGEVIEW_H_
+#endif  // ifndef SCANTAILOR_PAGE_LAYOUT_IMAGEVIEW_H_

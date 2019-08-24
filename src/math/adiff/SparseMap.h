@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef ADIFF_SPARSITY_H_
-#define ADIFF_SPARSITY_H_
+#ifndef SCANTAILOR_ADIFF_SPARSEMAP_H_
+#define SCANTAILOR_ADIFF_SPARSEMAP_H_
 
 #include <cstddef>
 #include "MatT.h"
@@ -26,10 +26,10 @@ class SparseMap<2> {
   static const size_t ZERO_ELEMENT;
 
   /**
-   * Creates a structure for a (num_vars)x(num_vars) Hessian
+   * Creates a structure for a (numVars)x(numVars) Hessian
    * with all elements being initially considered as zero.
    */
-  explicit SparseMap(size_t num_vars);
+  explicit SparseMap(size_t numVars);
 
   /**
    * Returns N for an NxN Hessian.
@@ -70,4 +70,4 @@ class SparseMap<2> {
   MatT<size_t> m_map;
 };
 }  // namespace adiff
-#endif  // ifndef ADIFF_SPARSITY_H_
+#endif  // ifndef SCANTAILOR_ADIFF_SPARSEMAP_H_

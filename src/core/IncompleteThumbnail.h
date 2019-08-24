@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef INCOMPLETETHUMBNAIL_H_
-#define INCOMPLETETHUMBNAIL_H_
+#ifndef SCANTAILOR_CORE_INCOMPLETETHUMBNAIL_H_
+#define SCANTAILOR_CORE_INCOMPLETETHUMBNAIL_H_
 
 #include <QPainterPath>
 #include "ThumbnailBase.h"
@@ -26,19 +26,17 @@ class QRectF;
  */
 class IncompleteThumbnail : public ThumbnailBase {
  public:
-  IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                      const QSizeF& max_size,
-                      const ImageId& image_id,
-                      const ImageTransformation& image_xform);
+  IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                      const QSizeF& maxSize,
+                      const ImageId& imageId,
+                      const ImageTransformation& imageXform);
 
   ~IncompleteThumbnail() override;
 
-  static void drawQuestionMark(QPainter& painter, const QRectF& bounding_rect);
+  static void drawQuestionMark(QPainter& painter, const QRectF& boundingRect);
 
  protected:
-  void paintOverImage(QPainter& painter,
-                      const QTransform& image_to_display,
-                      const QTransform& thumb_to_display) override;
+  void paintOverImage(QPainter& painter, const QTransform& imageToDisplay, const QTransform& thumbToDisplay) override;
 
  private:
   static QPainterPath m_sCachedPath;

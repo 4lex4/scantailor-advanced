@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_RASTER_OP_GENERIC_H_
-#define IMAGEPROC_RASTER_OP_GENERIC_H_
+#ifndef SCANTAILOR_IMAGEPROC_RASTEROPGENERIC_H_
+#define SCANTAILOR_IMAGEPROC_RASTEROPGENERIC_H_
 
 #include <QSize>
 #include <cassert>
@@ -177,4 +177,4 @@ void rasterOpGeneric(BinaryImage& image1, T2* data2, int stride2, Op operation) 
   }
 }
 }  // namespace imageproc
-#endif  // ifndef IMAGEPROC_RASTER_OP_GENERIC_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_RASTEROPGENERIC_H_

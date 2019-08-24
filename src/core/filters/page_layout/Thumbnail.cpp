@@ -2,66 +2,64 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Thumbnail.h"
+#include <PolygonUtils.h>
 #include <QPainter>
 #include <utility>
 #include "Utils.h"
-#include <PolygonUtils.h>
 
 using namespace imageproc;
 
 namespace page_layout {
-Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnail_cache,
-                     const QSizeF& max_size,
-                     const ImageId& image_id,
+Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+                     const QSizeF& maxSize,
+                     const ImageId& imageId,
                      const Params& params,
                      const ImageTransformation& xform,
-                     const QPolygonF& phys_content_rect,
+                     const QPolygonF& physContentRect,
                      const QRectF& displayArea,
                      bool deviant)
-    : ThumbnailBase(std::move(thumbnail_cache), max_size, image_id, xform, displayArea),
+    : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, xform, displayArea),
       m_params(params),
-      m_virtContentRect(xform.transform().map(phys_content_rect).boundingRect()),
+      m_virtContentRect(xform.transform().map(physContentRect).boundingRect()),
       m_virtOuterRect(displayArea),
       m_deviant(deviant) {
   setExtendedClipArea(true);
 }
 
-void Thumbnail::paintOverImage(QPainter& painter,
-                               const QTransform& image_to_display,
-                               const QTransform& thumb_to_display) {
+void Thumbnail::paintOverImage(QPainter& painter, const QTransform& imageToDisplay, const QTransform& thumbToDisplay) {
   // We work in display coordinates because we want to be
   // pixel-accurate with what we draw.
   painter.setWorldTransform(QTransform());
 
-  const QTransform virt_to_display(virtToThumb() * thumb_to_display);
+  const QTransform virtToDisplay(virtToThumb() * thumbToDisplay);
 
-  const QRectF inner_rect(virt_to_display.map(m_virtContentRect).boundingRect());
+  const QRectF innerRect(virtToDisplay.map(m_virtContentRect).boundingRect());
 
   // We extend the outer rectangle because otherwise we may get white
   // thin lines near the edges due to rounding errors and the lack
   // of subpixel accuracy.  Doing that is actually OK, because what
   // we paint will be clipped anyway.
-  const QRectF outer_rect(virt_to_display.map(m_virtOuterRect).boundingRect());
+  const QRectF outerRect(virtToDisplay.map(m_virtOuterRect).boundingRect());
 
-  QPainterPath outer_outline;
-  outer_outline.addPolygon(outer_rect);
+  QPainterPath outerOutline;
+  outerOutline.addPolygon(outerRect);
 
-  QPainterPath content_outline;
-  content_outline.addPolygon(inner_rect);
+  QPainterPath contentOutline;
+  contentOutline.addPolygon(innerRect);
 
   painter.setRenderHint(QPainter::Antialiasing, true);
 
-  QColor bg_color;
-  QColor fg_color;
+  QColor bgColor;
+  QColor fgColor;
   if (m_params.alignment().isNull()) {
     // "Align with other pages" is turned off.
     // Different color is useful on a thumbnail list to
     // distinguish "safe" pages from potentially problematic ones.
-    bg_color = QColor(0x58, 0x7f, 0xf4, 70);
-    fg_color = QColor(0x00, 0x52, 0xff);
+    bgColor = QColor(0x58, 0x7f, 0xf4, 70);
+    fgColor = QColor(0x00, 0x52, 0xff);
   } else {
-    bg_color = QColor(0xbb, 0x00, 0xff, 40);
-    fg_color = QColor(0xbe, 0x5b, 0xec);
+    bgColor = QColor(0xbb, 0x00, 0xff, 40);
+    fgColor = QColor(0xbe, 0x5b, 0xec);
   }
 
   // we round inner rect to check whether content rect is empty and this is just an adapted rect.
@@ -69,12 +67,12 @@ void Thumbnail::paintOverImage(QPainter& painter,
 
   // Draw margins.
   if (!isNullContentRect) {
-    painter.fillPath(outer_outline.subtracted(content_outline), bg_color);
+    painter.fillPath(outerOutline.subtracted(contentOutline), bgColor);
   } else {
-    painter.fillPath(outer_outline, bg_color);
+    painter.fillPath(outerOutline, bgColor);
   }
 
-  QPen pen(fg_color);
+  QPen pen(fgColor);
   pen.setCosmetic(true);
   pen.setWidthF(1.0);
   painter.setPen(pen);
@@ -82,7 +80,7 @@ void Thumbnail::paintOverImage(QPainter& painter,
 
   // inner rect
   if (!isNullContentRect) {
-    painter.drawRect(inner_rect);
+    painter.drawRect(innerRect);
   }
 
   // outer rect
@@ -90,7 +88,7 @@ void Thumbnail::paintOverImage(QPainter& painter,
     pen.setStyle(Qt::DashLine);
   }
   painter.setPen(pen);
-  painter.drawRect(outer_rect);
+  painter.drawRect(outerRect);
 
   if (m_deviant) {
     paintDeviant(painter);

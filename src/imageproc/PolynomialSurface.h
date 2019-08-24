@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef IMAGEPROC_POLYNOMIAL_SURFACE_H_
-#define IMAGEPROC_POLYNOMIAL_SURFACE_H_
+#ifndef SCANTAILOR_IMAGEPROC_POLYNOMIALSURFACE_H_
+#define SCANTAILOR_IMAGEPROC_POLYNOMIALSURFACE_H_
 
 #include <QSize>
 #include <cstdint>
@@ -22,10 +22,10 @@ class PolynomialSurface {
   /**
    * \brief Calculate a polynomial that approximates the given image.
    *
-   * \param hor_degree The degree of the polynomial in horizontal direction.
+   * \param horDegree The degree of the polynomial in horizontal direction.
    *        Must not be negative.  A value of 3 or 4 should be enough
    *        to approximate page background.
-   * \param vert_degree The degree of the polynomial in vertical direction.
+   * \param vertDegree The degree of the polynomial in vertical direction.
    *        Must not be negative.  A value of 3 or 4 should be enough
    *        to approximate page background.
    * \param src The image to approximate.  Must be grayscale and not null.
@@ -35,15 +35,15 @@ class PolynomialSurface {
    *       pixels will be fine.  Once built, the polynomial surface
    *       may then be rendered in the original size, if necessary.
    */
-  PolynomialSurface(int hor_degree, int vert_degree, const GrayImage& src);
+  PolynomialSurface(int horDegree, int vertDegree, const GrayImage& src);
 
   /**
    * \brief Calculate a polynomial that approximates portions of the given image.
    *
-   * \param hor_degree The degree of the polynomial in horizontal direction.
+   * \param horDegree The degree of the polynomial in horizontal direction.
    *        Must not be negative.  A value of 5 should be enough
    *        to approximate page background.
-   * \param vert_degree The degree of the polynomial in vertical direction.
+   * \param vertDegree The degree of the polynomial in vertical direction.
    *        Must not be negative.  A value of 5 should be enough
    *        to approximate page background.
    * \param src The image to approximate.  Must be grayscale and not null.
@@ -56,7 +56,7 @@ class PolynomialSurface {
    *       pixels will be fine.  Once built, the polynomial surface
    *       may then rendered in the original size, if necessary.
    */
-  PolynomialSurface(int hor_degree, int vert_degree, const GrayImage& src, const BinaryImage& mask);
+  PolynomialSurface(int horDegree, int vertDegree, const GrayImage& src, const BinaryImage& mask);
 
   /**
    * \brief Visualizes the polynomial surface as a grayscale image.
@@ -66,7 +66,7 @@ class PolynomialSurface {
   GrayImage render(const QSize& size) const;
 
  private:
-  void maybeReduceDegrees(int num_data_points);
+  void maybeReduceDegrees(int numDataPoints);
 
   int calcNumTerms() const;
 
@@ -75,15 +75,15 @@ class PolynomialSurface {
   static void prepareDataForLeastSquares(const GrayImage& image,
                                          MatT<double>& AtA,
                                          VecT<double>& Atb,
-                                         int h_degree,
-                                         int v_degree);
+                                         int hDegree,
+                                         int vDegree);
 
   static void prepareDataForLeastSquares(const GrayImage& image,
                                          const BinaryImage& mask,
                                          MatT<double>& AtA,
                                          VecT<double>& Atb,
-                                         int h_degree,
-                                         int v_degree);
+                                         int hDegree,
+                                         int vDegree);
 
   static void fixSquareMatrixRankDeficiency(MatT<double>& mat);
 
@@ -93,4 +93,4 @@ class PolynomialSurface {
 };
 }  // namespace imageproc
 
-#endif  // ifndef IMAGEPROC_POLYNOMIAL_SURFACE_H_
+#endif  // ifndef SCANTAILOR_IMAGEPROC_POLYNOMIALSURFACE_H_

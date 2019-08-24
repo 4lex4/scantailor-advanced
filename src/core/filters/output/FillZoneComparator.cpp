@@ -2,9 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "FillZoneComparator.h"
+#include <PolygonUtils.h>
 #include "FillColorProperty.h"
 #include "ZoneSet.h"
-#include <PolygonUtils.h>
 
 using namespace imageproc;
 

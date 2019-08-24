@@ -1,15 +1,15 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef LINEAR_SOLVER_H_
-#define LINEAR_SOLVER_H_
+#ifndef SCANTAILOR_MATH_LINEARSOLVER_H_
+#define SCANTAILOR_MATH_LINEARSOLVER_H_
 
+#include <NonCopyable.h>
 #include <boost/scoped_array.hpp>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
 #include <limits>
-#include <NonCopyable.h>
 #include <stdexcept>
 #include <string>
 #include "StaticPool.h"
@@ -68,12 +68,12 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
 
   const size_t num_elements_A = m_rowsAB * m_colsArowsX;
 
-  T* const lu_data = tbuffer;  // Dimensions: m_rowsAB, m_colsArowsX
+  T* const luData = tbuffer;  // Dimensions: m_rowsAB, m_colsArowsX
   tbuffer += num_elements_A;
 
   // Copy this matrix to lu.
   for (size_t i = 0; i < num_elements_A; ++i) {
-    lu_data[i] = A[i];
+    luData[i] = A[i];
   }
 
   // Maps virtual row numbers to physical ones.
@@ -82,41 +82,41 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
     perm[i] = i;
   }
 
-  T* p_col = lu_data;
-  for (size_t i = 0; i < m_colsArowsX; ++i, p_col += m_rowsAB) {
+  T* pCol = luData;
+  for (size_t i = 0; i < m_colsArowsX; ++i, pCol += m_rowsAB) {
     // Find the largest pivot.
-    size_t virt_pivot_row = i;
-    T largest_abs_pivot(std::abs(p_col[perm[i]]));
+    size_t virtPivotRow = i;
+    T largestAbsPivot(std::abs(pCol[perm[i]]));
     for (size_t j = i + 1; j < m_rowsAB; ++j) {
-      const T abs_pivot(std::abs(p_col[perm[j]]));
-      if (abs_pivot > largest_abs_pivot) {
-        largest_abs_pivot = abs_pivot;
-        virt_pivot_row = j;
+      const T absPivot(std::abs(pCol[perm[j]]));
+      if (absPivot > largestAbsPivot) {
+        largestAbsPivot = absPivot;
+        virtPivotRow = j;
       }
     }
 
-    if (largest_abs_pivot <= epsilon) {
+    if (largestAbsPivot <= epsilon) {
       throw std::runtime_error("LinearSolver: not a full rank matrix");
     }
 
-    const size_t phys_pivot_row(perm[virt_pivot_row]);
-    perm[virt_pivot_row] = perm[i];
-    perm[i] = phys_pivot_row;
+    const size_t physPivotRow(perm[virtPivotRow]);
+    perm[virtPivotRow] = perm[i];
+    perm[i] = physPivotRow;
 
-    const T* const p_pivot = p_col + phys_pivot_row;
-    const T r_pivot(T(1) / *p_pivot);
+    const T* const pPivot = pCol + physPivotRow;
+    const T rPivot(T(1) / *pPivot);
 
     // Eliminate entries below the pivot.
     for (size_t j = i + 1; j < m_rowsAB; ++j) {
-      const T* p1 = p_pivot;
-      T* p2 = p_col + perm[j];
+      const T* p1 = pPivot;
+      T* p2 = pCol + perm[j];
       if (std::abs(*p2) <= epsilon) {
         // We consider it's already zero.
         *p2 = T();
         continue;
       }
 
-      const T factor(*p2 * r_pivot);
+      const T factor(*p2 * rPivot);
       *p2 = factor;  // Factor goes into L, zero goes into U.
       // Transform the rest of the row.
       for (size_t col = i + 1; col < m_colsArowsX; ++col) {
@@ -128,69 +128,69 @@ void LinearSolver::solve(const T* A, T* X, const T* B, T* tbuffer, size_t* pbuff
   }
 
   // First solve Ly = b
-  T* const y_data = tbuffer;  // Dimensions: m_colsArowsX, m_colsBX
+  T* const yData = tbuffer;  // Dimensions: m_colsArowsX, m_colsBX
   // tbuffer += m_colsArowsX * m_colsBX;
-  T* p_y_col = y_data;
-  const T* p_b_col = B;
-  for (size_t y_col = 0; y_col < m_colsBX; ++y_col) {
-    size_t virt_row = 0;
-    for (; virt_row < m_colsArowsX; ++virt_row) {
-      const int phys_row = static_cast<int>(perm[virt_row]);
-      T right(p_b_col[phys_row]);
+  T* pYCol = yData;
+  const T* pBCol = B;
+  for (size_t yCol = 0; yCol < m_colsBX; ++yCol) {
+    size_t virtRow = 0;
+    for (; virtRow < m_colsArowsX; ++virtRow) {
+      const int physRow = static_cast<int>(perm[virtRow]);
+      T right(pBCol[physRow]);
 
       // Move already calculated factors to the right side.
-      const T* p_lu = lu_data + phys_row;
+      const T* pLu = luData + physRow;
       // Go left to right, stop at diagonal.
-      for (size_t lu_col = 0; lu_col < virt_row; ++lu_col) {
-        right -= *p_lu * p_y_col[lu_col];
-        p_lu += m_rowsAB;
+      for (size_t luCol = 0; luCol < virtRow; ++luCol) {
+        right -= *pLu * pYCol[luCol];
+        pLu += m_rowsAB;
       }
 
       // We assume L has ones on the diagonal, so no division here.
-      p_y_col[virt_row] = right;
+      pYCol[virtRow] = right;
     }
 
     // Continue below the square part (if any).
-    for (; virt_row < m_rowsAB; ++virt_row) {
-      const int phys_row = static_cast<int>(perm[virt_row]);
-      T right(p_b_col[phys_row]);
+    for (; virtRow < m_rowsAB; ++virtRow) {
+      const int physRow = static_cast<int>(perm[virtRow]);
+      T right(pBCol[physRow]);
 
       // Move everything to the right side, then verify it's zero.
-      const T* p_lu = lu_data + phys_row;
+      const T* pLu = luData + physRow;
       // Go left to right all the way.
-      for (size_t lu_col = 0; lu_col < m_colsArowsX; ++lu_col) {
-        right -= *p_lu * p_y_col[lu_col];
-        p_lu += m_rowsAB;
+      for (size_t luCol = 0; luCol < m_colsArowsX; ++luCol) {
+        right -= *pLu * pYCol[luCol];
+        pLu += m_rowsAB;
       }
       if (std::abs(right) > epsilon) {
         throw std::runtime_error("LinearSolver: inconsistent overdetermined system");
       }
     }
 
-    p_y_col += m_colsArowsX;
-    p_b_col += m_rowsAB;
+    pYCol += m_colsArowsX;
+    pBCol += m_rowsAB;
   }
 
   // Now solve Ux = y
-  T* p_x_col = X;
-  p_y_col = y_data;
-  const T* p_lu_last_col = lu_data + (m_colsArowsX - 1) * m_rowsAB;
-  for (size_t x_col = 0; x_col < m_colsBX; ++x_col) {
-    for (int virt_row = static_cast<int>(m_colsArowsX - 1); virt_row >= 0; --virt_row) {
-      T right(p_y_col[virt_row]);
+  T* pXCol = X;
+  pYCol = yData;
+  const T* pLuLastCol = luData + (m_colsArowsX - 1) * m_rowsAB;
+  for (size_t xCol = 0; xCol < m_colsBX; ++xCol) {
+    for (int virtRow = static_cast<int>(m_colsArowsX - 1); virtRow >= 0; --virtRow) {
+      T right(pYCol[virtRow]);
 
       // Move already calculated factors to the right side.
-      const T* p_lu = p_lu_last_col + perm[virt_row];
+      const T* pLu = pLuLastCol + perm[virtRow];
       // Go right to left, stop at diagonal.
-      for (int lu_col = static_cast<int>(m_colsArowsX - 1); lu_col > virt_row; --lu_col) {
-        right -= *p_lu * p_x_col[lu_col];
-        p_lu -= m_rowsAB;
+      for (int luCol = static_cast<int>(m_colsArowsX - 1); luCol > virtRow; --luCol) {
+        right -= *pLu * pXCol[luCol];
+        pLu -= m_rowsAB;
       }
-      p_x_col[virt_row] = right / *p_lu;
+      pXCol[virtRow] = right / *pLu;
     }
 
-    p_x_col += m_colsArowsX;
-    p_y_col += m_colsArowsX;
+    pXCol += m_colsArowsX;
+    pYCol += m_colsArowsX;
   }
 }  // LinearSolver::solve
 
@@ -202,4 +202,4 @@ void LinearSolver::solve(const T* A, T* X, const T* B) const {
   solve(A, X, B, tbuffer.get(), pbuffer.get());
 }
 
-#endif  // ifndef LINEAR_SOLVER_H_
+#endif  // ifndef SCANTAILOR_MATH_LINEARSOLVER_H_

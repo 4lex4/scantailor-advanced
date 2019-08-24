@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SELECTED_PAGE_H_
-#define SELECTED_PAGE_H_
+#ifndef SCANTAILOR_CORE_SELECTEDPAGE_H_
+#define SCANTAILOR_CORE_SELECTEDPAGE_H_
 
 #include "PageId.h"
 #include "PageView.h"
@@ -23,11 +23,11 @@ class SelectedPage {
  public:
   SelectedPage() = default;
 
-  SelectedPage(const PageId& page_id, PageView view);
+  SelectedPage(const PageId& pageId, PageView view);
 
   bool isNull() const { return m_pageId.isNull(); }
 
-  void set(const PageId& page_id, PageView view);
+  void set(const PageId& pageId, PageView view);
 
   PageId get(PageView view) const;
 

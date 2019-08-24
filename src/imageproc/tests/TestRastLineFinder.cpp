@@ -1,13 +1,13 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include <RastLineFinder.h>
 #include <QLineF>
 #include <QPointF>
 #include <boost/foreach.hpp>
 #include <boost/test/auto_unit_test.hpp>
 #include <set>
 #include <vector>
-#include <RastLineFinder.h>
 
 namespace imageproc {
 namespace tests {
@@ -34,30 +34,30 @@ BOOST_AUTO_TEST_CASE(test1) {
   pts.emplace_back(100, 0);
   pts.emplace_back(-100, 200);
 
-  std::set<unsigned> line1_idxs;
-  line1_idxs.insert(0);
-  line1_idxs.insert(1);
-  line1_idxs.insert(2);
-  line1_idxs.insert(3);
+  std::set<unsigned> line1Idxs;
+  line1Idxs.insert(0);
+  line1Idxs.insert(1);
+  line1Idxs.insert(2);
+  line1Idxs.insert(3);
 
-  std::set<unsigned> line2_idxs;
-  line2_idxs.insert(4);
-  line2_idxs.insert(5);
-  line2_idxs.insert(6);
+  std::set<unsigned> line2Idxs;
+  line2Idxs.insert(4);
+  line2Idxs.insert(5);
+  line2Idxs.insert(6);
 
   RastLineFinderParams params;
   params.setMinSupportPoints(3);
   RastLineFinder finder(pts, params);
 
-  std::vector<unsigned> support_idxs;
+  std::vector<unsigned> supportIdxs;
 
   // line 1
-  BOOST_REQUIRE(!finder.findNext(&support_idxs).isNull());
-  BOOST_REQUIRE(matchSupportPoints(support_idxs, line1_idxs));
+  BOOST_REQUIRE(!finder.findNext(&supportIdxs).isNull());
+  BOOST_REQUIRE(matchSupportPoints(supportIdxs, line1Idxs));
 
   // line2
-  BOOST_REQUIRE(!finder.findNext(&support_idxs).isNull());
-  BOOST_REQUIRE(matchSupportPoints(support_idxs, line2_idxs));
+  BOOST_REQUIRE(!finder.findNext(&supportIdxs).isNull());
+  BOOST_REQUIRE(matchSupportPoints(supportIdxs, line2Idxs));
 
   // no more lines
   BOOST_REQUIRE(finder.findNext().isNull());

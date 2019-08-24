@@ -6,19 +6,19 @@
 #include "PropertyFactory.h"
 
 PropertySet::PropertySet(const QDomElement& el, const PropertyFactory& factory) {
-  const QString property_str("property");
+  const QString propertyStr("property");
   QDomNode node(el.firstChild());
 
   for (; !node.isNull(); node = node.nextSibling()) {
     if (!node.isElement()) {
       continue;
     }
-    if (node.nodeName() != property_str) {
+    if (node.nodeName() != propertyStr) {
       continue;
     }
 
-    QDomElement prop_el(node.toElement());
-    intrusive_ptr<Property> prop = factory.construct(prop_el);
+    QDomElement propEl(node.toElement());
+    intrusive_ptr<Property> prop = factory.construct(propEl);
     if (prop) {
       m_props[typeid(*prop)] = prop;
     }
@@ -42,12 +42,12 @@ void PropertySet::swap(PropertySet& other) {
 }
 
 QDomElement PropertySet::toXml(QDomDocument& doc, const QString& name) const {
-  const QString property_str("property");
-  QDomElement props_el(doc.createElement(name));
+  const QString propertyStr("property");
+  QDomElement propsEl(doc.createElement(name));
 
   for (const auto& [type, prop] : m_props) {
-    props_el.appendChild(prop->toXml(doc, property_str));
+    propsEl.appendChild(prop->toXml(doc, propertyStr));
   }
 
-  return props_el;
+  return propsEl;
 }

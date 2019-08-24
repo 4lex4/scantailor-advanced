@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef PAGE_SPLIT_SETTINGS_H_
-#define PAGE_SPLIT_SETTINGS_H_
+#ifndef SCANTAILOR_PAGE_SPLIT_SETTINGS_H_
+#define SCANTAILOR_PAGE_SPLIT_SETTINGS_H_
 
 #include <QMutex>
 #include <memory>
@@ -43,7 +43,7 @@ class Settings : public ref_countable {
    protected:
     void setParams(const Params& params);
 
-    void setLayoutType(LayoutType layout_type);
+    void setLayoutType(LayoutType layoutType);
 
     void clearParams();
 
@@ -53,7 +53,7 @@ class Settings : public ref_countable {
      * \brief Checks if a particular layout type conflicts with PageLayout
      *        that is part of Params.
      */
-    bool hasLayoutTypeConflict(LayoutType layout_type) const;
+    bool hasLayoutTypeConflict(LayoutType layoutType) const;
 
     Params m_params;
     LayoutType m_layoutType;
@@ -68,9 +68,9 @@ class Settings : public ref_countable {
   class Record : public BaseRecord {
     // Member-wise copying is OK.
    public:
-    explicit Record(LayoutType default_layout_type);
+    explicit Record(LayoutType defaultLayoutType);
 
-    Record(const BaseRecord& base_record, LayoutType default_layout_type);
+    Record(const BaseRecord& baseRecord, LayoutType defaultLayoutType);
 
     LayoutType combinedLayoutType() const;
 
@@ -89,7 +89,7 @@ class Settings : public ref_countable {
    public:
     UpdateAction();
 
-    void setLayoutType(LayoutType layout_type);
+    void setLayoutType(LayoutType layoutType);
 
     void clearLayoutType();
 
@@ -124,18 +124,18 @@ class Settings : public ref_countable {
    * Sets layout type for all pages, removing other page
    * parameters where they conflict with the new layout type.
    */
-  void setLayoutTypeForAllPages(LayoutType layout_type);
+  void setLayoutTypeForAllPages(LayoutType layoutType);
 
   /**
    * Sets layout type for specified pages, removing other page
    * parameters where they conflict with the new layout type.
    */
-  void setLayoutTypeFor(LayoutType layout_type, const std::set<PageId>& pages);
+  void setLayoutTypeFor(LayoutType layoutType, const std::set<PageId>& pages);
 
   /**
    * \brief Returns all data related to a page as a single object.
    */
-  Record getPageRecord(const ImageId& image_id) const;
+  Record getPageRecord(const ImageId& imageId) const;
 
   /**
    * \brief Performs the requested update on the page.
@@ -144,7 +144,7 @@ class Settings : public ref_countable {
    * type and page parameters, the page parameters will be
    * cleared.
    */
-  void updatePage(const ImageId& image_id, const UpdateAction& action);
+  void updatePage(const ImageId& imageId, const UpdateAction& action);
 
   /**
    * \brief Performs a conditional update on the page.
@@ -154,14 +154,14 @@ class Settings : public ref_countable {
    * Whether the update took place or not, the current page record
    * (updated or not) will be returned.
    */
-  Record conditionalUpdate(const ImageId& image_id, const UpdateAction& action, bool* conflict = nullptr);
+  Record conditionalUpdate(const ImageId& imageId, const UpdateAction& action, bool* conflict = nullptr);
 
  private:
   typedef std::unordered_map<ImageId, BaseRecord> PerPageRecords;
 
-  Record getPageRecordLocked(const ImageId& image_id) const;
+  Record getPageRecordLocked(const ImageId& imageId) const;
 
-  void updatePageLocked(const ImageId& image_id, const UpdateAction& action);
+  void updatePageLocked(const ImageId& imageId, const UpdateAction& action);
 
   void updatePageLocked(PerPageRecords::iterator it, const UpdateAction& action);
 
@@ -170,4 +170,4 @@ class Settings : public ref_countable {
   LayoutType m_defaultLayoutType;
 };
 }  // namespace page_split
-#endif  // ifndef PAGE_SPLIT_SETTINGS_H_
+#endif  // ifndef SCANTAILOR_PAGE_SPLIT_SETTINGS_H_

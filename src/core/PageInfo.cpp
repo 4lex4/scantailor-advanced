@@ -5,13 +5,13 @@
 
 PageInfo::PageInfo() : m_imageSubPages(0), m_leftHalfRemoved(false), m_rightHalfRemoved(false) {}
 
-PageInfo::PageInfo(const PageId& page_id,
+PageInfo::PageInfo(const PageId& pageId,
                    const ImageMetadata& metadata,
-                   int image_sub_pages,
-                   bool left_half_removed,
-                   bool right_half_removed)
-    : m_pageId(page_id),
+                   int imageSubPages,
+                   bool leftHalfRemoved,
+                   bool rightHalfRemoved)
+    : m_pageId(pageId),
       m_metadata(metadata),
-      m_imageSubPages(image_sub_pages),
-      m_leftHalfRemoved(left_half_removed),
-      m_rightHalfRemoved(right_half_removed) {}
+      m_imageSubPages(imageSubPages),
+      m_leftHalfRemoved(leftHalfRemoved),
+      m_rightHalfRemoved(rightHalfRemoved) {}

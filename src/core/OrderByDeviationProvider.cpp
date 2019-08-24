@@ -6,14 +6,14 @@
 OrderByDeviationProvider::OrderByDeviationProvider(const DeviationProvider<PageId>& deviationProvider)
     : m_deviationProvider(&deviationProvider) {}
 
-bool OrderByDeviationProvider::precedes(const PageId& lhs_page,
-                                        bool lhs_incomplete,
-                                        const PageId& rhs_page,
-                                        bool rhs_incomplete) const {
-  if (lhs_incomplete != rhs_incomplete) {
+bool OrderByDeviationProvider::precedes(const PageId& lhsPage,
+                                        bool lhsIncomplete,
+                                        const PageId& rhsPage,
+                                        bool rhsIncomplete) const {
+  if (lhsIncomplete != rhsIncomplete) {
     // Invalid (unknown) sizes go to the back.
-    return lhs_incomplete;
+    return lhsIncomplete;
   }
 
-  return (m_deviationProvider->getDeviationValue(lhs_page) > m_deviationProvider->getDeviationValue(rhs_page));
+  return (m_deviationProvider->getDeviationValue(lhsPage) > m_deviationProvider->getDeviationValue(rhsPage));
 }

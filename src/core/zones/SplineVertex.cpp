@@ -44,19 +44,19 @@ SplineVertex::Ptr SplineVertex::next(const Loop loop) {
 }
 
 SplineVertex::Ptr SplineVertex::insertBefore(const QPointF& pt) {
-  auto new_vertex = make_intrusive<RealSplineVertex>(pt, m_prev, this);
-  m_prev->m_next = new_vertex;
-  m_prev = new_vertex.get();
+  auto newVertex = make_intrusive<RealSplineVertex>(pt, m_prev, this);
+  m_prev->m_next = newVertex;
+  m_prev = newVertex.get();
 
-  return new_vertex;
+  return newVertex;
 }
 
 SplineVertex::Ptr SplineVertex::insertAfter(const QPointF& pt) {
-  auto new_vertex = make_intrusive<RealSplineVertex>(pt, this, m_next.get());
-  m_next->m_prev = new_vertex.get();
-  m_next = new_vertex;
+  auto newVertex = make_intrusive<RealSplineVertex>(pt, this, m_next.get());
+  m_next->m_prev = newVertex.get();
+  m_next = newVertex;
 
-  return new_vertex;
+  return newVertex;
 }
 
 /*========================= SentinelSplineVertex =======================*/

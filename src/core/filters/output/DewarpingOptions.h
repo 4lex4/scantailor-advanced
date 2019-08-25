@@ -24,7 +24,7 @@ class DewarpingOptions {
 
   DewarpingMode dewarpingMode() const;
 
-  void setDewarpingMode(DewarpingMode m_mode);
+  void setDewarpingMode(DewarpingMode mode);
 
   bool needPostDeskew() const;
 

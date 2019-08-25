@@ -33,8 +33,8 @@ bool DewarpingOptions::operator!=(const DewarpingOptions& other) const {
   return !(*this == other);
 }
 
-void DewarpingOptions::setDewarpingMode(DewarpingMode m_mode) {
-  DewarpingOptions::m_mode = m_mode;
+void DewarpingOptions::setDewarpingMode(DewarpingMode mode) {
+  DewarpingOptions::m_mode = mode;
 }
 
 void DewarpingOptions::setPostDeskew(bool postDeskew) {

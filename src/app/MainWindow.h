@@ -189,6 +189,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   using FilterPtr = intrusive_ptr<AbstractFilter>;
 
+  static void removeWidgetsFromLayout(QLayout* layout);
+
   void setOptionsWidget(FilterOptionsWidget* widget, Ownership ownership) override;
 
   void setImageWidget(QWidget* widget,
@@ -219,8 +221,6 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& pageOrderProvider,
                           ThumbnailSequence::SelectionAction selectionAction = ThumbnailSequence::RESET_SELECTION);
-
-  void removeWidgetsFromLayout(QLayout* layout);
 
   void removeFilterOptionsWidget();
 

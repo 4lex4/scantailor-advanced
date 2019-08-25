@@ -77,13 +77,15 @@ using namespace core;
 
 class MainWindow::PageSelectionProviderImpl : public PageSelectionProvider {
  public:
-  PageSelectionProviderImpl(MainWindow* wnd) : m_wnd(wnd) {}
+  explicit PageSelectionProviderImpl(MainWindow* wnd) : m_wnd(wnd) {}
 
-  virtual PageSequence allPages() const { return m_wnd ? m_wnd->allPages() : PageSequence(); }
+  PageSequence allPages() const override { return m_wnd ? m_wnd->allPages() : PageSequence(); }
 
-  virtual std::set<PageId> selectedPages() const { return m_wnd ? m_wnd->selectedPages() : std::set<PageId>(); }
+  std::set<PageId> selectedPages() const override { return m_wnd ? m_wnd->selectedPages() : std::set<PageId>(); }
 
-  std::vector<PageRange> selectedRanges() const { return m_wnd ? m_wnd->selectedRanges() : std::vector<PageRange>(); }
+  std::vector<PageRange> selectedRanges() const override {
+    return m_wnd ? m_wnd->selectedRanges() : std::vector<PageRange>();
+  }
 
  private:
   QPointer<MainWindow> m_wnd;
@@ -407,10 +409,10 @@ void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
 
 void MainWindow::showNewOpenProjectPanel() {
   auto outerWidget = std::make_unique<QWidget>();
-  QGridLayout* layout = new QGridLayout(outerWidget.get());
+  auto* layout = new QGridLayout(outerWidget.get());
   outerWidget->setLayout(layout);
 
-  NewOpenProjectPanel* nop = new NewOpenProjectPanel(outerWidget.get());
+  auto* nop = new NewOpenProjectPanel(outerWidget.get());
   // We use asynchronous connections because otherwise we
   // would be deleting a widget from its event handler, which
   // Qt doesn't like.
@@ -430,8 +432,8 @@ void MainWindow::showNewOpenProjectPanel() {
 }  // MainWindow::showNewOpenProjectPanel
 
 void MainWindow::createBatchProcessingWidget() {
-  m_batchProcessingWidget.reset(new QWidget);
-  QGridLayout* layout = new QGridLayout(m_batchProcessingWidget.get());
+  m_batchProcessingWidget = std::make_unique<QWidget>();
+  auto* layout = new QGridLayout(m_batchProcessingWidget.get());
   m_batchProcessingWidget->setLayout(layout);
 
   const auto& iconProvider = IconProvider::getInstance();
@@ -442,13 +444,13 @@ void MainWindow::createBatchProcessingWidget() {
 
   class LowerPanel : public QWidget {
    public:
-    LowerPanel(QWidget* parent = 0) : QWidget(parent) { ui.setupUi(this); }
+    explicit LowerPanel(QWidget* parent = 0) : QWidget(parent) { ui.setupUi(this); }
 
     Ui::BatchProcessingLowerPanel ui;
   };
 
 
-  LowerPanel* lowerPanel = new LowerPanel(m_batchProcessingWidget.get());
+  auto* lowerPanel = new LowerPanel(m_batchProcessingWidget.get());
   m_checkBeepWhenFinished = [lowerPanel]() { return lowerPanel->ui.beepWhenFinished->isChecked(); };
 
   int row = 0;  // Row 0 is reserved.
@@ -486,7 +488,7 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* ev) {
   }
 
   if ((obj == thumbView || obj == thumbView->verticalScrollBar()) && (ev->type() == QEvent::Wheel)) {
-    QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(ev);
+    auto* wheelEvent = static_cast<QWheelEvent*>(ev);
     if (wheelEvent->modifiers() == Qt::AltModifier) {
       scaleThumbnails(wheelEvent);
       wheelEvent->accept();
@@ -666,7 +668,7 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
   // We use an asynchronous connection here, because the slot
   // will probably delete the options panel, which could be
   // responsible for the emission of this signal.  Qt doesn't
-  // like when we delete an object while it's emitting a singal.
+  // like when we delete an object while it's emitting a signal.
   connect(widget, SIGNAL(reloadRequested()), this, SLOT(reloadRequested()), Qt::QueuedConnection);
   connect(widget, SIGNAL(invalidateThumbnail(const PageId&)), this, SLOT(invalidateThumbnail(const PageId&)));
   connect(widget, SIGNAL(invalidateThumbnail(const PageInfo&)), this, SLOT(invalidateThumbnail(const PageInfo&)));
@@ -708,7 +710,7 @@ void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, Debu
     }
     m_imageFrameLayout->addWidget(m_tabbedDebugImages.get());
   }
-}  // MainWindow::setImageWidget
+}
 
 void MainWindow::removeImageWidget() {
   removeWidgetsFromLayout(m_imageFrameLayout);
@@ -733,7 +735,7 @@ void MainWindow::invalidateAllThumbnails() {
 intrusive_ptr<AbstractCommand<void>> MainWindow::relinkingDialogRequester() {
   class Requester : public AbstractCommand<void> {
    public:
-    Requester(MainWindow* wnd) : m_wnd(wnd) {}
+    explicit Requester(MainWindow* wnd) : m_wnd(wnd) {}
 
     virtual void operator()() {
       if (!m_wnd.isNull()) {
@@ -754,7 +756,7 @@ void MainWindow::showRelinkingDialog() {
     return;
   }
 
-  RelinkingDialog* dialog = new RelinkingDialog(m_projectFile, this);
+  auto* dialog = new RelinkingDialog(m_projectFile, this);
   dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->setWindowModality(Qt::WindowModal);
 
@@ -910,7 +912,7 @@ void MainWindow::pageContextMenuRequested(const PageInfo& pageInfo_, const QPoin
     return;
   }
   // Make a copy to prevent it from being invalidated.
-  const PageInfo pageInfo(pageInfo_);
+  const PageInfo pageInfo = pageInfo_;
 
   if (!selected) {
     goToPage(pageInfo.id());
@@ -1100,7 +1102,7 @@ void MainWindow::startBatchProcessing() {
 
   m_interactiveQueue->cancelAndClear();
 
-  m_batchQueue.reset(new ProcessingTaskQueue);
+  m_batchQueue = std::make_unique<ProcessingTaskQueue>();
   PageInfo page(m_thumbSequence->selectionLeader());
   for (; !page.isNull(); page = m_thumbSequence->nextPage(page.id())) {
     for (int i = 0; i < m_stages->count(); i++) {
@@ -1330,7 +1332,7 @@ void MainWindow::newProject() {
   }
 
   // It will delete itself when it's done.
-  ProjectCreationContext* context = new ProjectCreationContext(this);
+  auto* context = new ProjectCreationContext(this);
   connect(context, SIGNAL(done(ProjectCreationContext*)), this, SLOT(newProjectCreated(ProjectCreationContext*)));
 }
 
@@ -1345,7 +1347,6 @@ void MainWindow::openProject() {
   }
 
   const QString projectDir(QSettings().value("project/lastDir").toString());
-
   const QString projectFile(QFileDialog::getOpenFileName(this, tr("Open Project"), projectDir,
                                                          tr("Scan Tailor Projects") + " (*.ScanTailor)"));
   if (projectFile.isEmpty()) {
@@ -1501,7 +1502,7 @@ void MainWindow::updateProjectActions() {
 }
 
 bool MainWindow::isBatchProcessingInProgress() const {
-  return m_batchQueue.get() != 0;
+  return m_batchQueue != nullptr;
 }
 
 bool MainWindow::isProjectLoaded() const {
@@ -1600,7 +1601,7 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
   assert(m_thumbnailCache);
 
   m_interactiveQueue->cancelAndClear();
-  m_interactiveQueue->addProcessingTask(page, createCompositeTask(page, m_curFilter, /*batch=*/false, m_debug));
+  m_interactiveQueue->addProcessingTask(page, createCompositeTask(page, m_curFilter, false, m_debug));
   m_workerThreadPool->submitTask(m_interactiveQueue->takeForProcessing());
 }  // MainWindow::loadPageInteractive
 
@@ -1719,7 +1720,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId
   // We need to filter out files already in project.
   class ProxyModel : public QSortFilterProxyModel {
    public:
-    ProxyModel(const ProjectPages& pages) {
+    explicit ProxyModel(const ProjectPages& pages) {
       setDynamicSortFilter(true);
 
       const PageSequence sequence(pages.toPageSequence(IMAGE_VIEW));
@@ -1729,7 +1730,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId
     }
 
    protected:
-    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const {
+    bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override {
       const QModelIndex idx = sourceModel()->index(sourceRow, 0, sourceParent);
       const QVariant data(idx.data(QFileSystemModel::FilePathRole));
       if (data.isNull()) {
@@ -1739,7 +1740,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId
       return !m_inProjectFiles.contains(QFileInfo(data.toString()));
     }
 
-    virtual bool lessThan(const QModelIndex& left, const QModelIndex& right) const { return left.row() < right.row(); }
+    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override { return left.row() < right.row(); }
 
    private:
     QFileInfoList m_inProjectFiles;
@@ -1801,7 +1802,7 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId
   }
 
   // Check if there is at least one DPI that's not OK.
-  if (std::find_if(newFiles.begin(), newFiles.end(), [&](ImageFileInfo p) -> bool { return !p.isDpiOK(); })
+  if (std::find_if(newFiles.begin(), newFiles.end(), [&](const ImageFileInfo& p) -> bool { return !p.isDpiOK(); })
       != newFiles.end()) {
     auto dpiDialog = std::make_unique<FixDpiDialog>(newFiles, this);
     dpiDialog->setWindowModality(Qt::WindowModal);

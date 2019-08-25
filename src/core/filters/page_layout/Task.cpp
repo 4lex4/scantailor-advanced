@@ -122,10 +122,6 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const optWidget = m_filter->optionsWidget();
-  optWidget->postUpdateUI();
-  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
-
   if (m_aggSizeChanged) {
     ui->invalidateAllThumbnails();
   } else {
@@ -135,6 +131,10 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   if (m_batchProcessing) {
     return;
   }
+
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI();
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   auto* view = new ImageView(m_settings, m_pageId, m_image, m_downscaledImage, m_grayImage, m_xform,
                              m_adaptedContentRect, *optWidget);

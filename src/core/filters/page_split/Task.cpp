@@ -197,15 +197,15 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const optWidget = m_filter->optionsWidget();
-  optWidget->postUpdateUI(m_uiData);
-  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
-
   ui->invalidateThumbnail(m_pageInfo.id());
 
   if (m_batchProcessing) {
     return;
   }
+
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI(m_uiData);
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   auto view = new ImageView(m_image, m_downscaledImage, m_xform, m_uiData.pageLayout(), m_pages, m_pageInfo.imageId(),
                             m_pageInfo.leftHalfRemoved(), m_pageInfo.rightHalfRemoved());

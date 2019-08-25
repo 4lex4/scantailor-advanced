@@ -485,15 +485,15 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const optWidget = m_filter->optionsWidget();
-  optWidget->postUpdateUI();
-  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
-
   ui->invalidateThumbnail(m_pageId);
 
   if (m_batchProcessing) {
     return;
   }
+
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI();
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   auto tabImageRectMap = std::make_unique<std::unordered_map<ImageViewTab, QRectF, std::hash<int>>>();
 

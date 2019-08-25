@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include "Task.h"
 #include <UnitsProvider.h>
-
 #include <utility>
 #include "Dpm.h"
 #include "Filter.h"
@@ -10,7 +10,6 @@
 #include "ImageView.h"
 #include "OptionsWidget.h"
 #include "Settings.h"
-#include "Task.h"
 #include "TaskStatus.h"
 #include "filters/page_split/Task.h"
 
@@ -57,7 +56,6 @@ Task::~Task() = default;
 
 FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
   // This function is executed from the worker thread.
-
   status.throwIfCancelled();
 
   updateFilterData(data);
@@ -99,15 +97,15 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
 
 void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   // This function is executed from the GUI thread.
-  OptionsWidget* const optWidget = m_filter->optionsWidget();
-  optWidget->postUpdateUI(m_xform.preRotation());
-  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
-
   ui->invalidateThumbnail(PageId(m_imageId));
 
   if (m_batchProcessing) {
     return;
   }
+
+  OptionsWidget* const optWidget = m_filter->optionsWidget();
+  optWidget->postUpdateUI(m_xform.preRotation());
+  ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
   auto* view = new ImageView(m_image, m_downscaledImage, m_xform);
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);

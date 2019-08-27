@@ -7,5 +7,5 @@ Icon=ScanTailor
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Categories=Graphics;Applications;
+Categories=Graphics;
 MimeType=application/x-scantailor-project;

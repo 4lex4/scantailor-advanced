@@ -323,7 +323,7 @@ void OutputGenerator::Processor::calcAreas() {
 
   m_croppedContentArea = m_preCropArea.intersected(QRectF(m_renderParams.fillMargins() ? m_contentRect : m_outRect));
   m_croppedContentRect = m_croppedContentArea.boundingRect().toRect();
-  m_croppedContentArea = m_croppedContentArea.intersected(QRectF(m_croppedContentRect));
+  m_croppedContentArea = PolygonUtils::round(m_croppedContentArea.intersected(QRectF(m_croppedContentRect)));
   if (m_croppedContentRect.isEmpty()) {
     m_blank = true;
     return;

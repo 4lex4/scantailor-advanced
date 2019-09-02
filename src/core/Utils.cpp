@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 #include <QDir>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QTextDocument>
 #include <cmath>
 #include "ApplicationSettings.h"
@@ -54,19 +54,19 @@ intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& o
 
 QString Utils::qssConvertPxToEm(const QString& stylesheet, const double base, const int precision) {
   QString result = "";
-  const QRegExp pxToEm(R"((\d+(\.\d+)?)px)");
+  const QRegularExpression pxToEm(R"((\d+(\.\d+)?)px)");
 
+  QRegularExpressionMatchIterator iter = pxToEm.globalMatch(stylesheet);
   int prevIndex = 0;
-  int index = 0;
-  while ((index = pxToEm.indexIn(stylesheet, index)) != -1) {
-    result.append(stylesheet.mid(prevIndex, index - prevIndex));
+  while (iter.hasNext()) {
+    QRegularExpressionMatch match = iter.next();
+    result.append(stylesheet.mid(prevIndex, match.capturedStart() - prevIndex));
 
-    double value = pxToEm.cap(1).toDouble();
+    double value = match.captured(1).toDouble();
     value /= base;
     result.append(QString::number(value, 'f', precision)).append("em");
 
-    index += pxToEm.matchedLength();
-    prevIndex = index;
+    prevIndex = match.capturedEnd();
   }
   result.append(stylesheet.mid(prevIndex));
 

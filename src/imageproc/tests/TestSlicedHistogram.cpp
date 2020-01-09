@@ -4,7 +4,7 @@
 #include <BinaryImage.h>
 #include <SlicedHistogram.h>
 #include <QImage>
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <cstddef>
 #include <stdexcept>
 #include "Utils.h"

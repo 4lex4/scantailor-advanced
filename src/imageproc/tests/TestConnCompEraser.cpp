@@ -6,7 +6,7 @@
 #include <ConnCompEraser.h>
 #include <QImage>
 #include <algorithm>
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <list>
 #include "Utils.h"
 

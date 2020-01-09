@@ -4,7 +4,7 @@
 #include <ContentSpanFinder.h>
 #include <SlicedHistogram.h>
 #include <Span.h>
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <vector>
 
 namespace Tests {

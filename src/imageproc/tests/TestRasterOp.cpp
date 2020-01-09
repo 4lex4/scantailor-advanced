@@ -4,7 +4,7 @@
 #include <BinaryImage.h>
 #include <RasterOp.h>
 #include <QImage>
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>

@@ -5,7 +5,7 @@
 #include <Scale.h>
 #include <QImage>
 #include <QSize>
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>

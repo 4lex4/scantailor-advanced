@@ -9,7 +9,7 @@
 #include <QPainter>
 #include <QString>
 #include <QTransform>
-#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <cmath>
 #include <cstdlib>
 

@@ -9,13 +9,13 @@
 # update_translations_target(update_translations target)
 #
 macro (translation_sources _target) #, _sources
-  file(GLOB _sources ABSOLUTE ${ARGN})
+  file(GLOB _sources ${ARGN})
   list(APPEND ${_target}_TRANSLATION_SOURCES ${_sources})
   list(APPEND ${_target}_TRANSLATION_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
   list(REMOVE_DUPLICATES ${_target}_TRANSLATION_SOURCES)
   list(REMOVE_DUPLICATES ${_target}_TRANSLATION_INCLUDE_DIRS)
-  set(${_target}_TRANSLATION_SOURCES ${${_target}_TRANSLATION_SOURCES} CACHE STRING "" FORCE)
-  set(${_target}_TRANSLATION_INCLUDE_DIRS ${${_target}_TRANSLATION_INCLUDE_DIRS} CACHE STRING "" FORCE)
+  set(${_target}_TRANSLATION_SOURCES ${${_target}_TRANSLATION_SOURCES} CACHE INTERNAL "" FORCE)
+  set(${_target}_TRANSLATION_INCLUDE_DIRS ${${_target}_TRANSLATION_INCLUDE_DIRS} CACHE INTERNAL "" FORCE)
 endmacro()
 
 
@@ -38,9 +38,7 @@ macro (finalize_translations _target) #, _ts_files
     # to parse things like boost headers leads to spurious warnings.
     file(RELATIVE_PATH _dir_rel_to_source "${CMAKE_SOURCE_DIR}" "${_dir}")
     file(RELATIVE_PATH _dir_rel_to_binary "${CMAKE_BINARY_DIR}" "${_dir}")
-    if (NOT _dir_rel_to_source MATCHES "\\.\\..*")
-      list(APPEND _filtered_inc_dirs "${_dir}")
-    elseif (NOT _dir_rel_to_binary MATCHES "\\.\\..*")
+    if (NOT ((_dir_rel_to_source MATCHES "\\.\\..*") AND (_dir_rel_to_binary MATCHES "\\.\\..*")))
       list(APPEND _filtered_inc_dirs "${_dir}")
     endif()
   endforeach()

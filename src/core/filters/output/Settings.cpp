@@ -274,7 +274,6 @@ void Settings::setDefaultFillZoneProperties(const PropertySet& props) {
   m_defaultFillZoneProps = props;
 }
 
-// TODO: rework this
 PropertySet Settings::initialPictureZoneProps() {
   PropertySet props;
   props.locateOrCreate<PictureLayerProperty>()->setLayer(PictureLayerProperty::PAINTER2);

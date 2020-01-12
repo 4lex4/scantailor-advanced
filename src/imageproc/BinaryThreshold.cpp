@@ -116,7 +116,7 @@ BinaryThreshold BinaryThreshold::mokjiThreshold(const QImage& image,
                                                 const unsigned maxEdgeWidth,
                                                 const unsigned minEdgeMagnitude) {
   if (maxEdgeWidth < 1) {
-    throw std::invalid_argument("mokjiThreshold: invalud maxEdgeWidth");
+    throw std::invalid_argument("mokjiThreshold: invalid maxEdgeWidth");
   }
   if (minEdgeMagnitude < 1) {
     throw std::invalid_argument("mokjiThreshold: invalid minEdgeMagnitude");

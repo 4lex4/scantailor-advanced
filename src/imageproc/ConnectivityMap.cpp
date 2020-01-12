@@ -108,7 +108,7 @@ void ConnectivityMap::swap(ConnectivityMap& other) {
 
 void ConnectivityMap::addComponent(const BinaryImage& image) {
   if (m_size != image.size()) {
-    throw std::invalid_argument("ConnectivityMap::addComponent: sizes dont match");
+    throw std::invalid_argument("ConnectivityMap::addComponent: sizes do not match");
   }
   if (m_size.isEmpty()) {
     return;

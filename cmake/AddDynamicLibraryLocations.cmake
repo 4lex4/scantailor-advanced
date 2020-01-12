@@ -1,18 +1,20 @@
 # add_dynamic_lib_locations(<prefix name> <target> ...)
 #
-# Fixes the imported unknown target if it is actually a shared library on Windows.
+# Finds and adds the dynamic library locations for each configuration 
+# to the imported unknown target if it is actually a shared library on Windows.
 #
 # Tries to find the matching dynamic library for each import one in IMPORTED_LOCATION properties
-# and saves the result in the <prefix name>_DYNAMIC_LIBRARY_<Config> variable.
+# and saves the result in the <prefix name>_DYNAMIC_LIBRARY_<Config> variable 
+# adding IMPORTED_DYNLIB_<Config> property with the actual dynamic library location to the target on success.
+#
 # If an IMPORTED_LOCATION property points to a non-import library (for example static) 
 # or the matching dynamic library not found, no actions are applied to the target.
-# For shared libraries that have non-standard dynamic libraries locations you should set
-# appropriate <prefix name>_DYNAMIC_LIBRARY_<Config> cache variables or add the locations
-# to CMAKE_PROGRAM_PATH or CMAKE_PREFIX_PATH variables.
 #
-# After updating LOCATION properties point to the dynamic libraries (.dll)
-# and IMPORTED_IMPLIB properties to the import libraries.
+# For shared libraries that have non-standard dynamic libraries locations 
+# appropriate <prefix name>_DYNAMIC_LIBRARY_<Config> cache variables should be set
+# or the locations should be added to CMAKE_PROGRAM_PATH or CMAKE_PREFIX_PATH variables.
 #
+
 function(add_dynamic_library_locations Targets)
   foreach(_target ${Targets})
     get_target_property(target_type ${_target} TYPE)

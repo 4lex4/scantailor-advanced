@@ -116,13 +116,7 @@ MainWindow::MainWindow()
   connect(&m_autoSaveTimer, SIGNAL(timeout()), SLOT(autoSaveProject()));
 
   setupUi(this);
-
-  // TODO: move to setupIcons()
-  auto& iconProvider = IconProvider::getInstance();
-  focusButton->setIcon(iconProvider.getIcon("eye"));
-  prevPageBtn->setIcon(iconProvider.getIcon("triangle-up-arrow"));
-  nextPageBtn->setIcon(iconProvider.getIcon("triangle-down-arrow"));
-  filterSelectedBtn->setIcon(iconProvider.getIcon("check-mark"));
+  setupIcons();
 
   sortOptions->setVisible(false);
 
@@ -467,7 +461,7 @@ void MainWindow::createBatchProcessingWidget() {
 void MainWindow::updateThumbViewMinWidth() {
   const int sb = thumbView->style()->pixelMetric(QStyle::PM_ScrollBarExtent);
   int innerWidth = thumbView->maximumViewportSize().width() - sb;
-  if (thumbView->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents, 0, thumbView)) {
+  if (thumbView->style()->styleHint(QStyle::SH_ScrollView_FrameOnlyAroundContents, nullptr, thumbView)) {
     innerWidth -= thumbView->frameWidth() * 2;
   }
   const int deltaX = thumbView->size().width() - innerWidth;
@@ -2072,4 +2066,12 @@ void MainWindow::updateMaxLogicalThumbSize() {
   m_thumbSequence->setMaxLogicalThumbSize(m_maxLogicalThumbSize);
   updateThumbViewMinWidth();
   resetThumbSequence(currentPageOrderProvider(), ThumbnailSequence::KEEP_SELECTION);
+}
+
+void MainWindow::setupIcons() {
+  auto& iconProvider = IconProvider::getInstance();
+  focusButton->setIcon(iconProvider.getIcon("eye"));
+  prevPageBtn->setIcon(iconProvider.getIcon("triangle-up-arrow"));
+  nextPageBtn->setIcon(iconProvider.getIcon("triangle-down-arrow"));
+  filterSelectedBtn->setIcon(iconProvider.getIcon("check-mark"));
 }

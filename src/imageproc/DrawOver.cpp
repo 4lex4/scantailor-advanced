@@ -31,15 +31,12 @@ void drawOver(QImage& dst, const QRect& dstRect, const QImage& src, const QRect&
   const int depth = src.depth();
   assert(dst.depth() == depth);
 
-  if (depth % 8 != 0) {
-    assert(depth == 1);
-
+  if (depth == 1) {
     // Slow but simple.
     BinaryImage dstBin(dst);
     BinaryImage srcBin(src);
     rasterOp<RopSrc>(dstBin, dstRect, srcBin, srcRect.topLeft());
     dst = dstBin.toQImage().convertToFormat(dst.format());
-    // FIXME: we are not preserving the color table.
 
     return;
   }

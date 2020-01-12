@@ -286,6 +286,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void updateMaxLogicalThumbSize();
 
+  void setupIcons();
+
   QSizeF m_maxLogicalThumbSize;
   intrusive_ptr<ProjectPages> m_pages;
   intrusive_ptr<StageSequence> m_stages;

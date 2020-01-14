@@ -107,6 +107,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void goPrevSelectedPage();
 
+  void execGotoPageDialog();
+
   void goToPage(const PageId& pageId,
                 ThumbnailSequence::SelectionAction selectionAction = ThumbnailSequence::RESET_SELECTION);
 

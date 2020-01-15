@@ -8,6 +8,7 @@
 #include <memory>
 #include <set>
 #include <vector>
+
 #include "BeforeOrAfter.h"
 #include "FlagOps.h"
 #include "NonCopyable.h"
@@ -52,7 +53,10 @@ class ThumbnailSequence : public QObject {
      * In these circumstances, scrolling to make the new selection leader visible
      * is undesireable.
      */
-    AVOID_SCROLLING_TO = 1 << 2
+    AVOID_SCROLLING_TO = 1 << 2,
+
+    /** Indicates the items selection was cleared. */
+    SELECTION_CLEARED = 1 << 3
   };
 
   enum ViewMode { SINGLE_COLUMN, MULTI_COLUMN };
@@ -224,6 +228,9 @@ class ThumbnailSequence : public QObject {
   ViewMode getViewMode() const;
 
   void setViewMode(ViewMode mode);
+
+ public slots:
+  void setSelectionModeEnabled(bool enabled);
 
  signals:
 

@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ApplicationSettings.h"
+
 #include <tiff.h>
+
 #include <QLocale>
 #include <QtCore/QSettings>
 
@@ -26,6 +28,7 @@ const bool ApplicationSettings::DEFAULT_SINGLE_COLUMN_THUMBNAIL_DISPLAY = false;
 const QString ApplicationSettings::DEFAULT_LANGUAGE = QLocale::system().name();
 const QString ApplicationSettings::DEFAULT_UNITS = "mm";
 const QString ApplicationSettings::DEFAULT_PROFILE = "Default";
+const bool ApplicationSettings::DEFAULT_SHOW_CANCELING_SELECTION_QUESTION = true;
 
 const QString ApplicationSettings::ROOT_KEY = "settings";
 const QString ApplicationSettings::OPENGL_STATE_KEY = "enable_opengl";
@@ -48,6 +51,7 @@ const QString ApplicationSettings::SINGLE_COLUMN_THUMBNAIL_DISPLAY_KEY = "single
 const QString ApplicationSettings::LANGUAGE_KEY = "language";
 const QString ApplicationSettings::UNITS_KEY = "units";
 const QString ApplicationSettings::CURRENT_PROFILE_KEY = "current_profile";
+const QString ApplicationSettings::SHOW_CANCELING_SELECTION_QUESTION_KEY = "selection_canceling_question";
 
 QString ApplicationSettings::getKey(const QString& keyName) {
   return ApplicationSettings::ROOT_KEY + '/' + keyName;
@@ -221,4 +225,13 @@ QString ApplicationSettings::getCurrentProfile() const {
 
 void ApplicationSettings::setCurrentProfile(const QString& profile) {
   m_settings.setValue(getKey(CURRENT_PROFILE_KEY), profile);
+}
+
+bool ApplicationSettings::isCancelingSelectionQuestionEnabled() {
+  return m_settings.value(getKey(SHOW_CANCELING_SELECTION_QUESTION_KEY), DEFAULT_SHOW_CANCELING_SELECTION_QUESTION)
+      .toBool();
+}
+
+void ApplicationSettings::setCancelingSelectionQuestionEnabled(bool enabled) {
+  m_settings.setValue(getKey(SHOW_CANCELING_SELECTION_QUESTION_KEY), enabled);
 }

@@ -265,6 +265,7 @@ MainWindow::MainWindow()
           SLOT(pageContextMenuRequested(const PageInfo&, const QPoint&, bool)));
   connect(m_thumbSequence.get(), SIGNAL(pastLastPageContextMenuRequested(const QPoint&)),
           SLOT(pastLastPageContextMenuRequested(const QPoint&)));
+  connect(selectionModeBtn, SIGNAL(clicked(bool)), m_thumbSequence.get(), SLOT(setSelectionModeEnabled(bool)));
 
   connect(thumbView->verticalScrollBar(), SIGNAL(sliderMoved(int)), this, SLOT(thumbViewScrolled()));
   connect(thumbView->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(thumbViewScrolled()));
@@ -893,6 +894,10 @@ void MainWindow::currentPageChanged(const PageInfo& pageInfo,
     if (m_autoSaveTimer.remainingTime() <= 0) {
       m_autoSaveTimer.start(30000);
     }
+  }
+
+  if ((flags & ThumbnailSequence::SELECTION_CLEARED) && selectionModeBtn->isChecked()) {
+    selectionModeBtn->setChecked(false);
   }
 }
 

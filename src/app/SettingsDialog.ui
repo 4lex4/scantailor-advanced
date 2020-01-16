@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>337</width>
-    <height>419</height>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -211,6 +211,13 @@
            <widget class="QCheckBox" name="singleColumnThumbnailsCB">
             <property name="text">
              <string>Single column thumbnail display</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cancelingSelectionQuestionCB">
+            <property name="text">
+             <string>Show question on canceling multi page selection</string>
             </property>
            </widget>
           </item>

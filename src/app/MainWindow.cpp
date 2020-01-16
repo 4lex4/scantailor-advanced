@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "MainWindow.h"
+
 #include <core/ApplicationSettings.h>
 #include <core/IconProvider.h>
+
 #include <QDir>
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -12,8 +14,10 @@
 #include <QScrollBar>
 #include <QSortFilterProxyModel>
 #include <QStackedLayout>
+#include <QtWidgets/QInputDialog>
 #include <boost/lambda/lambda.hpp>
 #include <memory>
+
 #include "AbstractRelinker.h"
 #include "Application.h"
 #include "AutoRemovingFile.h"
@@ -200,6 +204,7 @@ MainWindow::MainWindow()
   addAction(actionPrevSelectedPage);
   addAction(actionNextSelectedPageW);
   addAction(actionPrevSelectedPageQ);
+  addAction(actionGotoPage);
 
   addAction(actionSwitchFilter1);
   addAction(actionSwitchFilter2);
@@ -220,6 +225,7 @@ MainWindow::MainWindow()
   connect(actionNextSelectedPage, SIGNAL(triggered(bool)), SLOT(goNextSelectedPage()));
   connect(actionPrevSelectedPageQ, SIGNAL(triggered(bool)), this, SLOT(goPrevSelectedPage()));
   connect(actionNextSelectedPageW, SIGNAL(triggered(bool)), this, SLOT(goNextSelectedPage()));
+  connect(actionGotoPage, SIGNAL(triggered(bool)), this, SLOT(execGotoPageDialog()));
   connect(actionAbout, SIGNAL(triggered(bool)), this, SLOT(showAboutDialog()));
   connect(&OutOfMemoryHandler::instance(), SIGNAL(outOfMemory()), SLOT(handleOutOfMemorySituation()));
   connect(prevPageBtn, &QToolButton::clicked, this, [this]() {
@@ -236,6 +242,7 @@ MainWindow::MainWindow()
       goNextPage();
     }
   });
+  connect(gotoPageBtn, SIGNAL(clicked()), this, SLOT(execGotoPageDialog()));
 
   connect(actionSwitchFilter1, SIGNAL(triggered(bool)), SLOT(switchFilter1()));
   connect(actionSwitchFilter2, SIGNAL(triggered(bool)), SLOT(switchFilter2()));
@@ -258,6 +265,7 @@ MainWindow::MainWindow()
           SLOT(pageContextMenuRequested(const PageInfo&, const QPoint&, bool)));
   connect(m_thumbSequence.get(), SIGNAL(pastLastPageContextMenuRequested(const QPoint&)),
           SLOT(pastLastPageContextMenuRequested(const QPoint&)));
+  connect(selectionModeBtn, SIGNAL(clicked(bool)), m_thumbSequence.get(), SLOT(setSelectionModeEnabled(bool)));
 
   connect(thumbView->verticalScrollBar(), SIGNAL(sliderMoved(int)), this, SLOT(thumbViewScrolled()));
   connect(thumbView->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(thumbViewScrolled()));
@@ -886,6 +894,10 @@ void MainWindow::currentPageChanged(const PageInfo& pageInfo,
     if (m_autoSaveTimer.remainingTime() <= 0) {
       m_autoSaveTimer.start(30000);
     }
+  }
+
+  if ((flags & ThumbnailSequence::SELECTION_CLEARED) && selectionModeBtn->isChecked()) {
+    selectionModeBtn->setChecked(false);
   }
 }
 
@@ -2074,4 +2086,24 @@ void MainWindow::setupIcons() {
   prevPageBtn->setIcon(iconProvider.getIcon("triangle-up-arrow"));
   nextPageBtn->setIcon(iconProvider.getIcon("triangle-down-arrow"));
   filterSelectedBtn->setIcon(iconProvider.getIcon("check-mark"));
+  gotoPageBtn->setIcon(iconProvider.getIcon("right-pointing"));
+  selectionModeBtn->setIcon(iconProvider.getIcon("checkbox-styled"));
+}
+
+void MainWindow::execGotoPageDialog() {
+  if (isBatchProcessingInProgress() || !isProjectLoaded()) {
+    return;
+  }
+
+  bool ok;
+  const PageSequence pageSequence = m_thumbSequence->toPageSequence();
+  const PageId& selectionLeader = m_thumbSequence->selectionLeader().id();
+  int pageNumber = QInputDialog::getInt(this, tr("Go To Page"), tr("Enter the page number:"),
+                                        pageSequence.pageNo(selectionLeader) + 1, 1, pageSequence.numPages(), 1, &ok);
+  if (ok) {
+    const PageId& newSelectionLeader = pageSequence.pageAt(pageNumber - 1).id();
+    if (selectionLeader != newSelectionLeader) {
+      goToPage(newSelectionLeader);
+    }
+  }
 }

@@ -2,13 +2,18 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ThumbnailSequence.h"
+
+#include <core/ApplicationSettings.h>
 #include <core/IconProvider.h>
+
 #include <QApplication>
 #include <QFileInfo>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QStyleOptionGraphicsItem>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QMessageBox>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #include <boost/lambda/bind.hpp>
@@ -18,6 +23,7 @@
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include <memory>
+
 #include "ColorSchemeManager.h"
 #include "IncompleteThumbnail.h"
 #include "PageSequence.h"
@@ -135,6 +141,8 @@ class ThumbnailSequence::Impl {
 
   void setViewMode(ViewMode mode);
 
+  void setSelectionModeEnabled(bool enabled);
+
  private:
   class ItemsByIdTag;
   class ItemsInOrderTag;
@@ -203,6 +211,8 @@ class ThumbnailSequence::Impl {
 
   void orderItems();
 
+  bool cancelingSelectionAccepted();
+
   static const int SPACING = 3;
   ThumbnailSequence& m_owner;
   QSizeF m_maxLogicalThumbSize;
@@ -222,6 +232,7 @@ class ThumbnailSequence::Impl {
   intrusive_ptr<const PageOrderProvider> m_orderProvider;
   GraphicsScene m_graphicsScene;
   QRectF m_sceneRect;
+  bool m_selectionMode;
 };
 
 
@@ -416,6 +427,10 @@ void ThumbnailSequence::setViewMode(ThumbnailSequence::ViewMode mode) {
   m_impl->setViewMode(mode);
 }
 
+void ThumbnailSequence::setSelectionModeEnabled(bool enabled) {
+  m_impl->setSelectionModeEnabled(enabled);
+}
+
 /*======================== ThumbnailSequence::Impl ==========================*/
 
 ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& maxLogicalThumbSize, const ViewMode viewMode)
@@ -426,7 +441,8 @@ ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& maxLogical
       m_itemsById(m_items.get<ItemsByIdTag>()),
       m_itemsInOrder(m_items.get<ItemsInOrderTag>()),
       m_selectedThenUnselected(m_items.get<SelectedThenUnselectedTag>()),
-      m_selectionLeader(nullptr) {
+      m_selectionLeader(nullptr),
+      m_selectionMode(false) {
   m_graphicsScene.setContextMenuEventCallback(
       [&](QGraphicsSceneContextMenuEvent* evt) { this->sceneContextMenuEvent(evt); });
 }
@@ -672,8 +688,44 @@ void ThumbnailSequence::Impl::invalidateAllThumbnails() {
   updateSceneItemsPos();
 }  // ThumbnailSequence::Impl::invalidateAllThumbnails
 
+bool ThumbnailSequence::Impl::cancelingSelectionAccepted() {
+  auto& appSettings = ApplicationSettings::getInstance();
+  if (appSettings.isCancelingSelectionQuestionEnabled()) {
+    std::set<PageId> selectedPages = selectedItems();
+    if (selectedPages.size() < 2) {
+      return true;
+    } else if (selectedPages.size() == 2) {
+      auto it = selectedPages.begin();
+      if ((*it).imageId() == (*(it++)).imageId()) {
+        return true;
+      }
+    }
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(QObject::tr("Canceling multi page selection"));
+    msgBox.setText(QObject::tr("%1 pages selection are going to be canceled. Continue?").arg(selectedPages.size()));
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    QCheckBox dontAskAgainCb(QObject::tr("Don't show this message again."));
+    msgBox.setCheckBox(&dontAskAgainCb);
+    QObject::connect(&msgBox, &QMessageBox::accepted, [&appSettings, &dontAskAgainCb]() {
+      if (dontAskAgainCb.isChecked()) {
+        appSettings.setCancelingSelectionQuestionEnabled(false);
+      }
+    });
+    if (msgBox.exec() != QMessageBox::Ok) {
+      return false;
+    }
+  }
+  return true;
+}
 
 bool ThumbnailSequence::Impl::setSelection(const PageId& pageId, const SelectionAction selectionAction) {
+  if ((selectionAction != KEEP_SELECTION) && !cancelingSelectionAccepted()) {
+    return false;
+  }
+
   const ItemsById::iterator idIt(m_itemsById.find(pageId));
   if (idIt == m_itemsById.end()) {
     return false;
@@ -718,6 +770,9 @@ bool ThumbnailSequence::Impl::setSelection(const PageId& pageId, const Selection
   SelectionFlags flags = DEFAULT_SELECTION_FLAGS;
   if (wasSelectionLeader) {
     flags |= REDUNDANT_SELECTION;
+  }
+  if (selectionAction != KEEP_SELECTION) {
+    flags |= SELECTION_CLEARED;
   }
 
   m_owner.emitNewSelectionLeader(idIt->pageInfo, idIt->composite, flags);
@@ -1010,7 +1065,7 @@ void ThumbnailSequence::Impl::sceneContextMenuEvent(QGraphicsSceneContextMenuEve
 void ThumbnailSequence::Impl::itemSelectedByUser(CompositeItem* compositeItem, const Qt::KeyboardModifiers modifiers) {
   const ItemsById::iterator idIt(m_itemsById.iterator_to(*compositeItem->item()));
 
-  if (modifiers & Qt::ControlModifier) {
+  if ((modifiers & Qt::ControlModifier) || m_selectionMode) {
     selectItemWithControl(idIt);
   } else if (modifiers & Qt::ShiftModifier) {
     selectItemWithShift(idIt);
@@ -1141,10 +1196,15 @@ void ThumbnailSequence::Impl::selectItemWithShift(const ItemsById::iterator& idI
 }  // ThumbnailSequence::Impl::selectItemWithShift
 
 void ThumbnailSequence::Impl::selectItemNoModifiers(const ItemsById::iterator& idIt) {
+  if (!cancelingSelectionAccepted()) {
+    return;
+  }
+
   SelectionFlags flags = SELECTED_BY_USER;
   if (m_selectionLeader == &*idIt) {
     flags |= REDUNDANT_SELECTION;
   }
+  flags |= SELECTION_CLEARED;
 
   clearSelection();
 
@@ -1349,6 +1409,10 @@ ThumbnailSequence::ViewMode ThumbnailSequence::Impl::getViewMode() const {
 
 void ThumbnailSequence::Impl::setViewMode(ThumbnailSequence::ViewMode mode) {
   m_viewMode = mode;
+}
+
+void ThumbnailSequence::Impl::setSelectionModeEnabled(bool enabled) {
+  m_selectionMode = enabled;
 }
 
 /*==================== ThumbnailSequence::Item ======================*/

@@ -158,4 +158,10 @@
   <icon name="expand" styled="on">
     <file>:/icons/expand.svg</file>
   </icon>
+  <icon name="checkbox-styled" styled="on">
+    <file>:icons/checkbox-styled.svg</file>
+  </icon>
+  <icon name="right-pointing" styled="on">
+    <file>:icons/right-pointing.svg</file>
+  </icon>
 </icons>

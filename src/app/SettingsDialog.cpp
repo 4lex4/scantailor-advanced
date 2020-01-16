@@ -77,6 +77,7 @@ SettingsDialog::SettingsDialog(QWidget* parent) : QDialog(parent) {
   ui.thumbnailSizeSB->setValue(settings.getMaxLogicalThumbnailSize().toSize().width());
 
   ui.singleColumnThumbnailsCB->setChecked(settings.isSingleColumnThumbnailDisplayEnabled());
+  ui.cancelingSelectionQuestionCB->setChecked(settings.isCancelingSelectionQuestionEnabled());
 
   connect(ui.buttonBox, SIGNAL(accepted()), SLOT(commitChanges()));
 }
@@ -116,6 +117,7 @@ void SettingsDialog::commitChanges() {
   }
 
   settings.setSingleColumnThumbnailDisplayEnabled(ui.singleColumnThumbnailsCB->isChecked());
+  settings.setCancelingSelectionQuestionEnabled(ui.cancelingSelectionQuestionCB->isChecked());
 
   emit settingsChanged();
 }

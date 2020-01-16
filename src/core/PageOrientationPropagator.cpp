@@ -31,9 +31,9 @@ PageOrientationPropagator::~PageOrientationPropagator() = default;
 void PageOrientationPropagator::propagate(const ProjectPages& pages) {
   const PageSequence sequence(pages.toPageSequence(PAGE_VIEW));
 
-  for (const PageInfo& page_info : sequence) {
+  for (const PageInfo& pageInfo : sequence) {
     Collector collector;
-    m_task->process(page_info, &collector);
-    m_pageSplitFilter->pageOrientationUpdate(page_info.imageId(), collector.orientation());
+    m_task->process(pageInfo, &collector);
+    m_pageSplitFilter->pageOrientationUpdate(pageInfo.imageId(), collector.orientation());
   }
 }

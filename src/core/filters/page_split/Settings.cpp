@@ -60,8 +60,8 @@ void Settings::setLayoutTypeFor(const LayoutType layoutType, const std::set<Page
 
   UpdateAction action;
 
-  for (const PageId& page_id : pages) {
-    updatePageLocked(page_id.imageId(), action);
+  for (const PageId& pageId : pages) {
+    updatePageLocked(pageId.imageId(), action);
   }
 }
 

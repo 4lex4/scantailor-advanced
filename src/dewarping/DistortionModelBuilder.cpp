@@ -426,9 +426,9 @@ void DistortionModelBuilder::RansacAlgo::buildAndAssessModel(const TracedCurve* 
     std::vector<double> B;
     B.reserve(polylineSize);
 
-    for (const QPointF& warped_pt : curve.trimmedPolyline) {
+    for (const QPointF& warpedPt : curve.trimmedPolyline) {
       // TODO: add another signature with hint for efficiency.
-      const QPointF dewarpedPt(dewarper.mapToDewarpedSpace(warped_pt));
+      const QPointF dewarpedPt(dewarper.mapToDewarpedSpace(warpedPt));
 
       // ax + b = y  <-> x * a + 1 * b = y
       At.push_back(dewarpedPt.x());

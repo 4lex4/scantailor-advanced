@@ -742,8 +742,8 @@ void TopBottomEdgeTracer::downTheHillSnake(std::vector<QPointF>& snake, const Gr
         float bestCost = NumericTraits<float>::max();
         uint32_t bestPrevStepIdx = step.prevStepIdx;
 
-        for (uint32_t prev_step_idx : paths) {
-          const Step& prevStep = stepStorage[prev_step_idx];
+        for (uint32_t prevStepIdx : paths) {
+          const Step& prevStep = stepStorage[prevStepIdx];
           float cost = prevStep.pathCost + step.pathCost;
 
           const Vec2f vec(step.pt - prevStep.pt);
@@ -775,7 +775,7 @@ void TopBottomEdgeTracer::downTheHillSnake(std::vector<QPointF>& snake, const Gr
 
           if (cost < bestCost) {
             bestCost = cost;
-            bestPrevStepIdx = prev_step_idx;
+            bestPrevStepIdx = prevStepIdx;
           }
         }
 
@@ -794,11 +794,11 @@ void TopBottomEdgeTracer::downTheHillSnake(std::vector<QPointF>& snake, const Gr
 
     uint32_t bestPathIdx = ~uint32_t(0);
     float bestCost = NumericTraits<float>::max();
-    for (uint32_t last_step_idx : paths) {
-      const Step& step = stepStorage[last_step_idx];
+    for (uint32_t lastStepIdx : paths) {
+      const Step& step = stepStorage[lastStepIdx];
       if (step.pathCost < bestCost) {
         bestCost = step.pathCost;
-        bestPathIdx = last_step_idx;
+        bestPathIdx = lastStepIdx;
       }
     }
     // Having found the best path, convert it back to a snake.
@@ -872,8 +872,8 @@ void TopBottomEdgeTracer::upTheHillSnake(std::vector<QPointF>& snake, const Grid
         float bestCost = NumericTraits<float>::max();
         uint32_t bestPrevStepIdx = step.prevStepIdx;
 
-        for (uint32_t prev_step_idx : paths) {
-          const Step& prevStep = stepStorage[prev_step_idx];
+        for (uint32_t prevStepIdx : paths) {
+          const Step& prevStep = stepStorage[prevStepIdx];
           float cost = prevStep.pathCost + step.pathCost;
 
           const Vec2f vec(step.pt - prevStep.pt);
@@ -905,7 +905,7 @@ void TopBottomEdgeTracer::upTheHillSnake(std::vector<QPointF>& snake, const Grid
 
           if (cost < bestCost) {
             bestCost = cost;
-            bestPrevStepIdx = prev_step_idx;
+            bestPrevStepIdx = prevStepIdx;
           }
         }
 
@@ -924,11 +924,11 @@ void TopBottomEdgeTracer::upTheHillSnake(std::vector<QPointF>& snake, const Grid
 
     uint32_t bestPathIdx = ~uint32_t(0);
     float bestCost = NumericTraits<float>::max();
-    for (uint32_t last_step_idx : paths) {
-      const Step& step = stepStorage[last_step_idx];
+    for (uint32_t lastStepIdx : paths) {
+      const Step& step = stepStorage[lastStepIdx];
       if (step.pathCost < bestCost) {
         bestCost = step.pathCost;
-        bestPathIdx = last_step_idx;
+        bestPathIdx = lastStepIdx;
       }
     }
     // Having found the best path, convert it back to a snake.
@@ -1090,9 +1090,9 @@ QImage TopBottomEdgeTracer::visualizePaths(const QImage& background,
   const int nbh_grid_offsets[8]
       = {-gridStride - 1, -gridStride, -gridStride + 1, -1, +1, +gridStride - 1, +gridStride, +gridStride + 1};
 
-  for (const QPoint path_endpoint : pathEndpoints) {
-    int gridOffset = path_endpoint.x() + path_endpoint.y() * gridStride;
-    int canvasOffset = path_endpoint.x() + path_endpoint.y() * canvasStride;
+  for (const QPoint pathEndpoint : pathEndpoints) {
+    int gridOffset = pathEndpoint.x() + pathEndpoint.y() * gridStride;
+    int canvasOffset = pathEndpoint.x() + pathEndpoint.y() * canvasStride;
     while (true) {
       const GridNode* node = gridData + gridOffset;
       canvasData[canvasOffset] = 0x00ff0000;

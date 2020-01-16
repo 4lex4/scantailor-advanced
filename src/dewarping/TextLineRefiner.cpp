@@ -510,10 +510,10 @@ bool TextLineRefiner::Optimizer::tangentMovement(Snake& snake, const Grid<float>
     const Vec2f unitTangent(m_frenetFrames[nodeIdx].unitTangent);
     const Vec2f downNormal(m_frenetFrames[nodeIdx].unitDownNormal);
 
-    for (float tangent_movement : tangent_movements) {
+    for (float tangentMovement : tangent_movements) {
       Step step;
       step.prevStepIdx = ~uint32_t(0);
-      step.node.center = initialPos + tangent_movement * unitTangent;
+      step.node.center = initialPos + tangentMovement * unitTangent;
       step.node.ribHalfLength = rib;
       step.pathCost = NumericTraits<float>::max();
 
@@ -547,11 +547,11 @@ bool TextLineRefiner::Optimizer::tangentMovement(Snake& snake, const Grid<float>
   // Find the best overall path.
   uint32_t bestPathIdx = ~uint32_t(0);
   float bestCost = NumericTraits<float>::max();
-  for (uint32_t last_step_idx : paths) {
-    const Step& step = stepStorage[last_step_idx];
+  for (uint32_t lastStepIdx : paths) {
+    const Step& step = stepStorage[lastStepIdx];
     if (step.pathCost < bestCost) {
       bestCost = step.pathCost;
-      bestPathIdx = last_step_idx;
+      bestPathIdx = lastStepIdx;
     }
   }
   // Having found the best path, convert it back to a snake.
@@ -590,13 +590,13 @@ bool TextLineRefiner::Optimizer::normalMovement(Snake& snake, const Grid<float>&
   // our calculations less accurate.  The proper solution is to provide not N but N*N
   // paths to the 3rd node, each path corresponding to a combination of movement of
   // the first and the second node.  That's the approach we are taking here.
-  for (float normal_movement : normal_movements) {
+  for (float normalMovement : normal_movements) {
     const auto prevStepIdx = static_cast<uint32_t>(stepStorage.size());
     {
       // Movements of the first node.
       const Vec2f downNormal(m_frenetFrames[0].unitDownNormal);
       Step step;
-      step.node.center = snake.nodes[0].center + normal_movement * downNormal;
+      step.node.center = snake.nodes[0].center + normalMovement * downNormal;
       step.node.ribHalfLength = snake.nodes[0].ribHalfLength;
       step.prevStepIdx = ~uint32_t(0);
       step.pathCost = calcExternalEnergy(gradient, step.node, downNormal);
@@ -623,10 +623,10 @@ bool TextLineRefiner::Optimizer::normalMovement(Snake& snake, const Grid<float>&
     const SnakeNode& node = snake.nodes[nodeIdx];
     const Vec2f downNormal(m_frenetFrames[nodeIdx].unitDownNormal);
 
-    for (float normal_movement : normal_movements) {
+    for (float normalMovement : normal_movements) {
       Step step;
       step.prevStepIdx = ~uint32_t(0);
-      step.node.center = node.center + normal_movement * downNormal;
+      step.node.center = node.center + normalMovement * downNormal;
       step.node.ribHalfLength = node.ribHalfLength;
       step.pathCost = NumericTraits<float>::max();
 
@@ -657,11 +657,11 @@ bool TextLineRefiner::Optimizer::normalMovement(Snake& snake, const Grid<float>&
   // Find the best overall path.
   uint32_t bestPathIdx = ~uint32_t(0);
   float bestCost = NumericTraits<float>::max();
-  for (uint32_t last_step_idx : paths) {
-    const Step& step = stepStorage[last_step_idx];
+  for (uint32_t lastStepIdx : paths) {
+    const Step& step = stepStorage[lastStepIdx];
     if (step.pathCost < bestCost) {
       bestCost = step.pathCost;
-      bestPathIdx = last_step_idx;
+      bestPathIdx = lastStepIdx;
     }
   }
   // Having found the best path, convert it back to a snake.

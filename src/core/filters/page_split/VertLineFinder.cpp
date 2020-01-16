@@ -133,8 +133,8 @@ std::vector<QLineF> VertLineFinder::findLines(const QImage& image,
 
   using LineGroups = std::list<LineGroup>;
   LineGroups lineGroups;
-  for (const HoughLine& hough_line : houghLines) {
-    const QualityLine newLine(hough_line.pointAtY(0.0), hough_line.pointAtY(height), hough_line.quality());
+  for (const HoughLine& houghLine : houghLines) {
+    const QualityLine newLine(houghLine.pointAtY(0.0), houghLine.pointAtY(height), houghLine.quality());
     LineGroup* homeGroup = nullptr;
 
     auto it(lineGroups.begin());

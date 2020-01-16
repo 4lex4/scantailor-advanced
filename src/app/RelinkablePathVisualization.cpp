@@ -96,20 +96,20 @@ void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool click
   checkForExistence(pathComponents);
 
   int componentIdx = -1;
-  for (PathComponent& path_component : pathComponents) {
+  for (PathComponent& pathComponent : pathComponents) {
     ++componentIdx;
     auto* btn = new ComponentButton(this);
     m_layout->addWidget(btn);
-    btn->setText(path_component.label.replace(QChar('/'), QChar('\\')));
+    btn->setText(pathComponent.label.replace(QChar('/'), QChar('\\')));
     btn->setEnabled(clickable);
     if (clickable) {
       btn->setCursor(QCursor(Qt::PointingHandCursor));
     }
-    stylePathComponentButton(btn, path_component.exists);
+    stylePathComponentButton(btn, pathComponent.exists);
 
     connect(btn, &ComponentButton::clicked,
-            boost::bind(&RelinkablePathVisualization::onClicked, this, componentIdx, path_component.prefixPath,
-                        path_component.suffixPath, path_component.type));
+            boost::bind(&RelinkablePathVisualization::onClicked, this, componentIdx, pathComponent.prefixPath,
+                        pathComponent.suffixPath, pathComponent.type));
   }
 
   m_layout->addStretch();

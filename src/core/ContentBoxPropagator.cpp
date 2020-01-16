@@ -38,13 +38,13 @@ ContentBoxPropagator::~ContentBoxPropagator() = default;
 void ContentBoxPropagator::propagate(const ProjectPages& pages) {
   const PageSequence sequence(pages.toPageSequence(PAGE_VIEW));
 
-  for (const PageInfo& page_info : sequence) {
+  for (const PageInfo& pageInfo : sequence) {
     Collector collector;
-    m_task->process(page_info, &collector);
+    m_task->process(pageInfo, &collector);
     if (collector.collected()) {
-      m_pageLayoutFilter->setContentBox(page_info.id(), collector.xform(), collector.contentRect());
+      m_pageLayoutFilter->setContentBox(pageInfo.id(), collector.xform(), collector.contentRect());
     } else {
-      m_pageLayoutFilter->invalidateContentBox(page_info.id());
+      m_pageLayoutFilter->invalidateContentBox(pageInfo.id());
     }
   }
 }

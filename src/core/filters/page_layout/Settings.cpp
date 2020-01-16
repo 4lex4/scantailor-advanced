@@ -414,11 +414,11 @@ void Settings::Impl::removePagesMissingFrom(const PageSequence& pages) {
 bool Settings::Impl::checkEverythingDefined(const PageSequence& pages, const PageId* ignore) const {
   const QMutexLocker locker(&m_mutex);
 
-  for (const PageInfo& page_info : pages) {
-    if (ignore && (*ignore == page_info.id())) {
+  for (const PageInfo& pageInfo : pages) {
+    if (ignore && (*ignore == pageInfo.id())) {
       continue;
     }
-    const Container::iterator it(m_items.find(page_info.id()));
+    const Container::iterator it(m_items.find(pageInfo.id()));
     if ((it == m_items.end()) || !it->contentSizeMM.isValid()) {
       return false;
     }

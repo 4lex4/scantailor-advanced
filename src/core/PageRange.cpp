@@ -17,9 +17,9 @@ std::set<PageId> PageRange::selectEveryOther(const PageId& base) const {
 
   const int baseIdx = static_cast<int>(it - pages.begin());
   int idx = 0;
-  for (const PageId& page_id : pages) {
+  for (const PageId& pageId : pages) {
     if (((idx - baseIdx) & 1) == 0) {
-      selection.insert(page_id);
+      selection.insert(pageId);
     }
     ++idx;
   }

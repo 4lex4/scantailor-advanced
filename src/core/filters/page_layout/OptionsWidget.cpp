@@ -331,16 +331,16 @@ void OptionsWidget::applyMargins(const std::set<PageId>& pages) {
   }
 
   const bool autoMarginsEnabled = m_settings->isPageAutoMarginsEnabled(m_pageId);
-  for (const PageId& page_id : pages) {
-    if (page_id == m_pageId) {
+  for (const PageId& pageId : pages) {
+    if (pageId == m_pageId) {
       continue;
     }
 
-    m_settings->setPageAutoMarginsEnabled(page_id, autoMarginsEnabled);
+    m_settings->setPageAutoMarginsEnabled(pageId, autoMarginsEnabled);
     if (autoMarginsEnabled) {
-      m_settings->invalidateContentSize(page_id);
+      m_settings->invalidateContentSize(pageId);
     } else {
-      m_settings->setHardMarginsMM(page_id, m_marginsMM);
+      m_settings->setHardMarginsMM(pageId, m_marginsMM);
     }
   }
 
@@ -353,12 +353,12 @@ void OptionsWidget::applyAlignment(const std::set<PageId>& pages) {
     return;
   }
 
-  for (const PageId& page_id : pages) {
-    if (page_id == m_pageId) {
+  for (const PageId& pageId : pages) {
+    if (pageId == m_pageId) {
       continue;
     }
 
-    m_settings->setPageAlignment(page_id, m_alignment);
+    m_settings->setPageAlignment(pageId, m_alignment);
   }
 
   emit invalidateAllThumbnails();

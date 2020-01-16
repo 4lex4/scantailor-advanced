@@ -14,9 +14,9 @@ bool lineBoundedByRect(QLineF& line, const QRectF& rect) {
 
   double s1 = 0;
   double s2 = 0;
-  for (const QLineF& rect_line : rect_lines) {
-    if (!lineIntersectionScalar(rect_line, line, s1, s2)) {
-      // line is parallel to rect_line.
+  for (const QLineF& rectLine : rect_lines) {
+    if (!lineIntersectionScalar(rectLine, line, s1, s2)) {
+      // line is parallel to rectLine.
       continue;
     }
     if ((s1 < 0) || (s1 > 1)) {

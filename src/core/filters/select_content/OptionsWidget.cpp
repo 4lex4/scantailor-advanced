@@ -213,13 +213,13 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages, const bool app
                       m_uiData.contentDetectionMode(), m_uiData.pageDetectionMode(),
                       m_uiData.isFineTuningCornersEnabled());
 
-  for (const PageId& page_id : pages) {
-    if (m_pageId == page_id) {
+  for (const PageId& pageId : pages) {
+    if (m_pageId == pageId) {
       continue;
     }
 
     Params newParams(params);
-    std::unique_ptr<Params> oldParams = m_settings->getPageParams(page_id);
+    std::unique_ptr<Params> oldParams = m_settings->getPageParams(pageId);
     if (oldParams) {
       if (newParams.pageDetectionMode() == MODE_MANUAL) {
         if (!applyPageBox) {
@@ -248,14 +248,14 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages, const bool app
       }
     }
 
-    m_settings->setPageParams(page_id, newParams);
+    m_settings->setPageParams(pageId, newParams);
   }
 
   if (pages.size() > 1) {
     emit invalidateAllThumbnails();
   } else {
-    for (const PageId& page_id : pages) {
-      emit invalidateThumbnail(page_id);
+    for (const PageId& pageId : pages) {
+      emit invalidateThumbnail(pageId);
     }
   }
 

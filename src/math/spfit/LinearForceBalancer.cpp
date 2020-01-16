@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "LinearForceBalancer.h"
+
 #include <cmath>
 
 namespace spfit {
@@ -33,7 +34,6 @@ double LinearForceBalancer::calcInternalForceWeight(double internalForce, double
   if (std::fabs(internalForce) > 1e-6) {
     lambda = m_currentRatio * externalForce / internalForce;
   }
-
   return lambda;
 }
 

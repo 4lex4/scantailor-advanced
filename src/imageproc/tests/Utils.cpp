@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Utils.h"
+
 #include <BinaryImage.h>
 #include <Grayscale.h>
+
 #include <QImage>
 #include <QRect>
 #include <cassert>
@@ -23,7 +25,6 @@ BinaryImage randomBinaryImage(const int width, const int height) {
     const uint32_t w2 = rand() % (1 << 16);
     *pword = (w1 << 16) | w2;
   }
-
   return image;
 }
 
@@ -40,7 +41,6 @@ QImage randomMonoQImage(const int width, const int height) {
     const uint32_t w2 = rand() % (1 << 16);
     *pword = (w1 << 16) | w2;
   }
-
   return image;
 }
 
@@ -52,7 +52,6 @@ QImage randomGrayImage(int width, int height) {
       img.setPixel(x, y, rand() % 10);
     }
   }
-
   return img;
 }
 
@@ -70,7 +69,6 @@ QImage makeMonoQImage(const int* data, const int width, const int height) {
       img.setPixel(x, y, data[y * width + x] ? 1 : 0);
     }
   }
-
   return img;
 }
 
@@ -82,7 +80,6 @@ QImage makeGrayImage(const int* data, const int width, const int height) {
       img.setPixel(x, y, data[y * width + x]);
     }
   }
-
   return img;
 }
 
@@ -93,7 +90,6 @@ void dumpBinaryImage(const BinaryImage& img, const char* name) {
 
   if (img.isNull()) {
     std::cout << "NULL image" << std::endl;
-
     return;
   }
 
@@ -120,7 +116,6 @@ void dumpGrayImage(const QImage& img, const char* name) {
 
   if (img.isNull()) {
     std::cout << "NULL image" << std::endl;
-
     return;
   }
   if (img.format() != QImage::Format_Indexed8) {
@@ -174,7 +169,6 @@ bool surroundingsIntact(const QImage& img1, const QImage& img2, const QRect& rec
       return false;
     }
   }
-
   return true;
 }  // surroundingsIntact
 }  // namespace utils

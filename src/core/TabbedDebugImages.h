@@ -6,6 +6,7 @@
 
 #include <QTabWidget>
 #include <boost/intrusive/list.hpp>
+
 #include "DebugImageView.h"
 
 class TabbedDebugImages : public QTabWidget {

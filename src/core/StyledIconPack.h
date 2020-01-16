@@ -5,8 +5,10 @@
 #define SCANTAILOR_CORE_STYLEDICONPACK_H_
 
 #include <foundation/Hashes.h>
+
 #include <QString>
 #include <unordered_map>
+
 #include "AbstractIconPack.h"
 
 class QDomElement;

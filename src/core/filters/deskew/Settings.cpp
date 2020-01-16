@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Settings.h"
+
 #include "../../Utils.h"
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
@@ -14,7 +15,6 @@ Settings::Settings() {
     auto it(m_perPageParams.find(pageId));
     if (it != m_perPageParams.end()) {
       const Params& params = it->second;
-
       return params.deskewAngle();
     } else {
       return .0;
@@ -82,7 +82,6 @@ void Settings::setDegrees(const std::set<PageId>& pages, const Params& params) {
 
 bool Settings::isParamsNull(const PageId& pageId) const {
   QMutexLocker locker(&m_mutex);
-
   return (m_perPageParams.find(pageId) == m_perPageParams.end());
 }
 

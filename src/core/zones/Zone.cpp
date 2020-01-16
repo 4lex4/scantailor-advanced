@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Zone.h"
+
 #include <QDomDocument>
 
 Zone::Zone(const SerializableSpline& spline, const PropertySet& props) : m_spline(spline), m_props(props) {}
@@ -13,7 +14,6 @@ QDomElement Zone::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.appendChild(m_spline.toXml(doc, "spline"));
   el.appendChild(m_props.toXml(doc, "properties"));
-
   return el;
 }
 

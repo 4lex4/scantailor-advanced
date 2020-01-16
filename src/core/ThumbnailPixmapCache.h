@@ -6,6 +6,7 @@
 
 #include <boost/weak_ptr.hpp>
 #include <memory>
+
 #include "AbstractCommand.h"
 #include "NonCopyable.h"
 #include "ThumbnailLoadResult.h"

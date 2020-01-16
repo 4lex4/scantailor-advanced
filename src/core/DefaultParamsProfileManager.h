@@ -6,6 +6,7 @@
 
 
 #include <foundation/NonCopyable.h>
+
 #include <QtCore/QString>
 #include <list>
 #include <memory>

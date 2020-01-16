@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ProjectPages.h"
+
 #include <QDebug>
 #include <boost/foreach.hpp>
 #include <boost/multi_index/member.hpp>
@@ -10,6 +11,7 @@
 #include <boost/multi_index_container.hpp>
 #include <cassert>
 #include <unordered_map>
+
 #include "AbstractRelinker.h"
 #include "ImageFileInfo.h"
 #include "ImageInfo.h"
@@ -66,7 +68,6 @@ Qt::LayoutDirection ProjectPages::layoutDirection() const {
     return Qt::LeftToRight;
   } else {
     assert(m_subPagesInOrder[0] == PageId::RIGHT_PAGE);
-
     return Qt::RightToLeft;
   }
 }
@@ -109,7 +110,6 @@ PageSequence ProjectPages::toPageSequence(const PageView view) const {
       pages.append(PageInfo(id, image.metadata, image.numLogicalPages, image.leftHalfRemoved, image.rightHalfRemoved));
     }
   }
-
   return pages;
 }  // ProjectPages::toPageSequence
 
@@ -207,7 +207,6 @@ int ProjectPages::adviseNumberOfLogicalPages(const ImageMetadata& metadata, cons
 
 int ProjectPages::numImages() const {
   QMutexLocker locker(&m_mutex);
-
   return static_cast<int>(m_images.size());
 }
 
@@ -219,7 +218,6 @@ std::vector<PageInfo> ProjectPages::insertImage(const ImageInfo& newImage,
 
   {
     QMutexLocker locker(&m_mutex);
-
     return insertImageImpl(newImage, beforeOrAfter, existing, view, wasModified);
   }
 
@@ -254,7 +252,6 @@ PageInfo ProjectPages::unremovePage(const PageId& pageId) {
   if (wasModified) {
     emit modified();
   }
-
   return pageInfo;
 }
 
@@ -266,7 +263,6 @@ bool ProjectPages::validateDpis() const {
       return false;
     }
   }
-
   return true;
 }
 
@@ -294,7 +290,6 @@ std::vector<ImageFileInfo> ProjectPages::toImageFileInfo() const {
       files.insert(file).first->metadata.push_back(image.metadata);
     }
   }
-
   return std::vector<ImageFileInfo>(files.get<1>().begin(), files.get<1>().end());
 }
 
@@ -462,7 +457,6 @@ std::vector<PageInfo> ProjectPages::insertImageImpl(const ImageInfo& newImage,
       logicalPages.push_back(pageInfoTempl);
     }
   }
-
   return logicalPages;
 }  // ProjectPages::insertImageImpl
 
@@ -533,7 +527,6 @@ PageInfo ProjectPages::unremovePageImpl(const PageId& pageId, bool& modified) {
   }
 
   image.numLogicalPages = 2;
-
   return PageInfo(pageId, image.metadata, image.numLogicalPages, image.leftHalfRemoved, image.rightHalfRemoved);
 }  // ProjectPages::unremovePageImpl
 

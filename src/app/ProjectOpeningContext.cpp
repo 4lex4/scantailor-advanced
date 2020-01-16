@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ProjectOpeningContext.h"
+
 #include <QMessageBox>
 #include <cassert>
+
 #include "FixDpiDialog.h"
 #include "ProjectPages.h"
 #include "version.h"
@@ -22,19 +24,16 @@ void ProjectOpeningContext::proceed() {
     if (!m_reader.getVersion().isNull() && (m_reader.getVersion().toInt() != PROJECT_VERSION)) {
       QMessageBox::warning(m_parent, tr("Error"),
                            tr("The project file is not compatible with the current application version."));
-
       return;
     }
 
     QMessageBox::critical(m_parent, tr("Error"), tr("Unable to interpret the project file."));
-
     return;
   }
 
   if (m_reader.pages()->validateDpis()) {
     deleteLater();
     emit done(this);
-
     return;
   }
 

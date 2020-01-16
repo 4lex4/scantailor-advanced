@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DragHandler.h"
+
 #include <QMouseEvent>
+
 #include "ImageViewBase.h"
 
 DragHandler::DragHandler(ImageViewBase& imageView)

@@ -1,9 +1,12 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
+#include "Task.h"
+
 #include <UnitsProvider.h>
 
 #include <utility>
+
 #include "DebugImagesImpl.h"
 #include "Dpm.h"
 #include "Filter.h"
@@ -15,7 +18,6 @@
 #include "PageLayoutEstimator.h"
 #include "ProjectPages.h"
 #include "Settings.h"
-#include "Task.h"
 #include "TaskStatus.h"
 #include "filters/deskew/Task.h"
 
@@ -60,7 +62,6 @@ static ProjectPages::LayoutType toPageLayoutType(const PageLayout& layout) {
   }
 
   assert(!"Unreachable");
-
   return ProjectPages::ONE_PAGE_LAYOUT;
 }
 
@@ -167,10 +168,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
   if (m_nextTask != nullptr) {
     ImageTransformation newXform(data.xform());
     newXform.setPreCropArea(layout.pageOutline(m_pageInfo.id().subPage()).toPolygon());
-
     return m_nextTask->process(status, FilterData(data, newXform));
   }
-
   return make_intrusive<UiUpdater>(m_filter, m_pages, std::move(m_dbg), data.origImage(), m_pageInfo, data.xform(),
                                    uiData, m_batchProcessing);
 }  // Task::process

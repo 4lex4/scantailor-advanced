@@ -7,6 +7,7 @@
 #include <QPalette>
 #include <QString>
 #include <memory>
+
 #include "ColorScheme.h"
 
 class LightColorScheme : public ColorScheme {

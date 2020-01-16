@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <QString>
 #include <set>
+
 #include "PageId.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"

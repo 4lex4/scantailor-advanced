@@ -8,6 +8,7 @@
 #include <QPoint>
 #include <QRect>
 #include <cstdint>
+
 #include "Grid.h"
 #include "VecNT.h"
 

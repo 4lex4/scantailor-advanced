@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_IMAGEMETADATALOADER_H_
 
 #include <vector>
+
 #include "VirtualFunction.h"
 #include "intrusive_ptr.h"
 #include "ref_countable.h"

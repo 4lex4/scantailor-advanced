@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutOfMemoryDialog.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
 #include <utility>
+
 #include "ProjectWriter.h"
 #include "RecentProjects.h"
 
@@ -85,10 +87,8 @@ bool OutOfMemoryDialog::saveProjectWithFeedback(const QString& projectFile) {
 
   if (!writer.write(projectFile, m_stages->filters())) {
     QMessageBox::warning(this, tr("Error"), tr("Error saving the project file!"));
-
     return false;
   }
-
   return true;
 }
 

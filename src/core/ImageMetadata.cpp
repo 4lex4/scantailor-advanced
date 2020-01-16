@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageMetadata.h"
+
 #include <Constants.h>
 
 using namespace constants;
@@ -52,6 +53,5 @@ ImageMetadata::DpiStatus ImageMetadata::dpiStatus(int pixelSize, int dpi) {
     // memory consumption is increased 9 times.
     return DPI_TOO_SMALL_FOR_THIS_PIXEL_SIZE;
   }
-
   return DPI_OK;
 }

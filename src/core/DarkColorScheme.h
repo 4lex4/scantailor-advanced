@@ -6,6 +6,7 @@
 
 #include <QPalette>
 #include <QString>
+
 #include "ColorScheme.h"
 
 class DarkColorScheme : public ColorScheme {

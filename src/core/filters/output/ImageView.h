@@ -5,6 +5,7 @@
 #define SCANTAILOR_OUTPUT_IMAGEVIEW_H_
 
 #include <QColor>
+
 #include "DragHandler.h"
 #include "ImageViewBase.h"
 #include "ZoomHandler.h"

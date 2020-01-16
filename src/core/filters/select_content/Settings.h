@@ -5,9 +5,11 @@
 #define SCANTAILOR_SELECT_CONTENT_SETTINGS_H_
 
 #include <DeviationProvider.h>
+
 #include <QMutex>
 #include <memory>
 #include <unordered_map>
+
 #include "NonCopyable.h"
 #include "PageId.h"
 #include "Params.h"

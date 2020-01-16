@@ -2,12 +2,15 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageView.h"
+
 #include <core/IconProvider.h>
+
 #include <QDebug>
 #include <QPainter>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <utility>
+
 #include "ImagePresentation.h"
 #include "ImageTransformation.h"
 #include "ProjectPages.h"
@@ -108,7 +111,6 @@ void ImageView::onPaint(QPainter& painter, const InteractionState& interaction) 
     case PageLayout::SINGLE_PAGE_UNCUT:
       painter.setBrush(QColor(0, 0, 255, 50));
       painter.drawRect(virtRect);
-
       return;  // No Split Line will be drawn.
     case PageLayout::SINGLE_PAGE_CUT:
       painter.setBrush(QColor(0, 0, 255, 50));
@@ -165,7 +167,6 @@ QLineF ImageView::widgetCutterLine(const int lineIdx) const {
   } else if (m_handleInteractors[lineIdx][0].interactionInProgress(interactionState())) {
     line.setP2(virtualToWidget().map(virtualCutterLine(lineIdx).p2()));
   }
-
   return line;
 }
 
@@ -187,7 +188,6 @@ QLineF ImageView::virtualCutterLine(int lineIdx) const {
 
 QRectF ImageView::reducedWidgetArea() const {
   const qreal delta = 0.5 * m_handlePixmap.width();
-
   return getOccupiedWidgetRect().adjusted(0.0, delta, 0.0, -delta);
 }
 
@@ -201,7 +201,6 @@ QLineF ImageView::customInscribedCutterLine(const QLineF& line, const QRectF& re
     // This should not happen, but if it does, we need to handle it gracefully.
     qreal middleX = 0.5 * (line.p1().x() + line.p2().x());
     middleX = qBound(rect.left(), middleX, rect.right());
-
     return QLineF(QPointF(middleX, rect.top()), QPointF(middleX, rect.bottom()));
   }
 
@@ -213,13 +212,11 @@ QLineF ImageView::customInscribedCutterLine(const QLineF& line, const QRectF& re
 
   const double topX = qBound(rect.left(), topPt.x(), rect.right());
   const double bottomX = qBound(rect.left(), bottomPt.x(), rect.right());
-
   return QLineF(QPointF(topX, rect.top()), QPointF(bottomX, rect.bottom()));
 }
 
 QPointF ImageView::handlePosition(int lineIdx, int handleIdx) const {
   const QLineF line(widgetCutterLine(lineIdx));
-
   return handleIdx == 0 ? line.p1() : line.p2();
 }
 
@@ -339,7 +336,6 @@ QPointF ImageView::leftPageCenter() const {
   const double xMid = 0.5 * (leftRect.right() + rightRect.left());
   leftRect.setRight(xMid);
   rightRect.setLeft(xMid);
-
   return virtualToWidget().map(leftRect.center());
 }
 
@@ -350,7 +346,6 @@ QPointF ImageView::rightPageCenter() const {
   const double xMid = 0.5 * (leftRect.right() + rightRect.left());
   leftRect.setRight(xMid);
   rightRect.setLeft(xMid);
-
   return virtualToWidget().map(rightRect.center());
 }
 

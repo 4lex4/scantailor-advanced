@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Dependencies.h"
+
 #include <PolygonUtils.h>
+
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
@@ -25,7 +27,6 @@ bool Dependencies::compatibleWith(const Dependencies& other) const {
   if (!m_params.compatibleWith(other.m_params)) {
     return false;
   }
-
   return PolygonUtils::fuzzyCompare(m_rotatedPageOutline, other.m_rotatedPageOutline);
 }
 
@@ -49,7 +50,6 @@ bool Dependencies::compatibleWith(const Dependencies& other, bool* updateContent
   if (updatePageBox) {
     *updatePageBox = needUpdatePageBox;
   }
-
   return isCompatible;
 }
 
@@ -59,7 +59,6 @@ QDomElement Dependencies::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.appendChild(marshaller.polygonF(m_rotatedPageOutline, "rotated-page-outline"));
   el.appendChild(m_params.toXml(doc, "params"));
-
   return el;
 }
 
@@ -97,7 +96,6 @@ QDomElement Dependencies::Params::toXml(QDomDocument& doc, const QString& name) 
   el.setAttribute("contentDetectionMode", autoManualModeToString(m_contentDetectionMode));
   el.setAttribute("pageDetectionMode", autoManualModeToString(m_pageDetectionMode));
   el.setAttribute("fineTuneCorners", m_fineTuneCorners ? "1" : "0");
-
   return el;
 }
 
@@ -111,7 +109,6 @@ bool Dependencies::Params::compatibleWith(const Dependencies::Params& other) con
   if ((m_pageDetectionMode == MODE_AUTO) && (m_fineTuneCorners != other.m_fineTuneCorners)) {
     return false;
   }
-
   return true;
 }
 

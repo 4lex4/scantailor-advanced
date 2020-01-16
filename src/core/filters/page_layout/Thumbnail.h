@@ -6,6 +6,7 @@
 
 #include <QRectF>
 #include <QTransform>
+
 #include "ImageTransformation.h"
 #include "Params.h"
 #include "ThumbnailBase.h"

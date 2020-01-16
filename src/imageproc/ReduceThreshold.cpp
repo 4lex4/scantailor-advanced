@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ReduceThreshold.h"
+
 #include <cassert>
 
 namespace imageproc {
@@ -38,7 +39,6 @@ inline uint32_t compressBitsUpperHalf(const uint32_t bits) {
   r |= compressBitsLut[(bits >> 17) & 0x7F] << 24;
   r |= compressBitsLut[(bits >> 9) & 0x7F] << 20;
   r |= compressBitsLut[(bits >> 1) & 0x7F] << 16;
-
   return r;
 }
 
@@ -52,14 +52,12 @@ inline uint32_t compressBitsLowerHalf(const uint32_t bits) {
   r |= compressBitsLut[(bits >> 17) & 0x7F] << 8;
   r |= compressBitsLut[(bits >> 9) & 0x7F] << 4;
   r |= compressBitsLut[(bits >> 1) & 0x7F];
-
   return r;
 }
 
 inline uint32_t threshold1(const uint32_t top, const uint32_t bottom) {
   uint32_t word = top | bottom;
   word |= word << 1;
-
   return word;
 }
 
@@ -68,7 +66,6 @@ inline uint32_t threshold2(const uint32_t top, const uint32_t bottom) {
   word1 |= word1 << 1;
   uint32_t word2 = top | bottom;
   word2 &= word2 << 1;
-
   return word1 | word2;
 }
 
@@ -77,14 +74,12 @@ inline uint32_t threshold3(const uint32_t top, const uint32_t bottom) {
   word1 &= word1 << 1;
   uint32_t word2 = top & bottom;
   word2 |= word2 << 1;
-
   return word1 & word2;
 }
 
 inline uint32_t threshold4(const uint32_t top, const uint32_t bottom) {
   uint32_t word = top & bottom;
   word &= word << 1;
-
   return word;
 }
 }  // namespace
@@ -107,11 +102,9 @@ ReduceThreshold& ReduceThreshold::reduce(const int threshold) {
 
   if (dstH == 0) {
     reduceHorLine(threshold);
-
     return *this;
   } else if (dstW == 0) {
     reduceVertLine(threshold);
-
     return *this;
   }
 
@@ -183,7 +176,6 @@ ReduceThreshold& ReduceThreshold::reduce(const int threshold) {
   }
 
   m_image = dst;
-
   return *this;
 }  // ReduceThreshold::reduce
 

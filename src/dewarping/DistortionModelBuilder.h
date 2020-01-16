@@ -10,6 +10,7 @@
 #include <deque>
 #include <utility>
 #include <vector>
+
 #include "VecNT.h"
 
 class QImage;

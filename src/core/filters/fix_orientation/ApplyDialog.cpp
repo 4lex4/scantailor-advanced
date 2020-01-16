@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ApplyDialog.h"
+
 #include <cassert>
+
 #include "PageSelectionAccessor.h"
 
 namespace fix_orientation {
@@ -41,14 +43,12 @@ void ApplyDialog::onSubmit() {
     m_pages.selectAll().swap(pages);
     emit appliedToAllPages(pages);
     accept();
-
     return;
   } else if (thisPageAndFollowersRB->isChecked()) {
     m_pages.selectPagePlusFollowers(m_curPage).swap(pages);
   } else if (selectedPagesRB->isChecked()) {
     emit appliedTo(m_selectedPages);
     accept();
-
     return;
   } else if (everyOtherRB->isChecked()) {
     m_pages.selectEveryOther(m_curPage).swap(pages);

@@ -5,6 +5,7 @@
 #define SCANTAILOR_INTERACTION_INTERACTIONHANDLER_H_
 
 #include <boost/intrusive/list.hpp>
+
 #include "NonCopyable.h"
 #include "intrusive_ptr.h"
 #include "ref_countable.h"

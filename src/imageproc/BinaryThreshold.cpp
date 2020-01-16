@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "BinaryThreshold.h"
+
 #include <QDebug>
 #include <cassert>
 #include <iostream>
+
 #include "Grayscale.h"
 #include "Morphology.h"
 
@@ -108,7 +110,6 @@ BinaryThreshold BinaryThreshold::peakThreshold(const GrayscaleHistogram& pixelsB
   std::cout << "threshold: " << threshold << std::endl;
   std::cout << "otsuThreshold: " << otsuThreshold << std::endl;
 #endif
-
   return BinaryThreshold(threshold);
 }  // BinaryThreshold::peakThreshold
 
@@ -168,7 +169,6 @@ BinaryThreshold BinaryThreshold::mokjiThreshold(const QImage& image,
   }
 
   const double threshold = 0.5 * nominator / denominator;
-
   return BinaryThreshold((int) (threshold + 0.5));
 }  // BinaryThreshold::mokjiThreshold
 }  // namespace imageproc

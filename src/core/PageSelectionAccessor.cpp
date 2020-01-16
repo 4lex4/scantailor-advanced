@@ -4,6 +4,7 @@
 #include "PageSelectionAccessor.h"
 
 #include <utility>
+
 #include "PageSequence.h"
 
 PageSelectionAccessor::PageSelectionAccessor(intrusive_ptr<const PageSelectionProvider> provider)

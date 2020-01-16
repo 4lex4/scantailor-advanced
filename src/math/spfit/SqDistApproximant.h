@@ -5,6 +5,7 @@
 #define SCANTAILOR_SPFIT_SQDISTAPPROXIMANT_H_
 
 #include <QLineF>
+
 #include "MatMNT.h"
 #include "VecNT.h"
 

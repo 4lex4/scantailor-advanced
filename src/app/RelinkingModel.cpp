@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "RelinkingModel.h"
+
 #include <core/IconProvider.h>
 #include <foundation/Hashes.h>
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -13,6 +15,7 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
+
 #include "OutOfMemoryHandler.h"
 #include "PayloadEvent.h"
 
@@ -125,7 +128,6 @@ QVariant RelinkingModel::data(const QModelIndex& index, int role) const {
     default:
       break;
   }
-
   return QVariant();
 }
 
@@ -202,7 +204,6 @@ bool RelinkingModel::checkForMerges() const {
   }
 
   std::sort(newPaths.begin(), newPaths.end());
-
   return std::adjacent_find(newPaths.begin(), newPaths.end()) != newPaths.end();
 }
 

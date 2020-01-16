@@ -5,6 +5,7 @@
 #define SCANTAILOR_MATH_QUADRATICFUNCTION_H_
 
 #include <cstddef>
+
 #include "MatT.h"
 #include "VecT.h"
 

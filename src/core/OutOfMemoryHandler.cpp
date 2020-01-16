@@ -13,7 +13,6 @@ OutOfMemoryHandler& OutOfMemoryHandler::instance() {
   // sounds rather fantastic, and is not a big deal, as the project would have
   // already been saved.
   static OutOfMemoryHandler object;
-
   return object;
 }
 
@@ -37,6 +36,5 @@ void OutOfMemoryHandler::handleOutOfMemorySituation() {
 
 bool OutOfMemoryHandler::hadOutOfMemorySituation() const {
   const QMutexLocker locker(&m_mutex);
-
   return m_hadOOM;
 }

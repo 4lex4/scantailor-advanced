@@ -6,8 +6,10 @@
 
 #include <DistortionModel.h>
 #include <ImageTransformation.h>
+
 #include <QRect>
 #include <QSize>
+
 #include "ColorParams.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"

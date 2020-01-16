@@ -6,6 +6,7 @@
 
 #include <QColor>
 #include <QWidget>
+
 #include "BubbleAnimation.h"
 
 class QRect;

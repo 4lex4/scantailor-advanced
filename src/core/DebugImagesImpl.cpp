@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DebugImagesImpl.h"
+
 #include <BinaryImage.h>
+
 #include <QDir>
 #include <QImage>
 #include <QImageWriter>
@@ -49,6 +51,5 @@ AutoRemovingFile DebugImagesImpl::retrieveNext(QString* label,
   }
 
   m_sequence.pop_front();
-
   return file;
 }

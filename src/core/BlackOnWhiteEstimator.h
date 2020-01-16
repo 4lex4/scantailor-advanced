@@ -5,7 +5,9 @@
 #define SCANTAILOR_CORE_BLACKONWHITEESTIMATOR_H_
 
 #include <imageproc/BinaryImage.h>
+
 #include <QtGui/QPolygonF>
+
 #include "ImageTransformation.h"
 
 class TaskStatus;

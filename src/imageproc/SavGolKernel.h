@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <vector>
+
 #include "AlignedArray.h"
 
 class QPoint;

@@ -9,6 +9,7 @@
 #include <boost/array.hpp>
 #include <utility>
 #include <vector>
+
 #include "ArcLengthMapper.h"
 #include "HomographicTransform.h"
 #include "PolylineIntersector.h"

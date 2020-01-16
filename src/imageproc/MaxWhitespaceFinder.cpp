@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "MaxWhitespaceFinder.h"
+
 #include <QDebug>
 #include <cassert>
 
@@ -14,7 +15,6 @@ class AreaCompare {
   bool operator()(const QRect lhs, const QRect rhs) const {
     const int lhsArea = lhs.width() * lhs.height();
     const int rhsArea = rhs.width() * rhs.height();
-
     return lhsArea < rhsArea;
   }
 };
@@ -75,10 +75,8 @@ QRect MaxWhitespaceFinder::next(const ObstacleMode obstacleMode, int maxIteratio
     if (obstacleMode == AUTO_OBSTACLES) {
       m_newObstacles.push_back(region.bounds());
     }
-
     return region.bounds();
   }
-
   return QRect();
 }
 
@@ -149,7 +147,6 @@ QRect MaxWhitespaceFinder::findPivotObstacle(const Region& region) const {
       bestDistance = distance;
     }
   }
-
   return bestObstacle;
 }
 
@@ -309,7 +306,6 @@ QRect MaxWhitespaceFinder::extendBlackPixelToBlackBox(const QPoint pixel, const 
       outerRect = middleRect;
     }
   }
-
   return innerRect;
 }  // MaxWhitespaceFinder::extendBlackPixelToBlackBox
 

@@ -6,6 +6,7 @@
 
 #include <QPointF>
 #include <vector>
+
 #include "FlagOps.h"
 #include "NumericTraits.h"
 #include "VirtualFunction.h"

@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <QString>
 #include <set>
+
 #include "DewarpingOptions.h"
 #include "PageId.h"
 #include "PageSequence.h"

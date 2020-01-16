@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_INCOMPLETETHUMBNAIL_H_
 
 #include <QPainterPath>
+
 #include "ThumbnailBase.h"
 #include "intrusive_ptr.h"
 

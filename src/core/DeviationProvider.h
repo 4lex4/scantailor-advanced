@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_DEVIATIONPROVIDER_H_
 
 #include <foundation/NonCopyable.h>
+
 #include <cmath>
 #include <functional>
 #include <unordered_map>
@@ -59,7 +60,6 @@ bool DeviationProvider<K, Hash>::isDeviant(const K& key, const double coefficien
   }
 
   update();
-
   return (std::abs(m_keyValueMap.at(key) - m_meanValue) > std::max((coefficient * m_standardDeviation), threshold));
 }
 
@@ -73,7 +73,6 @@ double DeviationProvider<K, Hash>::getDeviationValue(const K& key) const {
   }
 
   update();
-
   return std::abs(m_keyValueMap.at(key) - m_meanValue);
 }
 

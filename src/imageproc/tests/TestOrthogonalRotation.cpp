@@ -3,9 +3,11 @@
 
 #include <BinaryImage.h>
 #include <OrthogonalRotation.h>
+
 #include <QImage>
 #include <QRect>
 #include <boost/test/unit_test.hpp>
+
 #include "Utils.h"
 
 namespace imageproc {

@@ -6,6 +6,7 @@
 
 #include <QCoreApplication>
 #include <set>
+
 #include "AbstractFilter.h"
 #include "FilterResult.h"
 #include "NonCopyable.h"

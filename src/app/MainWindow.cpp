@@ -575,7 +575,6 @@ intrusive_ptr<const PageOrderProvider> MainWindow::currentPageOrderProvider() co
   }
 
   const intrusive_ptr<AbstractFilter> filter(m_stages->filterAt(m_curFilter));
-
   return filter->pageOrderOptions()[idx].provider();
 }
 
@@ -636,7 +635,6 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
     if (ownership == TRANSFER_OWNERSHIP) {
       delete widget;
     }
-
     return;
   }
 
@@ -748,8 +746,6 @@ intrusive_ptr<AbstractCommand<void>> MainWindow::relinkingDialogRequester() {
    private:
     QPointer<MainWindow> m_wnd;
   };
-
-
   return make_intrusive<Requester>(this);
 }
 
@@ -1224,7 +1220,6 @@ void MainWindow::filterResult(const BackgroundTaskPtr& task, const FilterResultP
         // If batch processing finished at the last page, jump to the first one.
         goFirstPage();
       }
-
       return;
     }
 
@@ -1288,7 +1283,6 @@ void MainWindow::fixedDpiSubmitted() {
 void MainWindow::saveProjectTriggered() {
   if (m_projectFile.isEmpty()) {
     saveProjectAsTriggered();
-
     return;
   }
 
@@ -1367,14 +1361,12 @@ void MainWindow::openProject(const QString& projectFile) {
   QFile file(projectFile);
   if (!file.open(QIODevice::ReadOnly)) {
     QMessageBox::warning(this, tr("Error"), tr("Unable to open the project file."));
-
     return;
   }
 
   QDomDocument doc;
   if (!doc.setContent(&file)) {
     QMessageBox::warning(this, tr("Error"), tr("The project file is broken."));
-
     return;
   }
 
@@ -1587,7 +1579,6 @@ void MainWindow::loadPageInteractive(const PageInfo& page) {
 
     removeFilterOptionsWidget();
     setImageWidget(new ErrorWidget(errText), TRANSFER_OWNERSHIP);
-
     return;
   }
 
@@ -1644,7 +1635,6 @@ bool MainWindow::closeProjectInteractive() {
         return false;
     }
     closeProjectWithoutSaving();
-
     return true;
   }
 
@@ -1667,7 +1657,6 @@ bool MainWindow::closeProjectInteractive() {
         return false;
     }
     closeProjectWithoutSaving();
-
     return true;
   }
 
@@ -1675,7 +1664,6 @@ bool MainWindow::closeProjectInteractive() {
     // The project hasn't really changed.
     QFile::remove(backupFilePath);
     closeProjectWithoutSaving();
-
     return true;
   }
 
@@ -1683,7 +1671,6 @@ bool MainWindow::closeProjectInteractive() {
     case SAVE:
       if (!Utils::overwritingRename(backupFilePath, m_projectFile)) {
         QMessageBox::warning(this, tr("Error"), tr("Error saving the project file!"));
-
         return false;
       }
       // fall through
@@ -1695,7 +1682,6 @@ bool MainWindow::closeProjectInteractive() {
   }
 
   closeProjectWithoutSaving();
-
   return true;
 }  // MainWindow::closeProjectInteractive
 
@@ -1709,10 +1695,8 @@ bool MainWindow::saveProjectWithFeedback(const QString& projectFile) {
 
   if (!writer.write(projectFile, m_stages->filters())) {
     QMessageBox::warning(this, tr("Error"), tr("Error saving the project file!"));
-
     return false;
   }
-
   return true;
 }
 
@@ -1742,7 +1726,6 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId
       if (data.isNull()) {
         return true;
       }
-
       return !m_inProjectFiles.contains(QFileInfo(data.toString()));
     }
 
@@ -1988,7 +1971,6 @@ BackgroundTaskPtr MainWindow::createCompositeTask(const PageInfo& page,
     debug = false;
   }
   assert(fixOrientationTask);
-
   return make_intrusive<LoadFileTask>(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
                                       m_thumbnailCache, m_pages, fixOrientationTask);
 }  // MainWindow::createCompositeTask
@@ -2021,7 +2003,6 @@ intrusive_ptr<CompositeCacheDrivenTask> MainWindow::createCompositeCacheDrivenTa
   }
 
   assert(fixOrientationTask);
-
   return fixOrientationTask;
 }  // MainWindow::createCompositeCacheDrivenTask
 
@@ -2033,7 +2014,6 @@ void MainWindow::updateDisambiguationRecords(const PageSequence& pages) {
 
 PageSelectionAccessor MainWindow::newPageSelectionAccessor() {
   auto provider = make_intrusive<PageSelectionProviderImpl>(this);
-
   return PageSelectionAccessor(provider);
 }
 

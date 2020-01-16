@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputGenerator.h"
+
 #include <AdjustBrightness.h>
 #include <Binarize.h>
 #include <BlackOnWhiteEstimator.h>
@@ -36,6 +37,7 @@
 #include <imageproc/PolygonUtils.h>
 #include <imageproc/Posterizer.h>
 #include <imageproc/SkewFinder.h>
+
 #include <QColor>
 #include <QDebug>
 #include <QPainter>
@@ -46,6 +48,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <cmath>
+
 #include "ColorParams.h"
 #include "DebugImages.h"
 #include "DewarpingOptions.h"
@@ -365,7 +368,6 @@ struct RaiseAboveBackground {
     }
     const unsigned orig = src;
     const unsigned background = dst;
-
     return static_cast<uint8_t>((orig * 255 + background / 2) / background);
   }
 };
@@ -375,7 +377,6 @@ struct CombineInverted {
     const unsigned dilated = dst;
     const unsigned eroded = src;
     const unsigned res = 255 - (255 - dilated) * eroded / 255;
-
     return static_cast<uint8_t>(res);
   }
 };
@@ -747,7 +748,6 @@ inline int findPositionOfTheHighestBitSet(uint32_t v) {
   v |= v >> 4;
   v |= v >> 8;
   v |= v >> 16;
-
   return MultiplyDeBruijnBitPosition2[(uint32_t)(v * 0x07C4ACDDU) >> 27];
 }
 
@@ -922,7 +922,6 @@ std::vector<QRect> findRectAreas(const BinaryImage& mask, BWColor contentColor, 
       area = area.intersected(mask.rect());
     }
   }
-
   return areas;
 }
 
@@ -1003,7 +1002,6 @@ QSize calcLocalWindowSize(const Dpi& dpi) {
   if (sizePixels.height() < 3) {
     sizePixels.setHeight(3);
   }
-
   return sizePixels;
 }
 
@@ -1135,7 +1133,6 @@ QImage smoothToGrayscale(const QImage& src, const Dpi& dpi) {
     window = 11;
     degree = 2;
   }
-
   return savGolFilter(src, QSize(window, window), degree, degree);
 }
 
@@ -1144,7 +1141,6 @@ QSize from300dpi(const QSize& size, const Dpi& targetDpi) {
   const double vscale = targetDpi.vertical() / 300.0;
   const int width = qRound(size.width() * hscale);
   const int height = qRound(size.height() * vscale);
-
   return QSize(std::max(1, width), std::max(1, height));
 }
 
@@ -1153,7 +1149,6 @@ QSize to300dpi(const QSize& size, const Dpi& sourceDpi) {
   const double vscale = 300.0 / sourceDpi.vertical();
   const int width = qRound(size.width() * hscale);
   const int height = qRound(size.height() * vscale);
-
   return QSize(std::max(1, width), std::max(1, height));
 }
 }  // namespace
@@ -1315,7 +1310,6 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
 
       imageBuilder.setImage(segmentedImage);
     }
-
     return imageBuilder.build();
   }
 
@@ -1478,7 +1472,6 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
       imageBuilder.setBackgroundMask(bwContentMaskOutput.inverted());
     }
   }
-
   return imageBuilder.setImage(dst).build();
 }
 
@@ -1668,7 +1661,6 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
 
       imageBuilder.setImage(segmentedImage);
     }
-
     return imageBuilder.build();
   }
 
@@ -1809,7 +1801,6 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
       imageBuilder.setBackgroundMask(dewarpedBwMask.inverted());
     }
   }
-
   return imageBuilder.setImage(dewarped).build();
 }
 
@@ -1845,7 +1836,6 @@ GrayImage OutputGenerator::Processor::normalizeIlluminationGray(const QImage& in
     m_dbg->add(bgImg, "normalized_illumination");
   }
   m_status.throwIfCancelled();
-
   return bgImg;
 }
 
@@ -1893,7 +1883,6 @@ BinaryImage OutputGenerator::Processor::estimateBinarizationMask(const GrayImage
   const BinaryThreshold threshold(48);
   // Scale back to original size.
   pictureAreas = scaleToGray(pictureAreas, sourceSubRect.size());
-
   return BinaryImage(pictureAreas, threshold);
 }
 
@@ -1972,7 +1961,6 @@ CylindricalSurfaceDewarper OutputGenerator::Processor::createDewarper(const Dist
   for (QPointF& pt : bottomPolyline) {
     pt = distortionModelToTarget.map(pt);
   }
-
   return CylindricalSurfaceDewarper(topPolyline, bottomPolyline, depthPerception);
 }
 
@@ -2001,10 +1989,8 @@ QImage OutputGenerator::Processor::dewarp(const QTransform& origToSrc,
   if (modelDomain.isEmpty()) {
     GrayImage out(src.size());
     out.fill(0xff);  // white
-
     return out;
   }
-
   return RasterDewarper::dewarp(src, m_outRect.size(), dewarper, modelDomain, bgColor);
 }
 
@@ -2081,10 +2067,8 @@ GrayImage OutputGenerator::Processor::detectPictures(const GrayImage& input300dp
     if (m_dbg) {
       m_dbg->add(stretched2, "stretched2");
     }
-
     return stretched2;
   }
-
   return holesFilled;
 }
 
@@ -2099,7 +2083,6 @@ BinaryThreshold OutputGenerator::Processor::adjustThreshold(BinaryThreshold thre
 BinaryThreshold OutputGenerator::Processor::calcBinarizationThreshold(const QImage& image,
                                                                       const BinaryImage& mask) const {
   GrayscaleHistogram hist(image, mask);
-
   return adjustThreshold(BinaryThreshold::otsuThreshold(hist));
 }
 
@@ -2119,7 +2102,6 @@ BinaryThreshold OutputGenerator::Processor::calcBinarizationThreshold(const QIma
     if (mask) {
       rasterOp<RopAnd<RopSrc, RopDst>>(modifiedMask, *mask);
     }
-
     return calcBinarizationThreshold(image, modifiedMask);
   }
 }
@@ -2242,7 +2224,6 @@ BinaryImage OutputGenerator::Processor::binarize(const QImage& image) const {
       break;
     }
   }
-
   return binarized;
 }
 
@@ -2250,7 +2231,6 @@ BinaryImage OutputGenerator::Processor::binarize(const QImage& image, const Bina
   BinaryImage binarized = binarize(image);
 
   rasterOp<RopAnd<RopSrc, RopDst>>(binarized, mask);
-
   return binarized;
 }
 
@@ -2270,7 +2250,6 @@ BinaryImage OutputGenerator::Processor::binarize(const QImage& image,
     if (mask) {
       rasterOp<RopAnd<RopSrc, RopDst>>(modifiedMask, *mask);
     }
-
     return binarize(image, modifiedMask);
   }
 }
@@ -2365,7 +2344,6 @@ QImage OutputGenerator::Processor::segmentImage(const BinaryImage& image, const 
     m_dbg->add(segmented, "segmented");
   }
   m_status.throwIfCancelled();
-
   return segmented;
 }
 
@@ -2381,7 +2359,6 @@ QImage OutputGenerator::Processor::posterizeImage(const QImage& image, const QCo
     m_dbg->add(posterized, "posterized");
   }
   m_status.throwIfCancelled();
-
   return posterized;
 }
 
@@ -2450,7 +2427,6 @@ QImage OutputGenerator::Processor::transformToWorkingCs(bool normalize) const {
     }
   }
   m_status.throwIfCancelled();
-
   return dst;
 }
 
@@ -2567,7 +2543,6 @@ DistortionModel OutputGenerator::Processor::buildAutoDistortionModel(const GrayI
       }
     }
   }
-
   return distortionModel;
 }
 
@@ -2659,7 +2634,6 @@ DistortionModel OutputGenerator::Processor::buildMarginalDistortionModel() const
     }
     m_dbg->add(outImage, "marginal dewarping");
   }
-
   return distortionModel;
 }
 }  // namespace output

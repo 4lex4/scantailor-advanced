@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputImageBuilder.h"
+
 #include <imageproc/BinaryImage.h>
+
 #include "ForegroundType.h"
 #include "OutputImageWithOriginalBackgroundMask.h"
 

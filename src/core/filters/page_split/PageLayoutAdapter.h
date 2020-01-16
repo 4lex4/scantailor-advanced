@@ -8,6 +8,7 @@
 #include <QtCore/QRectF>
 #include <QtCore/QVector>
 #include <memory>
+
 #include "PageLayout.h"
 
 namespace page_split {

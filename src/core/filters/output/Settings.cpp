@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Settings.h"
+
 #include "../../Utils.h"
 #include "AbstractRelinker.h"
 #include "FillColorProperty.h"
@@ -254,13 +255,11 @@ void Settings::setFillZones(const PageId& pageId, const ZoneSet& zones) {
 
 PropertySet Settings::defaultPictureZoneProperties() const {
   const QMutexLocker locker(&m_mutex);
-
   return m_defaultPictureZoneProps;
 }
 
 PropertySet Settings::defaultFillZoneProperties() const {
   const QMutexLocker locker(&m_mutex);
-
   return m_defaultFillZoneProps;
 }
 
@@ -277,14 +276,12 @@ void Settings::setDefaultFillZoneProperties(const PropertySet& props) {
 PropertySet Settings::initialPictureZoneProps() {
   PropertySet props;
   props.locateOrCreate<PictureLayerProperty>()->setLayer(PictureLayerProperty::PAINTER2);
-
   return props;
 }
 
 PropertySet Settings::initialFillZoneProps() {
   PropertySet props;
   props.locateOrCreate<FillColorProperty>()->setColor(Qt::white);
-
   return props;
 }
 
@@ -306,7 +303,6 @@ void Settings::setOutputProcessingParams(const PageId& pageId, const OutputProce
 
 bool Settings::isParamsNull(const PageId& pageId) const {
   const QMutexLocker locker(&m_mutex);
-
   return m_perPageParams.find(pageId) == m_perPageParams.end();
 }
 

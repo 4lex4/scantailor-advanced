@@ -5,7 +5,9 @@
 #define SCANTAILOR_DESKEW_TASK_H_
 
 #include <FilterData.h>
+
 #include <memory>
+
 #include "FilterResult.h"
 #include "NonCopyable.h"
 #include "PageId.h"

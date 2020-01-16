@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputProcessingParams.h"
+
 #include <QDomDocument>
+
 #include "BlackWhiteOptions.h"
 
 namespace output {
@@ -17,7 +19,6 @@ QDomElement OutputProcessingParams::toXml(QDomDocument& doc, const QString& name
   QDomElement el(doc.createElement(name));
   el.setAttribute("autoZonesFound", m_autoZonesFound ? "1" : "0");
   el.setAttribute("blackOnWhiteSetManually", m_blackOnWhiteSetManually ? "1" : "0");
-
   return el;
 }
 

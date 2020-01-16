@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DespeckleView.h"
+
 #include <QDebug>
 #include <QPointer>
 #include <utility>
+
 #include "AbstractCommand.h"
 #include "BackgroundExecutor.h"
 #include "BackgroundTask.h"
@@ -222,7 +224,6 @@ BackgroundExecutor::TaskResultPtr DespeckleView::DespeckleTask::operator()() {
     DespeckleVisualization visualization(m_despeckleState.visualize());
 
     m_cancelHandle->throwIfCancelled();
-
     return make_intrusive<DespeckleResult>(m_owner, m_cancelHandle, m_despeckleState, visualization, std::move(m_dbg));
   } catch (const TaskCancelException&) {
     return nullptr;

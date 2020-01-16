@@ -4,6 +4,7 @@
 #include "OrderByHeightProvider.h"
 
 #include <utility>
+
 #include "Params.h"
 
 namespace page_layout {
@@ -36,7 +37,6 @@ bool OrderByHeightProvider::precedes(const PageId& lhsPage,
     // Invalid (unknown) sizes go to the back.
     return lhsValid;
   }
-
   return lhsSize.height() < rhsSize.height();
 }  // OrderByHeightProvider::precedes
 }  // namespace page_layout

@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "FillZoneEditor.h"
+
 #include <QPainter>
 #include <QPointer>
 #include <boost/bind.hpp>
 #include <utility>
+
 #include "ImagePresentation.h"
 #include "ImageTransformation.h"
 #include "OutputMargins.h"
@@ -100,7 +102,6 @@ InteractionHandler* FillZoneEditor::createContextMenuInteraction(InteractionStat
 InteractionHandler* FillZoneEditor::createColorPickupInteraction(const EditableZoneSet::Zone& zone,
                                                                  InteractionState& interaction) {
   m_colorPickupInteraction.startInteraction(zone, interaction);
-
   return &m_colorPickupInteraction;
 }
 
@@ -124,19 +125,16 @@ void FillZoneEditor::updateRequested() {
 QColor FillZoneEditor::toOpaque(const QColor& color) {
   QColor adapted(color);
   adapted.setAlpha(0xff);
-
   return adapted;
 }
 
 QColor FillZoneEditor::toGrayscale(const QColor& color) {
   const int gray = qGray(color.rgb());
-
   return QColor(gray, gray, gray);
 }
 
 QColor FillZoneEditor::toBlackWhite(const QColor& color) {
   const int gray = qGray(color.rgb());
-
   return gray < 128 ? Qt::black : Qt::white;
 }
 
@@ -163,7 +161,6 @@ std::vector<ZoneContextMenuItem> FillZoneEditor::MenuCustomizer::operator()(cons
   items.reserve(2);
   items.emplace_back(tr("Pick color"), boost::bind(&FillZoneEditor::createColorPickupInteraction, m_editor, zone, _1));
   items.push_back(stdItems.deleteItem);
-
   return items;
 }
 }  // namespace output

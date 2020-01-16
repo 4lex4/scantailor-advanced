@@ -4,6 +4,7 @@
 #include "CacheDrivenTask.h"
 
 #include <utility>
+
 #include "ImageTransformation.h"
 #include "PageInfo.h"
 #include "Settings.h"
@@ -30,7 +31,6 @@ void CacheDrivenTask::process(const PageInfo& pageInfo, AbstractFilterDataCollec
 
   if (m_nextTask) {
     m_nextTask->process(pageInfo, collector, xform);
-
     return;
   }
 

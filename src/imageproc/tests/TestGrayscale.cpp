@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include <Grayscale.h>
+
 #include <QImage>
 #include <boost/test/unit_test.hpp>
 #include <cstdlib>
+
 #include "Utils.h"
 
 namespace imageproc {

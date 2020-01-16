@@ -5,7 +5,9 @@
 #define SCANTAILOR_OUTPUT_OUTPUTIMAGEWITHFOREGROUNDMASK_H_
 
 #include <imageproc/BinaryImage.h>
+
 #include <memory>
+
 #include "ForegroundType.h"
 #include "OutputImagePlain.h"
 #include "OutputImageWithForeground.h"

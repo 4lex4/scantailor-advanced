@@ -9,6 +9,7 @@
 #include <QPoint>
 #include <QPointF>
 #include <boost/function.hpp>
+
 #include "ColorPickupInteraction.h"
 #include "DragHandler.h"
 #include "EditableSpline.h"

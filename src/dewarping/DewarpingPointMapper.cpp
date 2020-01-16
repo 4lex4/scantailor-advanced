@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DewarpingPointMapper.h"
+
 #include <QTransform>
+
 #include "DistortionModel.h"
 
 namespace dewarping {
@@ -35,7 +37,6 @@ QPointF DewarpingPointMapper::mapToDewarpedSpace(const QPointF& warpedPt) const 
   const QPointF crvPt(m_dewarper.mapToDewarpedSpace(warpedPt));
   const double dewarpedX = crvPt.x() * m_modelXScaleFromNormalized + m_modelDomainLeft;
   const double dewarpedY = crvPt.y() * m_modelYScaleFromNormalized + m_modelDomainTop;
-
   return m_postTransform.map(QPointF(dewarpedX, dewarpedY));
 }
 
@@ -44,7 +45,6 @@ QPointF DewarpingPointMapper::mapToWarpedSpace(const QPointF& dewarpedPt) const 
 
   const double crvX = (dewarpedPtM.x() - m_modelDomainLeft) * m_modelXScaleToNormalized;
   const double crvY = (dewarpedPtM.y() - m_modelDomainTop) * m_modelYScaleToNormalized;
-
   return m_dewarper.mapToWarpedSpace(QPointF(crvX, crvY));
 }
 }  // namespace dewarping

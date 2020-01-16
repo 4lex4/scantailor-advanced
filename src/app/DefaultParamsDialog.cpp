@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DefaultParamsDialog.h"
+
 #include <core/ApplicationSettings.h>
 #include <core/IconProvider.h>
 #include <filters/output/ColorParams.h>
@@ -9,11 +10,13 @@
 #include <filters/output/PictureShapeOptions.h>
 #include <filters/page_split/LayoutType.h>
 #include <foundation/ScopedIncDec.h>
+
 #include <QLineEdit>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QToolTip>
 #include <cassert>
 #include <memory>
+
 #include "DefaultParamsProvider.h"
 #include "UnitsProvider.h"
 #include "Utils.h"
@@ -719,7 +722,6 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
   std::unique_ptr<DefaultParams> defaultParams = std::make_unique<DefaultParams>(
       fixOrientationParams, deskewParams, pageSplitParams, selectContentParams, pageLayoutParams, outputParams);
   defaultParams->setUnits(m_currentUnits);
-
   return defaultParams;
 }
 
@@ -1091,7 +1093,6 @@ QToolButton* DefaultParamsDialog::getCheckedAlignmentButton() const {
   if (!checkedButton) {
     checkedButton = alignCenterBtn;
   }
-
   return checkedButton;
 }
 

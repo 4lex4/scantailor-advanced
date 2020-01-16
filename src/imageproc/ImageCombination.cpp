@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageCombination.h"
+
 #include <QImage>
 #include <unordered_map>
 #include <unordered_set>
+
 #include "BinaryImage.h"
 
 namespace imageproc {

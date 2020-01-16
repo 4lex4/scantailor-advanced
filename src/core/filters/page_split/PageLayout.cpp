@@ -2,9 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PageLayout.h"
+
 #include <PolygonUtils.h>
+
 #include <QTransform>
 #include <cassert>
+
 #include "NumericTraits.h"
 #include "ToLineProjector.h"
 #include "XmlMarshaller.h"
@@ -53,7 +56,6 @@ void PageLayout::setUncutOutline(const QRectF& outline) {
 
 const QLineF& PageLayout::cutterLine(int idx) const {
   assert(idx >= 0 && idx < numCutters());
-
   return idx == 0 ? m_cutter1 : m_cutter2;
 }
 
@@ -73,7 +75,6 @@ LayoutType PageLayout::toLayoutType() const {
   }
 
   assert(!"Unreachable");
-
   return page_split::SINGLE_PAGE_UNCUT;
 }
 
@@ -88,7 +89,6 @@ int PageLayout::numCutters() const {
   }
 
   assert(!"Unreachable");
-
   return 0;
 }
 
@@ -147,7 +147,6 @@ QLineF PageLayout::inscribedCutterLine(int idx) const {
 
   QLineF res(minPt, maxPt);
   ensureSameDirection(rawLine, res);
-
   return res;
 }  // PageLayout::inscribedCutterLine
 
@@ -177,7 +176,6 @@ QPolygonF PageLayout::singlePageOutline() const {
   poly << line2.p1() << line2.p2();
   maybeAddIntersectionPoint(poly, reverseLine1.normalVector(), reverseLine2.normalVector());
   poly << line1.p2();
-
   return PolygonUtils::round(m_uncutOutline).intersected(PolygonUtils::round(poly));
 }
 
@@ -206,7 +204,6 @@ QPolygonF PageLayout::leftPageOutline() const {
   poly << line2.p1() << line2.p2();
   maybeAddIntersectionPoint(poly, reverseLine1.normalVector(), reverseLine2.normalVector());
   poly << line1.p2();
-
   return PolygonUtils::round(m_uncutOutline).intersected(PolygonUtils::round(poly));
 }
 
@@ -235,7 +232,6 @@ QPolygonF PageLayout::rightPageOutline() const {
   poly << line2.p1() << line2.p2();
   maybeAddIntersectionPoint(poly, reverseLine1.normalVector(), reverseLine2.normalVector());
   poly << line1.p2();
-
   return PolygonUtils::round(m_uncutOutline).intersected(PolygonUtils::round(poly));
 }
 
@@ -250,7 +246,6 @@ QPolygonF PageLayout::pageOutline(const PageId::SubPage page) const {
   }
 
   assert(!"Unreachable");
-
   return QPolygonF();
 }
 
@@ -272,7 +267,6 @@ QDomElement PageLayout::toXml(QDomDocument& doc, const QString& name) const {
       el.appendChild(marshaller.lineF(m_cutter2, "cutter2"));
     }
   }
-
   return el;
 }
 
@@ -299,7 +293,6 @@ QString PageLayout::typeToString(const Type type) {
       str = "two-pages";
       break;
   }
-
   return QString::fromLatin1(str);
 }
 
@@ -329,7 +322,6 @@ QLineF PageLayout::extendToCover(const QLineF& line, const QPolygonF& poly) {
       max = scalar;
     }
   }
-
   return QLineF(line.pointAt(min), line.pointAt(max));
 }
 

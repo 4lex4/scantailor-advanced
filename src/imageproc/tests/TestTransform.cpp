@@ -3,12 +3,14 @@
 
 #include <Grayscale.h>
 #include <Transform.h>
+
 #include <QImage>
 #include <QSize>
 #include <boost/test/unit_test.hpp>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
+
 #include "Utils.h"
 
 namespace imageproc {

@@ -3,12 +3,14 @@
 
 #include <BinaryImage.h>
 #include <RasterOp.h>
+
 #include <QImage>
 #include <boost/test/unit_test.hpp>
 #include <cassert>
 #include <cstddef>
 #include <cstdlib>
 #include <vector>
+
 #include "Utils.h"
 
 namespace imageproc {
@@ -27,7 +29,6 @@ static bool checkSubimageRop(const QImage& dst, const QRect& dstRect, const QIma
   const QRect srcRect(srcPt, dstRect.size());
   const BinaryImage srcSubimage(src.copy(srcRect));
   rasterOp<Rop>(dstSubimage, dstSubimage.rect(), srcSubimage, QPoint(0, 0));
-
   return dstSubimage.toQImage() == dstBi.toQImage().copy(dstRect);
 }
 
@@ -98,7 +99,6 @@ Tester1::Tester1() {
 bool Tester1::testFullImage() const {
   BinaryImage dst(m_dstBefore);
   rasterOp<Rop>(dst, dst.rect(), m_src, QPoint(0, 0));
-
   return dst == m_dstAfter;
 }
 
@@ -110,7 +110,6 @@ bool Tester1::testSubImage(const QRect& dstRect, const QPoint& srcPt) const {
   if (!checkSubimageRop<Rop>(dst, dstRect, src, srcPt)) {
     return false;
   }
-
   return surroundingsIntact(dst, dstBefore, dstRect);
 }
 }  // namespace
@@ -147,7 +146,6 @@ bool Tester2::testBlockMove(const QRect& rect, const int dx, const int dy) {
   if (qSrc.copy(rect) != qDst.copy(dstRect)) {
     return false;
   }
-
   return surroundingsIntact(qDst, qSrc, dstRect);
 }
 }  // namespace

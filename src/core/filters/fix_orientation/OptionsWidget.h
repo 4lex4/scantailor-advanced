@@ -5,6 +5,7 @@
 #define SCANTAILOR_FIX_ORIENTATION_OPTIONSWIDGET_H_
 
 #include <list>
+
 #include "FilterOptionsWidget.h"
 #include "OrthogonalRotation.h"
 #include "PageId.h"

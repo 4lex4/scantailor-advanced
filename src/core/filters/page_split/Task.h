@@ -5,6 +5,7 @@
 #define SCANTAILOR_PAGE_SPLIT_TASK_H_
 
 #include <memory>
+
 #include "FilterResult.h"
 #include "NonCopyable.h"
 #include "PageInfo.h"

@@ -9,6 +9,7 @@
 #include <boost/scoped_array.hpp>
 #include <cstring>
 #include <iterator>
+
 #include "ValueConv.h"
 
 namespace imageproc {

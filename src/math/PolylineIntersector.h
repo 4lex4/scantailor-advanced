@@ -7,6 +7,7 @@
 #include <QLineF>
 #include <QPointF>
 #include <vector>
+
 #include "VecNT.h"
 
 class PolylineIntersector {

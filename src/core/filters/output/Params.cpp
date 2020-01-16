@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Params.h"
+
 #include <XmlMarshaller.h>
 #include <XmlUnmarshaller.h>
 #include <foundation/Utils.h>
@@ -53,7 +54,6 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   el.appendChild(m_colorParams.toXml(doc, "color-params"));
   el.appendChild(m_splittingOptions.toXml(doc, "splitting"));
   el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");
-
   return el;
 }
 

@@ -12,7 +12,6 @@ void initHorTransitions(std::vector<HTransition>& transitions, const int width) 
   if (width == 1) {
     // No transitions allowed.
     transitions.emplace_back(0, 0);
-
     return;
   }
 
@@ -34,7 +33,6 @@ void initVertTransitions(std::vector<VTransition>& transitions, const int height
   if (height == 1) {
     // No transitions allowed.
     transitions.emplace_back(0, 0);
-
     return;
   }
 

@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Filter.h"
+
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
@@ -11,9 +12,11 @@
 #include <filters/page_layout/CacheDrivenTask.h>
 #include <filters/page_layout/Task.h>
 #include <foundation/Utils.h>
+
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <utility>
+
 #include "CacheDrivenTask.h"
 #include "FilterUiInterface.h"
 #include "OptionsWidget.h"
@@ -79,7 +82,6 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
 
   writer.enumPages(
       [&](const PageId& pageId, int numericId) { this->writePageSettings(doc, filterEl, pageId, numericId); });
-
   return filterEl;
 }
 

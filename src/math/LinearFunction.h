@@ -5,6 +5,7 @@
 #define SCANTAILOR_MATH_LINEARFUNCTION_H_
 
 #include <cstddef>
+
 #include "VecT.h"
 
 /**

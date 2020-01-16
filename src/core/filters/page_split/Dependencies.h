@@ -5,6 +5,7 @@
 #define SCANTAILOR_PAGE_SPLIT_DEPENDENCIES_H_
 
 #include <QSize>
+
 #include "LayoutType.h"
 #include "OrthogonalRotation.h"
 

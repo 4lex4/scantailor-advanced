@@ -6,6 +6,7 @@
 
 #include <QPointF>
 #include <set>
+
 #include "DraggableObject.h"
 #include "InteractionHandler.h"
 #include "InteractionState.h"

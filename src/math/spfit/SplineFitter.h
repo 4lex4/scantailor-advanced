@@ -5,6 +5,7 @@
 #define SCANTAILOR_SPFIT_SPLINEFITTER_H_
 
 #include <vector>
+
 #include "FittableSpline.h"
 #include "NonCopyable.h"
 #include "Optimizer.h"

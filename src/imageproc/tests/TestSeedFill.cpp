@@ -6,10 +6,12 @@
 #include <Connectivity.h>
 #include <Grayscale.h>
 #include <SeedFill.h>
+
 #include <QImage>
 #include <QPoint>
 #include <QSize>
 #include <boost/test/unit_test.hpp>
+
 #include "Utils.h"
 
 namespace imageproc {

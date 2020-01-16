@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <set>
 #include <vector>
+
 #include "BeforeOrAfter.h"
 #include "ImageId.h"
 #include "ImageMetadata.h"

@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TabbedDebugImages.h"
+
 #include "DebugImageView.h"
 
 TabbedDebugImages::TabbedDebugImages(QWidget* parent) : QTabWidget(parent) {

@@ -6,7 +6,9 @@
 
 #include <BinaryThreshold.h>
 #include <GrayImage.h>
+
 #include <QImage>
+
 #include "ImageSettings.h"
 #include "ImageTransformation.h"
 

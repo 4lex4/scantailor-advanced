@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ChangeDewarpingDialog.h"
+
 #include <boost/lambda/lambda.hpp>
+
 #include "PageSelectionAccessor.h"
 
 namespace output {
@@ -69,7 +71,6 @@ void ChangeDewarpingDialog::onSubmit() {
   } else if (ui.selectedPagesRB->isChecked()) {
     emit accepted(m_selectedPages, m_dewarpingOptions);
     accept();
-
     return;
   }
 

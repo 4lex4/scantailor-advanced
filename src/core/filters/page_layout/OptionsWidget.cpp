@@ -2,11 +2,14 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OptionsWidget.h"
+
 #include <Constants.h>
 #include <UnitsProvider.h>
 #include <core/IconProvider.h>
+
 #include <QSettings>
 #include <utility>
+
 #include "../../Utils.h"
 #include "ApplyDialog.h"
 #include "ScopedIncDec.h"
@@ -542,7 +545,6 @@ QToolButton* OptionsWidget::getCheckedAlignmentButton() const {
   if (!checkedButton) {
     checkedButton = alignCenterBtn;
   }
-
   return checkedButton;
 }
 

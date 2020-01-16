@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_PROJECTWRITER_H_
 
 #include <foundation/Hashes.h>
+
 #include <QString>
 #include <Qt>
 #include <boost/multi_index/hashed_index.hpp>
@@ -13,6 +14,7 @@
 #include <boost/multi_index_container.hpp>
 #include <unordered_map>
 #include <vector>
+
 #include "ImageId.h"
 #include "OutputFileNameGenerator.h"
 #include "PageId.h"

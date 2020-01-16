@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "AutoRemovingFile.h"
+
 #include <QFile>
 
 AutoRemovingFile::AutoRemovingFile() = default;
@@ -20,13 +21,11 @@ AutoRemovingFile::~AutoRemovingFile() {
 
 AutoRemovingFile& AutoRemovingFile::operator=(AutoRemovingFile& other) {
   m_file = other.release();
-
   return *this;
 }
 
 AutoRemovingFile& AutoRemovingFile::operator=(CopyHelper other) {
   m_file = other.obj->release();
-
   return *this;
 }
 
@@ -43,6 +42,5 @@ void AutoRemovingFile::reset(const QString& file) {
 QString AutoRemovingFile::release() {
   QString saved(m_file);
   m_file = QString();
-
   return saved;
 }

@@ -5,6 +5,7 @@
 #define SCANTAILOR_DESKEW_FILTER_H_
 
 #include <QCoreApplication>
+
 #include "AbstractFilter.h"
 #include "FilterResult.h"
 #include "NonCopyable.h"

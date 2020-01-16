@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "JpegMetadataLoader.h"
+
 #include <QDebug>
 #include <QIODevice>
 #include <cassert>
 #include <csetjmp>
+
 #include "Dpm.h"
 #include "ImageMetadata.h"
 #include "NonCopyable.h"
@@ -101,7 +103,6 @@ boolean JpegSourceManager::fillInputBufferImpl() {
     bytes_in_buffer = 2;
   }
   next_input_byte = m_buf;
-
   return 1;
 }
 
@@ -215,6 +216,5 @@ ImageMetadataLoader::Status JpegMetadataLoader::loadMetadata(QIODevice& ioDevice
   }
 
   out(ImageMetadata(size, dpi));
-
   return LOADED;
 }  // JpegMetadataLoader::loadMetadata

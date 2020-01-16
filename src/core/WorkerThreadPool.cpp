@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "WorkerThreadPool.h"
+
 #include <QCoreApplication>
 #include <QThreadPool>
 #include <utility>
+
 #include "OutOfMemoryHandler.h"
 
 class WorkerThreadPool::TaskResultEvent : public QEvent {

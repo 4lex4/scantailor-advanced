@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SqDistApproximant.h"
+
 #include "FrenetFrame.h"
 #include "MatrixCalc.h"
 
@@ -61,7 +62,6 @@ SqDistApproximant SqDistApproximant::weightedLineDistance(const QLineF& line, do
 
   // Unit normal to line.
   const Vec2d v(-u[1], u[0]);
-
   return SqDistApproximant(line.p1(), u, v, 0, weight);
 }
 
@@ -84,14 +84,12 @@ SqDistApproximant SqDistApproximant::weightedCurveDistance(const Vec2d& referenc
     const double d = std::fabs(frenetFrame.unitNormal().dot(toReferencePoint));
     m = d / (d + p);  // Formula 7 in [2].
   }
-
   return SqDistApproximant(frenetFrame.origin(), frenetFrame.unitTangent(), frenetFrame.unitNormal(), m * weight,
                            weight);
 }
 
 double SqDistApproximant::evaluate(const Vec2d& pt) const {
   StaticMatrixCalc<double, 8, 1> mc;
-
   return (mc(pt, 1, 2) * mc(A) * mc(pt, 2, 1) + mc(b, 1, 2) * mc(pt, 2, 1)).rawData()[0] + c;
 }
 }  // namespace spfit

@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PolygonUtils.h"
+
 #include <QLineF>
 #include <QPolygonF>
 #include <cassert>
@@ -20,7 +21,6 @@ class PolygonUtils::Before {
     if (comp != 0) {
       return comp < 0;
     }
-
     return compare(lhs.p2(), rhs.p2()) < 0;
   }
 
@@ -41,7 +41,6 @@ class PolygonUtils::Before {
         return 1;
       }
     }
-
     return 0;
   }
 };
@@ -54,7 +53,6 @@ QPolygonF PolygonUtils::round(const QPolygonF& poly) {
   for (const QPointF& p : poly) {
     rounded.push_back(roundPoint(p));
   }
-
   return rounded;
 }
 
@@ -86,7 +84,6 @@ bool PolygonUtils::fuzzyCompare(const QPolygonF& poly1, const QPolygonF& poly2) 
 
   std::sort(edges1.begin(), edges1.end(), Before());
   std::sort(edges2.begin(), edges2.end(), Before());
-
   return fuzzyCompareImpl(edges1, edges2);
 }  // PolygonUtils::fuzzyCompare
 
@@ -108,7 +105,6 @@ std::vector<QLineF> PolygonUtils::extractAndNormalizeEdges(const QPolygonF& poly
     }
     maybeAddNormalizedEdge(edges, poly[numEdges - 1], poly[0]);
   }
-
   return edges;
 }
 
@@ -132,7 +128,6 @@ bool PolygonUtils::fuzzyCompareImpl(const std::vector<QLineF>& lines1, const std
       return false;
     }
   }
-
   return true;
 }
 
@@ -143,7 +138,6 @@ bool PolygonUtils::fuzzyCompareImpl(const QLineF& line1, const QLineF& line2) {
 bool PolygonUtils::fuzzyCompareImpl(const QPointF& p1, const QPointF& p2) {
   const double dx = std::fabs(p1.x() - p2.x());
   const double dy = std::fabs(p1.y() - p2.y());
-
   return dx <= ROUNDING_RECIP_MULTIPLIER && dy <= ROUNDING_RECIP_MULTIPLIER;
 }
 
@@ -198,7 +192,6 @@ QPolygonF PolygonUtils::convexHull(std::vector<QPointF> pointCloud) {
   for (const QPointF& pt : hull) {
     poly << pt;
   }
-
   return poly;
 }
 }  // namespace imageproc

@@ -9,6 +9,7 @@
 #include <QString>
 #include <memory>
 #include <vector>
+
 #include "ImageFileInfo.h"
 #include "ui_ProjectFilesDialog.h"
 

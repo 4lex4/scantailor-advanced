@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TextLineTracer.h"
+
 #include <Binarize.h>
 #include <BinaryImage.h>
 #include <Constants.h>
@@ -15,12 +16,14 @@
 #include <Scale.h>
 #include <SeedFill.h>
 #include <Sobel.h>
+
 #include <QPainter>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/if.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <cmath>
+
 #include "DebugImages.h"
 #include "DetectVertContentBounds.h"
 #include "DistortionModel.h"
@@ -120,7 +123,6 @@ GrayImage TextLineTracer::downscale(const GrayImage& input, const Dpi& dpi) {
     downscaledSize.setWidth(std::max<int>(1, input.width() * 200 / dpi.horizontal()));
     downscaledSize.setHeight(std::max<int>(1, input.height() * 200 / dpi.vertical()));
   }
-
   return scaleToGray(input, downscaledSize);
 }
 
@@ -188,7 +190,6 @@ bool TextLineTracer::isCurvatureConsistent(const std::vector<QPointF>& polyline)
     prevNormal[1] = nextSegment[0];
     prevNormalSqlen = nextSegmentSqlen;
   }
-
   return !(significantPositive && significantNegative);
 }  // TextLineTracer::isCurvatureConsistent
 
@@ -210,7 +211,6 @@ bool TextLineTracer::isInsideBounds(const QPointF& pt, const QLineF& leftBound, 
   if (rightNormalInside.x() * rightVec.x() + rightNormalInside.y() * rightVec.y() < 0) {
     return false;
   }
-
   return true;
 }
 
@@ -401,7 +401,6 @@ Vec2f TextLineTracer::calcAvgUnitVector(const std::pair<QLineF, QLineF>& bounds)
 
   Vec2f v3(v1 + v2);
   v3 /= std::sqrt(v3.squaredNorm());
-
   return v3;
 }
 
@@ -410,7 +409,6 @@ BinaryImage TextLineTracer::closeWithObstacles(const BinaryImage& image,
                                                const QSize& brick) {
   BinaryImage mask(closeBrick(image, brick));
   rasterOp<RopSubtract<RopDst, RopSrc>>(mask, obstacles);
-
   return seedFill(image, mask, CONN4);
 }
 
@@ -448,7 +446,6 @@ QLineF TextLineTracer::calcMidLine(const QLineF& line1, const QLineF& line2) {
     const QPointF p2(ToLineProjector(line1).projectionPoint(p1));
     const QPointF origin(0.5 * (p1 + p2));
     const QPointF vector(line2.p2() - line2.p1());
-
     return QLineF(origin, origin + vector);
   } else {
     // Lines do intersect.
@@ -456,7 +453,6 @@ QLineF TextLineTracer::calcMidLine(const QLineF& line1, const QLineF& line2) {
     Vec2d v2(line2.p2() - line2.p1());
     v1 /= std::sqrt(v1.squaredNorm());
     v2 /= std::sqrt(v2.squaredNorm());
-
     return QLineF(intersection, intersection + 0.5 * (v1 + v2));
   }
 }
@@ -473,7 +469,6 @@ QImage TextLineTracer::visualizeVerticalBounds(const QImage& background, const s
 
   painter.drawLine(bounds.first);
   painter.drawLine(bounds.second);
-
   return canvas;
 }
 
@@ -525,7 +520,6 @@ QImage TextLineTracer::visualizeGradient(const QImage& background, const Grid<fl
   QImage canvas(background.convertToFormat(QImage::Format_ARGB32_Premultiplied));
   QPainter painter(&canvas);
   painter.drawImage(0, 0, overlay);
-
   return canvas;
 }  // TextLineTracer::visualizeGradient
 
@@ -561,7 +555,6 @@ QImage TextLineTracer::visualizeMidLineSeeds(const QImage& background,
     rect.moveCenter(pt + QPointF(0.5, 0.5));
     painter.drawEllipse(rect);
   }
-
   return canvas;
 }  // TextLineTracer::visualizeMidLineSeeds
 
@@ -585,7 +578,6 @@ QImage TextLineTracer::visualizePolylines(const QImage& background,
     painter.drawLine(vertBounds->first);
     painter.drawLine(vertBounds->second);
   }
-
   return canvas;
 }
 }  // namespace dewarping

@@ -5,8 +5,10 @@
 #define SCANTAILOR_CORE_UNITSPROVIDER_H_
 
 #include <foundation/NonCopyable.h>
+
 #include <list>
 #include <memory>
+
 #include "UnitsListener.h"
 
 class Dpi;

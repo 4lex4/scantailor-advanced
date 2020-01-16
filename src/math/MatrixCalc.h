@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <cstddef>
+
 #include "DynamicPool.h"
 #include "LinearSolver.h"
 #include "MatMNT.h"
@@ -172,7 +173,6 @@ Mat<T> Mat<T>::inv() const {
   for (int i = 0; i < todo; i += rows + 1) {
     identData[i] = T(1);
   }
-
   return solve(ident);
 }
 
@@ -184,7 +184,6 @@ Mat<T> Mat<T>::solve(const Mat& b) const {
   T* tbuffer = alloc->allocT(cols * (b.rows + b.cols));
   size_t* pbuffer = alloc->allocP(rows);
   LinearSolver(rows, cols, b.cols).solve(data, xData, b.data, tbuffer, pbuffer);
-
   return Mat(alloc, xData, cols, b.cols);
 }
 
@@ -201,7 +200,6 @@ Mat<T> Mat<T>::trans() const {
 
   T* pTrans = alloc->allocT(cols * rows);
   transWrite(pTrans);
-
   return Mat(alloc, pTrans, cols, rows);
 }
 
@@ -211,7 +209,6 @@ Mat<T> Mat<T>::write(T* buf) const {
   for (int i = 0; i < todo; ++i) {
     buf[i] = data[i];
   }
-
   return *this;
 }
 
@@ -219,7 +216,6 @@ template <typename T>
 template <size_t N>
 Mat<T> Mat<T>::write(VecNT<N, T>& vec) const {
   assert(N >= size_t(rows * cols));
-
   return write(vec.data());
 }
 
@@ -234,7 +230,6 @@ Mat<T> Mat<T>::transWrite(T* buf) const {
       pSrc += rows;
     }
   }
-
   return *this;
 }
 
@@ -242,7 +237,6 @@ template <typename T>
 template <size_t N>
 Mat<T> Mat<T>::transWrite(VecNT<N, T>& vec) const {
   assert(N >= rows * cols);
-
   return transWrite(vec.data());
 }
 
@@ -256,7 +250,6 @@ Mat<T> Mat<T>::operator-() const {
   for (int i = 0; i < todo; ++i) {
     pRes[i] = -data[i];
   }
-
   return res;
 }
 
@@ -271,7 +264,6 @@ Mat<T> operator+(const Mat<T>& m1, const Mat<T>& m2) {
   for (int i = 0; i < todo; ++i) {
     pRes[i] = m1.data[i] + m2.data[i];
   }
-
   return res;
 }
 
@@ -286,7 +278,6 @@ Mat<T> operator-(const Mat<T>& m1, const Mat<T>& m2) {
   for (int i = 0; i < todo; ++i) {
     pRes[i] = m1.data[i] - m2.data[i];
   }
-
   return res;
 }
 
@@ -311,7 +302,6 @@ Mat<T> operator*(const Mat<T>& m1, const Mat<T>& m2) {
       ++pRes;
     }
   }
-
   return res;
 }
 
@@ -324,7 +314,6 @@ Mat<T> operator*(T scalar, const Mat<T>& m) {
   for (int i = 0; i < todo; ++i) {
     pRes[i] = m.data[i] * scalar;
   }
-
   return res;
 }
 

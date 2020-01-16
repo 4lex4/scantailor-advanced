@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PolylineIntersector.h"
+
 #include <cmath>
+
 #include "ToLineProjector.h"
 
 PolylineIntersector::Hint::Hint() : m_lastSegment(0), m_direction(1) {}
@@ -27,14 +29,12 @@ QPointF PolylineIntersector::intersect(const QLineF& line, Hint& hint) const {
   // Check the next segment in direction provided by hint.
   if (intersectsSegment(normal, (segment = hint.m_lastSegment + hint.m_direction))) {
     hint.update(segment);
-
     return intersectWithSegment(line, segment);
   }
 
   // Check the next segment in opposite direction.
   if (intersectsSegment(normal, (segment = hint.m_lastSegment - hint.m_direction))) {
     hint.update(segment);
-
     return intersectWithSegment(line, segment);
   }
 
@@ -65,7 +65,6 @@ QPointF PolylineIntersector::intersect(const QLineF& line, Hint& hint) const {
   }
 
   hint.update(leftIdx);
-
   return intersectWithSegment(line, leftIdx);
 }  // PolylineIntersector::intersect
 
@@ -75,7 +74,6 @@ bool PolylineIntersector::intersectsSegment(const QLineF& normal, int segment) c
   }
 
   const QLineF segLine(m_polyline[segment], m_polyline[segment + 1]);
-
   return intersectsSpan(normal, segLine);
 }
 
@@ -83,7 +81,6 @@ bool PolylineIntersector::intersectsSpan(const QLineF& normal, const QLineF& spa
   const Vec2d v1(normal.p2() - normal.p1());
   const Vec2d v2(span.p1() - normal.p1());
   const Vec2d v3(span.p2() - normal.p1());
-
   return v1.dot(v2) * v1.dot(v3) <= 0;
 }
 
@@ -96,7 +93,6 @@ QPointF PolylineIntersector::intersectWithSegment(const QLineF& line, int segmen
     // midpoint in this case.
     return segLine.pointAt(0.5);
   }
-
   return intersection;
 }
 
@@ -125,6 +121,5 @@ bool PolylineIntersector::tryIntersectingOutsideOfPolyline(const QLineF& line,
     hint.update(m_numSegments);
     intersection = proj.projectionPoint(m_polyline.back());
   }
-
   return true;
 }

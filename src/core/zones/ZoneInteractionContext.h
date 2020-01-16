@@ -5,6 +5,7 @@
 #define SCANTAILOR_ZONES_ZONEINTERACTIONCONTEXT_H_
 
 #include <boost/function.hpp>
+
 #include "EditableSpline.h"
 #include "EditableZoneSet.h"
 #include "SplineVertex.h"

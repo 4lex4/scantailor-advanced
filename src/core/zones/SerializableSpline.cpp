@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SerializableSpline.h"
+
 #include <QTransform>
 #include <boost/foreach.hpp>
+
 #include "EditableSpline.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
@@ -45,7 +47,6 @@ QDomElement SerializableSpline::toXml(QDomDocument& doc, const QString& name) co
   for (const QPointF& pt : m_points) {
     el.appendChild(marshaller.pointF(pt, pointStr));
   }
-
   return el;
 }
 
@@ -55,7 +56,6 @@ SerializableSpline SerializableSpline::transformed(const QTransform& xform) cons
   for (QPointF& pt : transformed.m_points) {
     pt = xform.map(pt);
   }
-
   return transformed;
 }
 
@@ -65,6 +65,5 @@ SerializableSpline SerializableSpline::transformed(const boost::function<QPointF
   for (QPointF& pt : transformed.m_points) {
     pt = xform(pt);
   }
-
   return transformed;
 }

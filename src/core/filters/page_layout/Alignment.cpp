@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Alignment.h"
+
 #include <QDomDocument>
 
 namespace page_layout {
@@ -83,7 +84,6 @@ QDomElement Alignment::toXml(QDomDocument& doc, const QString& name) const {
   el.setAttribute("vert", QString::fromLatin1(vert));
   el.setAttribute("hor", QString::fromLatin1(hor));
   el.setAttribute("null", m_isNull ? 1 : 0);
-
   return el;
 }
 

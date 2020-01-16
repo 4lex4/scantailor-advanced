@@ -6,6 +6,7 @@
 
 #include <QFileInfo>
 #include <vector>
+
 #include "ImageMetadata.h"
 
 class ImageFileInfo {

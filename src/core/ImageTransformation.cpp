@@ -100,7 +100,6 @@ QTransform ImageTransformation::calcCropXform(const QPolygonF& area) {
   const QRectF bounds(area.boundingRect());
   QTransform xform;
   xform.translate(-bounds.x(), -bounds.y());
-
   return xform;
 }
 
@@ -121,7 +120,6 @@ QTransform ImageTransformation::calcPostRotateXform(const double degrees) {
     xform *= QTransform().translate(preRotateRect.left() - postRotateRect.left(),
                                     preRotateRect.top() - postRotateRect.top());
   }
-
   return xform;
 }
 
@@ -146,7 +144,6 @@ QTransform ImageTransformation::calcPostScaleXform(const Dpi& targetDpi) {
   const double yscale = targetDpi.vertical() * origVertUnit.length() / m_origDpi.vertical();
   QTransform xform;
   xform.scale(xscale, yscale);
-
   return xform;
 }
 

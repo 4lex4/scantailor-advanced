@@ -5,6 +5,7 @@
 #define SCANTAILOR_ZONES_EDITABLESPLINE_H_
 
 #include <QPolygonF>
+
 #include "SplineSegment.h"
 #include "SplineVertex.h"
 #include "intrusive_ptr.h"

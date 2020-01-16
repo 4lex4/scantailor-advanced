@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_BACKGROUNDEXECUTOR_H_
 
 #include <memory>
+
 #include "AbstractCommand.h"
 #include "NonCopyable.h"
 #include "PayloadEvent.h"

@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Curve.h"
+
 #include <QDataStream>
+
 #include "VecNT.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
@@ -11,7 +13,6 @@ namespace dewarping {
 struct Curve::CloseEnough {
   bool operator()(const QPointF& p1, const QPointF& p2) {
     const QPointF d(p1 - p2);
-
     return d.x() * d.x() + d.y() * d.y() <= 0.01 * 0.01;
   }
 };
@@ -34,7 +35,6 @@ QDomElement Curve::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.appendChild(serializeXSpline(m_xspline, doc, "xspline"));
   el.appendChild(serializePolyline(m_polyline, doc, "polyline"));
-
   return el;
 }
 
@@ -61,7 +61,6 @@ std::vector<QPointF> Curve::deserializePolyline(const QDomElement& el) {
     strm >> x >> y;
     points.emplace_back(x, y);
   }
-
   return points;
 }
 
@@ -82,7 +81,6 @@ QDomElement Curve::serializePolyline(const std::vector<QPointF>& polyline, QDomD
 
   QDomElement el(doc.createElement(name));
   el.appendChild(doc.createTextNode(QString::fromLatin1(ba.toBase64())));
-
   return el;
 }
 
@@ -90,7 +88,6 @@ bool Curve::approxPolylineMatch(const std::vector<QPointF>& polyline1, const std
   if (polyline1.size() != polyline2.size()) {
     return false;
   }
-
   return std::equal(polyline1.begin(), polyline1.end(), polyline2.begin(), CloseEnough());
 }
 
@@ -107,7 +104,6 @@ QDomElement Curve::serializeXSpline(const XSpline& xspline, QDomDocument& doc, c
     const QPointF pt(xspline.controlPointPosition(i));
     el.appendChild(marshaller.pointF(pt, "point"));
   }
-
   return el;
 }
 
@@ -130,7 +126,6 @@ XSpline Curve::deserializeXSpline(const QDomElement& el) {
     xspline.setControlPointTension(0, 0);
     xspline.setControlPointTension(xspline.numControlPoints() - 1, 0);
   }
-
   return xspline;
 }
 
@@ -152,7 +147,6 @@ bool Curve::splineHasLoops(const XSpline& spline) {
                 }
 #endif
   }
-
   return false;
 }
 }  // namespace dewarping

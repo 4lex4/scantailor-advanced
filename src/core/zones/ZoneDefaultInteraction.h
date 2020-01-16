@@ -6,6 +6,7 @@
 
 #include <QCoreApplication>
 #include <QPointF>
+
 #include "BasicSplineVisualizer.h"
 #include "DragHandler.h"
 #include "DragWatcher.h"

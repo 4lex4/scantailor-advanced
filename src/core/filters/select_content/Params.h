@@ -5,9 +5,11 @@
 #define SCANTAILOR_SELECT_CONTENT_PARAMS_H_
 
 #include <AutoManualMode.h>
+
 #include <QRectF>
 #include <QSizeF>
 #include <cmath>
+
 #include "Dependencies.h"
 #include "Margins.h"
 

@@ -9,6 +9,7 @@
 #include <QRectF>
 #include <QTransform>
 #include <vector>
+
 #include "DepthPerception.h"
 #include "DewarpingOptions.h"
 #include "DistortionModel.h"

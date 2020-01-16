@@ -6,6 +6,7 @@
 
 #include <QLineF>
 #include <QPointF>
+
 #include "SplineVertex.h"
 
 class SplineSegment {

@@ -5,6 +5,7 @@
 #define SCANTAILOR_APP_SYSTEMLOADWIDGET_H_
 
 #include <QWidget>
+
 #include "ui_SystemLoadWidget.h"
 
 class SystemLoadWidget : public QWidget {

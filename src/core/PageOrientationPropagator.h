@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_PAGEORIENTATIONPROPAGATOR_H_
 
 #include <QSizeF>
+
 #include "intrusive_ptr.h"
 
 class CompositeCacheDrivenTask;

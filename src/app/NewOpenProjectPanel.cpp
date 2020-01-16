@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "NewOpenProjectPanel.h"
+
 #include <QFileInfo>
 #include <QPainter>
+
 #include "ColorSchemeManager.h"
 #include "RecentProjects.h"
 #include "Utils.h"

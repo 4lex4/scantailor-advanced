@@ -2,8 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Task.h"
+
 #include <UnitsProvider.h>
+
 #include <utility>
+
 #include "Dpm.h"
 #include "Filter.h"
 #include "FilterUiInterface.h"

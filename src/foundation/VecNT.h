@@ -251,7 +251,6 @@ VecNT<N, T>& VecNT<N, T>::operator=(const VecNT<N, OT>& other) {
   for (size_t i = 0; i < N; ++i) {
     m_data[i] = static_cast<T>(other[i]);
   }
-
   return *this;
 }
 
@@ -260,7 +259,6 @@ VecNT<N, T>& VecNT<N, T>::operator+=(T scalar) {
   for (size_t i = 0; i < N; ++i) {
     m_data[i] += scalar;
   }
-
   return *this;
 }
 
@@ -269,7 +267,6 @@ VecNT<N, T>& VecNT<N, T>::operator+=(const VecNT& other) {
   for (size_t i = 0; i < N; ++i) {
     m_data[i] += other[i];
   }
-
   return *this;
 }
 
@@ -278,7 +275,6 @@ VecNT<N, T>& VecNT<N, T>::operator-=(T scalar) {
   for (size_t i = 0; i < N; ++i) {
     m_data[i] -= scalar;
   }
-
   return *this;
 }
 
@@ -287,7 +283,6 @@ VecNT<N, T>& VecNT<N, T>::operator-=(const VecNT<N, T>& other) {
   for (size_t i = 0; i < N; ++i) {
     m_data[i] -= other[i];
   }
-
   return *this;
 }
 
@@ -296,7 +291,6 @@ VecNT<N, T>& VecNT<N, T>::operator*=(T scalar) {
   for (size_t i = 0; i < N; ++i) {
     m_data[i] *= scalar;
   }
-
   return *this;
 }
 
@@ -311,7 +305,6 @@ T VecNT<N, T>::sum() const {
   for (size_t i = 0; i < N; ++i) {
     sum += m_data[i];
   }
-
   return sum;
 }
 
@@ -321,7 +314,6 @@ T VecNT<N, T>::dot(const VecNT& other) const {
   for (size_t i = 0; i < N; ++i) {
     sum += m_data[i] * other[i];
   }
-
   return sum;
 }
 
@@ -329,7 +321,6 @@ template <size_t N, typename T>
 VecNT<N, T> operator+(const VecNT<N, T>& lhs, const VecNT<N, T>& rhs) {
   VecNT<N, T> res(lhs);
   res += rhs;
-
   return res;
 }
 
@@ -337,7 +328,6 @@ template <size_t N, typename T>
 VecNT<N, T> operator-(const VecNT<N, T>& lhs, const VecNT<N, T>& rhs) {
   VecNT<N, T> res(lhs);
   res -= rhs;
-
   return res;
 }
 
@@ -347,7 +337,6 @@ VecNT<N, T> operator-(const VecNT<N, T>& vec) {
   for (size_t i = 0; i < N; ++i) {
     res[i] = -res[i];
   }
-
   return res;
 }
 
@@ -355,7 +344,6 @@ template <size_t N, typename T>
 VecNT<N, T> operator*(const VecNT<N, T>& vec, T scalar) {
   VecNT<N, T> res(vec);
   res *= scalar;
-
   return res;
 }
 
@@ -363,7 +351,6 @@ template <size_t N, typename T>
 VecNT<N, T> operator*(T scalar, const VecNT<N, T>& vec) {
   VecNT<N, T> res(vec);
   res *= scalar;
-
   return res;
 }
 

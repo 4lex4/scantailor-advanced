@@ -6,6 +6,7 @@
 
 #include <QCoreApplication>
 #include <QImage>
+
 #include "AbstractFilter.h"
 #include "FillZonePropFactory.h"
 #include "FilterResult.h"

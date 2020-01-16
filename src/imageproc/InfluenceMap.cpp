@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "InfluenceMap.h"
+
 #include <QImage>
+
 #include "BinaryImage.h"
 #include "BitOps.h"
 #include "ConnectivityMap.h"
@@ -45,7 +47,6 @@ InfluenceMap::InfluenceMap(const InfluenceMap& other)
 
 InfluenceMap& InfluenceMap::operator=(const InfluenceMap& other) {
   InfluenceMap(other).swap(*this);
-
   return *this;
 }
 
@@ -251,7 +252,6 @@ QImage InfluenceMap::visualized() const {
     srcLine += srcStride;
     dstLine += dstStride;
   }
-
   return dst;
 }  // InfluenceMap::visualized
 }  // namespace imageproc

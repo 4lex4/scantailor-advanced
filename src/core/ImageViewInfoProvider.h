@@ -5,10 +5,12 @@
 #define SCANTAILOR_CORE_IMAGEVIEWINFOPROVIDER_H_
 
 #include <foundation/NonCopyable.h>
+
 #include <QPointF>
 #include <QSizeF>
 #include <list>
 #include <memory>
+
 #include "Dpi.h"
 #include "ImageViewInfoListener.h"
 #include "NonCopyable.h"

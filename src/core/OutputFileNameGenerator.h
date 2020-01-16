@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <Qt>
+
 #include "FileNameDisambiguator.h"
 #include "intrusive_ptr.h"
 

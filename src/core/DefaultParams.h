@@ -12,7 +12,9 @@
 #include <filters/output/PictureShapeOptions.h>
 #include <filters/page_layout/Alignment.h>
 #include <filters/page_split/LayoutType.h>
+
 #include <QtCore/QRectF>
+
 #include "AutoManualMode.h"
 #include "Dpi.h"
 #include "Margins.h"

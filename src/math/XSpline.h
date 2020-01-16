@@ -7,6 +7,7 @@
 #include <QLineF>
 #include <QPointF>
 #include <vector>
+
 #include "NumericTraits.h"
 #include "QuadraticFunction.h"
 #include "VirtualFunction.h"

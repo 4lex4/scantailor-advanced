@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageView.h"
+
 #include <Despeckle.h>
 #include <ImageViewInfoProvider.h>
 #include <NullTaskStatus.h>
@@ -11,10 +12,12 @@
 #include <imageproc/GrayImage.h>
 #include <imageproc/PolygonRasterizer.h>
 #include <imageproc/Transform.h>
+
 #include <QMouseEvent>
 #include <QPainter>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
+
 #include "ImagePresentation.h"
 #include "OptionsWidget.h"
 #include "Params.h"
@@ -311,7 +314,6 @@ Proximity ImageView::cornerProximity(const int edgeMask, const QRectF* box, cons
   } else if (edgeMask & RIGHT) {
     pt.setX(r.right());
   }
-
   return Proximity(pt, mousePos);
 }
 
@@ -339,7 +341,6 @@ Proximity ImageView::edgeProximity(const int edgeMask, const QRectF* box, const 
     default:
       assert(!"Unreachable");
   }
-
   return Proximity::pointAndLineSegment(mousePos, line);
 }
 
@@ -584,7 +585,6 @@ Margins ImageView::calcHardMarginsMM() const {
   margins.setBottom(virtToMm.map(bottomMarginLine).length());
   margins.setLeft(virtToMm.map(leftMarginLine).length());
   margins.setRight(virtToMm.map(rightMarginLine).length());
-
   return margins;
 }  // ImageView::calcHardMarginsMM
 
@@ -618,7 +618,6 @@ QSizeF ImageView::origRectToSizeMM(const QRectF& rect) const {
   const QLineF vertLine(rect.topLeft(), rect.bottomLeft());
 
   const QSizeF sizeMm(virtToMm.map(horLine).length(), virtToMm.map(vertLine).length());
-
   return sizeMm;
 }
 
@@ -632,7 +631,6 @@ ImageView::AggregateSizeChanged ImageView::commitHardMargins(const Margins& marg
   }
 
   m_committedAggregateHardSizeMM = m_aggregateHardSizeMM;
-
   return changed;
 }
 
@@ -779,7 +777,6 @@ void ImageView::removeGuide(const int index) {
 QTransform ImageView::widgetToGuideCs() const {
   QTransform xform(widgetToVirtual());
   xform *= QTransform().translate(-m_outerRect.center().x(), -m_outerRect.center().y());
-
   return xform;
 }
 
@@ -858,7 +855,6 @@ QLineF ImageView::widgetGuideLine(const int index) const {
   } else {
     guideLine = QLineF(guideLine.x1(), widgetRect.top(), guideLine.x2(), widgetRect.bottom());
   }
-
   return guideLine;
 }
 
@@ -869,7 +865,6 @@ int ImageView::getGuideUnderMouse(const QPointF& screenMousePos, const Interacti
       return idxAndGuide.first;
     }
   }
-
   return -1;
 }
 
@@ -995,7 +990,6 @@ QRect ImageView::findContentInArea(const QRect& area) const {
 
   QRect foundArea = QRect(left, top, right - left + 1, bottom - top + 1);
   foundArea.adjust(-1, -1, 1, 1);
-
   return foundArea;
 }
 

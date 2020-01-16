@@ -7,6 +7,7 @@
 #include <QString>
 #include <algorithm>
 #include <cmath>
+
 #include "AutoManualMode.h"
 #include "Dependencies.h"
 

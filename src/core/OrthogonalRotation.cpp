@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OrthogonalRotation.h"
+
 #include <QDomDocument>
 #include <QDomElement>
 #include <QPointF>
@@ -78,7 +79,6 @@ QPointF OrthogonalRotation::rotate(const QPointF& point, const double xmax, cons
     default:
       assert(!"Unreachable");
   }
-
   return rotated;
 }
 
@@ -104,7 +104,6 @@ QPointF OrthogonalRotation::unrotate(const QPointF& point, const double xmax, co
     default:
       assert(!"Unreachable");
   }
-
   return unrotated;
 }
 
@@ -128,7 +127,6 @@ QTransform OrthogonalRotation::transform(const QSizeF& dimensions) const {
   }
 
   t.rotate(m_degrees);
-
   return t;
 }
 

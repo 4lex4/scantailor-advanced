@@ -14,6 +14,7 @@
 #include <memory>
 #include <set>
 #include <vector>
+
 #include "AbstractCommand.h"
 #include "BackgroundTask.h"
 #include "BeforeOrAfter.h"

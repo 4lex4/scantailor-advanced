@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "FillZoneComparator.h"
+
 #include <PolygonUtils.h>
+
 #include "FillColorProperty.h"
 #include "ZoneSet.h"
 
@@ -19,7 +21,6 @@ bool FillZoneComparator::equal(const ZoneSet& lhs, const ZoneSet& rhs) {
       return false;
     }
   }
-
   return lhs_it == lhs_end && rhs_it == rhs_end;
 }
 
@@ -27,13 +28,11 @@ bool FillZoneComparator::equal(const Zone& lhs, const Zone& rhs) {
   if (!PolygonUtils::fuzzyCompare(lhs.spline().toPolygon(), rhs.spline().toPolygon())) {
     return false;
   }
-
   return equal(lhs.properties(), rhs.properties());
 }
 
 bool FillZoneComparator::equal(const PropertySet& lhs, const PropertySet& rhs) {
   using FCP = FillColorProperty;
-
   return lhs.locateOrDefault<FCP>()->color() == rhs.locateOrDefault<FCP>()->color();
 }
 }  // namespace output

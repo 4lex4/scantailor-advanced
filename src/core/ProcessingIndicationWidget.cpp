@@ -2,10 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ProcessingIndicationWidget.h"
+
 #include <ColorInterpolation.h>
+
 #include <QPaintEvent>
 #include <QPainter>
 #include <QTimerEvent>
+
 #include "ColorSchemeManager.h"
 
 using namespace imageproc;
@@ -35,7 +38,6 @@ void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
   QRect animationRect(this->animationRect());
   if (!event->rect().contains(animationRect)) {
     update(animationRect);
-
     return;
   }
 
@@ -73,6 +75,5 @@ QRect ProcessingIndicationWidget::animationRect() const {
   QRect r(0, 0, 80, 80);
   r.moveCenter(rect().center());
   r &= rect();
-
   return r;
 }

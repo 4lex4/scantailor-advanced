@@ -2,12 +2,15 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ProjectFilesDialog.h"
+
 #include <core/IconProvider.h>
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QSettings>
 #include <QSortFilterProxyModel>
 #include <deque>
+
 #include "ImageMetadataLoader.h"
 #include "NonCopyable.h"
 #include "SmartFilenameOrdering.h"
@@ -202,7 +205,6 @@ std::vector<ImageFileInfo> ProjectFilesDialog::inProjectFiles() const {
   std::sort(files.begin(), files.end(), [](const ImageFileInfo& lhs, const ImageFileInfo& rhs) {
     return SmartFilenameOrdering()(lhs.fileInfo(), rhs.fileInfo());
   });
-
   return files;
 }
 
@@ -222,7 +224,6 @@ QString ProjectFilesDialog::sanitizePath(const QString& path) {
       trimmed.remove(0, 1);
     }
   }
-
   return trimmed;
 }
 
@@ -275,7 +276,6 @@ struct FileInfoLess {
       // This takes into account filesystem's case sensitivity.
       return false;
     }
-
     return lhs.absoluteFilePath() < rhs.absoluteFilePath();
   }
 };
@@ -363,21 +363,18 @@ void ProjectFilesDialog::removeFromProject() {
 void ProjectFilesDialog::onOK() {
   if (m_inProjectFiles->count() == 0) {
     QMessageBox::warning(this, tr("Error"), tr("No files in project!"));
-
     return;
   }
 
   const QDir inpDir(inpDirLine->text());
   if (!inpDir.isAbsolute() || !inpDir.exists()) {
     QMessageBox::warning(this, tr("Error"), tr("Input directory is not set or doesn't exist."));
-
     return;
   }
 
   const QDir outDir(outDirLine->text());
   if (inpDir == outDir) {
     QMessageBox::warning(this, tr("Error"), tr("Input and output directories can't be the same."));
-
     return;
   }
 
@@ -395,14 +392,12 @@ void ProjectFilesDialog::onOK() {
     if (create) {
       if (!outDir.mkpath(outDir.path())) {
         QMessageBox::warning(this, tr("Error"), tr("Unable to create output directory."));
-
         return;
       }
     }
   }
   if (!outDir.isAbsolute() || !outDir.exists()) {
     QMessageBox::warning(this, tr("Error"), tr("Output directory is not set or doesn't exist."));
-
     return;
   }
 
@@ -433,7 +428,6 @@ void ProjectFilesDialog::startLoadingMetadata() {
 void ProjectFilesDialog::timerEvent(QTimerEvent* event) {
   if (event->timerId() != m_loadTimerId) {
     QWidget::timerEvent(event);
-
     return;
   }
 
@@ -471,7 +465,6 @@ void ProjectFilesDialog::finishLoadingMetadata() {
                          tr("Some of the files failed to load.\n"
                             "Either we don't support their format, or they are broken.\n"
                             "You should remove them from the project."));
-
     return;
   }
 
@@ -548,7 +541,6 @@ QVariant ProjectFilesDialog::FileList::data(const QModelIndex& index, const int 
     default:
       break;
   }
-
   return QVariant();
 }
 
@@ -595,7 +587,6 @@ ProjectFilesDialog::FileList::LoadStatus ProjectFilesDialog::FileList::loadNextF
   emit dataChanged(idx, idx);
 
   m_itemsToLoad.pop_front();
-
   return status;
 }  // ProjectFilesDialog::FileList::loadNextFile
 
@@ -610,7 +601,6 @@ ProjectFilesDialog::SortedFileList::SortedFileList(FileList& delegate) : m_deleg
 bool ProjectFilesDialog::SortedFileList::lessThan(const QModelIndex& lhs, const QModelIndex& rhs) const {
   const Item& lhsItem = m_delegate.item(lhs);
   const Item& rhsItem = m_delegate.item(rhs);
-
   return ItemVisualOrdering()(lhsItem, rhsItem);
 }
 
@@ -623,6 +613,5 @@ bool ProjectFilesDialog::ItemVisualOrdering::operator()(const Item& lhs, const I
     // Failed ones go to the top.
     return lhsFailed;
   }
-
   return SmartFilenameOrdering()(lhs.fileInfo(), rhs.fileInfo());
 }

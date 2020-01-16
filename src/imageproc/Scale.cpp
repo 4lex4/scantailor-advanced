@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Scale.h"
+
 #include <cassert>
+
 #include "GrayImage.h"
 
 namespace imageproc {
@@ -51,7 +53,6 @@ static GrayImage scaleDownIntGrayToGray(const GrayImage& src, const QSize& dstSi
     srcLine += srcStrideScaled;
     dstLine += dstStride;
   }
-
   return dst;
 }  // scaleDownIntGrayToGray
 
@@ -95,7 +96,6 @@ static GrayImage scaleUpIntGrayToGray(const GrayImage& src, const QSize& dstSize
     srcLine += srcStride;
     dstLine += dstStrideScaled;
   }
-
   return dst;
 }  // scaleUpIntGrayToGray
 
@@ -116,7 +116,6 @@ static double calc32xRatio1(const int dst, const int src) {
     --src32;
     ratio = (double) src32 / dst;
   }
-
   return ratio;
 }
 
@@ -172,7 +171,6 @@ static GrayImage scaleUpGrayToGray(const GrayImage& src, const QSize& dstSize) {
       dstLine[dx] = static_cast<uint8_t>(pixValue);
     }
   }
-
   return dst;
 }  // scaleUpGrayToGray
 
@@ -193,7 +191,6 @@ static double calc32xRatio2(const int dst, const int src) {
     --src32;
     ratio = (double) src32 / dst;
   }
-
   return ratio;
 }
 
@@ -341,7 +338,6 @@ static GrayImage scaleGrayToGray(const GrayImage& src, const QSize& dstSize) {
       dstLine[dx] = static_cast<uint8_t>(pixValue);
     }
   }
-
   return dst;
 }  // scaleGrayToGray
 
@@ -357,7 +353,6 @@ GrayImage scaleToGray(const GrayImage& src, const QSize& dstSize) {
   if (dstSize.isEmpty()) {
     return GrayImage();
   }
-
   return scaleGrayToGray(src, dstSize);
 }
 }  // namespace imageproc

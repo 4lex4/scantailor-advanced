@@ -7,6 +7,7 @@
 #include <QSize>
 #include <cassert>
 #include <cstdint>
+
 #include "BinaryImage.h"
 
 namespace imageproc {
@@ -142,7 +143,6 @@ class BitProxy {
     assert(bit <= 1);
     const uint32_t mask = uint32_t(1) << m_shift;
     m_word = (m_word & ~mask) | (bit << m_shift);
-
     return *this;
   }
 

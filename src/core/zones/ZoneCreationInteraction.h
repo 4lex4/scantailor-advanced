@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QPointF>
+
 #include "BasicSplineVisualizer.h"
 #include "DragHandler.h"
 #include "DragWatcher.h"

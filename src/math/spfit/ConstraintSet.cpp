@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ConstraintSet.h"
+
 #include <boost/foreach.hpp>
+
 #include "FittableSpline.h"
 
 namespace spfit {
@@ -59,7 +61,6 @@ void ConstraintSet::constrainControlPoint(int cpIdx, const QLineF& line) {
 
   if (line.p1() == line.p2()) {
     constrainControlPoint(cpIdx, line.p1());
-
     return;
   }
 
@@ -90,7 +91,6 @@ void ConstraintSet::constrainControlPoint(int cpIdx, const QLineF& line) {
 void ConstraintSet::constrainSplinePoint(double t, const QLineF& line) {
   if (line.p1() == line.p2()) {
     constrainSplinePoint(t, line.p1());
-
     return;
   }
 

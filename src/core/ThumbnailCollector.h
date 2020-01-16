@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_THUMBNAILCOLLECTOR_H_
 
 #include <memory>
+
 #include "AbstractFilterDataCollector.h"
 
 class ThumbnailPixmapCache;

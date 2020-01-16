@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <set>
 #include <vector>
+
 #include "PageInfo.h"
 
 class PageSequence {

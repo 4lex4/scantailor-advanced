@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Binarize.h"
+
 #include <QDebug>
 #include <cassert>
 #include <cmath>
+
 #include "BinaryImage.h"
 #include "Grayscale.h"
 #include "IntegralImage.h"
@@ -16,7 +18,6 @@ BinaryImage binarizeOtsu(const QImage& src) {
 
 BinaryImage binarizeMokji(const QImage& src, const unsigned maxEdgeWidth, const unsigned minEdgeMagnitude) {
   const BinaryThreshold threshold(BinaryThreshold::mokjiThreshold(src, maxEdgeWidth, minEdgeMagnitude));
-
   return BinaryImage(src, threshold);
 }
 
@@ -94,7 +95,6 @@ BinaryImage binarizeSauvola(const QImage& src, const QSize windowSize, const dou
     grayLine += grayBpl;
     bwLine += bwWpl;
   }
-
   return bwImg;
 }  // binarizeSauvola
 
@@ -193,7 +193,6 @@ BinaryImage binarizeWolf(const QImage& src,
       }
     }
   }
-
   return bwImg;
 }  // binarizeWolf
 

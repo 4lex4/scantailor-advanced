@@ -6,6 +6,7 @@
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <list>
+
 #include "Zone.h"
 
 class PropertyFactory;

@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_STAGESEQUENCE_H_
 
 #include <vector>
+
 #include "AbstractFilter.h"
 #include "NonCopyable.h"
 #include "filters/deskew/Filter.h"

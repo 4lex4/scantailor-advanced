@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SplineFitter.h"
+
 #include <boost/foreach.hpp>
+
 #include "ConstraintSet.h"
 #include "ModelShape.h"
 
@@ -130,7 +132,6 @@ OptimizationResult SplineFitter::optimize(double internalForceWeight) {
     const Vec2d delta(m_optimizer.displacementVector() + i * 2);
     m_spline->moveControlPoint(i, m_spline->controlPointPosition(i) + delta);
   }
-
   return res;
 }
 

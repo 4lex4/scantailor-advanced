@@ -2,11 +2,14 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Application.h"
+
 #include <config.h>
+
 #include <QDir>
 #include <QDirIterator>
 #include <QFontDatabase>
 #include <QTemporaryDir>
+
 #include "OutOfMemoryHandler.h"
 
 Application::Application(int& argc, char** argv) : QApplication(argc, argv), m_currentLocale("en") {
@@ -51,7 +54,6 @@ std::list<QString> Application::getLanguagesList() const {
   std::list<QString> list{"en"};
   std::transform(m_translationsMap.begin(), m_translationsMap.end(), std::back_inserter(list),
                  [](const std::pair<QString, QString>& val) { return val.first; });
-
   return list;
 }
 

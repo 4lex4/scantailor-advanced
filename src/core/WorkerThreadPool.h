@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QSettings>
 #include <memory>
+
 #include "BackgroundTask.h"
 #include "FilterResult.h"
 

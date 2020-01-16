@@ -5,10 +5,12 @@
 #include <BinaryImage.h>
 #include <GrayImage.h>
 #include <Morphology.h>
+
 #include <QImage>
 #include <QPoint>
 #include <QSize>
 #include <boost/test/unit_test.hpp>
+
 #include "Utils.h"
 
 namespace imageproc {

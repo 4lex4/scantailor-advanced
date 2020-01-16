@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DespeckleState.h"
+
 #include <RasterOp.h>
+
 #include "DebugImages.h"
 #include "Despeckle.h"
 #include "DespeckleVisualization.h"
@@ -36,7 +38,6 @@ DespeckleState DespeckleState::redespeckle(const double level, const TaskStatus&
   if (level == 0) {
     // Null speckles image is equivalent to a white one.
     newState.m_speckles.release();
-
     return newState;
   }
 
@@ -45,7 +46,6 @@ DespeckleState DespeckleState::redespeckle(const double level, const TaskStatus&
   status.throwIfCancelled();
 
   rasterOp<RopSubtract<RopSrc, RopDst>>(newState.m_speckles, m_everythingBW);
-
   return newState;
 }  // DespeckleState::redespeckle
 
@@ -78,7 +78,6 @@ QImage DespeckleState::overlaySpeckles(const QImage& mixed, const imageproc::Bin
     resultLine += resultStride;
     specklesLine += specklesStride;
   }
-
   return result;
 }  // DespeckleState::overlaySpeckles
 
@@ -109,7 +108,6 @@ BinaryImage DespeckleState::extractBW(const QImage& mixed) {
     mixedLine += mixedStride;
     resultLine += resultStride;
   }
-
   return result;
 }
 

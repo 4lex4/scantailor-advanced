@@ -4,6 +4,7 @@
 #include "CacheDrivenTask.h"
 
 #include <utility>
+
 #include "IncompleteThumbnail.h"
 #include "PageInfo.h"
 #include "PageLayoutAdapter.h"
@@ -32,7 +33,6 @@ static ProjectPages::LayoutType toPageLayoutType(const PageLayout& layout) {
   }
 
   assert(!"Unreachable");
-
   return ProjectPages::ONE_PAGE_LAYOUT;
 }
 
@@ -51,7 +51,6 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
       thumbCol->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
           thumbCol->thumbnailCache(), thumbCol->maxLogicalThumbSize(), pageInfo.imageId(), xform)));
     }
-
     return;
   }
 
@@ -67,7 +66,6 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
     ImageTransformation newXform(xform);
     newXform.setPreCropArea(layout.pageOutline(pageInfo.id().subPage()).toPolygon());
     m_nextTask->process(pageInfo, collector, newXform);
-
     return;
   }
 

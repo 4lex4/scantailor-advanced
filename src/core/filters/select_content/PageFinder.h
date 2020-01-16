@@ -5,9 +5,10 @@
 #define SCANTAILOR_SELECT_CONTENT_PAGEFINDER_H_
 
 #include <BinaryThreshold.h>
-#include "Margins.h"
 
 #include <Qt>
+
+#include "Margins.h"
 
 class TaskStatus;
 class DebugImages;

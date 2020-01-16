@@ -6,6 +6,7 @@
 #include <BinaryThreshold.h>
 #include <PolygonRasterizer.h>
 #include <RasterOp.h>
+
 #include <QBrush>
 #include <QColor>
 #include <QImage>
@@ -17,6 +18,7 @@
 #include <Qt>
 #include <boost/test/unit_test.hpp>
 #include <cmath>
+
 #include "Utils.h"
 
 namespace imageproc {
@@ -39,7 +41,6 @@ static QPolygonF createShape(const QSize& imageSize, double radius) {
     angle += step * 2;
     poly.push_back(center + QPointF(std::cos(angle), std::sin(angle)) * radius);
   }
-
   return poly;
 }
 
@@ -54,7 +55,6 @@ static bool fuzzyCompare(const BinaryImage& img, const QImage& control) {
 
   // Are there pixels different in both cases?
   rasterOp<RopAnd<RopSrc, RopDst>>(control1, control2);
-
   return control1.countBlackPixels() == 0;
 }
 
@@ -72,7 +72,6 @@ static bool testFillShape(const QSize& imageSize, const QPolygonF& shape, Qt::Fi
     painter.setPen(Qt::NoPen);
     painter.drawPolygon(shape, fillRule);
   }
-
   return fuzzyCompare(bImage, qImage);
 }
 
@@ -90,7 +89,6 @@ static bool testFillExceptShape(const QSize& imageSize, const QPolygonF& shape, 
     painter.setPen(Qt::NoPen);
     painter.drawPolygon(shape, fillRule);
   }
-
   return fuzzyCompare(bImage, qImage);
 }
 

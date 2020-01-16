@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_IMAGEID_H_
 
 #include <foundation/Hashes.h>
+
 #include <QString>
 
 class QFileInfo;

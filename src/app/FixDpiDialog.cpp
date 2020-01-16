@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "FixDpiDialog.h"
+
 #include <QSortFilterProxyModel>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
+
 #include "ColorSchemeManager.h"
 
 // To be able to use it in QVariant
@@ -265,14 +267,12 @@ void FixDpiDialog::dpiValueChanged() {
 
   if ((m_xDpiInitialValue == xDpi->text()) && (m_yDpiInitialValue == yDpi->text())) {
     applyBtn->setEnabled(false);
-
     return;
   }
 
 
   if (metadata.isDpiOK()) {
     applyBtn->setEnabled(true);
-
     return;
   }
 
@@ -343,7 +343,6 @@ void FixDpiDialog::setDpiForm(const ImageMetadata& metadata) {
 
   if (dpi.isNull()) {
     resetDpiForm();
-
     return;
   }
 
@@ -366,7 +365,6 @@ void FixDpiDialog::updateDpiCombo() {
       if (data.isValid()) {
         if (dpi == data.toSize()) {
           dpiCombo->setCurrentIndex(i);
-
           return;
         }
       }
@@ -419,7 +417,6 @@ bool FixDpiDialog::DpiCounts::allDpisOK() const {
   // We put wrong DPIs to the front, so if the first one is OK,
   // the others are OK as well.
   const auto it(m_counts.begin());
-
   return it == m_counts.end() || it->first.isDpiOK();
 }
 
@@ -446,7 +443,6 @@ ImageMetadata FixDpiDialog::DpiCounts::aggregate(const Scope scope) const {
     // If this one is OK, the following ones are OK as well.
     return it->first;
   }
-
   return ImageMetadata();
 }
 
@@ -490,7 +486,6 @@ bool FixDpiDialog::TreeModel::isVisibleForFilter(const QModelIndex& parent, int 
     const SizeGroup& group = m_sizes[parent.row()];
     const SizeGroup::Item& item = group.items()[row];
     const ImageFileInfo& file = m_files[item.fileIdx];
-
     return !file.imageInfo()[item.imageIdx].isDpiOK();
   } else {
     // Should not happen.
@@ -562,7 +557,6 @@ QModelIndex FixDpiDialog::TreeModel::index(const int row, const int column, cons
     // An image within some size group.
     return createIndex(row, column, (void*) &m_sizes[parent.row()]);
   }
-
   return QModelIndex();
 }
 
@@ -581,7 +575,6 @@ QModelIndex FixDpiDialog::TreeModel::parent(const QModelIndex& index) const {
   } else {
     // Image -> size group.
     const auto* group = static_cast<const SizeGroup*>(ptr);
-
     return createIndex(static_cast<int>(group - &m_sizes[0]), index.column(), &m_sizeGroupNodeId);
   }
 }
@@ -627,7 +620,6 @@ QVariant FixDpiDialog::TreeModel::data(const QModelIndex& index, const int role)
       return QVariant::fromValue(file.imageInfo()[item.imageIdx]);
     }
   }
-
   return QVariant();
 }  // FixDpiDialog::TreeModel::data
 
@@ -719,7 +711,6 @@ FixDpiDialog::SizeGroup& FixDpiDialog::TreeModel::sizeGroupFor(const QSize size)
     return *it;
   } else {
     m_sizes.emplace_back(size);
-
     return m_sizes.back();
   }
 }
@@ -743,6 +734,5 @@ QVariant FixDpiDialog::FilterModel::data(const QModelIndex& index, int role) con
   if (role == AGGREGATE_METADATA_ROLE) {
     role = AGGREGATE_NOT_OK_METADATA_ROLE;
   }
-
   return QSortFilterProxyModel::data(index, role);
 }

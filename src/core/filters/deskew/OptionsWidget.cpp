@@ -4,6 +4,7 @@
 #include "OptionsWidget.h"
 
 #include <utility>
+
 #include "ApplyDialog.h"
 #include "ScopedIncDec.h"
 #include "Settings.h"

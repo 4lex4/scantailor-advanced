@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Settings.h"
+
 #include "../../Utils.h"
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
@@ -62,7 +63,6 @@ void Settings::setImageRotationLocked(const ImageId& imageId, const OrthogonalRo
 
 bool Settings::isRotationNull(const ImageId& imageId) const {
   QMutexLocker locker(&m_mutex);
-
   return (m_perImageRotation.find(imageId) == m_perImageRotation.end());
 }
 }  // namespace fix_orientation

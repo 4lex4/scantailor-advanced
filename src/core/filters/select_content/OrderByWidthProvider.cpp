@@ -31,7 +31,6 @@ bool OrderByWidthProvider::precedes(const PageId& lhsPage,
     // Invalid (unknown) sizes go to the back.
     return lhsValid;
   }
-
   return lhsSize.width() < rhsSize.width();
 }
 }  // namespace select_content

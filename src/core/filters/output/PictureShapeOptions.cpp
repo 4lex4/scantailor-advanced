@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PictureShapeOptions.h"
+
 #include <QDomDocument>
 
 namespace output {
@@ -18,7 +19,6 @@ QDomElement PictureShapeOptions::toXml(QDomDocument& doc, const QString& name) c
   el.setAttribute("pictureShape", formatPictureShape(m_pictureShape));
   el.setAttribute("sensitivity", m_sensitivity);
   el.setAttribute("higherSearchSensitivity", m_higherSearchSensitivity ? "1" : "0");
-
   return el;
 }
 
@@ -54,7 +54,6 @@ QString PictureShapeOptions::formatPictureShape(PictureShape type) {
       str = "rectangular";
       break;
   }
-
   return str;
 }
 

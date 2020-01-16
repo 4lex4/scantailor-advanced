@@ -5,9 +5,11 @@
 #define SCANTAILOR_CORE_DEBUGIMAGESIMPL_H_
 
 #include <imageproc/DebugImages.h>
+
 #include <QString>
 #include <boost/function.hpp>
 #include <deque>
+
 #include "AutoRemovingFile.h"
 #include "intrusive_ptr.h"
 #include "ref_countable.h"

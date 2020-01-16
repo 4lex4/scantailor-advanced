@@ -3,9 +3,11 @@
 
 #include <Binarize.h>
 #include <BinaryImage.h>
+
 #include <QImage>
 #include <QSize>
 #include <boost/test/unit_test.hpp>
+
 #include "Utils.h"
 
 namespace imageproc {

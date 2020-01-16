@@ -5,6 +5,7 @@
 #define SCANTAILOR_ZONES_SPLINEVERTEX_H_
 
 #include <QPointF>
+
 #include "NonCopyable.h"
 #include "intrusive_ptr.h"
 

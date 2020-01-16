@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PageLayoutEstimator.h"
+
 #include <Binarize.h>
 #include <BinaryThreshold.h>
 #include <ConnComp.h>
@@ -21,11 +22,13 @@
 #include <SlicedHistogram.h>
 #include <Transform.h>
 #include <imageproc/OrthogonalRotation.h>
+
 #include <QDebug>
 #include <QPainter>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
+
 #include "ContentSpanFinder.h"
 #include "DebugImages.h"
 #include "ImageMetadata.h"
@@ -108,11 +111,9 @@ std::unique_ptr<PageLayout> autoDetectSinglePageLayout(const LayoutType layoutTy
     const double lineCenter = lineCenterX(line);
     if (lineCenter < imageCenter) {
       const QLineF rightLine(virtualImageRect.topRight(), virtualImageRect.bottomRight());
-
       return std::make_unique<PageLayout>(virtualImageRect, line, rightLine);
     } else {
       const QLineF leftLine(virtualImageRect.topLeft(), virtualImageRect.bottomLeft());
-
       return std::make_unique<PageLayout>(virtualImageRect, leftLine, line);
     }
   }
@@ -146,7 +147,6 @@ std::unique_ptr<PageLayout> autoDetectTwoPageLayout(const std::vector<QLineF>& l
       bestLine = &line;
     }
   }
-
   return std::make_unique<PageLayout>(virtualImageRect, *bestLine);
 }
 
@@ -168,7 +168,6 @@ int numPages(const LayoutType layoutType, const ImageTransformation& preXform) {
       numPages = 2;
       break;
   }
-
   return numPages;
 }
 }  // anonymous namespace
@@ -186,7 +185,6 @@ PageLayout PageLayoutEstimator::estimatePageLayout(const LayoutType layoutType,
   if (layout) {
     return *layout;
   }
-
   return cutAtWhitespace(layoutType, input, preXform, bwThreshold, dbg);
 }
 
@@ -202,7 +200,6 @@ class BadTwoPageSplitter {
    */
   bool operator()(const QLineF& line) {
     const double dist = std::fabs(lineCenterX(line) - m_imageCenter);
-
     return dist > m_distFromCenterThreshold;
   }
 
@@ -275,14 +272,12 @@ std::unique_ptr<PageLayout> PageLayoutEstimator::tryCutAtFoldingLine(const Layou
       lines.push_back(leftDist < rightDist ? leftLine : rightLine);
       break;
     }
-
     return autoDetectSinglePageLayout(layoutType, lines, virtualImageRect, grayDownscaled, outToDownscaled, dbg);
   } else {
     assert(numPages == 2);
     // In two page mode we ignore the lines that are too close
     // to the edge.
     lines.erase(std::remove_if(lines.begin(), lines.end(), BadTwoPageSplitter(virtualImageRect.width())), lines.end());
-
     return autoDetectTwoPageLayout(lines, virtualImageRect);
   }
 }  // PageLayoutEstimator::tryCutAtFoldingLine
@@ -368,7 +363,6 @@ PageLayout PageLayoutEstimator::cutAtWhitespace(const LayoutType layoutType,
   PageLayout transformedLayout(layout.transformed(xform.inverted()));
   // We don't want a skewed outline!
   transformedLayout.setUncutOutline(preXform.resultingRect());
-
   return transformedLayout;
 }  // PageLayoutEstimator::cutAtWhitespace
 
@@ -435,7 +429,6 @@ PageLayout PageLayoutEstimator::cutAtWhitespaceDeskewed150(const LayoutType layo
     if (dbg) {
       visualizeSpans(*dbg, spans, input, "spans_refined");
     }
-
     return processContentSpansTwoPages(layoutType, spans, width, height);
   }
 }  // PageLayoutEstimator::cutAtWhitespaceDeskewed150
@@ -456,7 +449,6 @@ imageproc::BinaryImage PageLayoutEstimator::to300DpiBinary(const QImage& img,
                       std::max(1, (int) std::ceil(yfactor * img.height())));
 
   const GrayImage newImage(scaleToGray(GrayImage(img), newSize));
-
   return BinaryImage(newImage, binaryThreshold);
 }
 
@@ -496,7 +488,6 @@ BinaryImage PageLayoutEstimator::removeGarbageAnd2xDownscale(const BinaryImage& 
   }
 
   rasterOp<RopSubtract<RopDst, RopSrc>>(reduced, shadowsDilated);
-
   return reduced;
 }  // PageLayoutEstimator::removeGarbageAnd2xDownscale
 
@@ -505,7 +496,6 @@ bool PageLayoutEstimator::checkForLeftOffcut(const BinaryImage& image) {
   const int width = 3;
   QRect rect(margin, 0, width, image.height());
   rect.adjust(0, margin, 0, -margin);
-
   return image.countBlackPixels(rect) != 0;
 }
 
@@ -514,7 +504,6 @@ bool PageLayoutEstimator::checkForRightOffcut(const BinaryImage& image) {
   const int width = 3;
   QRect rect(image.width() - margin - width, 0, width, image.height());
   rect.adjust(0, margin, 0, -margin);
-
   return image.countBlackPixels(rect) != 0;
 }
 
@@ -613,7 +602,6 @@ PageLayout PageLayoutEstimator::processContentSpansSinglePage(const LayoutType l
     }
 
     const QLineF rightLine(virtualImageRect.topRight(), virtualImageRect.bottomRight());
-
     return PageLayout(virtualImageRect, vertLine(x), rightLine);
   }
 
@@ -637,14 +625,12 @@ PageLayout PageLayoutEstimator::processContentSpansSinglePage(const LayoutType l
     }
 
     const QLineF leftLine(virtualImageRect.topLeft(), virtualImageRect.bottomLeft());
-
     return PageLayout(virtualImageRect, leftLine, vertLine(x));
   }
 
   if (layoutType == PAGE_PLUS_OFFCUT) {
     const QLineF line1(virtualImageRect.topLeft(), virtualImageRect.bottomLeft());
     const QLineF line2(virtualImageRect.topRight(), virtualImageRect.bottomRight());
-
     return PageLayout(virtualImageRect, line1, line2);
   } else {
     // Returning a SINGLE_PAGE_UNCUT layout.
@@ -742,7 +728,6 @@ PageLayout PageLayoutEstimator::processContentSpansTwoPages(const LayoutType lay
     const Span gap(spans[widestGap], spans[widestGap + 1]);
     x = gap.center();
   }
-
   return PageLayout(virtualImageRect, vertLine(x));
 }  // PageLayoutEstimator::processContentSpansTwoPages
 
@@ -767,7 +752,6 @@ PageLayout PageLayoutEstimator::processTwoPagesWithSingleSpan(const Span& span, 
       x = std::min(width, span.end() + 15);
     }
   }
-
   return PageLayout(virtualImageRect, vertLine(x));
 }
 

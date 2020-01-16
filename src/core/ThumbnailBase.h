@@ -8,6 +8,7 @@
 #include <QRectF>
 #include <QSizeF>
 #include <QTransform>
+
 #include "ImageId.h"
 #include "ImageTransformation.h"
 #include "NonCopyable.h"

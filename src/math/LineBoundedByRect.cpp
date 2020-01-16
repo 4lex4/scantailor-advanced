@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "LineBoundedByRect.h"
+
 #include "LineIntersectionScalar.h"
 #include "NumericTraits.h"
 
@@ -34,7 +35,6 @@ bool lineBoundedByRect(QLineF& line, const QRectF& rect) {
 
   if (max > min) {
     line = QLineF(line.pointAt(min), line.pointAt(max));
-
     return true;
   } else {
     return false;

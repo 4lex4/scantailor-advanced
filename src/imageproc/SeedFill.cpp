@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SeedFill.h"
+
 #include <QDebug>
+
 #include "GrayImage.h"
 #include "SeedFillGeneric.h"
 
@@ -16,7 +18,6 @@ inline uint32_t fillWordHorizontally(uint32_t word, const uint32_t mask) {
     word |= (word << 1) | (word >> 1);
     word &= mask;
   } while (word != prevWord);
-
   return word;
 }
 
@@ -300,7 +301,6 @@ uint8_t seedFillGray4SlowIteration(GrayImage& seed, const GrayImage& mask) {
     seedLine -= seedStride;
     maskLine -= maskStride;
   }
-
   return modified;
 }  // seedFillGray4SlowIteration
 
@@ -323,11 +323,9 @@ uint8_t seedFillGray8SlowIteration(GrayImage& seed, const GrayImage& mask) {
   // Some code below doesn't handle such cases.
   if (w == 1) {
     seedFillGrayVertLine(seedLine, seedStride, maskLine, maskStride, h);
-
     return 0;
   } else if (h == 1) {
     seedFillGrayHorLine(seedLine, maskLine, w);
-
     return 0;
   }
 
@@ -394,7 +392,6 @@ uint8_t seedFillGray8SlowIteration(GrayImage& seed, const GrayImage& mask) {
     seedLine -= seedStride;
     maskLine -= maskStride;
   }
-
   return modified;
 }  // seedFillGray8SlowIteration
 }  // namespace
@@ -415,14 +412,12 @@ BinaryImage seedFill(const BinaryImage& seed, const BinaryImage& mask, const Con
       seedFill8Iteration(img, mask);
     }
   } while (img != prev);
-
   return img;
 }
 
 GrayImage seedFillGray(const GrayImage& seed, const GrayImage& mask, const Connectivity connectivity) {
   GrayImage result(seed);
   seedFillGrayInPlace(result, mask, connectivity);
-
   return result;
 }
 
@@ -451,7 +446,6 @@ GrayImage seedFillGraySlow(const GrayImage& seed, const GrayImage& mask, const C
       // Continue until done.
     }
   }
-
   return img;
 }
 }  // namespace imageproc

@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Settings.h"
+
 #include <iostream>
+
 #include "../../Utils.h"
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
@@ -16,7 +18,6 @@ Settings::Settings() : m_pageDetectionBox(0.0, 0.0), m_pageDetectionTolerance(0.
     if (it != m_pageParams.end()) {
       const Params& params = it->second;
       const QSizeF& contentSizeMM = params.contentSizeMM();
-
       return std::sqrt(contentSizeMM.width() * contentSizeMM.height() / 4 / 25.4);
     } else {
       return .0;
@@ -76,7 +77,6 @@ std::unique_ptr<Params> Settings::getPageParams(const PageId& pageId) const {
 
 bool Settings::isParamsNull(const PageId& pageId) const {
   QMutexLocker locker(&m_mutex);
-
   return (m_pageParams.find(pageId) == m_pageParams.end());
 }
 

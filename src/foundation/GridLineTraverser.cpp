@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "GridLineTraverser.h"
+
 #include "LineIntersectionScalar.h"
 
 GridLineTraverser::GridLineTraverser(const QLineF& line) {
@@ -31,6 +32,5 @@ GridLineTraverser::GridLineTraverser(const QLineF& line) {
 QPoint GridLineTraverser::next() {
   const QPointF pt(m_line.pointAt(m_stopsDone * m_dt));
   ++m_stopsDone;
-
   return pt.toPoint();
 }

@@ -6,10 +6,12 @@
 #define SCANTAILOR_OUTPUT_PICTUREZONEEDITOR_H_
 
 #include <BinaryImage.h>
+
 #include <QPixmap>
 #include <QPoint>
 #include <QTimer>
 #include <QTransform>
+
 #include "DragHandler.h"
 #include "EditableSpline.h"
 #include "EditableZoneSet.h"

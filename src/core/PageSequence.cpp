@@ -34,7 +34,6 @@ std::set<PageId> PageSequence::selectAll() const {
   for (const PageInfo& pageInfo : m_pages) {
     selection.insert(pageInfo.id());
   }
-
   return selection;
 }
 
@@ -49,7 +48,6 @@ std::set<PageId> PageSequence::selectPagePlusFollowers(const PageId& page) const
   for (; it != end; ++it) {
     selection.insert(it->id());
   }
-
   return selection;
 }
 
@@ -73,6 +71,5 @@ std::set<PageId> PageSequence::selectEveryOther(const PageId& base) const {
     }
     ++idx;
   }
-
   return selection;
 }

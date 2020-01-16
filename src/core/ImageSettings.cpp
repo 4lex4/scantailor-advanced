@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageSettings.h"
+
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
 #include "Utils.h"
@@ -56,7 +57,6 @@ QDomElement ImageSettings::PageParams::toXml(QDomDocument& doc, const QString& n
   QDomElement el(doc.createElement(name));
   el.setAttribute("bwThreshold", m_bwThreshold);
   el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");
-
   return el;
 }
 

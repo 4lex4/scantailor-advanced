@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ApplyColorsDialog.h"
+
 #include "PageSelectionAccessor.h"
 
 namespace output {
@@ -39,7 +40,6 @@ void ApplyColorsDialog::onSubmit() {
   } else if (selectedPagesRB->isChecked()) {
     emit accepted(m_selectedPages);
     accept();
-
     return;
   }
 

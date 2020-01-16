@@ -2,9 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OptionsWidget.h"
+
 #include <core/IconProvider.h>
+
 #include <cassert>
 #include <utility>
+
 #include "ApplyDialog.h"
 #include "Filter.h"
 #include "ProjectPages.h"

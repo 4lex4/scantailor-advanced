@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Optimizer.h"
+
 #include <boost/foreach.hpp>
+
 #include "MatrixCalc.h"
 
 namespace spfit {
@@ -104,7 +106,6 @@ OptimizationResult Optimizer::optimize(double internalForceWeight) {
     m_externalForce.reset();
     m_internalForce.reset();
     m_x.fill(0);  // To make undoLastStep() work as expected.
-
     return OptimizationResult(totalForceBefore, totalForceBefore);
   }
 
@@ -114,7 +115,6 @@ OptimizationResult Optimizer::optimize(double internalForceWeight) {
   // The last thing remaining is to adjust constraints,
   // as they depend on the current variables.
   adjustConstraints(1.0);
-
   return OptimizationResult(totalForceBefore, totalForceAfter);
 }  // Optimizer::optimize
 

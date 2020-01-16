@@ -83,13 +83,11 @@ class MatT {
 
   const T& operator()(size_t row, size_t col) const {
     assert(row < m_rows && col < m_cols);
-
     return m_data[row + col * m_rows];
   }
 
   T& operator()(size_t row, size_t col) {
     assert(row < m_rows && col < m_cols);
-
     return m_data[row + col * m_rows];
   }
 
@@ -153,7 +151,6 @@ MatT<T>::MatT(const MatT<OT>& other) : m_rows(other.rows()), m_cols(other.cols()
 template <typename T>
 MatT<T>& MatT<T>::operator=(const MatT& other) {
   MatT(other).swap(*this);
-
   return *this;
 }
 
@@ -161,7 +158,6 @@ template <typename T>
 template <typename OT>
 MatT<T>& MatT<T>::operator=(const MatT<OT>& other) {
   MatT(other).swap(*this);
-
   return *this;
 }
 
@@ -173,7 +169,6 @@ MatT<T>& MatT<T>::operator+=(const MatT& rhs) {
   for (size_t i = 0; i < len; ++i) {
     m_data[i] += rhs.m_data[i];
   }
-
   return *this;
 }
 
@@ -185,7 +180,6 @@ MatT<T>& MatT<T>::operator-=(const MatT& rhs) {
   for (size_t i = 0; i < len; ++i) {
     m_data[i] -= rhs.m_data[i];
   }
-
   return *this;
 }
 
@@ -195,7 +189,6 @@ MatT<T>& MatT<T>::operator*=(const T scalar) {
   for (size_t i = 0; i < len; ++i) {
     m_data[i] *= scalar;
   }
-
   return *this;
 }
 
@@ -229,7 +222,6 @@ template <typename T>
 MatT<T> operator*(const MatT<T>& mat, double scalar) {
   MatT<T> res(mat);
   res *= scalar;
-
   return res;
 }
 
@@ -237,7 +229,6 @@ template <typename T>
 MatT<T> operator*(double scalar, const MatT<T>& mat) {
   MatT<T> res(mat);
   res *= scalar;
-
   return res;
 }
 

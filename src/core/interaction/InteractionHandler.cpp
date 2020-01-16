@@ -2,11 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "InteractionHandler.h"
+
 #include <QKeyEvent>
 #include <QPainter>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/construct.hpp>
 #include <boost/lambda/lambda.hpp>
+
 #include "InteractionState.h"
 
 #define DISPATCH(list, call)                      \

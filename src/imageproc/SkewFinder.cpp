@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SkewFinder.h"
+
 #include <QDebug>
 #include <cmath>
+
 #include "BinaryImage.h"
 #include "BitOps.h"
 #include "Constants.h"
@@ -111,7 +113,6 @@ Skew SkewFinder::findSkew(const BinaryImage& image) const {
     if (numCoarseScores > 1) {
       confidence = bestCoarseScore / sumCoarseScores * numCoarseScores;
     }
-
     return Skew(-bestCoarseAngle, confidence - 1.0);
   }
 
@@ -170,7 +171,6 @@ Skew SkewFinder::findSkew(const BinaryImage& image) const {
     sumScores += fineScore2;
     confidence = bestScore / sumScores * numScores;
   }
-
   return Skew(-bestAngle, confidence - 1.0);
 }  // SkewFinder::findSkew
 
@@ -178,7 +178,6 @@ double SkewFinder::process(const BinaryImage& src, BinaryImage& dst, const doubl
   const double tg = std::tan(angle * constants::DEG2RAD);
   const double xCenter = 0.5 * dst.width();
   vShearFromTo(src, dst, tg / m_resolutionRatio, xCenter, WHITE);
-
   return calcScore(dst);
 }
 
@@ -206,7 +205,6 @@ double SkewFinder::calcScore(const BinaryImage& image) {
     }
     lastLineBlackPixels = numBlackPixels;
   }
-
   return score;
 }
 }  // namespace imageproc

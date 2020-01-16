@@ -6,6 +6,7 @@
 
 #include <imageproc/BinaryImage.h>
 #include <interaction/DraggableLineSegment.h>
+
 #include <QMenu>
 #include <QPoint>
 #include <QPointF>
@@ -13,6 +14,7 @@
 #include <QSizeF>
 #include <QTransform>
 #include <unordered_map>
+
 #include "Alignment.h"
 #include "DragHandler.h"
 #include "DraggableObject.h"

@@ -5,6 +5,7 @@
 #define SCANTAILOR_FIX_ORIENTATION_TASK_H_
 
 #include <FilterData.h>
+
 #include "FilterResult.h"
 #include "ImageId.h"
 #include "NonCopyable.h"

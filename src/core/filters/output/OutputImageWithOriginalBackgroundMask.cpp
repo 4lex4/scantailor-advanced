@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputImageWithOriginalBackgroundMask.h"
+
 #include <imageproc/Dpm.h>
 #include <imageproc/ImageCombination.h>
 
@@ -44,7 +45,6 @@ std::unique_ptr<OutputImageWithOriginalBackgroundMask> OutputImageWithOriginalBa
   QImage image(originalBackground);
   combineImages(image, foregroundImage, foregroundMask);
   combineImages(image, backgroundImage, backgroundMask);
-
   return std::make_unique<OutputImageWithOriginalBackgroundMask>(image, foregroundMask,
                                                                  getForegroundType(foregroundImage), backgroundMask);
 }

@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputImageWithForegroundMask.h"
+
 #include <imageproc/ImageCombination.h>
 #include <imageproc/Posterizer.h>
 
@@ -31,7 +32,6 @@ QImage OutputImageWithForegroundMask::getForegroundImage() const {
     case ForegroundType::COLOR:
       break;
   }
-
   return foreground;
 }
 
@@ -52,7 +52,6 @@ std::unique_ptr<OutputImageWithForegroundMask> OutputImageWithForegroundMask::fr
 
   QImage image(backgroundImage);
   combineImages(image, foregroundImage);
-
   return std::make_unique<OutputImageWithForegroundMask>(image, foregroundMask, getForegroundType(foregroundImage));
 }
 

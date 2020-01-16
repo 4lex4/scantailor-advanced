@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ApplyDialog.h"
+
 #include <cassert>
+
 #include "PageSelectionAccessor.h"
 
 namespace page_layout {
@@ -45,7 +47,6 @@ void ApplyDialog::onSubmit() {
   } else if (selectedPagesRB->isChecked()) {
     emit accepted(m_selectedPages);
     accept();
-
     return;
   } else if (everyOtherRB->isChecked()) {
     m_pages.selectEveryOther(m_curPage).swap(pages);

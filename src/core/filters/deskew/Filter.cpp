@@ -2,14 +2,17 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Filter.h"
+
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
 #include <filters/select_content/CacheDrivenTask.h>
 #include <filters/select_content/Task.h>
+
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <utility>
+
 #include "AbstractRelinker.h"
 #include "CacheDrivenTask.h"
 #include "FilterUiInterface.h"
@@ -56,7 +59,6 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
       [&](const PageId& pageId, const int numericId) { this->writeParams(doc, filterEl, pageId, numericId); });
 
   saveImageSettings(writer, doc, filterEl);
-
   return filterEl;
 }
 

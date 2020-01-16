@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Dependencies.h"
+
 #include "Params.h"
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
@@ -40,7 +41,6 @@ bool Dependencies::compatibleWith(const Params& params) const {
     // split line.
     return true;
   }
-
   return false;
 }
 
@@ -55,7 +55,6 @@ QDomElement Dependencies::toXml(QDomDocument& doc, const QString& tagName) const
   el.appendChild(m_rotation.toXml(doc, "rotation"));
   el.appendChild(marshaller.size(m_imageSize, "size"));
   el.appendChild(marshaller.string(layoutTypeToString(m_layoutType), "layoutType"));
-
   return el;
 }
 

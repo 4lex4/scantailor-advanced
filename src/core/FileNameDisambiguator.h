@@ -7,6 +7,7 @@
 #include <boost/function.hpp>
 #include <memory>
 #include <set>
+
 #include "NonCopyable.h"
 #include "ref_countable.h"
 

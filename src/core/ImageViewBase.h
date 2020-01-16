@@ -16,6 +16,7 @@
 #include <QTransform>
 #include <QWidget>
 #include <Qt>
+
 #include "ImagePixmapUnion.h"
 #include "ImageViewInfoProvider.h"
 #include "InteractionHandler.h"

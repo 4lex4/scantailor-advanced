@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageLoader.h"
+
 #include <QFile>
 #include <QImage>
 #include <QtGui/QImageReader>
+
 #include "ImageId.h"
 #include "TiffReader.h"
 
@@ -17,7 +19,6 @@ QImage ImageLoader::load(const QString& filePath, const int pageNum) {
   if (!file.open(QIODevice::ReadOnly)) {
     return QImage();
   }
-
   return load(file, pageNum);
 }
 
@@ -33,6 +34,5 @@ QImage ImageLoader::load(QIODevice& ioDev, const int pageNum) {
 
   QImage image;
   QImageReader(&ioDev).read(&image);
-
   return image;
 }

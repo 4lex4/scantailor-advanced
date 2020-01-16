@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_FILTEROPTIONSWIDGET_H_
 
 #include <QWidget>
+
 #include "PageId.h"
 #include "PageInfo.h"
 

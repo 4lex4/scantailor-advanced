@@ -7,6 +7,7 @@
 #include <QString>
 #include <map>
 #include <unordered_map>
+
 #include "ThumbnailPixmapCache.h"
 
 namespace core {
@@ -99,7 +100,6 @@ T Utils::castOrFindChild(QObject* object) {
       }
     }
   }
-
   return nullptr;
 }
 }  // namespace core

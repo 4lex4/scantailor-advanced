@@ -535,7 +535,6 @@ PageSequence ThumbnailSequence::Impl::toPageSequence() const {
   for (const Item& item : m_itemsInOrder) {
     pages.append(item.pageInfo);
   }
-
   return pages;
 }
 
@@ -564,7 +563,6 @@ int ThumbnailSequence::Impl::getGraphicsViewWidth() const {
       viewWidth -= gv->frameWidth() * 2;
     }
   }
-
   return viewWidth;
 }
 
@@ -776,7 +774,6 @@ bool ThumbnailSequence::Impl::setSelection(const PageId& pageId, const Selection
   }
 
   m_owner.emitNewSelectionLeader(idIt->pageInfo, idIt->composite, flags);
-
   return true;
 }  // ThumbnailSequence::Impl::setSelection
 
@@ -801,11 +798,9 @@ PageInfo ThumbnailSequence::Impl::prevPage(const PageId& referencePage) const {
   if (ordIt != m_itemsInOrder.end()) {
     if (ordIt != m_itemsInOrder.begin()) {
       --ordIt;
-
       return ordIt->pageInfo;
     }
   }
-
   return PageInfo();
 }
 
@@ -825,7 +820,6 @@ PageInfo ThumbnailSequence::Impl::nextPage(const PageId& referencePage) const {
       return ordIt->pageInfo;
     }
   }
-
   return PageInfo();
 }
 
@@ -847,7 +841,6 @@ PageInfo ThumbnailSequence::Impl::prevSelectedPage(const PageId& referencePage) 
       }
     }
   }
-
   return PageInfo();
 }
 
@@ -870,7 +863,6 @@ PageInfo ThumbnailSequence::Impl::nextSelectedPage(const PageId& referencePage) 
       ++ordIt;
     }
   }
-
   return PageInfo();
 }
 
@@ -878,7 +870,6 @@ PageInfo ThumbnailSequence::Impl::firstPage() const {
   if (m_items.empty()) {
     return PageInfo();
   }
-
   return m_itemsInOrder.front().pageInfo;
 }
 
@@ -886,7 +877,6 @@ PageInfo ThumbnailSequence::Impl::lastPage() const {
   if (m_items.empty()) {
     return PageInfo();
   }
-
   return m_itemsInOrder.back().pageInfo;
 }
 
@@ -991,7 +981,6 @@ bool ThumbnailSequence::Impl::multipleItemsSelected() const {
       return false;
     }
   }
-
   return true;
 }
 
@@ -1007,7 +996,6 @@ QRectF ThumbnailSequence::Impl::selectionLeaderSceneRect() const {
   if (!m_selectionLeader) {
     return QRectF();
   }
-
   return m_selectionLeader->composite->mapToScene(m_selectionLeader->composite->boundingRect()).boundingRect();
 }
 
@@ -1019,7 +1007,6 @@ std::set<PageId> ThumbnailSequence::Impl::selectedItems() const {
     }
     selection.insert(item.pageInfo.id());
   }
-
   return selection;
 }
 
@@ -1042,7 +1029,6 @@ std::vector<PageRange> ThumbnailSequence::Impl::selectedRanges() const {
       range.pages.push_back(it->pageInfo.id());
     }
   }
-
   return ranges;
 }
 
@@ -1086,7 +1072,6 @@ void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& i
     moveToSelected(m_selectionLeader);
 
     m_owner.emitNewSelectionLeader(m_selectionLeader->pageInfo, m_selectionLeader->composite, flags);
-
     return;
   }
 
@@ -1094,7 +1079,6 @@ void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& i
     // Clicked on the only selected item.
     flags |= REDUNDANT_SELECTION;
     m_owner.emitNewSelectionLeader(m_selectionLeader->pageInfo, m_selectionLeader->composite, flags);
-
     return;
   }
 
@@ -1140,7 +1124,6 @@ void ThumbnailSequence::Impl::selectItemWithControl(const ItemsById::iterator& i
 void ThumbnailSequence::Impl::selectItemWithShift(const ItemsById::iterator& idIt) {
   if (!m_selectionLeader) {
     selectItemNoModifiers(idIt);
-
     return;
   }
 
@@ -1256,7 +1239,6 @@ ThumbnailSequence::Impl::ItemsInOrder::iterator ThumbnailSequence::Impl::itemIns
     if (distFromHint) {
       *distFromHint = 0;
     }
-
     return hint;
   }
 
@@ -1292,7 +1274,6 @@ ThumbnailSequence::Impl::ItemsInOrder::iterator ThumbnailSequence::Impl::itemIns
   if (distFromHint) {
     *distFromHint = dist;
   }
-
   return insPos;
 }  // ThumbnailSequence::Impl::itemInsertPosition
 
@@ -1306,7 +1287,6 @@ std::unique_ptr<QGraphicsItem> ThumbnailSequence::Impl::getThumbnail(const PageI
   if (!thumb) {
     thumb = std::make_unique<PlaceholderThumb>(m_maxLogicalThumbSize);
   }
-
   return thumb;
 }
 
@@ -1371,7 +1351,6 @@ std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabel
   pixmapBox.moveLeft(boldTextBox.right() + labelPixmapSpacing);
   pixmapItem->setPos(pixmapBox.topLeft());
   pixmapItemSelected->setPos(pixmapBox.topLeft());
-
   return std::make_unique<LabelGroup>(std::move(normalTextItem), std::move(boldTextItem), std::move(pixmapItem),
                                       std::move(pixmapItemSelected));
 }  // ThumbnailSequence::Impl::getLabelGroup
@@ -1383,7 +1362,6 @@ std::unique_ptr<ThumbnailSequence::CompositeItem> ThumbnailSequence::Impl::getCo
 
   auto composite = std::make_unique<CompositeItem>(*this, std::move(thumb), std::move(labelGroup));
   composite->setItem(item);
-
   return composite;
 }
 

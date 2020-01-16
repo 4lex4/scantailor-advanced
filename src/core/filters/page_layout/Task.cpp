@@ -2,8 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Task.h"
+
 #include <UnitsProvider.h>
+
 #include <utility>
+
 #include "Dpm.h"
 #include "Filter.h"
 #include "FilterData.h"
@@ -89,7 +92,6 @@ FilterResultPtr Task::process(const TaskStatus& status,
 
     ImageTransformation newXform(data.xform());
     newXform.setPostCropArea(Utils::shiftToRoundedOrigin(newXform.transform().map(pageRectPhys)));
-
     return m_nextTask->process(status, FilterData(data, newXform), contentRectPhys);
   } else {
     return make_intrusive<UiUpdater>(m_filter, m_settings, m_pageId, data.origImage(), data.xform(),

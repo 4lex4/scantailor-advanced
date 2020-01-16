@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Proximity.h"
+
 #include <QLineF>
 #include <QPointF>
 
@@ -17,7 +18,6 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
     if (pointOnSegment) {
       *pointOnSegment = segment.p1();
     }
-
     return Proximity(pt, segment.p1());
   }
 
@@ -41,7 +41,6 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
     if (pointOnSegment) {
       *pointOnSegment = intersection;
     }
-
     return Proximity(intersection, pt);
   }
 
@@ -57,6 +56,5 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
   if (pointOnSegment) {
     *pointOnSegment = pts[minPrx - prx];
   }
-
   return *minPrx;
 }  // Proximity::pointAndLineSegment

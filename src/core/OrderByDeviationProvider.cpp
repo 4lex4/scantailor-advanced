@@ -14,6 +14,5 @@ bool OrderByDeviationProvider::precedes(const PageId& lhsPage,
     // Invalid (unknown) sizes go to the back.
     return lhsIncomplete;
   }
-
   return (m_deviationProvider->getDeviationValue(lhsPage) > m_deviationProvider->getDeviationValue(rhsPage));
 }

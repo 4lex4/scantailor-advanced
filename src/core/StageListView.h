@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include <QTableView>
 #include <vector>
+
 #include "intrusive_ptr.h"
 
 class StageSequence;

@@ -16,7 +16,6 @@ QDomElement ColorParams::toXml(QDomDocument& doc, const QString& name) const {
   el.setAttribute("colorMode", formatColorMode(m_colorMode));
   el.appendChild(m_colorCommonOptions.toXml(doc, "color-or-grayscale"));
   el.appendChild(m_bwOptions.toXml(doc, "bw"));
-
   return el;
 }
 
@@ -45,7 +44,6 @@ QString ColorParams::formatColorMode(const ColorMode mode) {
       str = "mixed";
       break;
   }
-
   return QString::fromLatin1(str);
 }
 

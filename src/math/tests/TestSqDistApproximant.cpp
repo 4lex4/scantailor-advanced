@@ -3,10 +3,11 @@
 
 #include <ToLineProjector.h>
 #include <spfit/SqDistApproximant.h>
+
 #include <QLineF>
 #include <QPointF>
-#include <boost/test/unit_test.hpp>
 #include <boost/test/tools/floating_point_comparison.hpp>
+#include <boost/test/unit_test.hpp>
 #include <cmath>
 #include <cstdlib>
 
@@ -18,7 +19,6 @@ static const double PI = 3.14159265;
 
 static double frand(double from, double to) {
   const double rand01 = rand() / double(RAND_MAX);
-
   return from + (to - from) * rand01;
 }
 

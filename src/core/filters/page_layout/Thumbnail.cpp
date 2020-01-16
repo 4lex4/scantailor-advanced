@@ -2,9 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Thumbnail.h"
+
 #include <PolygonUtils.h>
+
 #include <QPainter>
 #include <utility>
+
 #include "Utils.h"
 
 using namespace imageproc;

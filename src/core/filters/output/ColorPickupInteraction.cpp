@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ColorPickupInteraction.h"
+
 #include <QKeyEvent>
 #include <QPainter>
+
 #include "ImageViewBase.h"
 #include "ScopedIncDec.h"
 #include "ZoneInteractionContext.h"
@@ -115,7 +117,6 @@ QRect ColorPickupInteraction::targetBoundingRect() const {
   const QPoint mousePos(m_context.imageView().mapFromGlobal(QCursor::pos()));
   QRect rect(0, 0, 15, 15);  // Odd width and height are needed for symmetry.
   rect.moveCenter(mousePos);
-
   return rect;
 }
 

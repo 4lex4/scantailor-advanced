@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Utils.h"
+
 #include <QDir>
 #include <QString>
 #include <QTransform>
+
 #include "Dpi.h"
 
 namespace output {
@@ -23,7 +25,6 @@ QString Utils::specklesDir(const QString& outDir) {
 QTransform Utils::scaleFromToDpi(const Dpi& from, const Dpi& to) {
   QTransform xform;
   xform.scale((double) to.horizontal() / from.horizontal(), (double) to.vertical() / from.vertical());
-
   return xform;
 }
 
@@ -49,7 +50,6 @@ QTransform Utils::rotate(double degrees, const QRect& imageRect) {
   rotateXform.translate(-origin.x(), -origin.y());
   rotateXform *= QTransform().rotate(degrees);
   rotateXform *= QTransform().translate(origin.x(), origin.y());
-
   return rotateXform;
 }
 }  // namespace output

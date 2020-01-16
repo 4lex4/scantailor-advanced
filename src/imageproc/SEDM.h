@@ -5,6 +5,7 @@
 #define SCANTAILOR_IMAGEPROC_SEDM_H_
 
 #include <FlagOps.h>
+
 #include <QSize>
 #include <cstdint>
 #include <vector>

@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <QRect>
 #include <cstdint>
+
 #include "EditableZoneSet.h"
 #include "FillColorProperty.h"
 #include "InteractionHandler.h"

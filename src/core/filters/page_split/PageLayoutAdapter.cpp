@@ -33,7 +33,6 @@ QLineF PageLayoutAdapter::adaptCutter(const QLineF& cutterLine, const QRectF& ne
   } else if (lowerIntersection.x() > newRect.bottomRight().x()) {
     lowerIntersection.setX(newRect.bottomRight().x());
   }
-
   return QLineF(upperIntersection, lowerIntersection);
 }
 
@@ -74,7 +73,6 @@ QVector<QLineF> PageLayoutAdapter::adaptCutters(const QVector<QLineF>& cuttersLi
       adaptedCutters.replace(i, cutterRight);
     }
   }
-
   return adaptedCutters;
 }
 
@@ -133,7 +131,6 @@ PageLayout PageLayoutAdapter::adaptPageLayout(const PageLayout& pageLayout, cons
   } else {
     newPageLayout = PageLayout(outline);
   }
-
   return newPageLayout;
 }
 }  // namespace page_split

@@ -2,12 +2,14 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PolynomialSurface.h"
+
 #include <QDebug>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdint>
 #include <stdexcept>
+
 #include "AlignedArray.h"
 #include "BinaryImage.h"
 #include "BitOps.h"
@@ -160,7 +162,6 @@ GrayImage PolynomialSurface::render(const QSize& size) const {
       line[x] = static_cast<unsigned char>(qBound(0, isum, 255));
     }
   }
-
   return image;
 }  // PolynomialSurface::render
 

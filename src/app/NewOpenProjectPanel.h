@@ -6,6 +6,7 @@
 
 #include <QWidget>
 #include <memory>
+
 #include "ui_NewOpenProjectPanel.h"
 
 class QString;

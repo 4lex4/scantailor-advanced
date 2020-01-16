@@ -5,9 +5,11 @@
 #define SCANTAILOR_CORE_COLORSCHEMEMANAGER_H_
 
 #include <foundation/NonCopyable.h>
+
 #include <QBrush>
 #include <QColor>
 #include <memory>
+
 #include "ColorScheme.h"
 
 class ColorSchemeManager {

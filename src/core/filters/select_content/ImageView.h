@@ -6,9 +6,11 @@
 
 #include <imageproc/BinaryImage.h>
 #include <interaction/DraggablePolygon.h>
+
 #include <QRectF>
 #include <QSizeF>
 #include <QString>
+
 #include "DragHandler.h"
 #include "DraggableLineSegment.h"
 #include "DraggablePoint.h"

@@ -2,11 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ZoneContextMenuInteraction.h"
+
 #include <QDebug>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPainter>
 #include <boost/bind.hpp>
+
 #include "ImageViewBase.h"
 #include "ZoneInteractionContext.h"
 
@@ -17,7 +19,6 @@ class ZoneContextMenuInteraction::OrderByArea {
     const QRectF rhsBbox(rhs.spline()->toPolygon().boundingRect());
     const qreal lhsArea = lhsBbox.width() * lhsBbox.height();
     const qreal rhsArea = rhsBbox.width() * rhsBbox.height();
-
     return lhsArea < rhsArea;
   }
 };
@@ -55,7 +56,6 @@ std::vector<ZoneContextMenuInteraction::Zone> ZoneContextMenuInteraction::zonesU
       selectableZones.emplace_back(zone);
     }
   }
-
   return selectableZones;
 }
 
@@ -140,7 +140,6 @@ void ZoneContextMenuInteraction::menuAboutToHide() {
   // The only way to tell is to check back later, which we do here.
   if (m_extraDelaysDone++ < 1) {
     QTimer::singleShot(200, this, SLOT(menuAboutToHide()));
-
     return;
   }
 #endif
@@ -172,14 +171,12 @@ void ZoneContextMenuInteraction::menuItemTriggered(InteractionState& interaction
 
 InteractionHandler* ZoneContextMenuInteraction::propertiesRequest(const EditableZoneSet::Zone& zone) {
   m_context.showPropertiesCommand(zone);
-
   return m_context.createDefaultInteraction();
 }
 
 InteractionHandler* ZoneContextMenuInteraction::deleteRequest(const EditableZoneSet::Zone& zone) {
   m_context.zones().removeZone(zone.spline());
   m_context.zones().commit();
-
   return m_context.createDefaultInteraction();
 }
 
@@ -207,7 +204,6 @@ std::vector<ZoneContextMenuItem> ZoneContextMenuInteraction::defaultMenuCustomiz
   items.reserve(2);
   items.push_back(stdItems.propertiesItem);
   items.push_back(stdItems.deleteItem);
-
   return items;
 }
 

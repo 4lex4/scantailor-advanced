@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Utils.h"
+
 #include <QDir>
 #include <QRegularExpression>
 #include <QTextDocument>
 #include <cmath>
+
 #include "ApplicationSettings.h"
 
 #ifdef Q_OS_WIN
@@ -48,7 +50,6 @@ QString Utils::outputDirToThumbDir(const QString& outputDir) {
 intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& outputDir) {
   const QSize maxPixmapSize = ApplicationSettings::getInstance().getThumbnailQuality();
   const QString thumbsCachePath(outputDirToThumbDir(outputDir));
-
   return make_intrusive<ThumbnailPixmapCache>(thumbsCachePath, maxPixmapSize, 40, 5);
 }
 
@@ -69,7 +70,6 @@ QString Utils::qssConvertPxToEm(const QString& stylesheet, const double base, co
     prevIndex = match.capturedEnd();
   }
   result.append(stylesheet.mid(prevIndex));
-
   return result;
 }
 }  // namespace core

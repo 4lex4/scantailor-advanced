@@ -5,6 +5,7 @@
 #define SCANTAILOR_OUTPUT_BINARIZATIONOPTIONSWIDGET_H_
 
 #include <PageId.h>
+
 #include <QWidget>
 
 namespace output {

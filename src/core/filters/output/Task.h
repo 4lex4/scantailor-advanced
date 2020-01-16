@@ -7,6 +7,7 @@
 #include <QColor>
 #include <QImage>
 #include <memory>
+
 #include "FilterResult.h"
 #include "ImageViewTab.h"
 #include "NonCopyable.h"

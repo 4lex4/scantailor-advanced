@@ -8,6 +8,7 @@
 #include <QObject>
 #include <boost/scoped_array.hpp>
 #include <cstddef>
+
 #include "NonCopyable.h"
 
 class OutOfMemoryHandler : public QObject {

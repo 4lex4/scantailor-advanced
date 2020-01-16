@@ -2,8 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PngMetadataLoader.h"
+
 #include <png.h>
+
 #include <QIODevice>
+
 #include "Dpm.h"
 #include "ImageMetadata.h"
 #include "NonCopyable.h"
@@ -49,7 +52,6 @@ static void readFn(png_structp pngPtr, png_bytep data, png_size_t length) {
     const qint64 read = ioDevice->read((char*) data, length);
     if (read <= 0) {
       png_error(pngPtr, "Read Error");
-
       return;
     }
     length -= read;
@@ -93,6 +95,5 @@ ImageMetadataLoader::Status PngMetadataLoader::loadMetadata(QIODevice& ioDevice,
   }
 
   out(ImageMetadata(size, dpi));
-
   return LOADED;
 }  // PngMetadataLoader::loadMetadata

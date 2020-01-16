@@ -6,6 +6,7 @@
 
 #include <list>
 #include <vector>
+
 #include "FittableSpline.h"
 #include "LinearFunction.h"
 #include "MatT.h"

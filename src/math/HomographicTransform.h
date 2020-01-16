@@ -5,6 +5,7 @@
 #define SCANTAILOR_MATH_HOMOGRAPHICTRANSFORM_H_
 
 #include <cstddef>
+
 #include "MatrixCalc.h"
 #include "VecNT.h"
 
@@ -57,7 +58,6 @@ HomographicTransform<N, T> HomographicTransformBase<N, T>::inv() const {
   StaticMatrixCalc<T, 4 * (N + 1) * (N + 1), N + 1> mc;
   Mat invMat;
   mc(m_mat, static_cast<int>(N + 1), static_cast<int>(N + 1)).inv().write(invMat);
-
   return HomographicTransform<N, T>(invMat);
 }
 
@@ -69,7 +69,6 @@ typename HomographicTransformBase<N, T>::Vec HomographicTransformBase<N, T>::ope
   (mc(m_mat, static_cast<int>(N + 1), static_cast<int>(N + 1)) * mc(hsrc, static_cast<int>(N + 1), 1)).write(hdst);
   VecNT<N, T> res(&hdst[0]);
   res /= hdst[N];
-
   return res;
 }
 
@@ -77,7 +76,6 @@ template <typename T>
 T HomographicTransform<1, T>::operator()(T from) const {
   // Optimized version for 1D case.
   const T* m = this->mat().data();
-
   return (from * m[0] + m[2]) / (from * m[1] + m[3]);
 }
 

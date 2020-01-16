@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "RelinkablePath.h"
+
 #include <QStringList>
 
 RelinkablePath::RelinkablePath(const QString& path, Type type) : m_normalizedPath(normalize(path)), m_type(type) {}
@@ -38,6 +39,5 @@ QString RelinkablePath::normalize(const QString& path) {
       newComponents.push_back(comp);
     }
   }
-
   return newComponents.join(QChar('/'));
 }  // RelinkablePath::normalize

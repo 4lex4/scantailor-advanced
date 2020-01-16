@@ -9,6 +9,7 @@
 #include <QString>
 #include <Qt>
 #include <vector>
+
 #include "ImageFileInfo.h"
 #include "NonCopyable.h"
 

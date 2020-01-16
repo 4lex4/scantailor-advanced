@@ -2,9 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Utils.h"
+
 #include <UnitsConverter.h>
+
 #include <cassert>
 #include <cmath>
+
 #include "Alignment.h"
 #include "ImageTransformation.h"
 #include "Margins.h"
@@ -18,7 +21,6 @@ QRectF Utils::adaptContentRect(const ImageTransformation& xform, const QRectF& c
 
   const QPointF center(xform.resultingRect().center());
   const QPointF delta(0.01, 0.01);
-
   return QRectF(center - delta, center + delta);
 }
 
@@ -30,7 +32,6 @@ QSizeF Utils::calcRectSizeMM(const ImageTransformation& xform, const QRectF& rec
 
   const double width = virtToMm.map(horLine).length();
   const double height = virtToMm.map(verLine).length();
-
   return QSizeF(width, height);
 }
 
@@ -80,7 +81,6 @@ Margins Utils::calcMarginsMM(const ImageTransformation& xform, const QRectF& pag
   double rMM = (hSpace < 1.0) ? 0.0 : (right * widthMM / hSpace);
   double tMM = (vSpace < 1.0) ? 0.0 : (top * heightMM / vSpace);
   double bMM = (vSpace < 1.0) ? 0.0 : (bottom * heightMM / vSpace);
-
   return Margins(lMM, tMM, rMM, bMM);
 }
 
@@ -200,7 +200,6 @@ Margins Utils::calcSoftMarginsMM(const QSizeF& hardSizeMm,
         break;
     }
   }
-
   return Margins(left, top, right, bottom);
 }  // Utils::calcSoftMarginsMM
 
@@ -218,21 +217,18 @@ QPolygonF Utils::calcPageRectPhys(const ImageTransformation& xform,
                                           params.contentSizeMM(), params.pageRect()));
 
   extendPolyRectWithMargins(polyMm, softMarginsMm);
-
   return pixelsToMmTransform.inverted().map(polyMm);
 }
 
 QPointF Utils::getRightUnitVector(const QPolygonF& polyRect) {
   const QPointF topLeft(polyRect[0]);
   const QPointF topRight(polyRect[1]);
-
   return QLineF(topLeft, topRight).unitVector().p2() - topLeft;
 }
 
 QPointF Utils::getDownUnitVector(const QPolygonF& polyRect) {
   const QPointF topLeft(polyRect[0]);
   const QPointF bottomLeft(polyRect[3]);
-
   return QLineF(topLeft, bottomLeft).unitVector().p2() - topLeft;
 }
 
@@ -241,7 +237,6 @@ QPolygonF Utils::shiftToRoundedOrigin(const QPolygonF& poly) {
   const double y = poly.boundingRect().top();
   const double shiftValueX = -(x - std::round(x));
   const double shiftValueY = -(y - std::round(y));
-
   return poly.translated(shiftValueX, shiftValueY);
 }
 }  // namespace page_layout

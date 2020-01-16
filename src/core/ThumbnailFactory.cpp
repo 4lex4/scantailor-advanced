@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ThumbnailFactory.h"
+
 #include <QGraphicsItem>
 #include <utility>
+
 #include "CompositeCacheDrivenTask.h"
 #include "ThumbnailCollector.h"
 
@@ -36,7 +38,6 @@ ThumbnailFactory::~ThumbnailFactory() = default;
 std::unique_ptr<QGraphicsItem> ThumbnailFactory::get(const PageInfo& pageInfo) {
   Collector collector(m_pixmapCache, m_maxSize);
   m_task->process(pageInfo, &collector);
-
   return collector.retrieveThumbnail();
 }
 

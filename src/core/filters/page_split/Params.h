@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <utility>
+
 #include "AutoManualMode.h"
 #include "Dependencies.h"
 #include "PageLayout.h"

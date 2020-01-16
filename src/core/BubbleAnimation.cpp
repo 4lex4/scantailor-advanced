@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "BubbleAnimation.h"
+
 #include <ColorInterpolation.h>
 #include <Constants.h>
+
 #include <QPaintDevice>
 #include <QPainter>
 #include <cassert>
@@ -21,7 +23,6 @@ bool BubbleAnimation::nextFrame(const QColor& headColor, const QColor& tailColor
   }
 
   QPainter painter(pd);
-
   return nextFrame(headColor, tailColor, &painter, rect);
 }
 
@@ -61,11 +62,9 @@ bool BubbleAnimation::nextFrame(const QColor& headColor,
 
   if (m_curFrame + 1 < m_numBubbles) {
     ++m_curFrame;
-
     return true;
   } else {
     m_curFrame = 0;
-
     return false;
   }
 }  // BubbleAnimation::nextFrame

@@ -4,10 +4,12 @@
 #include <BWColor.h>
 #include <BinaryImage.h>
 #include <SEDM.h>
+
 #include <QImage>
 #include <boost/test/unit_test.hpp>
 #include <cmath>
 #include <iostream>
+
 #include "Utils.h"
 
 namespace imageproc {
@@ -27,7 +29,6 @@ bool verifySEDM(const SEDM& sedm, const uint32_t* control) {
     }
     line += sedm.stride();
   }
-
   return true;
 }
 

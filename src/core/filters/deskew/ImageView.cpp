@@ -2,14 +2,17 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageView.h"
+
 #include <Constants.h>
 #include <core/IconProvider.h>
+
 #include <QAction>
 #include <QPainter>
 #include <QScrollBar>
 #include <QStyle>
 #include <QWheelEvent>
 #include <boost/bind.hpp>
+
 #include "ImagePresentation.h"
 
 namespace deskew {
@@ -204,7 +207,6 @@ void ImageView::dragFinished() {
  */
 QPointF ImageView::getImageRotationOrigin() const {
   const QRectF viewportRect(maxViewportRect());
-
   return QPointF(std::floor(0.5 * viewportRect.width()) + 0.5, std::floor(0.5 * viewportRect.height()) + 0.5);
 }
 
@@ -228,7 +230,6 @@ QRectF ImageView::getRotationArcSquare() const {
 
   QRectF arcSquare(QPointF(0, 0), arcSize);
   arcSquare.moveCenter(reducedScreenRect.center());
-
   return arcSquare;
 }
 
@@ -241,7 +242,6 @@ std::pair<QPointF, QPointF> ImageView::getRotationHandles(const QRectF& arcSquar
   leftHandle += arcCenter;
   QPointF rightHandle(rotCos * arcRadius, rotSin * arcRadius);
   rightHandle += arcCenter;
-
   return std::make_pair(leftHandle, rightHandle);
 }
 }  // namespace deskew

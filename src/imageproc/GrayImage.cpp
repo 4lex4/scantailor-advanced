@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "GrayImage.h"
+
 #include "Grayscale.h"
 
 namespace imageproc {
@@ -22,7 +23,6 @@ GrayImage::GrayImage(const QImage& image) : m_image(toGrayscale(image)) {}
 GrayImage GrayImage::inverted() const {
   GrayImage inverted(*this);
   inverted.invert();
-
   return inverted;
 }
 

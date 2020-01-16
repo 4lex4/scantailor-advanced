@@ -5,6 +5,7 @@
 #define SCANTAILOR_PAGE_LAYOUT_TASK_H_
 
 #include <QPolygonF>
+
 #include "FilterResult.h"
 #include "NonCopyable.h"
 #include "PageId.h"

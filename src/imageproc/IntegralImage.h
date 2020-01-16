@@ -7,6 +7,7 @@
 #include <QRect>
 #include <QSize>
 #include <new>
+
 #include "NonCopyable.h"
 
 namespace imageproc {
@@ -135,7 +136,6 @@ inline T IntegralImage<T>::sum(const QRect& rect) const {
   sum -= m_data[preTop * m_width + preRight];
   sum += m_data[preTop * m_width + preLeft];
   sum -= m_data[preBottom * m_width + preLeft];
-
   return sum;
 }
 }  // namespace imageproc

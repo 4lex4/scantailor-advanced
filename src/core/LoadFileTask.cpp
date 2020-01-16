@@ -2,11 +2,14 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "LoadFileTask.h"
+
 #include <imageproc/Grayscale.h>
+
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
 #include <QTextDocument>
+
 #include "AbstractFilter.h"
 #include "Dpm.h"
 #include "ErrorWidget.h"
@@ -64,7 +67,6 @@ FilterResultPtr LoadFileTask::operator()() {
       updateImageSizeIfChanged(image);
       overrideDpi(image);
       m_thumbnailCache->ensureThumbnailExists(m_imageId, image);
-
       return m_nextTask->process(*this, FilterData(image));
     }
   } catch (const CancelledException&) {

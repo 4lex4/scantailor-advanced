@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "UpscaleIntegerTimes.h"
+
 #include "BinaryImage.h"
 
 namespace imageproc {
@@ -68,7 +69,6 @@ BinaryImage upscaleIntegerTimes(const BinaryImage& src, const int xscale, const 
 
   BinaryImage dst(src.width() * xscale, src.height() * yscale);
   expandImpl(dst, src, xscale, yscale);
-
   return dst;
 }
 
@@ -76,7 +76,6 @@ BinaryImage upscaleIntegerTimes(const BinaryImage& src, const QSize& dstSize, co
   if (src.isNull()) {
     BinaryImage dst(dstSize);
     dst.fill(padding);
-
     return dst;
   }
 
@@ -90,7 +89,6 @@ BinaryImage upscaleIntegerTimes(const BinaryImage& src, const QSize& dstSize, co
   expandImpl(dst, src, xscale, yscale);
   const QRect rect(0, 0, src.width() * xscale, src.height() * yscale);
   dst.fillExcept(rect, padding);
-
   return dst;
 }
 }  // namespace imageproc

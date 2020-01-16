@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "RecentProjects.h"
+
 #include <QFile>
 #include <QSettings>
 
@@ -48,7 +49,6 @@ bool RecentProjects::validate() {
       allOk = false;
     }
   }
-
   return allOk;
 }
 

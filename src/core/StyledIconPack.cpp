@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "StyledIconPack.h"
+
 #include <QIconEngine>
 #include <QPalette>
 #include <QtCore/QFile>
@@ -152,7 +153,6 @@ QByteArray SvgStyledIconEngine::generateIcon(const QString& fileName, QIcon::Mod
       doc.documentElement(),
       {"altGlyph", "circle", "ellipse", "path", "polygon", "polyline", "rect", "text", "textPath", "tref", "tspan"},
       std::bind(&fillSvgElement, std::placeholders::_1, getIconColor(mode)));
-
   return doc.toByteArray();
 }
 }  // namespace

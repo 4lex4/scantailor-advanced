@@ -6,6 +6,7 @@
 
 #include <list>
 #include <set>
+
 #include "AutoManualMode.h"
 #include "Dependencies.h"
 #include "FilterOptionsWidget.h"

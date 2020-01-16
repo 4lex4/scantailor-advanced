@@ -5,7 +5,9 @@
 #define SCANTAILOR_PAGE_LAYOUT_SETTINGS_H_
 
 #include <DeviationProvider.h>
+
 #include <memory>
+
 #include "Margins.h"
 #include "NonCopyable.h"
 #include "ref_countable.h"

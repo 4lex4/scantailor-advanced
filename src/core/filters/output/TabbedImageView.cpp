@@ -3,7 +3,9 @@
 
 #include <ImageViewBase.h>
 #include <filters/output/TabbedImageView.h>
+
 #include <QKeyEvent>
+
 #include "../../Utils.h"
 #include "DespeckleView.h"
 
@@ -100,7 +102,6 @@ QPointF TabbedImageView::getFocus(const QRectF& rect, const QScrollBar& horBar, 
 
   qreal x = ((horBar.value() + (horBar.pageStep() / 2.0)) / horBarLength) * rect.width() + rect.left();
   qreal y = ((verBar.value() + (verBar.pageStep() / 2.0)) / verBarLength) * rect.height() + rect.top();
-
   return QPointF(x, y);
 }
 

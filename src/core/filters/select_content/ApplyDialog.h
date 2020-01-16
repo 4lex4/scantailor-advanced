@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <set>
 #include <vector>
+
 #include "PageId.h"
 #include "PageRange.h"
 #include "PageSequence.h"

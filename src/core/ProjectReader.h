@@ -9,6 +9,7 @@
 #include <Qt>
 #include <unordered_map>
 #include <vector>
+
 #include "ImageId.h"
 #include "ImageInfo.h"
 #include "ImageMetadata.h"

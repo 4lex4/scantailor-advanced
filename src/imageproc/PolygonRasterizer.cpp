@@ -2,11 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PolygonRasterizer.h"
+
 #include <QImage>
 #include <QPainterPath>
 #include <QPolygonF>
 #include <boost/foreach.hpp>
 #include <cassert>
+
 #include "BinaryImage.h"
 #include "PolygonUtils.h"
 
@@ -200,7 +202,6 @@ PolygonRasterizer::Edge::Edge(const QPointF& from, const QPointF& to) {
 
 double PolygonRasterizer::Edge::xForY(double y) const {
   const double fraction = (y - m_top.y()) * m_reDeltaY;
-
   return m_top.x() + m_deltaX * fraction;
 }
 
@@ -442,7 +443,6 @@ void PolygonRasterizer::Rasterizer::fillBinarySegment(const int xFrom,
     const uint32_t mask = firstWordMask & lastWordMask;
     uint32_t& word = line[firstWordIdx];
     word = (word & ~mask) | (pattern & mask);
-
     return;
   }
 

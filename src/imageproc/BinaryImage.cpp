@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "BinaryImage.h"
+
 #include <QAtomicInt>
 #include <QImage>
 #include <QRect>
@@ -14,6 +15,7 @@
 #include <memory>
 #include <new>
 #include <stdexcept>
+
 #include "BitOps.h"
 #include "ByteOrder.h"
 
@@ -184,7 +186,6 @@ BinaryImage::~BinaryImage() {
 
 BinaryImage& BinaryImage::operator=(const BinaryImage& other) {
   BinaryImage(other).swap(*this);
-
   return *this;
 }
 
@@ -236,7 +237,6 @@ BinaryImage BinaryImage::inverted() const {
   for (size_t i = 0; i < numWords; ++i, ++srcData, ++dstData) {
     *dstData = ~*srcData;
   }
-
   return BinaryImage(m_width, m_height, newData);
 }
 
@@ -269,7 +269,6 @@ void BinaryImage::fillExcept(const QRect& rect, const BWColor color) {
   const QRect boundedRect(rect.intersected(this->rect()));
   if (boundedRect.isEmpty()) {
     fill(color);
-
     return;
   }
 
@@ -308,7 +307,6 @@ void BinaryImage::fillFrame(const QRect& outerRect, const QRect& innerRect, cons
     return;
   } else if (boundedInnerRect.isEmpty()) {
     fill(boundedOuterRect, color);
-
     return;
   }
 
@@ -387,7 +385,6 @@ int BinaryImage::countBlackPixels(const QRect& rect) const {
       count += countNonZeroBits(line[idx] & lastWordMask);
     }
   }
-
   return count;
 }  // BinaryImage::countBlackPixels
 
@@ -396,7 +393,6 @@ int BinaryImage::countWhitePixels(const QRect& rect) const {
   if (r.isEmpty()) {
     return 0;
   }
-
   return r.width() * r.height() - countBlackPixels(r);
 }
 
@@ -483,7 +479,6 @@ uint32_t* BinaryImage::data() {
   }
 
   copyIfShared();
-
   return m_data->data();
 }
 
@@ -491,7 +486,6 @@ const uint32_t* BinaryImage::data() const {
   if (isNull()) {
     return nullptr;
   }
-
   return m_data->data();
 }
 
@@ -517,7 +511,6 @@ QImage BinaryImage::toQImage() const {
     srcLine += srcWpl;
     dstLine += dstWpl;
   }
-
   return dst;
 }
 
@@ -554,7 +547,6 @@ QImage BinaryImage::toAlphaMask(const QColor& color) const {
     srcLine += srcStride;
     dstLine += dstStride;
   }
-
   return dst;
 }  // BinaryImage::toAlphaMask
 
@@ -576,7 +568,6 @@ void BinaryImage::fillRectImpl(uint32_t* const data, const QRect& rect, const BW
 
   if ((rect.x() == 0) && (rect.width() == m_width)) {
     memset(data + rect.y() * m_wpl, pattern, rect.height() * m_wpl * 4);
-
     return;
   }
 
@@ -593,7 +584,6 @@ void BinaryImage::fillRectImpl(uint32_t* const data, const QRect& rect, const BW
     for (int i = rect.height(); i > 0; --i, line += m_wpl) {
       *line = (*line & ~mask) | (pattern & mask);
     }
-
     return;
   }
 
@@ -638,7 +628,6 @@ BinaryImage BinaryImage::fromMono(const QImage& image) {
     srcLine += srcWpl;
     dstLine += dstWpl;
   }
-
   return dst;
 }
 
@@ -701,7 +690,6 @@ BinaryImage BinaryImage::fromMono(const QImage& image, const QRect& rect) {
       dstLine += dstWpl;
     }
   }
-
   return dst;
 }  // BinaryImage::fromMono
 
@@ -767,7 +755,6 @@ BinaryImage BinaryImage::fromIndexed8(const QImage& image, const QRect& rect, co
     dstLine += dstWpl;
     srcLine += srcBpl;
   }
-
   return dst;
 }  // BinaryImage::fromIndexed8
 
@@ -776,7 +763,6 @@ static inline uint32_t thresholdRgb32(const QRgb c, const int threshold) {
   // return (gray < threshold) ? 1 : 0;
 
   const int sum = qRed(c) * 11 + qGreen(c) * 16 + qBlue(c) * 5;
-
   return (sum < threshold * 32) ? 1 : 0;
 }
 
@@ -820,7 +806,6 @@ BinaryImage BinaryImage::fromRgb32(const QImage& image, const QRect& rect, const
     dstLine += dstWpl;
     srcLine += srcWpl;
   }
-
   return dst;
 }  // BinaryImage::fromRgb32
 
@@ -837,7 +822,6 @@ static inline uint32_t thresholdArgbPM(const QRgb pm, const int threshold) {
   // return (gray < threshold) ? 1 : 0;
 
   const int sum = qRed(pm) * (255 * 11) + qGreen(pm) * (255 * 16) + qBlue(pm) * (255 * 5);
-
   return (sum < alpha * threshold * 32) ? 1 : 0;
 }
 
@@ -881,7 +865,6 @@ BinaryImage BinaryImage::fromArgb32Premultiplied(const QImage& image, const QRec
     dstLine += dstWpl;
     srcLine += srcWpl;
   }
-
   return dst;
 }  // BinaryImage::fromArgb32Premultiplied
 
@@ -907,7 +890,6 @@ static inline uint32_t thresholdRgb16(const uint16_t c16, const int threshold) {
   // return (gray < threshold) ? 1 : 0;
 
   const int sum = r8 * 11 + g8 * 16 + b8 * 5;
-
   return (sum < threshold * 32) ? 1 : 0;
 }
 
@@ -949,7 +931,6 @@ BinaryImage BinaryImage::fromRgb16(const QImage& image, const QRect& rect, const
     dstLine += dstWpl;
     srcLine += srcWpl;
   }
-
   return dst;
 }  // BinaryImage::fromRgb16
 
@@ -977,7 +958,6 @@ bool BinaryImage::isLineMonotone(const uint32_t* const line,
   if (word) {
     return false;
   }
-
   return true;
 }
 
@@ -994,7 +974,6 @@ int BinaryImage::leftmostBitOffset(const uint32_t* const line, const int offsetL
       break;
     }
   }
-
   return std::min(bitOffset, offsetLimit);
 }
 
@@ -1011,7 +990,6 @@ int BinaryImage::rightmostBitOffset(const uint32_t* const line, const int offset
       break;
     }
   }
-
   return std::min(bitOffset, offsetLimit);
 }
 
@@ -1049,7 +1027,6 @@ bool operator==(const BinaryImage& lhs, const BinaryImage& rhs) {
     lhsLine += lhsWpl;
     rhsLine += rhsWpl;
   }
-
   return true;
 }  // ==
 
@@ -1068,7 +1045,6 @@ void* BinaryImage::SharedData::operator new(size_t, const NumWords numWords) {
   if (!addr) {
     throw std::bad_alloc();
   }
-
   return addr;
 }
 

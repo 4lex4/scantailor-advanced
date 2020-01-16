@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Params.h"
+
 #include <foundation/Utils.h>
+
 #include <QDomDocument>
 
 using namespace foundation;
@@ -23,7 +25,6 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   el.setAttribute("mode", m_mode == MODE_AUTO ? "auto" : "manual");
   el.setAttribute("angle", Utils::doubleToString(m_deskewAngleDeg));
   el.appendChild(m_deps.toXml(doc, "dependencies"));
-
   return el;
 }
 

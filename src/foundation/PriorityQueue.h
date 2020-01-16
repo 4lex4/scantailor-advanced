@@ -181,7 +181,6 @@ size_t PriorityQueue<T, SubClass>::bubbleUp(size_t idx) {
     subClass()->setIndex(m_index[parentIdx], parentIdx);
     idx = parentIdx;
   }
-
   return idx;
 }
 
@@ -217,7 +216,6 @@ size_t PriorityQueue<T, SubClass>::bubbleDown(size_t idx) {
       break;
     }
   }
-
   return idx;
 }  // >::bubbleDown
 

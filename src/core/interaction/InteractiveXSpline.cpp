@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "InteractiveXSpline.h"
+
 #include <QCursor>
 #include <QDebug>
 #include <QMouseEvent>
 #include <Qt>
+
 #include "MatrixCalc.h"
 #include "Proximity.h"
 #include "VecNT.h"
@@ -91,7 +93,6 @@ bool InteractiveXSpline::curveIsProximityLeader(const InteractionState& state, Q
     }
     return true;
   }
-
   return false;
 }
 

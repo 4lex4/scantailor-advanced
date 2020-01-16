@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "FileNameDisambiguator.h"
+
 #include <QDomDocument>
 #include <QFileInfo>
 #include <QMutex>
@@ -12,6 +13,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
+
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
 
@@ -157,7 +159,6 @@ QDomElement FileNameDisambiguator::Impl::toXml(QDomDocument& doc,
     fileEl.setAttribute("label", item.label);
     el.appendChild(fileEl);
   }
-
   return el;
 }
 
@@ -168,7 +169,6 @@ int FileNameDisambiguator::Impl::getLabel(const QString& filePath) const {
   if (fpIt != m_itemsByFilePath.end()) {
     return fpIt->label;
   }
-
   return 0;
 }
 
@@ -195,7 +195,6 @@ int FileNameDisambiguator::Impl::registerFile(const QString& filePath) {
   }  // Otherwise, label remains 0.
   const Item newItem(filePath, fileName, label);
   m_itemsByFileNameLabel.insert(fnIt, newItem);
-
   return label;
 }
 

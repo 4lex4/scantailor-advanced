@@ -7,11 +7,12 @@
 #include <BinaryImage.h>
 #include <GrayRasterOp.h>
 #include <Transform.h>
+
+#include <QDebug>
+
 #include "DebugImages.h"
 #include "FilterData.h"
 #include "TaskStatus.h"
-
-#include <QDebug>
 
 namespace select_content {
 using namespace imageproc;
@@ -113,7 +114,6 @@ QRectF PageFinder::findPageBox(const TaskStatus& status,
   QTransform combinedXform(xform150dpi.transform().inverted());
   combinedXform *= data.xform().transform();
   QRectF result = combinedXform.map(QRectF(contentRect)).boundingRect();
-
   return result;
 }  // PageFinder::findPageBox
 
@@ -126,7 +126,6 @@ QRect PageFinder::detectBorders(const QImage& img) {
   t = detectEdge(img, t, b, 1, xmid, Qt::Vertical);
   r = detectEdge(img, r, 0, -1, ymid, Qt::Horizontal);
   b = detectEdge(img, b, t, -1, xmid, Qt::Vertical);
-
   return QRect(l, t, r - l + 1, b - t + 1);
 }
 
@@ -170,7 +169,6 @@ int PageFinder::detectEdge(const QImage& img, int start, int end, int inc, int m
 
     i += inc;
   }
-
   return edge;
 }  // PageFinder::detectEdge
 
@@ -221,7 +219,6 @@ bool PageFinder::fineTuneCorner(const QImage& img,
   }
   x = tx;
   y = ty;
-
   return false;
 }
 }  // namespace select_content

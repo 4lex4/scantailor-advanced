@@ -2,8 +2,15 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Task.h"
+
+#include <UnitsProvider.h>
+
+#include <iostream>
+#include <utility>
+
 #include "ContentBoxFinder.h"
 #include "DebugImagesImpl.h"
+#include "Dpm.h"
 #include "Filter.h"
 #include "FilterData.h"
 #include "FilterUiInterface.h"
@@ -12,11 +19,6 @@
 #include "PageFinder.h"
 #include "TaskStatus.h"
 #include "filters/page_layout/Task.h"
-
-#include <UnitsProvider.h>
-#include <iostream>
-#include <utility>
-#include "Dpm.h"
 
 using namespace imageproc;
 

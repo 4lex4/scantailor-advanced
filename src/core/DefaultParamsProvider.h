@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_DEFAULTPARAMSPROVIDER_H_
 
 #include <foundation/NonCopyable.h>
+
 #include <QtCore/QString>
 #include <memory>
 

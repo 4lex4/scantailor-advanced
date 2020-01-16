@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ZoneCategoryProperty.h"
+
 #include <QDomDocument>
+
 #include "PropertyFactory.h"
 
 namespace output {
@@ -26,7 +28,6 @@ QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, const QString& name) 
   QDomElement el(doc.createElement(name));
   el.setAttribute("type", m_propertyName);
   el.setAttribute("zoneCategory", zoneCategoryToString(m_zoneCategory));
-
   return el;
 }
 
@@ -56,7 +57,6 @@ QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zoneCategory) {
       str = "";
       break;
   }
-
   return str;
 }
 

@@ -5,6 +5,7 @@
 #define SCANTAILOR_INTERACTION_DRAGGABLEOBJECT_H_
 
 #include <boost/function.hpp>
+
 #include "InteractionState.h"
 #include "Proximity.h"
 

@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ProjectReader.h"
+
 #include <QDir>
 #include <boost/bind.hpp>
+
 #include "AbstractFilter.h"
 #include "FileNameDisambiguator.h"
 #include "ProjectPages.h"
@@ -203,7 +205,6 @@ ImageMetadata ProjectReader::processImageMetadata(const QDomElement& imageEl) {
   if (!dpiEl.isNull()) {
     dpi = Dpi(dpiEl);
   }
-
   return ImageMetadata(size, dpi);
 }
 
@@ -256,7 +257,6 @@ QString ProjectReader::getDirPath(const int id) const {
   if (it != m_dirMap.end()) {
     return it->second;
   }
-
   return QString();
 }
 
@@ -265,7 +265,6 @@ ProjectReader::FileRecord ProjectReader::getFileRecord(int id) const {
   if (it != m_fileMap.end()) {
     return it->second;
   }
-
   return FileRecord();
 }
 
@@ -275,7 +274,6 @@ QString ProjectReader::expandFilePath(const QString& pathShorthand) const {
   if (!ok) {
     return QString();
   }
-
   return getFileRecord(fileId).filePath;
 }
 
@@ -284,7 +282,6 @@ ImageInfo ProjectReader::getImageInfo(int id) const {
   if (it != m_imageMap.end()) {
     return it->second;
   }
-
   return ImageInfo();
 }
 
@@ -293,7 +290,6 @@ ImageId ProjectReader::imageId(const int numericId) const {
   if (it != m_imageMap.end()) {
     return it->second.id();
   }
-
   return ImageId();
 }
 
@@ -302,6 +298,5 @@ PageId ProjectReader::pageId(int numericId) const {
   if (it != m_pageMap.end()) {
     return it->second;
   }
-
   return PageId();
 }

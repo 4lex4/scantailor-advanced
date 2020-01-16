@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageViewBase.h"
+
 #include <PolygonUtils.h>
 #include <Transform.h>
+
 #include <QApplication>
 #include <QGLWidget>
 #include <QMouseEvent>
@@ -12,6 +14,7 @@
 #include <QScrollBar>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QStatusBar>
+
 #include "ApplicationSettings.h"
 #include "BackgroundExecutor.h"
 #include "ColorSchemeManager.h"
@@ -245,7 +248,6 @@ QImage ImageViewBase::createDownscaledImage(const QImage& image) {
 
   QTransform xform;
   xform.scale((double) dW / oW, (double) dH / oH);
-
   return transform(image, xform, QRect(0, 0, dW, dH), OutsidePixels::assumeColor(Qt::white));
 }
 
@@ -256,7 +258,6 @@ QRectF ImageViewBase::maxViewportRect() const {
   if (r.isEmpty()) {
     return QRectF(viewportRect.center(), viewportRect.center());
   }
-
   return r;
 }
 
@@ -267,13 +268,11 @@ QRectF ImageViewBase::dynamicViewportRect() const {
   if (r.isEmpty()) {
     return QRectF(viewportRect.center(), viewportRect.center());
   }
-
   return r;
 }
 
 QRectF ImageViewBase::getOccupiedWidgetRect() const {
   const QRectF widgetRect(m_virtualToWidget.mapRect(virtualDisplayRect()));
-
   return widgetRect.intersected(dynamicViewportRect());
 }
 
@@ -800,7 +799,6 @@ QPointF ImageViewBase::getIdealWidgetFocalPoint(const FocalPointMode mode) const
     const double movement = std::min(std::fabs(topMargin), std::fabs(bottomMargin));
     widgetFocalPoint.ry() -= movement;
   }
-
   return widgetFocalPoint;
 }  // ImageViewBase::getIdealWidgetFocalPoint
 
@@ -900,7 +898,6 @@ bool ImageViewBase::validateHqPixmap() const {
   if (m_hqXform != m_imageToVirtual * m_virtualToWidget) {
     return false;
   }
-
   return true;
 }
 
@@ -975,7 +972,6 @@ void ImageViewBase::maybeQueueRedraw() {
 
 BackgroundExecutor& ImageViewBase::backgroundExecutor() {
   static BackgroundExecutor executor;
-
   return executor;
 }
 
@@ -1023,7 +1019,6 @@ intrusive_ptr<AbstractCommand<void>> ImageViewBase::HqTransformTask::operator()(
       = hqImage.convertToFormat(hqImage.hasAlphaChannel() ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32);
 
   m_result->setData(targetRect.topLeft(), hqImage);
-
   return m_result;
 }
 

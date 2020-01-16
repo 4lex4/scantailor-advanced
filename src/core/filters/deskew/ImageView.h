@@ -11,6 +11,7 @@
 #include <QRectF>
 #include <QString>
 #include <utility>
+
 #include "DragHandler.h"
 #include "DraggablePoint.h"
 #include "ImageTransformation.h"

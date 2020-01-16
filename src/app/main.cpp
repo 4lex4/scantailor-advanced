@@ -9,8 +9,10 @@
 #include <core/FontIconPack.h>
 #include <core/IconProvider.h>
 #include <core/StyledIconPack.h>
+
 #include <QSettings>
 #include <QStringList>
+
 #include "MainWindow.h"
 
 int main(int argc, char* argv[]) {
@@ -57,6 +59,5 @@ int main(int argc, char* argv[]) {
   if (args.size() > 1) {
     mainWnd->openProject(args.at(1));
   }
-
   return Application::exec();
 }  // main

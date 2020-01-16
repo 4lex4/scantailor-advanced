@@ -4,10 +4,12 @@
 #include <BinaryImage.h>
 #include <ConnComp.h>
 #include <ConnCompEraser.h>
+
 #include <QImage>
 #include <algorithm>
 #include <boost/test/unit_test.hpp>
 #include <list>
+
 #include "Utils.h"
 
 namespace imageproc {

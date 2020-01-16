@@ -5,6 +5,7 @@
 #define SCANTAILOR_FOUNDATION_VALUECONV_H_
 
 #include <cmath>
+
 #include "NumericTraits.h"
 
 template <typename ToType>

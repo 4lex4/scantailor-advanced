@@ -4,7 +4,9 @@
 #include "CacheDrivenTask.h"
 
 #include <core/ApplicationSettings.h>
+
 #include <utility>
+
 #include "IncompleteThumbnail.h"
 #include "PageInfo.h"
 #include "Params.h"
@@ -32,7 +34,6 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
       thumbCol->processThumbnail(std::unique_ptr<QGraphicsItem>(new IncompleteThumbnail(
           thumbCol->thumbnailCache(), thumbCol->maxLogicalThumbSize(), pageInfo.imageId(), xform)));
     }
-
     return;
   }
 
@@ -49,7 +50,6 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
 
   if (m_nextTask) {
     m_nextTask->process(pageInfo, collector, newXform, contentRectPhys);
-
     return;
   }
 

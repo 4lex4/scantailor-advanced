@@ -5,6 +5,7 @@
 #define SCANTAILOR_PAGE_SPLIT_THUMBNAIL_H_
 
 #include <QPixmap>
+
 #include "PageLayout.h"
 #include "ThumbnailBase.h"
 #include "intrusive_ptr.h"

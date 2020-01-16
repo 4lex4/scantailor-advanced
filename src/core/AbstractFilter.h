@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_ABSTRACTFILTER_H_
 
 #include <vector>
+
 #include "PageOrderOption.h"
 #include "PageView.h"
 #include "ref_countable.h"

@@ -18,7 +18,6 @@ QDomElement SplittingOptions::toXml(QDomDocument& doc, const QString& name) cons
   el.setAttribute("splitOutput", m_isSplitOutput ? "1" : "0");
   el.setAttribute("splittingMode", formatSplittingMode(m_splittingMode));
   el.setAttribute("originalBackground", m_isOriginalBackgroundEnabled ? "1" : "0");
-
   return el;
 }
 
@@ -64,7 +63,6 @@ QString SplittingOptions::formatSplittingMode(const SplittingMode type) {
       str = "color";
       break;
   }
-
   return str;
 }
 

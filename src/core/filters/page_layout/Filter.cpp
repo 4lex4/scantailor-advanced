@@ -2,15 +2,18 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Filter.h"
+
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
 #include <UnitsConverter.h>
 #include <filters/output/CacheDrivenTask.h>
 #include <filters/output/Task.h>
+
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <utility>
+
 #include "CacheDrivenTask.h"
 #include "FilterUiInterface.h"
 #include "Guide.h"
@@ -93,7 +96,6 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
 
   writer.enumPages(
       [&](const PageId& pageId, int numericId) { this->writePageSettings(doc, filterEl, pageId, numericId); });
-
   return filterEl;
 }
 
@@ -171,7 +173,6 @@ void Filter::invalidateContentBox(const PageId& pageId) {
 
 bool Filter::checkReadyForOutput(const ProjectPages& pages, const PageId* ignore) {
   const PageSequence snapshot(pages.toPageSequence(PAGE_VIEW));
-
   return m_settings->checkEverythingDefined(snapshot, ignore);
 }
 

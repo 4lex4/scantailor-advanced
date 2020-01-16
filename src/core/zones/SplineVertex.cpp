@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SplineVertex.h"
+
 #include <cassert>
 
 
@@ -31,7 +32,6 @@ bool SplineVertex::hasAtLeastSiblings(const int num) {
       return true;
     }
   }
-
   return false;
 }
 
@@ -47,7 +47,6 @@ SplineVertex::Ptr SplineVertex::insertBefore(const QPointF& pt) {
   auto newVertex = make_intrusive<RealSplineVertex>(pt, m_prev, this);
   m_prev->m_next = newVertex;
   m_prev = newVertex.get();
-
   return newVertex;
 }
 
@@ -55,7 +54,6 @@ SplineVertex::Ptr SplineVertex::insertAfter(const QPointF& pt) {
   auto newVertex = make_intrusive<RealSplineVertex>(pt, this, m_next.get());
   m_next->m_prev = newVertex.get();
   m_next = newVertex;
-
   return newVertex;
 }
 
@@ -91,7 +89,6 @@ SplineVertex::Ptr SentinelSplineVertex::thisOrNextReal(const Loop loop) {
 
 const QPointF SentinelSplineVertex::point() const {
   assert(!"Illegal call to SentinelSplineVertex::point()");
-
   return QPointF();
 }
 

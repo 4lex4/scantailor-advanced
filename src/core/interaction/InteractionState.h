@@ -7,6 +7,7 @@
 #include <QCursor>
 #include <QString>
 #include <boost/intrusive/list.hpp>
+
 #include "NonCopyable.h"
 #include "Proximity.h"
 

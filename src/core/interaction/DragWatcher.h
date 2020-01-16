@@ -6,6 +6,7 @@
 
 #include <QDateTime>
 #include <QPoint>
+
 #include "InteractionHandler.h"
 
 class DragHandler;

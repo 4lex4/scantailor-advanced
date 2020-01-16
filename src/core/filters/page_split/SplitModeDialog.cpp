@@ -2,9 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SplitModeDialog.h"
+
 #include <core/IconProvider.h>
+
 #include <cassert>
 #include <iostream>
+
 #include "PageSelectionAccessor.h"
 
 namespace page_split {
@@ -79,7 +82,6 @@ void SplitModeDialog::onSubmit() {
   } else if (selectedPagesRB->isChecked()) {
     emit accepted(m_selectedPages, layoutType, applyCutOption->isChecked());
     accept();
-
     return;
   } else if (everyOtherRB->isChecked()) {
     m_pages.selectEveryOther(m_curPage).swap(pages);
@@ -122,7 +124,6 @@ LayoutType SplitModeDialog::combinedLayoutType() const {
   }
 
   assert(!"Unreachable");
-
   return AUTO_LAYOUT_TYPE;
 }
 

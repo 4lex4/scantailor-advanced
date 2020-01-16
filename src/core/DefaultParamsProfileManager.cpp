@@ -2,9 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DefaultParamsProfileManager.h"
+
 #include <config.h>
+
 #include <QtGui/QtGui>
 #include <QtXml/QDomDocument>
+
 #include "Application.h"
 #include "DefaultParams.h"
 #include "version.h"
@@ -36,7 +39,6 @@ std::list<QString> DefaultParamsProfileManager::getProfileList() const {
       }
     }
   }
-
   return profileList;
 }
 
@@ -105,7 +107,6 @@ bool DefaultParamsProfileManager::writeProfile(const DefaultParams& params, cons
     doc.save(textStream, 2);
     return true;
   }
-
   return false;
 }
 
@@ -140,7 +141,6 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::createSourceProfile(
   colorParams.setColorCommonOptions(colorCommonOptions);
 
   outputParams.setColorParams(colorParams);
-
   return std::make_unique<DefaultParams>(DefaultParams::FixOrientationParams(), deskewParams, pageSplitParams,
                                          selectContentParams, pageLayoutParams, outputParams);
 }

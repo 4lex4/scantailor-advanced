@@ -5,6 +5,7 @@
 #define SCANTAILOR_DESKEW_DEPENDENCIES_H_
 
 #include <QPolygonF>
+
 #include "OrthogonalRotation.h"
 
 class QDomDocument;

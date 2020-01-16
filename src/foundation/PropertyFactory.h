@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <unordered_map>
+
 #include "Hashes.h"
 #include "Property.h"
 #include "intrusive_ptr.h"

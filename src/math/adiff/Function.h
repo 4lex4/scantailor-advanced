@@ -5,6 +5,7 @@
 #define SCANTAILOR_ADIFF_FUNCTION_H_
 
 #include <cstddef>
+
 #include "MatT.h"
 #include "SparseMap.h"
 #include "VecT.h"

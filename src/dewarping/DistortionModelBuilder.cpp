@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DistortionModelBuilder.h"
+
 #include <QDebug>
 #include <QImage>
 #include <QPainter>
 #include <boost/foreach.hpp>
+
 #include "CylindricalSurfaceDewarper.h"
 #include "DebugImages.h"
 #include "DistortionModel.h"
@@ -177,7 +179,6 @@ DistortionModel DistortionModelBuilder::tryBuildModel(DebugImages* dbg, const QI
     model.setTopCurve(Curve(ransac.bestModel().topCurve->extendedPolyline));
     model.setBottomCurve(Curve(ransac.bestModel().bottomCurve->extendedPolyline));
   }
-
   return model;
 }  // DistortionModelBuilder::tryBuildModel
 
@@ -194,7 +195,6 @@ DistortionModelBuilder::TracedCurve DistortionModelBuilder::polylineToCurve(
   const XSpline extendedSpline(fitExtendedSpline(trimmedPolyline, centroid, bounds));
 
   const double order = centroid.dot(m_downDirection);
-
   return TracedCurve(trimmedPolyline, extendedSpline, order);
 }
 
@@ -248,7 +248,6 @@ std::vector<QPointF> DistortionModelBuilder::maybeTrimPolyline(const std::vector
   std::deque<QPointF> trimmedPolyline(polyline.begin(), polyline.end());
   maybeTrimFront(trimmedPolyline, bounds.first);
   maybeTrimBack(trimmedPolyline, bounds.second);
-
   return std::vector<QPointF>(trimmedPolyline.begin(), trimmedPolyline.end());
 }
 
@@ -263,7 +262,6 @@ bool DistortionModelBuilder::maybeTrimFront(std::deque<QPointF>& polyline, const
   }
 
   intersectFront(polyline, bound);
-
   return true;
 }
 
@@ -278,7 +276,6 @@ bool DistortionModelBuilder::maybeTrimBack(std::deque<QPointF>& polyline, const 
   }
 
   intersectBack(polyline, bound);
-
   return true;
 }
 
@@ -396,7 +393,6 @@ XSpline DistortionModelBuilder::fitExtendedSpline(const std::vector<QPointF>& po
       break;
     }
   }
-
   return spline;
 }  // DistortionModelBuilder::fitExtendedSpline
 
@@ -487,7 +483,6 @@ catch (const std::runtime_error&) {
 
         const QPointF pt1(dewarper.mapToDewarpedSpace(loc + QPointF(0.0, -10)));
         const QPointF pt2(dewarper.mapToDewarpedSpace(loc + QPointF(0.0, 10)));
-
         return std::fabs(pt1.y() - pt2.y());
     }
 #endif
@@ -532,7 +527,6 @@ QImage DistortionModelBuilder::visualizeTrimmedPolylines(const QImage& backgroun
       painter.drawEllipse(rect);
     }
   }
-
   return canvas;
 }  // DistortionModelBuilder::visualizeTrimmedPolylines
 
@@ -640,7 +634,6 @@ QImage DistortionModelBuilder::visualizeModel(const QImage& background,
       painter.drawEllipse(rect);
     }
   }
-
   return canvas;
 }  // DistortionModelBuilder::visualizeModel
 }  // namespace dewarping

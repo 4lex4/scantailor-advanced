@@ -2,11 +2,14 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TowardsLineTracer.h"
+
 #include <SEDM.h>
+
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <cassert>
+
 #include "NumericTraits.h"
 #include "SidesOfLine.h"
 
@@ -100,14 +103,12 @@ const QPoint* TowardsLineTracer::trace(const float maxDist) {
     const QPoint vec(curPos - m_lastOutputPos);
     if (vec.x() * vec.x() + vec.y() * vec.y() > maxSqdist) {
       m_lastOutputPos = curPos;
-
       return &m_lastOutputPos;
     }
   }
 
   if (m_lastOutputPos != curPos) {
     m_lastOutputPos = curPos;
-
     return &m_lastOutputPos;
   } else {
     return nullptr;

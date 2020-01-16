@@ -6,6 +6,7 @@
 
 #include <QColor>
 #include <QPen>
+
 #include "EditableSpline.h"
 
 class EditableZoneSet;

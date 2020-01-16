@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Settings.h"
+
 #include <cassert>
+
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
 
@@ -34,7 +36,6 @@ void Settings::performRelinking(const AbstractRelinker& relinker) {
 
 LayoutType Settings::defaultLayoutType() const {
   QMutexLocker locker(&m_mutex);
-
   return m_defaultLayoutType;
 }
 
@@ -67,7 +68,6 @@ void Settings::setLayoutTypeFor(const LayoutType layoutType, const std::set<Page
 
 Settings::Record Settings::getPageRecord(const ImageId& imageId) const {
   QMutexLocker locker(&m_mutex);
-
   return getPageRecordLocked(imageId);
 }
 
@@ -135,7 +135,6 @@ Settings::Record Settings::conditionalUpdate(const ImageId& imageId, const Updat
       if (conflict) {
         *conflict = true;
       }
-
       return Record(m_defaultLayoutType);
     }
 
@@ -146,7 +145,6 @@ Settings::Record Settings::conditionalUpdate(const ImageId& imageId, const Updat
     if (conflict) {
       *conflict = false;
     }
-
     return record;
   } else {
     // A record was found.
@@ -158,7 +156,6 @@ Settings::Record Settings::conditionalUpdate(const ImageId& imageId, const Updat
       if (conflict) {
         *conflict = true;
       }
-
       return Record(it->second, m_defaultLayoutType);
     }
 
@@ -168,11 +165,9 @@ Settings::Record Settings::conditionalUpdate(const ImageId& imageId, const Updat
 
     if (record.isNull()) {
       m_perPageRecords.erase(it);
-
       return Record(m_defaultLayoutType);
     } else {
       it->second = record;
-
       return record;
     }
   }
@@ -217,7 +212,6 @@ bool Settings::BaseRecord::hasLayoutTypeConflict(const LayoutType layoutType) co
   }
 
   assert(!"Unreachable");
-
   return false;
 }
 

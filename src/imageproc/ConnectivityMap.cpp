@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ConnectivityMap.h"
+
 #include <QDebug>
 #include <QImage>
+
 #include "BinaryImage.h"
 #include "BitOps.h"
 #include "InfluenceMap.h"
@@ -83,7 +85,6 @@ ConnectivityMap::ConnectivityMap(const InfluenceMap& imap)
 
 ConnectivityMap& ConnectivityMap::operator=(const ConnectivityMap& other) {
   ConnectivityMap(other).swap(*this);
-
   return *this;
 }
 
@@ -94,7 +95,6 @@ ConnectivityMap& ConnectivityMap::operator=(const InfluenceMap& imap) {
   } else {
     ConnectivityMap(imap).swap(*this);
   }
-
   return *this;
 }
 
@@ -235,7 +235,6 @@ BinaryImage ConnectivityMap::getBinaryMask() const {
     srcLine += srcStride;
     dstLine += dstStride;
   }
-
   return dst;
 }
 
@@ -283,7 +282,6 @@ QImage ConnectivityMap::visualized(QColor bgColor) const {
     srcLine += srcStride;
     dstLine += dstStride;
   }
-
   return dst;
 }  // ConnectivityMap::visualized
 
@@ -351,7 +349,6 @@ uint32_t ConnectivityMap::initialTagging() {
       }
     }
   }
-
   return nextLabel - 1;
 }
 

@@ -6,7 +6,9 @@
 #define SCANTAILOR_OUTPUT_DESPECKLESTATE_H_
 
 #include <BinaryImage.h>
+
 #include <QImage>
+
 #include "DespeckleLevel.h"
 #include "Dpi.h"
 

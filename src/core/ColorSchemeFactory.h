@@ -6,6 +6,7 @@
 
 #include <foundation/Hashes.h>
 #include <foundation/NonCopyable.h>
+
 #include <QString>
 #include <functional>
 #include <memory>

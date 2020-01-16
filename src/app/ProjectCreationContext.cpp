@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ProjectCreationContext.h"
+
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <cassert>
+
 #include "FixDpiDialog.h"
 #include "ProjectFilesDialog.h"
 
@@ -22,7 +24,6 @@ namespace {
 template <typename T>
 bool allDpisOK(const T& container) {
   using namespace boost::lambda;
-
   return std::find_if(container.begin(), container.end(), !bind(&ImageFileInfo::isDpiOK, _1)) == container.end();
 }
 }  // anonymous namespace

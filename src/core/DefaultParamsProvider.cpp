@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DefaultParamsProvider.h"
+
 #include <cassert>
+
 #include "ApplicationSettings.h"
 #include "DefaultParams.h"
 #include "DefaultParamsProfileManager.h"
@@ -42,7 +44,6 @@ const QString& DefaultParamsProvider::getProfileName() const {
 
 DefaultParams DefaultParamsProvider::getParams() const {
   assert(m_params != nullptr);
-
   return *m_params;
 }
 

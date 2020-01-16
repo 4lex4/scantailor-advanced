@@ -6,10 +6,12 @@
 
 #include <AutoManualMode.h>
 #include <UnitsListener.h>
+
 #include <QRectF>
 #include <QSizeF>
 #include <list>
 #include <memory>
+
 #include "Dependencies.h"
 #include "FilterOptionsWidget.h"
 #include "PageId.h"

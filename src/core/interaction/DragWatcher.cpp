@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DragWatcher.h"
+
 #include <QDebug>
 #include <QMouseEvent>
+
 #include "DragHandler.h"
 
 DragWatcher::DragWatcher(DragHandler& dragHandler)
@@ -22,7 +24,6 @@ bool DragWatcher::haveSignificantDrag() const {
 
   const double distScore = std::sqrt((double) m_dragMaxSqDist) / 12.0;
   const double timeScore = msecPassed / 500.0;
-
   return distScore + timeScore >= 1.0;
 }
 

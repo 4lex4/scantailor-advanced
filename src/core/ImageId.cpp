@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageId.h"
+
 #include <QFileInfo>
 
 ImageId::ImageId(const QString& filePath, const int page) : m_filePath(filePath), m_page(page) {}
@@ -23,6 +24,5 @@ bool operator<(const ImageId& lhs, const ImageId& rhs) {
   } else if (comp > 0) {
     return false;
   }
-
   return lhs.page() < rhs.page();
 }

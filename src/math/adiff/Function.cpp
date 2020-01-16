@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Function.h"
+
 #include <algorithm>
 
 namespace adiff {
@@ -48,7 +49,6 @@ VecT<double> Function<2>::gradient(const SparseMap<2>& sparseMap) const {
       grad[i] = firstDerivs[u];
     }
   }
-
   return grad;
 }
 
@@ -73,7 +73,6 @@ MatT<double> Function<2>::hessian(const SparseMap<2>& sparseMap) const {
       hess(i, j) = Fij;
     }
   }
-
   return hess;
 }
 
@@ -95,7 +94,6 @@ Function<2>& Function<2>::operator+=(const Function<2>& other) {
     firstDerivs[u] += other.firstDerivs[u];
     secondDerivs[u] += other.secondDerivs[u];
   }
-
   return *this;
 }
 
@@ -111,7 +109,6 @@ Function<2>& Function<2>::operator-=(const Function<2>& other) {
     firstDerivs[u] -= other.firstDerivs[u];
     secondDerivs[u] -= other.secondDerivs[u];
   }
-
   return *this;
 }
 
@@ -122,7 +119,6 @@ Function<2>& Function<2>::operator*=(double scalar) {
   for (size_t u = 0; u < p; ++u) {
     firstDerivs[u] *= scalar;
   }
-
   return *this;
 }
 
@@ -139,7 +135,6 @@ Function<2> operator+(const Function<2>& f1, const Function<2>& f2) {
     res.firstDerivs[u] = f1.firstDerivs[u] + f2.firstDerivs[u];
     res.secondDerivs[u] = f1.secondDerivs[u] + f2.secondDerivs[u];
   }
-
   return res;
 }
 
@@ -156,7 +151,6 @@ Function<2> operator-(const Function<2>& f1, const Function<2>& f2) {
     res.firstDerivs[u] = f1.firstDerivs[u] - f2.firstDerivs[u];
     res.secondDerivs[u] = f1.secondDerivs[u] - f2.secondDerivs[u];
   }
-
   return res;
 }
 
@@ -174,21 +168,18 @@ Function<2> operator*(const Function<2>& f1, const Function<2>& f2) {
     res.secondDerivs[u]
         = f1.secondDerivs[u] * f2.value + 2.0 * f1.firstDerivs[u] * f2.firstDerivs[u] + f1.value * f2.secondDerivs[u];
   }
-
   return res;
 }
 
 Function<2> operator*(const Function<2>& f, double scalar) {
   Function<2> res(f);
   res *= scalar;
-
   return res;
 }
 
 Function<2> operator*(double scalar, const Function<2>& f) {
   Function<2> res(f);
   res *= scalar;
-
   return res;
 }
 
@@ -218,7 +209,6 @@ Function<2> operator/(const Function<2>& num, const Function<2>& den) {
     // Derivative of: (d1 / den2)
     res.secondDerivs[u] = (d2 * den2 - d1 * d3) / den4;
   }
-
   return res;
 }
 }  // namespace adiff

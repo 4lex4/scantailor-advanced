@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ToLineProjector.h"
+
 #include <cmath>
 
 ToLineProjector::ToLineProjector(const QLineF& line) : m_origin(line.p1()), m_vec(line.p2() - line.p1()), m_mat(m_vec) {
@@ -20,7 +21,6 @@ ToLineProjector::ToLineProjector(const QLineF& line) : m_origin(line.p1()), m_ve
 
 double ToLineProjector::projectionScalar(const QPointF& pt) const {
   const Vec2d b(pt - m_origin);
-
   return m_mat.dot(b);
 }
 

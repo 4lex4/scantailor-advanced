@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "EstimateBackground.h"
+
 #include <BinaryImage.h>
 #include <BitOps.h>
 #include <Connectivity.h>
@@ -15,10 +16,12 @@
 #include <Scale.h>
 #include <SeedFill.h>
 #include <Transform.h>
+
 #include <QDebug>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/control_structures.hpp>
 #include <boost/lambda/lambda.hpp>
+
 #include "DebugImages.h"
 #include "ImageTransformation.h"
 #include "TaskStatus.h"
@@ -282,6 +285,5 @@ imageproc::PolynomialSurface estimateBackground(const GrayImage& input,
   }
 
   status.throwIfCancelled();
-
   return PolynomialSurface(8, 5, background, mask);
 }  // estimateBackground

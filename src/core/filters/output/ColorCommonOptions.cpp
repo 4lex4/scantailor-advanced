@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ColorCommonOptions.h"
+
 #include <QDomDocument>
 
 namespace output {
@@ -22,7 +23,6 @@ QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) co
   el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
   el.setAttribute("fillingColor", formatFillingColor(m_fillingColor));
   el.appendChild(m_posterizationOptions.toXml(doc, "posterization-options"));
-
   return el;
 }
 
@@ -62,7 +62,6 @@ QString ColorCommonOptions::formatFillingColor(FillingColor type) {
       str = "background";
       break;
   }
-
   return str;
 }
 
@@ -115,7 +114,6 @@ QDomElement ColorCommonOptions::PosterizationOptions::toXml(QDomDocument& doc, c
   el.setAttribute("level", m_level);
   el.setAttribute("normalizationEnabled", m_isNormalizationEnabled ? "1" : "0");
   el.setAttribute("forceBlackAndWhite", m_forceBlackAndWhite ? "1" : "0");
-
   return el;
 }
 

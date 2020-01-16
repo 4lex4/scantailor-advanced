@@ -7,6 +7,7 @@
 #include <QPolygonF>
 #include <QRectF>
 #include <QTransform>
+
 #include "Dpi.h"
 #include "OrthogonalRotation.h"
 

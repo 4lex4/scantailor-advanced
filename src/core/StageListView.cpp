@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "StageListView.h"
+
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QPainter>
@@ -9,6 +10,7 @@
 #include <QTimer>
 #include <cassert>
 #include <utility>
+
 #include "BubbleAnimation.h"
 #include "ChangedStateItemDelegate.h"
 #include "ColorSchemeManager.h"
@@ -189,7 +191,6 @@ void StageListView::setBatchProcessingInProgress(const bool inProgress) {
 void StageListView::timerEvent(QTimerEvent* event) {
   if (event->timerId() != m_timerId) {
     QTableView::timerEvent(event);
-
     return;
   }
 
@@ -291,7 +292,6 @@ int StageListView::selectedRow() const {
   if (selection.empty()) {
     return -1;
   }
-
   return selection.front().row();
 }
 
@@ -335,7 +335,6 @@ QVariant StageListView::Model::data(const QModelIndex& index, const int role) co
       }
     }
   }
-
   return QVariant();
 }
 

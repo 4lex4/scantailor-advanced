@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ChangeDpiDialog.h"
+
 #include <QLineEdit>
 #include <QMessageBox>
+
 #include "PageSelectionAccessor.h"
 
 namespace output {
@@ -83,20 +85,17 @@ void ChangeDpiDialog::onSubmit() {
   const QString dpiStr(dpiSelector->currentText());
   if (dpiStr.isEmpty()) {
     QMessageBox::warning(this, tr("Error"), tr("DPI is not set."));
-
     return;
   }
 
   const int dpi = dpiStr.toInt();
   if (dpi < 72) {
     QMessageBox::warning(this, tr("Error"), tr("DPI is too low!"));
-
     return;
   }
 
   if (dpi > 1200) {
     QMessageBox::warning(this, tr("Error"), tr("DPI is too high!"));
-
     return;
   }
 
@@ -111,7 +110,6 @@ void ChangeDpiDialog::onSubmit() {
   } else if (selectedPagesRB->isChecked()) {
     emit accepted(m_selectedPages, Dpi(dpi, dpi));
     accept();
-
     return;
   }
 

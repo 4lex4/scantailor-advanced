@@ -6,6 +6,7 @@
 
 #include <QSize>
 #include <cstdint>
+
 #include "MatT.h"
 #include "VecT.h"
 

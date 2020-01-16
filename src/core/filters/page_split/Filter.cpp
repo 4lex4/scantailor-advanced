@@ -2,13 +2,16 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Filter.h"
+
 #include <DefaultParams.h>
 #include <DefaultParamsProvider.h>
 #include <filters/deskew/CacheDrivenTask.h>
 #include <filters/deskew/Task.h>
+
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <utility>
+
 #include "CacheDrivenTask.h"
 #include "FilterUiInterface.h"
 #include "OptionsWidget.h"
@@ -56,7 +59,6 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
   writer.enumImages([&](const ImageId& imageId, const int numericId) {
     this->writeImageSettings(doc, filterEl, imageId, numericId);
   });
-
   return filterEl;
 }
 

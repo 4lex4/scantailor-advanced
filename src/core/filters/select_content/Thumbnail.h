@@ -5,6 +5,7 @@
 #define SCANTAILOR_SELECT_CONTENT_THUMBNAIL_H_
 
 #include <QRectF>
+
 #include "ThumbnailBase.h"
 
 class QSizeF;

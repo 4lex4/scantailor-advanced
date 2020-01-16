@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Params.h"
+
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
@@ -46,7 +47,6 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   el.appendChild(marshaller.rectF(m_pageRect, "page-rect"));
   el.appendChild(marshaller.sizeF(m_contentSizeMM, "content-size-mm"));
   el.appendChild(m_deps.toXml(doc, "dependencies"));
-
   return el;
 }
 

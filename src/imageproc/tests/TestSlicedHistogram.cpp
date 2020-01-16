@@ -3,10 +3,12 @@
 
 #include <BinaryImage.h>
 #include <SlicedHistogram.h>
+
 #include <QImage>
 #include <boost/test/unit_test.hpp>
 #include <cstddef>
 #include <stdexcept>
+
 #include "Utils.h"
 
 namespace imageproc {
@@ -22,7 +24,6 @@ static bool checkHistogram(const SlicedHistogram& hist, const int* dataBegin, co
       return false;
     }
   }
-
   return true;
 }
 

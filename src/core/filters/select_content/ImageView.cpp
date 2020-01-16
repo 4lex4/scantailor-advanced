@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageView.h"
+
 #include <Despeckle.h>
 #include <NullTaskStatus.h>
 #include <TaskStatus.h>
@@ -9,6 +10,7 @@
 #include <imageproc/GrayImage.h>
 #include <imageproc/PolygonRasterizer.h>
 #include <imageproc/Transform.h>
+
 #include <QDebug>
 #include <QMenu>
 #include <QMouseEvent>
@@ -16,6 +18,7 @@
 #include <boost/bind.hpp>
 #include <cmath>
 #include <map>
+
 #include "ImagePresentation.h"
 #include "ImageTransformation.h"
 
@@ -259,7 +262,6 @@ QPointF ImageView::contentRectCornerPosition(int edgeMask) const {
   } else if (edgeMask & RIGHT) {
     pt.setX(rect.right());
   }
-
   return pt;
 }
 
@@ -329,7 +331,6 @@ QPointF ImageView::pageRectCornerPosition(int edgeMask) const {
   } else if (edgeMask & RIGHT) {
     pt.setX(rect.right());
   }
-
   return pt;
 }
 
@@ -617,7 +618,6 @@ QRect ImageView::findContentInArea(const QRect& area) const {
 
   QRect foundArea = QRect(left, top, right - left + 1, bottom - top + 1);
   foundArea.adjust(-1, -1, 1, 1);
-
   return foundArea;
 }
 

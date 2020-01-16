@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Thumbnail.h"
+
 #include <core/IconProvider.h>
+
 #include <QPainter>
 #include <utility>
 
@@ -36,7 +38,6 @@ void Thumbnail::prePaintOverImage(QPainter& painter,
     case PageLayout::SINGLE_PAGE_UNCUT:
       painter.setBrush(QColor(0, 0, 255, 50));
       painter.drawRect(canvasRect);
-
       return;  // No split line will be drawn.
     case PageLayout::SINGLE_PAGE_CUT:
       painter.setBrush(QColor(0, 0, 255, 50));
@@ -96,7 +97,6 @@ QPointF Thumbnail::subPageCenter(const QPolygonF& leftPage,
   const double xMid = 0.5 * (rects[0].right() + rects[1].left());
   rects[0].setRight(xMid);
   rects[1].setLeft(xMid);
-
   return imageToDisplay.map(rects[subpageIdx].center());
 }
 }  // namespace page_split

@@ -11,6 +11,7 @@
 #include <QString>
 #include <memory>
 #include <vector>
+
 #include "Dpi.h"
 #include "ImageFileInfo.h"
 #include "ImageMetadata.h"

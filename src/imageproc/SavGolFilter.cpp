@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SavGolFilter.h"
+
 #include "Grayscale.h"
 #include "SavGolKernel.h"
 
@@ -256,7 +257,6 @@ QImage savGolFilterGrayToGray(const QImage& src, const QSize& windowSize, const 
     }
     kOrigin.ry() += 1;
   }
-
   return dst;
 }  // savGolFilterGrayToGray
 }  // namespace
@@ -272,7 +272,6 @@ QImage savGolFilter(const QImage& src, const QSize& windowSize, const int horDeg
   if (calcNumTerms(horDegree, vertDegree) > windowSize.width() * windowSize.height()) {
     throw std::invalid_argument("savGolFilter: order is too big for that window");
   }
-
   return savGolFilterGrayToGray(toGrayscale(src), windowSize, horDegree, vertDegree);
 }
 }  // namespace imageproc

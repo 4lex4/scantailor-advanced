@@ -8,6 +8,7 @@
 #include <QWidget>
 #include <boost/function.hpp>
 #include <boost/intrusive/list.hpp>
+
 #include "AutoRemovingFile.h"
 
 class QImage;

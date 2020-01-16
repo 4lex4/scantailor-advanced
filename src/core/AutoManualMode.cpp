@@ -16,7 +16,6 @@ QString autoManualModeToString(AutoManualMode mode) {
       str = "disabled";
       break;
   }
-
   return str;
 }
 

@@ -5,6 +5,7 @@
 #define SCANTAILOR_IMAGEPROC_COLORFORID_H_
 
 #include <QColor>
+
 #include "BitOps.h"
 
 namespace imageproc {
@@ -26,7 +27,6 @@ QColor colorForId(T id) {
   const double V = 1.0;
   QColor color;
   color.setHsvF(H, S, V);
-
   return color;
 }
 }  // namespace imageproc

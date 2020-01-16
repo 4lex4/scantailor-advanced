@@ -2,13 +2,16 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TiffWriter.h"
+
 #include <Constants.h>
 #include <Grayscale.h>
 #include <tiffio.h>
+
 #include <QDebug>
 #include <QtCore/QFile>
 #include <cassert>
 #include <cmath>
+
 #include "ApplicationSettings.h"
 #include "Dpm.h"
 
@@ -56,7 +59,6 @@ static tsize_t deviceRead(thandle_t context, tdata_t data, tsize_t size) {
 
 static tsize_t deviceWrite(thandle_t context, tdata_t data, tsize_t size) {
   auto* dev = (QIODevice*) context;
-
   return (tsize_t) dev->write(static_cast<char*>(data), size);
 }
 
@@ -76,20 +78,17 @@ static toff_t deviceSeek(thandle_t context, toff_t offset, int whence) {
     default:
       break;
   }
-
   return dev->pos();
 }
 
 static int deviceClose(thandle_t context) {
   auto* dev = (QIODevice*) context;
   dev->close();
-
   return 0;
 }
 
 static toff_t deviceSize(thandle_t context) {
   auto* dev = (QIODevice*) context;
-
   return dev->size();
 }
 
@@ -114,10 +113,8 @@ bool TiffWriter::writeImage(const QString& filePath, const QImage& image) {
 
   if (!writeImage(file, image)) {
     file.remove();
-
     return false;
   }
-
   return true;
 }
 
@@ -293,7 +290,6 @@ bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
       return false;
     }
   }
-
   return true;
 }  // TiffWriter::writeRGB32Image
 
@@ -328,7 +324,6 @@ bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
       return false;
     }
   }
-
   return true;
 }  // TiffWriter::writeARGB32Image
 
@@ -348,7 +343,6 @@ bool TiffWriter::write8bitLines(const TiffHandle& tif, const QImage& image) {
       return false;
     }
   }
-
   return true;
 }
 
@@ -368,7 +362,6 @@ bool TiffWriter::writeBinaryLinesAsIs(const TiffHandle& tif, const QImage& image
       return false;
     }
   }
-
   return true;
 }
 
@@ -388,6 +381,5 @@ bool TiffWriter::writeBinaryLinesReversed(const TiffHandle& tif, const QImage& i
       return false;
     }
   }
-
   return true;
 }

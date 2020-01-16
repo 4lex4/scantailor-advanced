@@ -2,10 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "CollapsibleGroupBox.h"
+
 #include <foundation/ScopedIncDec.h>
+
 #include <QSettings>
 #include <QtCore/QEvent>
 #include <QtGui/QShowEvent>
+
 #include "IconProvider.h"
 
 CollapsibleGroupBox::CollapsibleGroupBox(QWidget* parent) : QGroupBox(parent) {
@@ -147,7 +150,6 @@ bool CollapsibleGroupBox::eventFilter(QObject* watched, QEvent* event) {
       }
     }
   }
-
   return QObject::eventFilter(watched, event);
 }
 

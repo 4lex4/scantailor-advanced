@@ -8,6 +8,7 @@
 #include <QPointF>
 #include <cstddef>
 #include <list>
+
 #include "LinearFunction.h"
 
 namespace spfit {

@@ -3,6 +3,7 @@
 
 #include <BinaryImage.h>
 #include <SkewFinder.h>
+
 #include <QApplication>
 #include <QColor>
 #include <QImage>

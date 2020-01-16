@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DewarpingOptions.h"
+
 #include <foundation/Utils.h>
+
 #include <cassert>
 
 using namespace foundation;
@@ -21,7 +23,6 @@ QDomElement DewarpingOptions::toXml(QDomDocument& doc, const QString& name) cons
   el.setAttribute("mode", formatDewarpingMode(m_mode));
   el.setAttribute("postDeskew", m_needPostDeskew ? "1" : "0");
   el.setAttribute("postDeskewAngle", Utils::doubleToString(m_postDeskewAngle));
-
   return el;
 }
 
@@ -82,7 +83,6 @@ QString DewarpingOptions::formatDewarpingMode(DewarpingMode mode) {
   }
 
   assert(!"Unreachable");
-
   return QString();
 }
 }  // namespace output

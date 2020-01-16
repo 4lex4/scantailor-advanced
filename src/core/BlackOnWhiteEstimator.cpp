@@ -2,12 +2,14 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "BlackOnWhiteEstimator.h"
+
 #include <imageproc/Binarize.h>
 #include <imageproc/Grayscale.h>
 #include <imageproc/Morphology.h>
 #include <imageproc/PolygonRasterizer.h>
 #include <imageproc/RasterOp.h>
 #include <imageproc/Transform.h>
+
 #include "DebugImages.h"
 #include "Despeckle.h"
 #include "TaskStatus.h"
@@ -60,7 +62,6 @@ bool BlackOnWhiteEstimator::isBlackOnWhiteRefining(const imageproc::GrayImage& g
   status.throwIfCancelled();
 
   rasterOp<RopAnd<RopSrc, RopDst>>(bw150, contentMask);
-
   return (2 * bw150.countBlackPixels() <= contentMask.countBlackPixels());
 }
 
@@ -86,7 +87,6 @@ bool BlackOnWhiteEstimator::isBlackOnWhite(const GrayImage& img, const BinaryIma
 
   BinaryImage bwImage(img, BinaryThreshold::otsuThreshold(GrayscaleHistogram(img, mask)));
   rasterOp<RopAnd<RopSrc, RopDst>>(bwImage, mask);
-
   return (2 * bwImage.countBlackPixels() <= mask.countBlackPixels());
 }
 
@@ -100,6 +100,5 @@ bool BlackOnWhiteEstimator::isBlackOnWhite(const GrayImage& img, const QPolygonF
 
   BinaryImage mask(img.size(), BLACK);
   PolygonRasterizer::fillExcept(mask, WHITE, cropArea, Qt::WindingFill);
-
   return isBlackOnWhite(img, mask);
 }

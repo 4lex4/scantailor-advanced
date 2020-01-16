@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "BackgroundExecutor.h"
+
 #include <QCoreApplication>
 #include <QThread>
 #include <cassert>
+
 #include "OutOfMemoryHandler.h"
 
 class BackgroundExecutor::Dispatcher : public QObject {

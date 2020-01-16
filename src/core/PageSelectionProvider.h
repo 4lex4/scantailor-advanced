@@ -6,6 +6,7 @@
 
 #include <set>
 #include <vector>
+
 #include "ref_countable.h"
 
 class PageSequence;

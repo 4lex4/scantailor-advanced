@@ -6,6 +6,7 @@
 
 
 #include <foundation/NonCopyable.h>
+
 #include <QtGui/QIcon>
 #include <memory>
 

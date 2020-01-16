@@ -18,7 +18,6 @@ struct hash<QString> {
     for (int i = 0; i < str.size(); ++i) {
       hash = ((hash << 5) + hash) ^ ((data[i].row() << 8) | data[i].cell());
     }
-
     return hash;
   }
 };

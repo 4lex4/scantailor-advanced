@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "BackgroundColorCalculator.h"
+
 #include <cassert>
+
 #include "Binarize.h"
 #include "BinaryImage.h"
 #include "Grayscale.h"
@@ -177,7 +179,6 @@ QColor BackgroundColorCalculator::calcDominantBackgroundColor(const QImage& img,
 
   BinaryImage mask(img.size(), BLACK);
   PolygonRasterizer::fillExcept(mask, WHITE, cropArea, Qt::WindingFill);
-
   return calcDominantBackgroundColor(img, mask);
 }
 
@@ -187,14 +188,12 @@ QColor BackgroundColorCalculator::calcDominantColor(const QImage& img, const Bin
     int rawHist[256];
     grayHistToArray(rawHist, hist);
     uint8_t dominantGray = calcDominantLevel(rawHist);
-
     return QColor(dominantGray, dominantGray, dominantGray);
   } else {
     const RgbHistogram hist(img, backgroundMask);
     uint8_t dominantRed = calcDominantLevel(hist.redChannel());
     uint8_t dominantGreen = calcDominantLevel(hist.greenChannel());
     uint8_t dominantBlue = calcDominantLevel(hist.blueChannel());
-
     return QColor(dominantRed, dominantGreen, dominantBlue);
   }
 }

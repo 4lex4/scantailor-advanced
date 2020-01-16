@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <stack>
+
 #include "BinaryImage.h"
 #include "ConnComp.h"
 #include "Connectivity.h"

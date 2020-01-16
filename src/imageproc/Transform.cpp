@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Transform.h"
+
 #include <QDebug>
 #include <cassert>
+
 #include "BadAllocIfNull.h"
 #include "ColorMixer.h"
 #include "Grayscale.h"
@@ -34,7 +36,6 @@ QSizeF calcSrcUnitSize(const QTransform& xform, const QSizeF& min) {
   const double height = srcPoly.back().y() - srcPoly.front().y();
 
   const QSizeF min32(min * 32.0);
-
   return QSizeF(std::max(min32.width(), width), std::max(min32.height(), height));
 }
 
@@ -320,7 +321,6 @@ QImage transform(const QImage& src,
             outsidePixels.grayLevel(), outsidePixels.flags(), minMappingArea);
 
         fixDpiInPlace(grayDst, src, xform);
-
         return grayDst;
       }
       // fall through
@@ -337,7 +337,6 @@ QImage transform(const QImage& src,
             dst.bytesPerLine() / 4, xform, dstRect, outsidePixels.rgb(), outsidePixels.flags(), minMappingArea);
 
         fixDpiInPlace(dst, src, xform);
-
         return dst;
       } else {
         const QImage srcArgb32(src.convertToFormat(QImage::Format_ARGB32));
@@ -351,7 +350,6 @@ QImage transform(const QImage& src,
             dst.bytesPerLine() / 4, xform, dstRect, outsidePixels.rgba(), outsidePixels.flags(), minMappingArea);
 
         fixDpiInPlace(dst, src, xform);
-
         return dst;
       }
   }
@@ -381,7 +379,6 @@ GrayImage transformToGray(const QImage& src,
                                                        outsidePixels.flags(), minMappingArea);
 
   fixDpiInPlace(dst, src, xform);
-
   return dst;
 }
 }  // namespace imageproc

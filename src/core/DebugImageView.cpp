@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DebugImageView.h"
+
 #include <QPointer>
 #include <utility>
+
 #include "AbstractCommand.h"
 #include "BackgroundExecutor.h"
 #include "BasicImageView.h"
@@ -33,7 +35,6 @@ class DebugImageView::ImageLoader : public AbstractCommand<BackgroundExecutor::T
 
   BackgroundExecutor::TaskResultPtr operator()() override {
     QImage image(m_filePath);
-
     return make_intrusive<ImageLoadResult>(m_owner, image);
   }
 

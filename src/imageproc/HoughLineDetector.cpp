@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "HoughLineDetector.h"
+
 #include <QDebug>
 #include <QPainter>
 #include <cassert>
 #include <cmath>
+
 #include "BinaryImage.h"
 #include "ConnCompEraser.h"
 #include "Constants.h"
@@ -96,7 +98,6 @@ QImage HoughLineDetector::visualizeHoughSpace(const unsigned lowerBound) const {
 
   if (maxValue == 0) {
     intensity.fill(0);
-
     return intensity;
   }
 
@@ -132,7 +133,6 @@ QImage HoughLineDetector::visualizeHoughSpace(const unsigned lowerBound) const {
     QPainter painter(&visual);
     painter.drawImage(QPoint(0, 0), peaksVisual);
   }
-
   return visual;
 }  // HoughLineDetector::visualizeHoughSpace
 
@@ -154,7 +154,6 @@ std::vector<HoughLine> HoughLineDetector::findLines(const unsigned qualityLowerB
   }
 
   std::sort(lines.begin(), lines.end(), GreaterQualityFirst());
-
   return lines;
 }
 
@@ -193,7 +192,6 @@ BinaryImage HoughLineDetector::findHistogramPeaks(const std::vector<unsigned>& h
   const BinaryImage notPeaks(seedFill(diff, peakCandidates, CONN8));
 
   rasterOp<RopXor<RopSrc, RopDst>>(peakCandidates, notPeaks);
-
   return peakCandidates;
 }  // HoughLineDetector::findHistogramPeaks
 
@@ -213,7 +211,6 @@ BinaryImage HoughLineDetector::findPeakCandidates(const std::vector<unsigned>& h
   max5x5(hist, maxed, width, height);
   // Those that haven't changed didn't have a greater neighbor.
   BinaryImage equalMap(buildEqualMap(hist, maxed, width, height, lowerBound));
-
   return equalMap;
 }
 
@@ -265,7 +262,6 @@ void HoughLineDetector::max3x1(const std::vector<unsigned>& src,
                                const int height) {
   if (width == 1) {
     dst = src;
-
     return;
   }
 
@@ -301,7 +297,6 @@ void HoughLineDetector::max1x3(const std::vector<unsigned>& src,
                                const int height) {
   if (height == 1) {
     dst = src;
-
     return;
   }
   // First row (no top neighbors).
@@ -359,7 +354,6 @@ BinaryImage HoughLineDetector::buildEqualMap(const std::vector<unsigned>& src1,
     src1Line += width;
     src2Line += width;
   }
-
   return dst;
 }
 
@@ -367,20 +361,17 @@ BinaryImage HoughLineDetector::buildEqualMap(const std::vector<unsigned>& src1,
 
 QPointF HoughLine::pointAtY(const double y) const {
   double x = (m_distance - y * m_normUnitVector.y()) / m_normUnitVector.x();
-
   return QPointF(x, y);
 }
 
 QPointF HoughLine::pointAtX(const double x) const {
   double y = (m_distance - x * m_normUnitVector.x()) / m_normUnitVector.y();
-
   return QPointF(x, y);
 }
 
 QLineF HoughLine::unitSegment() const {
   const QPointF linePoint(m_normUnitVector * m_distance);
   const QPointF lineVector(m_normUnitVector.y(), -m_normUnitVector.x());
-
   return QLineF(linePoint, linePoint + lineVector);
 }
 }  // namespace imageproc

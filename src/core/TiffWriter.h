@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_TIFFWRITER_H_
 
 #include <tiff.h>
+
 #include <cstddef>
 #include <cstdint>
 

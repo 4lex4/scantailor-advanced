@@ -2,14 +2,16 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OptionsWidget.h"
-#include "ApplyDialog.h"
-#include "ScopedIncDec.h"
-#include "Settings.h"
 
 #include <UnitsProvider.h>
+
 #include <boost/bind.hpp>
 #include <iostream>
 #include <utility>
+
+#include "ApplyDialog.h"
+#include "ScopedIncDec.h"
+#include "Settings.h"
 
 namespace select_content {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor)

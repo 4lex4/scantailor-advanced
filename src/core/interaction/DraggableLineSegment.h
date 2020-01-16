@@ -7,6 +7,7 @@
 #include <QLineF>
 #include <QPointF>
 #include <boost/function.hpp>
+
 #include "DraggableObject.h"
 
 class ObjectDragHandler;

@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "UnitsProvider.h"
+
 #include <algorithm>
+
 #include "ApplicationSettings.h"
 #include "Dpm.h"
 #include "UnitsConverter.h"

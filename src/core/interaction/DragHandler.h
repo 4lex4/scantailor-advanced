@@ -9,6 +9,7 @@
 #include <QCoreApplication>
 #include <QPoint>
 #include <boost/function.hpp>
+
 #include "InteractionHandler.h"
 #include "InteractionState.h"
 

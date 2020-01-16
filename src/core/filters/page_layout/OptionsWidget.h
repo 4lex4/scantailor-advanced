@@ -5,11 +5,13 @@
 #define SCANTAILOR_PAGE_LAYOUT_OPTIONSWIDGET_H_
 
 #include <UnitsListener.h>
+
 #include <QIcon>
 #include <list>
 #include <memory>
 #include <set>
 #include <unordered_map>
+
 #include "Alignment.h"
 #include "FilterOptionsWidget.h"
 #include "Margins.h"

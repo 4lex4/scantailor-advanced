@@ -9,6 +9,7 @@
 #include <boost/function.hpp>
 #include <boost/scoped_array.hpp>
 #include <cstddef>
+
 #include "DraggablePoint.h"
 #include "InteractionState.h"
 #include "ObjectDragHandler.h"

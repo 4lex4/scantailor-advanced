@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
+
 #include "NonCopyable.h"
 
 template <typename T>
@@ -93,7 +94,6 @@ FastQueue<T>::FastQueue(const FastQueue& other) : m_chunkCapacity(other.m_chunkC
 template <typename T>
 FastQueue<T>& FastQueue<T>::operator=(const FastQueue& other) {
   FastQueue(other).swap(*this);
-
   return *this;
 }
 

@@ -5,10 +5,12 @@
 #define SCANTAILOR_DESKEW_SETTINGS_H_
 
 #include <DeviationProvider.h>
+
 #include <QMutex>
 #include <memory>
 #include <set>
 #include <unordered_map>
+
 #include "NonCopyable.h"
 #include "PageId.h"
 #include "Params.h"

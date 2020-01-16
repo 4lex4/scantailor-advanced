@@ -6,6 +6,7 @@
 
 #include <QtCore/QMutex>
 #include <QtWidgets/QWidget>
+
 #include "Dpi.h"
 #include "ImageViewInfoListener.h"
 #include "ImageViewInfoProvider.h"

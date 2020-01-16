@@ -6,6 +6,7 @@
 
 #include <QAtomicInt>
 #include <exception>
+
 #include "AbstractCommand.h"
 #include "FilterResult.h"
 #include "TaskStatus.h"

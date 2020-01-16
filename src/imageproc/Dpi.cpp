@@ -2,9 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Dpi.h"
+
 #include <Constants.h>
+
 #include <QDomDocument>
 #include <QDomElement>
+
 #include "Dpm.h"
 
 Dpi::Dpi() : m_xDpi(0), m_yDpi(0) {}

@@ -7,6 +7,7 @@
 #include <boost/intrusive/list.hpp>
 #include <boost/scoped_array.hpp>
 #include <cstddef>
+
 #include "NonCopyable.h"
 
 /**
@@ -94,7 +95,6 @@ T* DynamicPool<T>::alloc(size_t numElements) {
   T* data = chunk->pData;
   chunk->pData += numElements;
   chunk->remainingElements -= numElements;
-
   return data;
 }
 
@@ -104,7 +104,6 @@ size_t DynamicPool<T>::adviseChunkSize(size_t numElements) {
   if (factor > (size_t) OVERALLOCATION_FACTOR) {
     factor = OVERALLOCATION_FACTOR;
   }
-
   return numElements * (factor + 1);
 }
 

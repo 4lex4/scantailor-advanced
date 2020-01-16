@@ -5,6 +5,7 @@
 #define SCANTAILOR_PAGE_SPLIT_IMAGEVIEW_H_
 
 #include <QPixmap>
+
 #include "DragHandler.h"
 #include "DraggableLineSegment.h"
 #include "DraggablePoint.h"

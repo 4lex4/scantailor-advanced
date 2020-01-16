@@ -2,13 +2,16 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ThumbnailBase.h"
+
 #include <PolygonUtils.h>
+
 #include <QApplication>
 #include <QPainter>
 #include <QPixmapCache>
 #include <QStyleOptionGraphicsItem>
 #include <cmath>
 #include <utility>
+
 #include "ApplicationSettings.h"
 #include "PixmapRenderer.h"
 
@@ -81,7 +84,6 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     painter->fillRect(rect, QColor(0xff, 0xff, 0xff));
 
     paintOverImage(*painter, imageToDisplay, thumbToDisplay);
-
     return;
   }
 

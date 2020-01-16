@@ -5,6 +5,7 @@
 #define SCANTAILOR_PAGE_LAYOUT_CACHEDRIVENTASK_H_
 
 #include <QPolygonF>
+
 #include "NonCopyable.h"
 #include "intrusive_ptr.h"
 #include "ref_countable.h"

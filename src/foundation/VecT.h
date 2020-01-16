@@ -79,13 +79,11 @@ class VecT {
 
   const T& operator[](size_t idx) const {
     assert(idx < m_size);
-
     return m_data[idx];
   }
 
   T& operator[](size_t idx) {
     assert(idx < m_size);
-
     return m_data[idx];
   }
 
@@ -143,7 +141,6 @@ VecT<T>::VecT(const VecT<OT>& other) : m_data(new T[other.m_size]), m_size(other
 template <typename T>
 VecT<T>& VecT<T>::operator=(const VecT& other) {
   VecT(other).swap(*this);
-
   return *this;
 }
 
@@ -151,7 +148,6 @@ template <typename T>
 template <typename OT>
 VecT<T>& VecT<T>::operator=(const VecT<OT>& other) {
   VecT(other).swap(*this);
-
   return *this;
 }
 
@@ -161,7 +157,6 @@ VecT<T>& VecT<T>::operator+=(const VecT& rhs) {
   for (size_t i = 0; i < m_size; ++i) {
     m_data[i] += rhs.m_data[i];
   }
-
   return *this;
 }
 
@@ -171,7 +166,6 @@ VecT<T>& VecT<T>::operator-=(const VecT& rhs) {
   for (size_t i = 0; i < m_size; ++i) {
     m_data[i] -= rhs.m_data[i];
   }
-
   return *this;
 }
 
@@ -180,7 +174,6 @@ VecT<T>& VecT<T>::operator*=(const T scalar) {
   for (size_t i = 0; i < m_size; ++i) {
     m_data[i] *= scalar;
   }
-
   return *this;
 }
 
@@ -208,7 +201,6 @@ template <typename T>
 VecT<T> operator*(const VecT<T>& vec, double scalar) {
   VecT<T> res(vec);
   res *= scalar;
-
   return res;
 }
 
@@ -216,7 +208,6 @@ template <typename T>
 VecT<T> operator*(double scalar, const VecT<T>& vec) {
   VecT<T> res(vec);
   res *= scalar;
-
   return res;
 }
 

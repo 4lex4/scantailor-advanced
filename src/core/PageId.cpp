@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PageId.h"
+
 #include <cassert>
 
 PageId::PageId() : m_subPage(SINGLE_PAGE) {}
@@ -24,7 +25,6 @@ QString PageId::subPageToString(const SubPage subPage) {
   }
 
   assert(str);
-
   return QString::fromLatin1(str);
 }
 
@@ -45,7 +45,6 @@ PageId::SubPage PageId::subPageFromString(const QString& string, bool* ok) {
   if (ok) {
     *ok = recognized;
   }
-
   return subPage;
 }
 

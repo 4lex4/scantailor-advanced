@@ -6,6 +6,7 @@
 
 #include <QColor>
 #include <QVector>
+
 #include "GrayImage.h"
 
 class QImage;

@@ -3,12 +3,14 @@
 
 #include <GrayImage.h>
 #include <Scale.h>
+
 #include <QImage>
 #include <QSize>
 #include <boost/test/unit_test.hpp>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
+
 #include "Utils.h"
 
 namespace imageproc {
@@ -41,14 +43,12 @@ static bool fuzzyCompare(const QImage& img1, const QImage& img2) {
     line1 += line1Bpl;
     line2 += line2Bpl;
   }
-
   return true;
 }
 
 static bool checkScale(const GrayImage& img, const QSize& newSize) {
   const GrayImage scaled1(scaleToGray(img, newSize));
   const GrayImage scaled2(img.toQImage().scaled(newSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
-
   return fuzzyCompare(scaled1, scaled2);
 }
 

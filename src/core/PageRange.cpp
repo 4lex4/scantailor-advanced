@@ -23,6 +23,5 @@ std::set<PageId> PageRange::selectEveryOther(const PageId& base) const {
     }
     ++idx;
   }
-
   return selection;
 }

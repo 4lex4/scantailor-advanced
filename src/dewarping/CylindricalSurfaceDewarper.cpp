@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "CylindricalSurfaceDewarper.h"
+
 #include <QDebug>
 #include <boost/foreach.hpp>
+
 #include "NumericTraits.h"
 #include "ToLineProjector.h"
 
@@ -98,7 +100,6 @@ CylindricalSurfaceDewarper::Generatrix CylindricalSurfaceDewarper::mapGeneratrix
     pairs[2] = std::make_pair(m_plnStraightLineY, imgStraightLineProj);
   }
   HomographicTransform<1, double> H(threePoint1DHomography(pairs));
-
   return Generatrix(imgGeneratrix, H);
 }  // CylindricalSurfaceDewarper::mapGeneratrix
 
@@ -133,14 +134,12 @@ QPointF CylindricalSurfaceDewarper::mapToDewarpedSpace(const QPointF& imgPt) con
 
   const double imgPtProj(projector.projectionScalar(imgPt));
   const double crvY = H(imgPtProj);
-
   return QPointF(crvX, crvY);
 }  // CylindricalSurfaceDewarper::mapToDewarpedSpace
 
 QPointF CylindricalSurfaceDewarper::mapToWarpedSpace(const QPointF& crvPt) const {
   State state;
   const Generatrix gtx(mapGeneratrix(crvPt.x(), state));
-
   return gtx.imgLine.pointAt(gtx.pln2img(crvPt.y()));
 }
 
@@ -152,7 +151,6 @@ HomographicTransform<2, double> CylindricalSurfaceDewarper::calcPlnToImgHomograp
   pairs[1] = std::make_pair(QPointF(1, 0), imgDirectrix1.back());
   pairs[2] = std::make_pair(QPointF(0, 1), imgDirectrix2.front());
   pairs[3] = std::make_pair(QPointF(1, 1), imgDirectrix2.back());
-
   return fourPoint2DHomography(pairs);
 }
 
@@ -188,7 +186,6 @@ double CylindricalSurfaceDewarper::calcPlnStraightLineY(const std::vector<QPoint
     plnYAccum += img2pln(imgPt)[1] * weight;
     weightAccum += weight;
   }
-
   return weightAccum == 0 ? 0.5 : plnYAccum / weightAccum;
 }  // CylindricalSurfaceDewarper::calcPlnStraightLineY
 
@@ -236,7 +233,6 @@ HomographicTransform<2, double> CylindricalSurfaceDewarper::fourPoint2DHomograph
   MatrixCalc<double> mc;
   mc(A, 8, 8).solve(mc(B, 8, 1)).write(H);
   mc(H, 3, 3).trans().write(H);
-
   return HomographicTransform<2, double>(H);
 }  // CylindricalSurfaceDewarper::fourPoint2DHomography
 
@@ -266,7 +262,6 @@ HomographicTransform<1, double> CylindricalSurfaceDewarper::threePoint1DHomograp
   MatrixCalc<double> mc;
   mc(A, 3, 3).solve(mc(B, 3, 1)).write(H);
   mc(H, 2, 2).trans().write(H);
-
   return HomographicTransform<1, double>(H);
 }
 
@@ -331,11 +326,9 @@ CylindricalSurfaceDewarper::CoupledPolylinesIterator::CoupledPolylinesIterator(
 bool CylindricalSurfaceDewarper::CoupledPolylinesIterator::next(QPointF& imgPt1, QPointF& imgPt2, double& plnX) {
   if ((m_nextPlnX1 < m_nextPlnX2) && (m_seq1It != m_seq1End)) {
     next1(imgPt1, imgPt2, plnX);
-
     return true;
   } else if (m_seq2It != m_seq2End) {
     next2(imgPt1, imgPt2, plnX);
-
     return true;
   } else {
     return false;

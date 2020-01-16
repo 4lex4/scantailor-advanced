@@ -7,6 +7,7 @@
 #include <QButtonGroup>
 #include <QDialog>
 #include <set>
+
 #include "LayoutType.h"
 #include "PageId.h"
 #include "PageLayout.h"

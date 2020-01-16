@@ -4,6 +4,7 @@
 #define _ISOC99SOURCE  // For std::copysign()
 
 #include "SavGolKernel.h"
+
 #include <QPoint>
 #include <QSize>
 #include <cassert>

@@ -5,6 +5,7 @@
 #define SCANTAILOR_IMAGEPROC_MORPHOLOGY_H_
 
 #include <vector>
+
 #include "BWColor.h"
 
 class QSize;

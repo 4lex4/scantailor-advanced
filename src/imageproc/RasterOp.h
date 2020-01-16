@@ -10,6 +10,7 @@
 #include <boost/cstdint.hpp>
 #include <cassert>
 #include <stdexcept>
+
 #include "BinaryImage.h"
 
 namespace imageproc {
@@ -122,7 +123,6 @@ class RopSubtract {
   static uint32_t transform(uint32_t src, uint32_t dst) {
     uint32_t lhs = Arg1::transform(src, dst);
     uint32_t rhs = Arg2::transform(src, dst);
-
     return lhs & (lhs ^ rhs);
   }
 };
@@ -138,7 +138,6 @@ class RopSubtractWhite {
   static uint32_t transform(uint32_t src, uint32_t dst) {
     uint32_t lhs = Arg1::transform(src, dst);
     uint32_t rhs = Arg2::transform(src, dst);
-
     return lhs | ~(lhs ^ rhs);
   }
 };
@@ -272,7 +271,6 @@ void rasterOpInDirection(BinaryImage& dst,
         dstSpan[widx] = (dstWord & ~lastDstMask) | (newDstWord & lastDstMask);
       }
     }
-
     return;
   }
 
@@ -381,13 +379,11 @@ void rasterOp(BinaryImage& dst, const QRect& dr, const BinaryImage& src, const Q
 
     if (dr.y() > sp.y()) {
       rasterOpInDirection<Rop>(dst, dr, src, sp, -1, 1);
-
       return;
     }
 
     if ((dr.y() == sp.y()) && (dr.x() > sp.x())) {
       rasterOpInDirection<Rop>(dst, dr, src, sp, 1, -1);
-
       return;
     }
   }

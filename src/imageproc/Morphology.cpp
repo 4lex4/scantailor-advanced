@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Morphology.h"
+
 #include <QDebug>
 #include <cassert>
 #include <cmath>
+
 #include "BinaryImage.h"
 #include "GrayImage.h"
 #include "Grayscale.h"
@@ -43,7 +45,6 @@ void Brick::flip() {
 Brick Brick::flipped() const {
   Brick brick(*this);
   brick.flip();
-
   return brick;
 }
 
@@ -75,7 +76,6 @@ BinaryImage ReusableImages::retrieveOrCreate(const QSize& size) {
     BinaryImage img;
     m_images.back().swap(img);
     m_images.pop_back();
-
     return img;
   }
 }
@@ -263,7 +263,6 @@ void spreadInDirection(BinaryImage& dst,
   if (numSteps < COMPOSITE_THRESHOLD) {
     spreadInDirectionLow(dst, dstCs, dstRelevantRect, src, srcCs, dxMin, dxStep, dyMin, dyStep, numSteps, rop,
                          initialColor, dstCompositionAllowed);
-
     return;
   }
 
@@ -311,7 +310,6 @@ void dilateOrErodeBrick(BinaryImage& dst,
 
   if (!extendByBrick(src.rect(), brick).intersects(dstArea)) {
     dst.fill(srcSurroundings);
-
     return;
   }
 
@@ -329,7 +327,6 @@ void dilateOrErodeBrick(BinaryImage& dst,
     dstRelevantRect = dstRelevantRect.intersected(dstImageRect);
     if (dstRelevantRect.isEmpty()) {
       dst.fill(srcSurroundings);
-
       return;
     }
   }
@@ -542,7 +539,6 @@ GrayImage extendGrayImage(const GrayImage& src, const QRect& dstArea, const uint
 
   if (boundSrcRectInDstCs.isEmpty()) {
     dst.fill(background);
-
     return dst;
   }
 
@@ -577,7 +573,6 @@ GrayImage extendGrayImage(const GrayImage& src, const QRect& dstArea, const uint
   for (; y < height; ++y, dstLine += dstStride) {
     memset(dstLine, background, dstStride);
   }
-
   return dst;
 }  // extendGrayImage
 
@@ -594,7 +589,6 @@ GrayImage dilateOrErodeGray(const GrayImage& src,
 
   if (!extendByBrick(src.rect(), brick).intersects(dstArea)) {
     dst.fill(srcSurroundings);
-
     return dst;
   }
   const CoordinateSystem dstCs(dstArea.topLeft());
@@ -652,7 +646,6 @@ GrayImage dilateOrErodeGray(const GrayImage& src,
                                    collectArea.maxY());
     }
   }
-
   return dst;
 }  // dilateOrErodeGray
 }  // anonymous namespace
@@ -674,7 +667,6 @@ BinaryImage dilateBrick(const BinaryImage& src,
   TemplateRasterOp<RopOr<RopSrc, RopDst>> rop;
   BinaryImage dst(dstArea.size());
   dilateOrErodeBrick(dst, src, brick, dstArea, srcSurroundings, rop, BLACK);
-
   return dst;
 }
 
@@ -691,7 +683,6 @@ GrayImage dilateGray(const GrayImage& src,
   if (dstArea.isEmpty()) {
     throw std::invalid_argument("dilateGray: dstArea is empty");
   }
-
   return dilateOrErodeGray<Darker>(src, brick, dstArea, srcSurroundings);
 }
 
@@ -722,7 +713,6 @@ BinaryImage erodeBrick(const BinaryImage& src,
   TemplateRasterOp<RopAnd<RopSrc, RopDst>> rop;
   BinaryImage dst(dstArea.size());
   dilateOrErodeBrick(dst, src, brick, dstArea, srcSurroundings, rop, WHITE);
-
   return dst;
 }
 
@@ -739,7 +729,6 @@ GrayImage erodeGray(const GrayImage& src,
   if (dstArea.isEmpty()) {
     throw std::invalid_argument("erodeGray: dstArea is empty");
   }
-
   return dilateOrErodeGray<Lighter>(src, brick, dstArea, srcSurroundings);
 }
 
@@ -781,7 +770,6 @@ BinaryImage openBrick(const BinaryImage& src, const QSize& brick, const QRect& d
 
   const BinaryImage tmp(erodeBrick(src, actualBrick, tmpArea, srcSurroundings));
   actualBrick.flip();
-
   return dilateBrick(tmp, actualBrick, tmpCs.fromGlobal(dstArea), srcSurroundings);
 }  // openBrick
 
@@ -812,7 +800,6 @@ GrayImage openGray(const GrayImage& src,
   CoordinateSystem tmpCs(tmpRect.topLeft());
 
   const GrayImage tmp(dilateOrErodeGray<Lighter>(src, brick1, tmpRect, srcSurroundings));
-
   return dilateOrErodeGray<Darker>(tmp, brick2, tmpCs.fromGlobal(dstArea), srcSurroundings);
 }
 
@@ -853,7 +840,6 @@ BinaryImage closeBrick(const BinaryImage& src,
 
   const BinaryImage tmp(dilateBrick(src, actualBrick, tmpArea, srcSurroundings));
   actualBrick.flip();
-
   return erodeBrick(tmp, actualBrick, tmpCs.fromGlobal(dstArea), srcSurroundings);
 }  // closeBrick
 
@@ -884,7 +870,6 @@ GrayImage closeGray(const GrayImage& src,
   CoordinateSystem tmpCs(tmpRect.topLeft());
 
   const GrayImage tmp(dilateOrErodeGray<Darker>(src, brick1, tmpRect, srcSurroundings));
-
   return dilateOrErodeGray<Lighter>(tmp, brick2, tmpCs.fromGlobal(dstArea), srcSurroundings);
 }
 
@@ -950,7 +935,6 @@ BinaryImage hitMissMatch(const BinaryImage& src,
   if (first) {
     dst.fill(WHITE);  // No matches.
   }
-
   return dst;
 }  // hitMissMatch
 
@@ -980,7 +964,6 @@ BinaryImage hitMissMatch(const BinaryImage& src,
       }
     }
   }
-
   return hitMissMatch(src, srcSurroundings, hits, misses);
 }
 
@@ -992,7 +975,6 @@ BinaryImage hitMissReplace(const BinaryImage& src,
   BinaryImage dst(src);
 
   hitMissReplaceInPlace(dst, srcSurroundings, pattern, patternWidth, patternHeight);
-
   return dst;
 }
 
@@ -1093,7 +1075,6 @@ BinaryImage whiteTopHatTransform(const BinaryImage& src,
   }
 
   rasterOp<RopSubtract<RopDst, RopSrc>>(dst, openBrick(src, brick, dstArea, srcSurroundings));
-
   return dst;
 }
 
@@ -1123,7 +1104,6 @@ BinaryImage blackTopHatTransform(const BinaryImage& src,
   }
 
   rasterOp<RopSubtract<RopSrc, RopDst>>(dst, closeBrick(src, brick, dstArea, srcSurroundings));
-
   return dst;
 }
 

@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "StatusBarPanel.h"
+
 #include <QtCore/QFileInfo>
 #include <cmath>
+
 #include "ImageViewInfoProvider.h"
 #include "PageId.h"
 #include "UnitsProvider.h"

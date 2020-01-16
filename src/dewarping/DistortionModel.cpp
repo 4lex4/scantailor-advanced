@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DistortionModel.h"
+
 #include <QDomDocument>
 #include <QRectF>
 #include <QTransform>
+
 #include "CylindricalSurfaceDewarper.h"
 
 namespace dewarping {
@@ -21,7 +23,6 @@ QDomElement DistortionModel::toXml(QDomDocument& doc, const QString& name) const
   QDomElement el(doc.createElement(name));
   el.appendChild(m_topCurve.toXml(doc, "top-curve"));
   el.appendChild(m_bottomCurve.toXml(doc, "bottom-curve"));
-
   return el;
 }
 
@@ -63,7 +64,6 @@ bool DistortionModel::isValid() const {
     // Too close - possible problems with calculating homography.
     return false;
   }
-
   return true;
 }  // DistortionModel::isValid
 
@@ -81,7 +81,6 @@ bool DistortionModel::matches(const DistortionModel& other) const {
   } else if (!m_bottomCurve.matches(other.m_bottomCurve)) {
     return false;
   }
-
   return true;
 }
 
@@ -101,7 +100,6 @@ QRectF DistortionModel::modelDomain(const CylindricalSurfaceDewarper& dewarper,
   const double newHeight = modelDomain.height() * vertScale;
   modelDomain.setTop(scaleOrigin.y() - newUpperPart);
   modelDomain.setHeight(newHeight);
-
   return modelDomain;
 }
 

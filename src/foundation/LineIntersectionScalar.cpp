@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "LineIntersectionScalar.h"
+
 #include <cmath>
 
 bool lineIntersectionScalar(const QLineF& line1, const QLineF& line2, double& s1, double& s2) {
@@ -27,7 +28,6 @@ bool lineIntersectionScalar(const QLineF& line1, const QLineF& line2, double& s1
   const QPointF b(p2 - p1);
   s1 = (v2.x() * b.y() - b.x() * v2.y()) * r_det_A;
   s2 = (v1.x() * b.y() - b.x() * v1.y()) * r_det_A;
-
   return true;
 }
 
@@ -53,6 +53,5 @@ bool lineIntersectionScalar(const QLineF& line1, const QLineF& line2, double& s1
 
   const QPointF b(p2 - p1);
   s1 = (v2.x() * b.y() - b.x() * v2.y()) / det_A;
-
   return true;
 }

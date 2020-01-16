@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PropertySet.h"
+
 #include <QDomDocument>
+
 #include "PropertyFactory.h"
 
 PropertySet::PropertySet(const QDomElement& el, const PropertyFactory& factory) {
@@ -48,6 +50,5 @@ QDomElement PropertySet::toXml(QDomDocument& doc, const QString& name) const {
   for (const auto& [type, prop] : m_props) {
     propsEl.appendChild(prop->toXml(doc, propertyStr));
   }
-
   return propsEl;
 }

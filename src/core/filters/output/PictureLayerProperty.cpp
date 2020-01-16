@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PictureLayerProperty.h"
+
 #include <QDomDocument>
+
 #include "PropertyFactory.h"
 
 namespace output {
@@ -22,7 +24,6 @@ QDomElement PictureLayerProperty::toXml(QDomDocument& doc, const QString& name) 
   QDomElement el(doc.createElement(name));
   el.setAttribute("type", m_propertyName);
   el.setAttribute("layer", layerToString(m_layer));
-
   return el;
 }
 
@@ -59,7 +60,6 @@ QString PictureLayerProperty::layerToString(Layer layer) {
       str = "";
       break;
   }
-
   return str;
 }
 

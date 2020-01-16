@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ColorSegmenter.h"
+
 #include <QImage>
 #include <cmath>
+
 #include "BinaryImage.h"
 #include "BinaryThreshold.h"
 #include "ConnectivityMap.h"
@@ -94,7 +96,6 @@ bool ComponentCleaner::eligibleForDelete(const Component& component, const Bound
 
   double squareRelation = double(component.square()) / (boundingBox.height() * boundingBox.width());
   double averageWidth = std::min(boundingBox.height(), boundingBox.width()) * squareRelation;
-
   return (averageWidth <= m_minAverageWidthThreshold);
 }
 
@@ -235,7 +236,6 @@ ConnectivityMap buildMapFromRgb(const BinaryImage& image,
   BinaryImage remainingComponents(image);
   rasterOp<RopSubtract<RopDst, RopSrc>>(remainingComponents, segmentsMap.getBinaryMask());
   segmentsMap.addComponents(remainingComponents, CONN8);
-
   return segmentsMap;
 }
 
@@ -318,7 +318,6 @@ QImage buildRgbImage(const ConnectivityMap& segmentsMap, const QImage& colorImag
     mapLine += mapStride;
     dstLine += dstStride;
   }
-
   return dst;
 }
 
@@ -377,7 +376,6 @@ GrayImage buildGrayImage(const ConnectivityMap& segmentsMap, const GrayImage& gr
     mapLine += mapStride;
     dstLine += dstStride;
   }
-
   return dst;
 }
 }  // namespace

@@ -49,28 +49,24 @@ class Span {
   Span& operator+=(int offset) {
     m_begin += offset;
     m_end += offset;
-
     return *this;
   }
 
   Span& operator-=(int offset) {
     m_begin -= offset;
     m_end -= offset;
-
     return *this;
   }
 
   Span operator+(int offset) const {
     Span span(*this);
     span += offset;
-
     return span;
   }
 
   Span operator-(int offset) const {
     Span span(*this);
     span -= offset;
-
     return span;
   }
 

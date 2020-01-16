@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OpenGLSupport.h"
+
 #include <QOffscreenSurface>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
@@ -26,7 +27,6 @@ bool OpenGLSupport::supported() {
   if (!format.hasAlpha()) {
     return false;
   }
-
   return true;
 }
 
@@ -38,6 +38,5 @@ QString OpenGLSupport::deviceName() {
     name = QString::fromUtf8((const char*) context.functions()->glGetString(GL_RENDERER));
     context.doneCurrent();
   }
-
   return name;
 }

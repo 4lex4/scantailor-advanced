@@ -2,13 +2,16 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TiffReader.h"
+
 #include <tiff.h>
 #include <tiffio.h>
+
 #include <QDebug>
 #include <QIODevice>
 #include <QImage>
 #include <cassert>
 #include <cmath>
+
 #include "Dpm.h"
 #include "ImageMetadata.h"
 #include "NonCopyable.h"
@@ -136,13 +139,11 @@ bool TiffReader::TiffInfo::mapsToBinaryOrIndexed8() const {
     default:
       break;
   }
-
   return false;
 }
 
 static tsize_t deviceRead(thandle_t context, tdata_t data, tsize_t size) {
   auto* dev = (QIODevice*) context;
-
   return (tsize_t) dev->read(static_cast<char*>(data), size);
 }
 
@@ -167,20 +168,17 @@ static toff_t deviceSeek(thandle_t context, toff_t offset, int whence) {
     default:
       break;
   }
-
   return dev->pos();
 }
 
 static int deviceClose(thandle_t context) {
   auto* dev = (QIODevice*) context;
   dev->close();
-
   return 0;
 }
 
 static toff_t deviceSize(thandle_t context) {
   auto* dev = (QIODevice*) context;
-
   return dev->size();
 }
 
@@ -203,7 +201,6 @@ bool TiffReader::canRead(QIODevice& device) {
   }
 
   TiffHeader header(readHeader(device));
-
   return checkHeader(header);
 }
 
@@ -230,7 +227,6 @@ ImageMetadataLoader::Status TiffReader::readMetadata(QIODevice& device,
   do {
     out(currentPageMetadata(tif));
   } while (TIFFReadDirectory(tif.handle()));
-
   return ImageMetadataLoader::LOADED;
 }
 
@@ -319,7 +315,6 @@ QImage TiffReader::readImage(QIODevice& device, const int pageNum) {
     image.setDotsPerMeterX(dpm.horizontal());
     image.setDotsPerMeterY(dpm.vertical());
   }
-
   return image;
 }  // TiffReader::readImage
 
@@ -334,11 +329,9 @@ TiffReader::TiffHeader TiffReader::readHeader(QIODevice& device) {
 
   if ((data[0] == 0x4d) && (data[1] == 0x4d)) {
     const uint16 version = (versionByte0 << 8) + versionByte1;
-
     return TiffHeader(TiffHeader::TIFF_BIG_ENDIAN, version);
   } else if ((data[0] == 0x49) && (data[1] == 0x49)) {
     const uint16 version = (versionByte1 << 8) + versionByte0;
-
     return TiffHeader(TiffHeader::TIFF_LITTLE_ENDIAN, version);
   } else {
     return TiffHeader();
@@ -352,7 +345,6 @@ bool TiffReader::checkHeader(const TiffHeader& header) {
   if ((header.version() != 42) && (header.version() != 43)) {
     return false;
   }
-
   return true;
 }
 
@@ -365,7 +357,6 @@ ImageMetadata TiffReader::currentPageMetadata(const TiffHandle& tif) {
   TIFFGetField(tif.handle(), TIFFTAG_XRESOLUTION, &xres);
   TIFFGetField(tif.handle(), TIFFTAG_YRESOLUTION, &yres);
   TIFFGetFieldDefaulted(tif.handle(), TIFFTAG_RESOLUTIONUNIT, &resUnit);
-
   return ImageMetadata(QSize(width, height), getDpi(xres, yres, resUnit));
 }
 
@@ -378,7 +369,6 @@ Dpi TiffReader::getDpi(float xres, float yres, unsigned resUnit) {
     default:
       break;
   }
-
   return Dpi();
 }
 
@@ -441,7 +431,6 @@ QImage TiffReader::extractBinaryOrIndexed8Image(const TiffHandle& tif, const Tif
   } else {
     readAndUnpackLines(tif, info, image);
   }
-
   return image;
 }  // TiffReader::extractBinaryOrIndexed8Image
 

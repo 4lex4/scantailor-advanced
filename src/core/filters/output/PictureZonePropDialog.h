@@ -5,6 +5,7 @@
 #define SCANTAILOR_OUTPUT_PICTUREZONEPROPDIALOG_H_
 
 #include <QDialog>
+
 #include "PropertySet.h"
 #include "intrusive_ptr.h"
 #include "ui_PictureZonePropDialog.h"

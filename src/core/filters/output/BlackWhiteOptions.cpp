@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "BlackWhiteOptions.h"
+
 #include <foundation/Utils.h>
+
 #include <QDomDocument>
 #include <cmath>
 
@@ -47,7 +49,6 @@ QDomElement BlackWhiteOptions::toXml(QDomDocument& doc, const QString& name) con
   el.setAttribute("wolfCoef", Utils::doubleToString(m_wolfCoef));
   el.setAttribute("binarizationMethod", formatBinarizationMethod(m_binarizationMethod));
   el.appendChild(m_colorSegmenterOptions.toXml(doc, "color-segmenter-options"));
-
   return el;
 }
 
@@ -153,7 +154,6 @@ QString BlackWhiteOptions::formatBinarizationMethod(BinarizationMethod type) {
       str = "wolf";
       break;
   }
-
   return str;
 }
 
@@ -205,7 +205,6 @@ QDomElement BlackWhiteOptions::ColorSegmenterOptions::toXml(QDomDocument& doc, c
   el.setAttribute("redThresholdAdjustment", m_redThresholdAdjustment);
   el.setAttribute("greenThresholdAdjustment", m_greenThresholdAdjustment);
   el.setAttribute("blueThresholdAdjustment", m_blueThresholdAdjustment);
-
   return el;
 }
 

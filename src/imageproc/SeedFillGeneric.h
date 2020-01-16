@@ -7,6 +7,7 @@
 #include <QSize>
 #include <cassert>
 #include <vector>
+
 #include "BinaryImage.h"
 #include "Connectivity.h"
 #include "FastQueue.h"

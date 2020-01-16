@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OrthogonalRotation.h"
+
 #include "BinaryImage.h"
 #include "RasterOp.h"
 
@@ -17,7 +18,6 @@ static BinaryImage rotate0(const BinaryImage& src, const QRect& srcRect) {
 
   BinaryImage dst(srcRect.width(), srcRect.height());
   rasterOp<RopSrc>(dst, dst.rect(), src, srcRect.topLeft());
-
   return dst;
 }
 
@@ -53,7 +53,6 @@ static BinaryImage rotate90(const BinaryImage& src, const QRect& srcRect) {
 
     dstLine += dstWpl;
   }
-
   return dst;
 }
 
@@ -85,7 +84,6 @@ static BinaryImage rotate180(const BinaryImage& src, const QRect& srcRect) {
     srcLine -= srcWpl;
     dstLine += dstWpl;
   }
-
   return dst;
 }
 
@@ -121,7 +119,6 @@ static BinaryImage rotate270(const BinaryImage& src, const QRect& srcRect) {
 
     dstLine += dstWpl;
   }
-
   return dst;
 }
 

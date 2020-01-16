@@ -7,6 +7,7 @@
 #include <QMutex>
 #include <set>
 #include <unordered_map>
+
 #include "ImageId.h"
 #include "NonCopyable.h"
 #include "OrthogonalRotation.h"

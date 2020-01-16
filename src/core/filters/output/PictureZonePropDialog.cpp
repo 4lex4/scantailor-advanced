@@ -4,6 +4,7 @@
 #include "PictureZonePropDialog.h"
 
 #include <utility>
+
 #include "PictureLayerProperty.h"
 
 namespace output {

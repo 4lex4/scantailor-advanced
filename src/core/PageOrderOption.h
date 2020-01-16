@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_PAGEORDEROPTION_H_
 
 #include <QString>
+
 #include "PageOrderProvider.h"
 #include "intrusive_ptr.h"
 

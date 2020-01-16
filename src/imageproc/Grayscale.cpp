@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Grayscale.h"
+
 #include "BinaryImage.h"
 #include "BitOps.h"
 
@@ -44,7 +45,6 @@ static QImage monoMsbToGrayscale(const QImage& src) {
 
   dst.setDotsPerMeterX(src.dotsPerMeterX());
   dst.setDotsPerMeterY(src.dotsPerMeterY());
-
   return dst;
 }  // monoMsbToGrayscale
 
@@ -86,7 +86,6 @@ static QImage monoLsbToGrayscale(const QImage& src) {
 
   dst.setDotsPerMeterX(src.dotsPerMeterX());
   dst.setDotsPerMeterY(src.dotsPerMeterY());
-
   return dst;
 }  // monoLsbToGrayscale
 
@@ -112,7 +111,6 @@ static QImage anyToGrayscale(const QImage& src) {
 
   dst.setDotsPerMeterX(src.dotsPerMeterX());
   dst.setDotsPerMeterY(src.dotsPerMeterY());
-
   return dst;
 }
 
@@ -121,7 +119,6 @@ QVector<QRgb> createGrayscalePalette() {
   for (int i = 0; i < 256; ++i) {
     palette[i] = qRgb(i, i, i);
   }
-
   return palette;
 }
 
@@ -145,7 +142,6 @@ QImage toGrayscale(const QImage& src) {
           if (!src.isNull() && dst.isNull()) {
             throw std::bad_alloc();
           }
-
           return dst;
         }
       }
@@ -223,7 +219,6 @@ GrayImage stretchGrayRange(const GrayImage& src, const double blackClipFraction,
       line[x] = gray_mapping[line[x]];
     }
   }
-
   return dst;
 }  // stretchGrayRange
 
@@ -245,7 +240,6 @@ GrayImage createFramedImage(const QSize& size, const unsigned char innerColor, c
   }
 
   memset(line - stride, frameColor, width);
-
   return image;
 }
 
@@ -266,7 +260,6 @@ unsigned char darkestGrayLevel(const QImage& image) {
     }
     line += bpl;
   }
-
   return darkest;
 }
 

@@ -7,6 +7,7 @@
 #include <QPointF>
 #include <QPolygonF>
 #include <boost/function.hpp>
+
 #include "DraggableObject.h"
 
 class ObjectDragHandler;

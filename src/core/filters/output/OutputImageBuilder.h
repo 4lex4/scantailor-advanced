@@ -5,6 +5,7 @@
 #define SCANTAILOR_OUTPUT_OUTPUTIMAGEBUILDER_H_
 
 #include <memory>
+
 #include "OutputImage.h"
 
 enum class ForegroundType;

@@ -6,6 +6,7 @@
 
 #include <QRect>
 #include <memory>
+
 #include "ImageTransformation.h"
 #include "OutputImage.h"
 #include "intrusive_ptr.h"

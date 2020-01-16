@@ -5,6 +5,7 @@
 #define SCANTAILOR_APP_RELINKINGDIALOG_H_
 
 #include <QDialog>
+
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
 #include "RelinkingModel.h"

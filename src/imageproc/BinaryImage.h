@@ -9,6 +9,7 @@
 #include <QSize>
 #include <cstdint>
 #include <vector>
+
 #include "BWColor.h"
 #include "BinaryThreshold.h"
 
@@ -277,7 +278,6 @@ inline void swap(BinaryImage& o1, BinaryImage& o2) {
 inline BinaryImage BinaryImage::release() {
   BinaryImage newImg;
   newImg.swap(*this);
-
   return newImg;
 }
 

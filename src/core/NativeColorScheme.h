@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_NATIVECOLORSCHEME_H_
 
 #include <QString>
+
 #include "ColorScheme.h"
 
 class NativeColorScheme : public ColorScheme {

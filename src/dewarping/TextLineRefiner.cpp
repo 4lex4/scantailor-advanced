@@ -2,14 +2,17 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TextLineRefiner.h"
+
 #include <GaussBlur.h>
 #include <Sobel.h>
+
 #include <QDebug>
 #include <QPainter>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <cmath>
+
 #include "DebugImages.h"
 #include "NumericTraits.h"
 
@@ -163,7 +166,6 @@ float TextLineRefiner::externalEnergyAt(const Grid<float>& gradient, const Vec2f
 
   const int stride = gradient.stride();
   const float* base = gradient.data() + yBaseI * stride + xBaseI;
-
   return base[0] * x1 * y1 + base[1] * x * y1 + base[stride] * x1 * y + base[stride + 1] * x * y;
 }
 
@@ -199,7 +201,6 @@ TextLineRefiner::Snake TextLineRefiner::makeSnake(const std::vector<QPointF>& po
 
     baseT = nextT;
   }
-
   return snake;
 }  // TextLineRefiner::makeSnake
 
@@ -215,7 +216,6 @@ void TextLineRefiner::calcFrenetFrames(std::vector<FrenetFrame>& frenetFrames,
   } else if (numNodes == 1) {
     frenetFrames[0].unitTangent = Vec2f();
     frenetFrames[0].unitDownNormal = Vec2f();
-
     return;
   }
 
@@ -334,7 +334,6 @@ QImage TextLineRefiner::visualizeGradient(const Grid<float>& gradient) const {
   QImage canvas(m_image.toQImage().convertToFormat(QImage::Format_ARGB32_Premultiplied));
   QPainter painter(&canvas);
   painter.drawImage(0, 0, overlay);
-
   return canvas;
 }  // TextLineRefiner::visualizeGradient
 
@@ -398,7 +397,6 @@ QImage TextLineRefiner::visualizeSnakes(const std::vector<Snake>& snakes, const 
       painter.drawEllipse(knotRect);
     }
   }
-
   return canvas;
 }  // TextLineRefiner::visualizeSnakes
 
@@ -481,7 +479,6 @@ bool TextLineRefiner::Optimizer::thicknessAdjustment(Snake& snake, const Grid<fl
     // didn't change, as movement of ribs in tangent direction affects
     // interpolation.
   }
-
   return rib_adjustments[bestI] != 0 || rib_adjustments[bestJ] != 0;
 }  // TextLineRefiner::Optimizer::thicknessAdjustment
 
@@ -568,7 +565,6 @@ bool TextLineRefiner::Optimizer::tangentMovement(Snake& snake, const Grid<float>
     node = step.node;
     stepIdx = step.prevStepIdx;
   }
-
   return maxSqdist > std::numeric_limits<float>::epsilon();
 }  // TextLineRefiner::Optimizer::tangentMovement
 
@@ -678,7 +674,6 @@ bool TextLineRefiner::Optimizer::normalMovement(Snake& snake, const Grid<float>&
     node = step.node;
     stepIdx = step.prevStepIdx;
   }
-
   return maxSqdist > std::numeric_limits<float>::epsilon();
 }  // TextLineRefiner::Optimizer::normalMovement
 
@@ -712,7 +707,6 @@ float TextLineRefiner::Optimizer::calcElasticityEnergy(const SnakeNode& node1, c
   }
 
   const auto distDiff = std::fabs(avgDist - vecLen);
-
   return m_elasticityWeight * (distDiff / avgDist);
 }
 
@@ -733,7 +727,6 @@ float TextLineRefiner::Optimizer::calcBendingEnergy(const SnakeNode& node,
   }
 
   const Vec2f bendVec(vec / vecLen - prevVec / prevVecLen);
-
   return m_bendingWeight * bendVec.squaredNorm();
 }
 }  // namespace dewarping

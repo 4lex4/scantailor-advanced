@@ -10,6 +10,7 @@
 #include <cassert>
 #include <cstdint>
 #include <stdexcept>
+
 #include "GrayImage.h"
 #include "Grayscale.h"
 
@@ -72,7 +73,6 @@ class GRopClippedSubtract {
   static uint8_t transform(uint8_t src, uint8_t dst) {
     const uint8_t lhs = Lhs::transform(src, dst);
     const uint8_t rhs = Rhs::transform(src, dst);
-
     return lhs > rhs ? lhs - rhs : uint8_t(0);
   }
 };
@@ -92,7 +92,6 @@ class GRopUnclippedSubtract {
   static uint8_t transform(uint8_t src, uint8_t dst) {
     const uint8_t lhs = Lhs::transform(src, dst);
     const uint8_t rhs = Rhs::transform(src, dst);
-
     return lhs - rhs;
   }
 };
@@ -112,7 +111,6 @@ class GRopClippedAdd {
     const unsigned lhs = Lhs::transform(src, dst);
     const unsigned rhs = Rhs::transform(src, dst);
     const unsigned sum = lhs + rhs;
-
     return sum < 256 ? static_cast<uint8_t>(sum) : uint8_t(255);
   }
 };
@@ -132,7 +130,6 @@ class GRopUnclippedAdd {
   static uint8_t transform(uint8_t src, uint8_t dst) {
     const uint8_t lhs = Lhs::transform(src, dst);
     const uint8_t rhs = Rhs::transform(src, dst);
-
     return lhs + rhs;
   }
 };
@@ -148,7 +145,6 @@ class GRopDarkest {
   static uint8_t transform(uint8_t src, uint8_t dst) {
     const uint8_t lhs = Lhs::transform(src, dst);
     const uint8_t rhs = Rhs::transform(src, dst);
-
     return lhs < rhs ? lhs : rhs;
   }
 };
@@ -164,7 +160,6 @@ class GRopLightest {
   static uint8_t transform(uint8_t src, uint8_t dst) {
     const uint8_t lhs = Lhs::transform(src, dst);
     const uint8_t rhs = Rhs::transform(src, dst);
-
     return lhs > rhs ? lhs : rhs;
   }
 };

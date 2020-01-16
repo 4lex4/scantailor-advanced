@@ -5,6 +5,7 @@
 #define SCANTAILOR_ZONES_ZONE_H_
 
 #include <PropertySet.h>
+
 #include "SerializableSpline.h"
 
 class PropertyFactory;

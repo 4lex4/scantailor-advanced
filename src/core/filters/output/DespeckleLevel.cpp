@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DespeckleLevel.h"
+
 #include <QString>
 
 namespace output {
@@ -16,7 +17,6 @@ QString despeckleLevelToString(const DespeckleLevel level) {
     case DESPECKLE_AGGRESSIVE:
       return "aggressive";
   }
-
   return QString();
 }
 

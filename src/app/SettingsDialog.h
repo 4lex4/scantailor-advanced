@@ -5,6 +5,7 @@
 #define SCANTAILOR_APP_SETTINGSDIALOG_H_
 
 #include <QDialog>
+
 #include "ui_SettingsDialog.h"
 
 class SettingsDialog : public QDialog {

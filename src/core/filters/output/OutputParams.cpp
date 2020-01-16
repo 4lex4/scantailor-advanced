@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputParams.h"
+
 #include <QDomDocument>
+
 #include "FillZonePropFactory.h"
 #include "PictureZonePropFactory.h"
 
@@ -48,7 +50,6 @@ QDomElement OutputParams::toXml(QDomDocument& doc, const QString& name) const {
   el.appendChild(m_specklesFileParams.toXml(doc, "speckles"));
   el.appendChild(m_pictureZones.toXml(doc, "zones"));
   el.appendChild(m_fillZones.toXml(doc, "fill-zones"));
-
   return el;
 }
 

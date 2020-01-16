@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ZoneSet.h"
+
 #include <QDomNode>
 
 ZoneSet::ZoneSet(const QDomElement& el, const PropertyFactory& propFactory) {
@@ -30,6 +31,5 @@ QDomElement ZoneSet::toXml(QDomDocument& doc, const QString& name) const {
   for (const Zone& zone : m_zones) {
     el.appendChild(zone.toXml(doc, zoneStr));
   }
-
   return el;
 }

@@ -2,13 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SplineSegment.h"
+
 #include <cassert>
 
 SplineSegment::SplineSegment(const SplineVertex::Ptr& prev, const SplineVertex::Ptr& next) : prev(prev), next(next) {}
 
 SplineVertex::Ptr SplineSegment::splitAt(const QPointF& pt) {
   assert(isValid());
-
   return prev->insertAfter(pt);
 }
 

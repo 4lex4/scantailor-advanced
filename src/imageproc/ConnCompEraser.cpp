@@ -6,7 +6,9 @@
  * This version is optimized to elliminate all multiplications. */
 
 #include "ConnCompEraser.h"
+
 #include <cassert>
+
 #include "BitOps.h"
 
 namespace imageproc {
@@ -26,7 +28,6 @@ struct ConnCompEraser::BBox {
 
 inline uint32_t ConnCompEraser::getBit(const uint32_t* const line, const int x) {
   const uint32_t mask = (uint32_t(1) << 31) >> (x & 31);
-
   return line[x >> 5] & mask;
 }
 
@@ -158,7 +159,6 @@ bool ConnCompEraser::moveToNextBlackPixel() {
     const int shift = countMostSignificantZeroes(word);
     m_x += shift;
     assert(m_x < m_width);
-
     return true;
   }
 
@@ -181,7 +181,6 @@ bool ConnCompEraser::moveToNextBlackPixel() {
         assert(m_x < m_width);
         m_y = y;
         m_line = line;
-
         return true;
       }
     }
@@ -194,7 +193,6 @@ bool ConnCompEraser::moveToNextBlackPixel() {
       assert(m_x < m_width);
       m_y = y;
       m_line = line;
-
       return true;
     }
 
@@ -202,7 +200,6 @@ bool ConnCompEraser::moveToNextBlackPixel() {
     pStopWord += m_wpl;
     pword = line;
   }
-
   return false;
 }  // ConnCompEraser::moveToNextBlackPixel
 
@@ -259,7 +256,6 @@ ConnComp ConnCompEraser::eraseConnComp4() {
   }
 
   QRect rect(bbox.xmin, bbox.ymin, bbox.width(), bbox.height());
-
   return ConnComp(QPoint(m_x, m_y), rect, pixCount);
 }  // ConnCompEraser::eraseConnComp4
 
@@ -315,7 +311,6 @@ ConnComp ConnCompEraser::eraseConnComp8() {
   }
 
   QRect rect(bbox.xmin, bbox.ymin, bbox.width(), bbox.height());
-
   return ConnComp(QPoint(m_x, m_y), rect, pixCount);
 }  // ConnCompEraser::eraseConnComp8
 }  // namespace imageproc

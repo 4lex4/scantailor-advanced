@@ -2,13 +2,16 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Task.h"
+
 #include <DewarpingPointMapper.h>
 #include <PolygonUtils.h>
 #include <UnitsProvider.h>
 #include <core/TiffWriter.h>
+
 #include <QDir>
 #include <boost/bind.hpp>
 #include <utility>
+
 #include "DebugImagesImpl.h"
 #include "DespeckleState.h"
 #include "DespeckleView.h"
@@ -428,7 +431,6 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     // Otherwise it will get constructed on demand.
     despeckleVisualization = despeckleState.visualize();
   }
-
   return make_intrusive<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, newXform,
                                    generator.outputContentRect(), m_pageId, data.origImage(), outImg, automaskImg,
                                    despeckleState, despeckleVisualization, m_batchProcessing, m_debug);

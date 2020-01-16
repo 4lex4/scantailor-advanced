@@ -5,6 +5,7 @@
 #define SCANTAILOR_MATH_LINEARSOLVER_H_
 
 #include <NonCopyable.h>
+
 #include <boost/scoped_array.hpp>
 #include <cassert>
 #include <cmath>
@@ -12,6 +13,7 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
+
 #include "StaticPool.h"
 
 /**

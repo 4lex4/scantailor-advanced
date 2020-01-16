@@ -5,9 +5,11 @@
 #define SCANTAILOR_PAGE_SPLIT_PAGELAYOUTESTIMATOR_H_
 
 #include <VirtualFunction.h>
+
 #include <QLineF>
 #include <deque>
 #include <memory>
+
 #include "LayoutType.h"
 
 class QRect;

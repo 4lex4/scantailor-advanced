@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_IMAGEMETADATA_H_
 
 #include <QSize>
+
 #include "Dpi.h"
 
 class ImageMetadata {

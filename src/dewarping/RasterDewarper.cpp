@@ -2,10 +2,13 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "RasterDewarper.h"
+
 #include <ColorMixer.h>
 #include <GrayImage.h>
+
 #include <QDebug>
 #include <cmath>
+
 #include "CylindricalSurfaceDewarper.h"
 
 #define INTERP_NONE 0
@@ -455,7 +458,6 @@ QImage dewarpGrayscale(const QImage& src,
   dst.fill(bgSample);
   dewarpGeneric<GrayColorMixer<MixingWeight>, uint8_t>(src.bits(), src.size(), src.bytesPerLine(), dst.data(), dstSize,
                                                        dst.stride(), distortionModel, modelDomain, bgSample);
-
   return dst.toQImage();
 }
 
@@ -469,7 +471,6 @@ QImage dewarpRgb(const QImage& src,
   dewarpGeneric<RgbColorMixer<MixingWeight>, uint32_t>((const uint32_t*) src.bits(), src.size(), src.bytesPerLine() / 4,
                                                        (uint32_t*) dst.bits(), dstSize, dst.bytesPerLine() / 4,
                                                        distortionModel, modelDomain, bgColor.rgb());
-
   return dst;
 }
 
@@ -483,7 +484,6 @@ QImage dewarpArgb(const QImage& src,
   dewarpGeneric<ArgbColorMixer<MixingWeight>, uint32_t>(
       (const uint32_t*) src.bits(), src.size(), src.bytesPerLine() / 4, (uint32_t*) dst.bits(), dstSize,
       dst.bytesPerLine() / 4, distortionModel, modelDomain, bgColor.rgba());
-
   return dst;
 }
 }  // namespace

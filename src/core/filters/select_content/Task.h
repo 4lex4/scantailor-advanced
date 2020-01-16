@@ -7,6 +7,7 @@
 #include <QRectF>
 #include <QSizeF>
 #include <memory>
+
 #include "FilterResult.h"
 #include "NonCopyable.h"
 #include "PageId.h"

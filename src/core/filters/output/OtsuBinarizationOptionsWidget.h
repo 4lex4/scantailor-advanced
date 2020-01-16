@@ -6,6 +6,7 @@
 
 #include <QtCore>
 #include <list>
+
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
 #include "Settings.h"

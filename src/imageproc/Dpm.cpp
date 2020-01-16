@@ -2,8 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Dpm.h"
+
 #include <Constants.h>
+
 #include <QImage>
+
 #include "Dpi.h"
 
 Dpm::Dpm(const QSize size) : m_xDpm(size.width()), m_yDpm(size.height()) {}

@@ -5,11 +5,13 @@
 #define SCANTAILOR_DEWARPING_TEXTLINEREFINER_H_
 
 #include <GrayImage.h>
+
 #include <QLineF>
 #include <QPointF>
 #include <cstdint>
 #include <list>
 #include <vector>
+
 #include "Dpi.h"
 #include "Grid.h"
 #include "VecNT.h"

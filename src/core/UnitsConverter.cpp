@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "UnitsConverter.h"
+
 #include "Dpm.h"
 
 UnitsConverter::UnitsConverter(const Dpi& dpi) : m_dpi(dpi) {}
@@ -92,7 +93,6 @@ QTransform UnitsConverter::transform(Units fromUnits, Units toUnits) const {
   double xScaleFactor = 1.0;
   double yScaleFactor = 1.0;
   convert(xScaleFactor, yScaleFactor, fromUnits, toUnits);
-
   return QTransform().scale(xScaleFactor, yScaleFactor);
 }
 

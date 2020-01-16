@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <vector>
+
 #include "ui_LoadFilesStatusDialog.h"
 
 class LoadFilesStatusDialog : public QDialog {

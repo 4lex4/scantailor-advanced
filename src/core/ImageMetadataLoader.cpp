@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ImageMetadataLoader.h"
+
 #include <QFile>
 #include <QIODevice>
 #include <QString>
+
 #include "ImageMetadata.h"
 #include "JpegMetadataLoader.h"
 #include "PngMetadataLoader.h"
@@ -34,7 +36,6 @@ ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(QIODevice& ioDevice,
       return status;
     }
   }
-
   return FORMAT_NOT_RECOGNIZED;
 }
 
@@ -44,6 +45,5 @@ ImageMetadataLoader::Status ImageMetadataLoader::loadImpl(const QString& filePat
   if (!file.open(QIODevice::ReadOnly)) {
     return GENERIC_ERROR;
   }
-
   return loadImpl(file, out);
 }

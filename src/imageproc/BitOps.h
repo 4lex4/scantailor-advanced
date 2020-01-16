@@ -38,7 +38,6 @@ struct ReverseBytes {
     T res(ReverseBytes<T, TotalBytes, Offset + 1, Offset == TotalBytes / 2>::result(val));
     res |= T(reversedBits[leftByte]) << rightShift;
     res |= T(reversedBits[rightByte]) << leftShift;
-
     return res;
   }
 };
@@ -52,7 +51,6 @@ template <typename T>
 struct ReverseBytes<T, 1, 0, false> {
   static T result(const T val) {
     using Byte = unsigned char;
-
     return T(reversedBits[static_cast<Byte>(val)]);
   }
 };
@@ -91,7 +89,6 @@ struct MostSignificantZeroes {
       val = tmp;
       count -= STRIPE_LEN;
     }
-
     return MostSignificantZeroes<T, STRIPE_LEN / 2>::reduce(val, count);
   }
 };
@@ -109,7 +106,6 @@ struct LeastSignificantZeroes {
       val = tmp;
       count -= STRIPE_LEN;
     }
-
     return LeastSignificantZeroes<T, STRIPE_LEN / 2>::reduce(val, count);
   }
 };
@@ -138,7 +134,6 @@ int countMostSignificantZeroes(const T val) {
   if (val) {
     zeroes = detail::MostSignificantZeroes<T, totalBits / 2>::reduce(val, zeroes);
   }
-
   return zeroes;
 }
 
@@ -150,7 +145,6 @@ int countLeastSignificantZeroes(const T val) {
   if (val) {
     zeroes = detail::LeastSignificantZeroes<T, totalBits / 2>::reduce(val, zeroes);
   }
-
   return zeroes;
 }
 }  // namespace imageproc

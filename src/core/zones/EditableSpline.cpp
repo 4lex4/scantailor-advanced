@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "EditableSpline.h"
+
 #include "SerializableSpline.h"
 
 EditableSpline::EditableSpline() = default;
@@ -27,7 +28,6 @@ bool EditableSpline::hasAtLeastSegments(int num) const {
   for (SegmentIterator it((EditableSpline&) *this); num > 0 && it.hasNext(); it.next()) {
     --num;
   }
-
   return num == 0;
 }
 
@@ -43,7 +43,6 @@ QPolygonF EditableSpline::toPolygon() const {
   if (vertex) {
     poly.push_back(vertex->point());
   }
-
   return poly;
 }
 

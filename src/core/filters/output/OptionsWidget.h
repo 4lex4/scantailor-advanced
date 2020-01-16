@@ -11,6 +11,7 @@
 #include <list>
 #include <memory>
 #include <set>
+
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
 #include "DepthPerception.h"

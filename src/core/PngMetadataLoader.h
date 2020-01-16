@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_PNGMETADATALOADER_H_
 
 #include <vector>
+
 #include "ImageMetadataLoader.h"
 #include "VirtualFunction.h"
 

@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+
 #include "PriorityQueue.h"
 
 namespace imageproc {

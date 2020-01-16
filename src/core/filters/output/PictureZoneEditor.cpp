@@ -2,13 +2,16 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PictureZoneEditor.h"
+
 #include <Constants.h>
 #include <GrayImage.h>
 #include <Transform.h>
+
 #include <QPainter>
 #include <QPointer>
 #include <boost/bind.hpp>
 #include <utility>
+
 #include "BackgroundExecutor.h"
 #include "ImagePresentation.h"
 #include "ImageTransformation.h"
@@ -299,7 +302,6 @@ intrusive_ptr<AbstractCommand<void>> PictureZoneEditor::MaskTransformTask::opera
   mask.setAlphaChannel(grayMask);
 
   m_result->setData(targetRect.topLeft(), mask);
-
   return m_result;
 }
 

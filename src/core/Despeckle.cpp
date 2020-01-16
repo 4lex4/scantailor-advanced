@@ -2,12 +2,15 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Despeckle.h"
+
 #include <BinaryImage.h>
 #include <ConnectivityMap.h>
+
 #include <QDebug>
 #include <QImage>
 #include <cmath>
 #include <unordered_map>
+
 #include "DebugImages.h"
 #include "Dpi.h"
 #include "FastQueue.h"
@@ -96,7 +99,6 @@ Settings Settings::get(const Despeckle::Level level, const Dpi& dpi) {
       settings.bigObjectThreshold = qRound(17 * dpiFactor);
       break;
   }
-
   return settings;
 }
 
@@ -109,7 +111,6 @@ Settings Settings::get(const double level, const Dpi& dpi) {
   settings.minRelativeParentWeight = (0.05 * level + 0.075) * dpiFactor;
   settings.pixelsToSqDist = static_cast<uint32_t>(std::pow(0.25 * std::pow(level, 2) - 4.25 * level + 14, 2));
   settings.bigObjectThreshold = qRound((5 * level + 2) * dpiFactor);
-
   return settings;
 }
 
@@ -178,14 +179,12 @@ union Distance {
   static Distance zero() {
     Distance dist{};
     dist.raw = 0;
-
     return dist;
   }
 
   static Distance special() {
     Distance dist{};
     dist.vec.x = dist.vec.y = std::numeric_limits<int16_t>::max();
-
     return dist;
   }
 
@@ -201,7 +200,6 @@ union Distance {
   uint32_t sqdist() const {
     const int x = vec.x;
     const int y = vec.y;
-
     return static_cast<uint32_t>(x * x + VERTICAL_SCALE_SQ * y * y);
   }
 };
@@ -324,7 +322,6 @@ bool canBeAttachedTo(const Component& comp, const Component& target, uint32_t sq
       return true;
     }
   }
-
   return false;
 }
 
@@ -918,7 +915,6 @@ BinaryImage Despeckle::despeckle(const BinaryImage& src,
                                  DebugImages* const dbg) {
   BinaryImage dst(src);
   despeckleInPlace(dst, dpi, level, status, dbg);
-
   return dst;
 }
 
@@ -938,7 +934,6 @@ imageproc::BinaryImage Despeckle::despeckle(const imageproc::BinaryImage& src,
                                             DebugImages* dbg) {
   BinaryImage dst(src);
   despeckleInPlace(dst, dpi, level, status, dbg);
-
   return dst;
 }
 

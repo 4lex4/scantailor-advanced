@@ -4,6 +4,7 @@
 #include "PageOrientationPropagator.h"
 
 #include <utility>
+
 #include "CompositeCacheDrivenTask.h"
 #include "OrthogonalRotation.h"
 #include "PageOrientationCollector.h"

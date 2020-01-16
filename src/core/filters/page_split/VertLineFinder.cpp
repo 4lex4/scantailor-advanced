@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "VertLineFinder.h"
+
 #include <Constants.h>
 #include <GrayImage.h>
 #include <GrayRasterOp.h>
@@ -10,9 +11,11 @@
 #include <MorphGradientDetect.h>
 #include <Morphology.h>
 #include <Transform.h>
+
 #include <QDebug>
 #include <QPainter>
 #include <cmath>
+
 #include "DebugImages.h"
 #include "ImageTransformation.h"
 
@@ -189,7 +192,6 @@ std::vector<QLineF> VertLineFinder::findLines(const QImage& image,
   for (QLineF& line : lines) {
     line = undo100dpi.map(line);
   }
-
   return lines;
 }  // VertLineFinder::findLines
 
@@ -198,7 +200,6 @@ GrayImage VertLineFinder::removeDarkVertBorders(const GrayImage& src) {
 
   selectVertBorders(dst);
   grayRasterOp<GRopInvert<GRopClippedSubtract<GRopDst, GRopSrc>>>(dst, src);
-
   return dst;
 }
 

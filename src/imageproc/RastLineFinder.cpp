@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "RastLineFinder.h"
+
 #include <boost/foreach.hpp>
 #include <cassert>
 #include <cmath>
+
 #include "Constants.h"
 #include "VecNT.h"
 
@@ -24,7 +26,6 @@ bool RastLineFinderParams::validate(std::string* error) const {
     if (error) {
       *error = "RastLineFinder: angle tolerance must be positive";
     }
-
     return false;
   }
 
@@ -32,7 +33,6 @@ bool RastLineFinderParams::validate(std::string* error) const {
     if (error) {
       *error = "RastLineFinder: angle tolerance must be below 180 degrees";
     }
-
     return false;
   }
 
@@ -40,7 +40,6 @@ bool RastLineFinderParams::validate(std::string* error) const {
     if (error) {
       *error = "RastLineFinder: max-dist-from-line must be positive";
     }
-
     return false;
   }
 
@@ -48,10 +47,8 @@ bool RastLineFinderParams::validate(std::string* error) const {
     if (error) {
       *error = "RastLineFinder: min-support-points must be at least 2";
     }
-
     return false;
   }
-
   return true;
 }  // RastLineFinderParams::validate
 
@@ -119,7 +116,6 @@ QLineF RastLineFinder::findNext(std::vector<unsigned>* pointIdxs) {
         if (pointIdxs) {
           pointIdxs->swap(ssp.pointIdxs());
         }
-
         return ssp.representativeLine(*this);
       } else {
         // Can only subdivide by angle.
@@ -146,7 +142,6 @@ QLineF RastLineFinder::findNext(std::vector<unsigned>* pointIdxs) {
       }
     }
   }
-
   return QLineF();
 }  // RastLineFinder::findNext
 
@@ -245,7 +240,6 @@ QLineF RastLineFinder::SearchSpace::representativeLine(const RastLineFinder& own
   const QPointF angleNormVec(-angleUnitVec.y(), angleUnitVec.x());
   const QPointF p1(owner.m_origin + angleUnitVec * dist);
   const QPointF p2(p1 + angleNormVec);
-
   return QLineF(p1, p2);
 }
 
@@ -275,7 +269,6 @@ bool RastLineFinder::SearchSpace::subdivideDist(const RastLineFinder& owner,
     ssp1.swap(subspace1);
     ssp2.swap(subspace2);
   }
-
   return true;
 }
 
@@ -295,7 +288,6 @@ bool RastLineFinder::SearchSpace::subdivideAngle(const RastLineFinder& owner,
 
   ssp1.swap(subspace1);
   ssp2.swap(subspace2);
-
   return true;
 }
 

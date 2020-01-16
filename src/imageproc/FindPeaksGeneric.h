@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <limits>
 #include <vector>
+
 #include "BinaryImage.h"
 #include "Connectivity.h"
 #include "LocalMinMaxGeneric.h"
@@ -176,7 +177,6 @@ BinaryImage findPeaksGeneric(MostSignificantSelector mostSignificant,
     raisedLine += raisedStride;
     dataLine += stride;
   }
-
   return peaks;
 }  // findPeaksGeneric
 }  // namespace imageproc

@@ -5,6 +5,7 @@
 #define SCANTAILOR_IMAGEPROC_COLORSEGMENTER_H_
 
 #include <QImage>
+
 #include "Dpi.h"
 
 namespace imageproc {

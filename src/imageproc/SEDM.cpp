@@ -3,6 +3,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "SEDM.h"
+
 #include "BinaryImage.h"
 #include "ConnectivityMap.h"
 #include "Morphology.h"
@@ -112,7 +113,6 @@ SEDM::SEDM(const SEDM& other)
 
 SEDM& SEDM::operator=(const SEDM& other) {
   SEDM(other).swap(*this);
-
   return *this;
 }
 
@@ -158,7 +158,6 @@ BinaryImage SEDM::findPeaksDestructive() {
   diff.release();
 
   rasterOp<RopXor<RopSrc, RopDst>>(peakCandidates, notPeaks);
-
   return peakCandidates;
 }  // SEDM::findPeaksDestructive
 
@@ -168,7 +167,6 @@ inline uint32_t SEDM::distSq(const int x1, const int x2, const uint32_t dySq) {
   }
   const int dx = x1 - x2;
   const uint32_t dxSq = dx * dx;
-
   return dxSq + dySq;
 }
 
@@ -350,7 +348,6 @@ BinaryImage SEDM::findPeakCandidatesNonPadded() const {
 
   // Every cell becomes the maximum of itself and its neighbors.
   max3x3(&m_data[0], &maxed[0]);
-
   return buildEqualMapNonPadded(&m_data[0], &maxed[0]);
 }
 
@@ -376,7 +373,6 @@ BinaryImage SEDM::buildEqualMapNonPadded(const uint32_t* src1, const uint32_t* s
     src1Line += srcStride;
     src2Line += srcStride;
   }
-
   return dst;
 }
 

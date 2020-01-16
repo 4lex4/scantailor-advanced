@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DrawOver.h"
+
 #include <QImage>
 #include <cassert>
+
 #include "BinaryImage.h"
 #include "RasterOp.h"
 
@@ -37,7 +39,6 @@ void drawOver(QImage& dst, const QRect& dstRect, const QImage& src, const QRect&
     BinaryImage srcBin(src);
     rasterOp<RopSrc>(dstBin, dstRect, srcBin, srcRect.topLeft());
     dst = dstBin.toQImage().convertToFormat(dst.format());
-
     return;
   }
 

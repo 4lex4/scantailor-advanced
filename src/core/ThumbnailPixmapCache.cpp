@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ThumbnailPixmapCache.h"
+
 #include <GrayImage.h>
 #include <Scale.h>
+
 #include <QCoreApplication>
 #include <QCryptographicHash>
 #include <QDebug>
@@ -15,6 +17,7 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
+
 #include "AtomicFileOverwriter.h"
 #include "ImageId.h"
 #include "ImageLoader.h"
@@ -357,11 +360,9 @@ ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(
       // Move it after all other candidates for removal.
       const RemoveQueue::iterator rqIt(m_items.project<RemoveQueueTag>(kIt));
       m_removeQueue.relocate(m_endOfLoadedItems, rqIt);
-
       return LOADED;
     } else if (kIt->status == Item::LOAD_FAILED) {
       pixmap = kIt->pixmap;
-
       return LOAD_FAILED;
     }
   }
@@ -378,7 +379,6 @@ ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(
     }
 
     cachePixmapUnlocked(imageId, pixmap);
-
     return LOADED;
   }
 
@@ -399,7 +399,6 @@ ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(
       const LoadQueue::iterator lqIt(m_items.project<LoadQueueTag>(kIt));
       m_loadQueue.relocate(m_loadQueue.begin(), lqIt);
     }
-
     return QUEUED;
   }
 
@@ -426,7 +425,6 @@ ThumbnailPixmapCache::Status ThumbnailPixmapCache::Impl::request(
       m_threadStarted = true;
     }
   }
-
   return QUEUED;
 }  // ThumbnailPixmapCache::Impl::request
 
@@ -603,7 +601,6 @@ QImage ThumbnailPixmapCache::Impl::loadSaveThumbnail(const ImageId& imageId,
 
   const QImage thumbnail(makeThumbnail(image, maxThumbSize));
   thumbnail.save(thumbFilePath, "PNG");
-
   return thumbnail;
 }
 
@@ -629,7 +626,6 @@ QString ThumbnailPixmapCache::Impl::getThumbFilePath(const ImageId& imageId,
   thumbFilePath += QChar('_');
   thumbFilePath += thumbnailQualityStr;
   thumbFilePath += QString::fromLatin1(".png");
-
   return thumbFilePath;
 }
 
@@ -645,7 +641,6 @@ QImage ThumbnailPixmapCache::Impl::makeThumbnail(const QImage& image, const QSiz
     // This will be faster than QImage::scale().
     return scaleToGray(GrayImage(image), toSize);
   }
-
   return image.scaled(toSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
@@ -818,7 +813,6 @@ void ThumbnailPixmapCache::Impl::cachePixmapLocked(const ImageId& imageId, const
     rqIt->pixmap = pixmap;
 
     assert(rqIt->completionHandlers.empty());
-
     return;
   }
 
@@ -846,7 +840,6 @@ void ThumbnailPixmapCache::Impl::cachePixmapLocked(const ImageId& imageId, const
     lqIt->pixmap = pixmap;
     queuedToInProgress(lqIt);
     postLoadResult(lqIt, QImage(), ThumbnailLoadResult::LOADED);
-
     return;
   }
 

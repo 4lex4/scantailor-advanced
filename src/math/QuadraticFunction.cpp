@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "QuadraticFunction.h"
+
 #include <algorithm>
 
 QuadraticFunction::QuadraticFunction(size_t numVars) : A(numVars, numVars), b(numVars), c(0) {}
@@ -22,7 +23,6 @@ double QuadraticFunction::evaluate(const double* x) const {
       sum += x[i] * x[j] * A(i, j);
     }
   }
-
   return sum;
 }
 
@@ -38,7 +38,6 @@ QuadraticFunction::Gradient QuadraticFunction::gradient() const {
   }
 
   grad.b = b;
-
   return grad;
 }
 
@@ -71,7 +70,6 @@ QuadraticFunction& QuadraticFunction::operator+=(const QuadraticFunction& other)
   A += other.A;
   b += other.b;
   c += other.c;
-
   return *this;
 }
 
@@ -79,6 +77,5 @@ QuadraticFunction& QuadraticFunction::operator*=(double scalar) {
   A *= scalar;
   b *= scalar;
   c *= scalar;
-
   return *this;
 }

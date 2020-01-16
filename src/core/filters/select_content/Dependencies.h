@@ -5,6 +5,7 @@
 #define SCANTAILOR_SELECT_CONTENT_DEPENDENCIES_H_
 
 #include <AutoManualMode.h>
+
 #include <QPolygonF>
 
 class QDomDocument;

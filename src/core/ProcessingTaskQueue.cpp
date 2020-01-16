@@ -24,11 +24,9 @@ BackgroundTaskPtr ProcessingTaskQueue::takeForProcessing() {
         // jumps caused by dynamic ordering.
         m_selectedPage = ent.pageInfo;
       }
-
       return ent.task;
     }
   }
-
   return nullptr;
 }
 

@@ -2,8 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputImageParams.h"
+
 #include <foundation/Utils.h>
+
 #include <cmath>
+
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
@@ -75,7 +78,6 @@ QDomElement OutputImageParams::toXml(QDomDocument& doc, const QString& name) con
   el.setAttribute("despeckleLevel", Utils::doubleToString(m_despeckleLevel));
   el.appendChild(m_outputProcessingParams.toXml(doc, "processing-params"));
   el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");
-
   return el;
 }
 
@@ -127,7 +129,6 @@ bool OutputImageParams::matches(const OutputImageParams& other) const {
   if (m_blackOnWhite != other.m_blackOnWhite) {
     return false;
   }
-
   return true;
 }  // OutputImageParams::matches
 
@@ -161,7 +162,6 @@ bool OutputImageParams::colorParamsMatch(const ColorParams& cp1,
       }
       break;
   }
-
   return true;
 }
 
@@ -222,7 +222,6 @@ QDomElement OutputImageParams::PartialXform::toXml(QDomDocument& doc, const QStr
   el.appendChild(marshaller.string(Utils::doubleToString(m_12), "m12"));
   el.appendChild(marshaller.string(Utils::doubleToString(m_21), "m21"));
   el.appendChild(marshaller.string(Utils::doubleToString(m_22), "m22"));
-
   return el;
 }
 

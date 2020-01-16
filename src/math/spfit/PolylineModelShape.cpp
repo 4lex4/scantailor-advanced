@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PolylineModelShape.h"
+
 #include <QDebug>
+
 #include "FrenetFrame.h"
 #include "ToLineProjector.h"
 
@@ -84,7 +86,6 @@ SqDistApproximant PolylineModelShape::localSqDistApproximant(const QPointF& pt,
     const double k1 = pd1.signedCurvature();
     const double k2 = pd2.signedCurvature();
     const double weightedK = k1 + segmentT * (k2 - k1);
-
     return calcApproximant(pt, sampleFlags, DEFAULT_FLAGS, frenetFrame, weightedK);
   } else {
     // The foot point is a vertex of the polyline.
@@ -100,7 +101,6 @@ SqDistApproximant PolylineModelShape::localSqDistApproximant(const QPointF& pt,
     if (vertexIdx == int(m_vertices.size()) - 1) {
       polylineFlags |= POLYLINE_BACK;
     }
-
     return calcApproximant(pt, sampleFlags, polylineFlags, frenetFrame, pd.signedCurvature());
   }
 }  // PolylineModelShape::localSqDistApproximant

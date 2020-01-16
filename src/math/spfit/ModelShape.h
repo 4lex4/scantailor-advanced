@@ -5,6 +5,7 @@
 #define SCANTAILOR_SPFIT_MODELSHAPE_H_
 
 #include <QPointF>
+
 #include "FittableSpline.h"
 #include "SqDistApproximant.h"
 

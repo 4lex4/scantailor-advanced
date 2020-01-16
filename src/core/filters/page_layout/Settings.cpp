@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Settings.h"
+
 #include <DeviationProvider.h>
+
 #include <QMutex>
 #include <boost/foreach.hpp>
 #include <boost/multi_index/composite_key.hpp>
@@ -13,6 +15,7 @@
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
 #include <utility>
+
 #include "AbstractRelinker.h"
 #include "Guide.h"
 #include "PageId.h"
@@ -423,7 +426,6 @@ bool Settings::Impl::checkEverythingDefined(const PageSequence& pages, const Pag
       return false;
     }
   }
-
   return true;
 }
 
@@ -434,7 +436,6 @@ std::unique_ptr<Params> Settings::Impl::getPageParams(const PageId& pageId) cons
   if (it == m_items.end()) {
     return nullptr;
   }
-
   return std::make_unique<Params>(it->hardMarginsMM, it->pageRect, it->contentRect, it->contentSizeMM, it->alignment,
                                   it->autoMargins);
 }
@@ -482,7 +483,6 @@ Params Settings::Impl::updateContentSizeAndGetParams(const PageId& pageId,
   }
 
   m_deviationProvider.addOrUpdate(pageId);
-
   return Params(itemIt->hardMarginsMM, itemIt->pageRect, itemIt->contentRect, itemIt->contentSizeMM, itemIt->alignment,
                 itemIt->autoMargins);
 }  // Settings::Impl::updateContentSizeAndGetParams
@@ -585,7 +585,6 @@ void Settings::Impl::invalidateContentSize(const PageId& pageId) {
 
 QSizeF Settings::Impl::getAggregateHardSizeMM() const {
   const QMutexLocker locker(&m_mutex);
-
   return getAggregateHardSizeMMLocked();
 }
 
@@ -599,7 +598,6 @@ QSizeF Settings::Impl::getAggregateHardSizeMMLocked() const {
 
   const double width = maxWidthItem.influenceHardWidthMM();
   const double height = maxHeightItem.influenceHardHeightMM();
-
   return QSizeF(width, height);
 }
 
@@ -647,7 +645,6 @@ QSizeF Settings::Impl::getAggregateHardSizeMM(const PageId& pageId,
       }
     }
   }
-
   return QSizeF(width, height);
 }  // Settings::Impl::getAggregateHardSizeMM
 
@@ -677,7 +674,6 @@ void Settings::Impl::setPageAutoMarginsEnabled(const PageId& pageId, const bool 
 
 bool Settings::Impl::isParamsNull(const PageId& pageId) const {
   const QMutexLocker locker(&m_mutex);
-
   return (m_items.find(pageId) == m_items.end());
 }
 

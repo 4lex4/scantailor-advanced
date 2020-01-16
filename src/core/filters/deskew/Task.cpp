@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Task.h"
+
 #include <BinaryImage.h>
 #include <BlackOnWhiteEstimator.h>
 #include <Morphology.h>
@@ -16,7 +17,9 @@
 #include <imageproc/Grayscale.h>
 #include <imageproc/OrthogonalRotation.h>
 #include <imageproc/PolygonRasterizer.h>
+
 #include <utility>
+
 #include "DebugImagesImpl.h"
 #include "Dpm.h"
 #include "Filter.h"
@@ -194,14 +197,12 @@ int Task::from150dpi(int size, int targetDpi) {
   if (newSize < 1) {
     return 1;
   }
-
   return newSize;
 }
 
 QSize Task::from150dpi(const QSize& size, const Dpi& targetDpi) {
   const int width = from150dpi(size.width(), targetDpi.horizontal());
   const int height = from150dpi(size.height(), targetDpi.vertical());
-
   return QSize(width, height);
 }
 

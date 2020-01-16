@@ -7,6 +7,7 @@
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
+
 #include "Property.h"
 #include "intrusive_ptr.h"
 #include "ref_countable.h"

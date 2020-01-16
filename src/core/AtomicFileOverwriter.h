@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_ATOMICFILEOVERWRITER_H_
 
 #include <memory>
+
 #include "NonCopyable.h"
 
 class QString;

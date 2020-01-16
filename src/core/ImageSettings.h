@@ -7,10 +7,12 @@
 #include <foundation/NonCopyable.h>
 #include <foundation/ref_countable.h>
 #include <imageproc/BinaryThreshold.h>
+
 #include <QtCore/QMutex>
 #include <QtXml/QDomDocument>
 #include <memory>
 #include <unordered_map>
+
 #include "PageId.h"
 
 class AbstractRelinker;

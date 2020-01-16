@@ -7,6 +7,7 @@
 #include <QString>
 #include <boost/function.hpp>
 #include <deque>
+
 #include "AutoRemovingFile.h"
 
 class QImage;

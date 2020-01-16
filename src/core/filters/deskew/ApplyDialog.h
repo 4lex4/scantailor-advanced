@@ -7,6 +7,7 @@
 #include <QButtonGroup>
 #include <QDialog>
 #include <set>
+
 #include "PageId.h"
 #include "PageSequence.h"
 #include "intrusive_ptr.h"

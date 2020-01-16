@@ -6,8 +6,10 @@
 #define SCANTAILOR_OUTPUT_DESPECKLEVIEW_H_
 
 #include <BinaryImage.h>
+
 #include <QImage>
 #include <QStackedWidget>
+
 #include "DespeckleLevel.h"
 #include "DespeckleState.h"
 #include "Dpi.h"

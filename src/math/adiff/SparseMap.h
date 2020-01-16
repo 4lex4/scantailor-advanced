@@ -5,6 +5,7 @@
 #define SCANTAILOR_ADIFF_SPARSEMAP_H_
 
 #include <cstddef>
+
 #include "MatT.h"
 
 namespace adiff {

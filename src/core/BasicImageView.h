@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_BASICIMAGEVIEW_H_
 
 #include <QImage>
+
 #include "DragHandler.h"
 #include "ImagePixmapUnion.h"
 #include "ImageViewBase.h"

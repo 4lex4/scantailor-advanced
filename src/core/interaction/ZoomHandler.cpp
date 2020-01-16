@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ZoomHandler.h"
+
 #include <QWheelEvent>
+
 #include "ImageViewBase.h"
 
 ZoomHandler::ZoomHandler(ImageViewBase& imageView)
@@ -35,7 +37,6 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
 
     const double dist = -deltaClicks * 30;  // 30px per "click"
     m_imageView.moveTowardsIdealPosition(dist);
-
     return;
   }
 

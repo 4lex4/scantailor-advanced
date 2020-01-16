@@ -5,6 +5,7 @@
 #define SCANTAILOR_IMAGEPROC_POLYGONRASTERIZER_H_
 
 #include <Qt>
+
 #include "BWColor.h"
 
 class QPolygonF;

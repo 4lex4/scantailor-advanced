@@ -6,10 +6,12 @@
 #include <ConnComp.h>
 #include <ConnCompEraserExt.h>
 #include <RasterOp.h>
+
 #include <QImage>
 #include <algorithm>
 #include <boost/test/unit_test.hpp>
 #include <list>
+
 #include "Utils.h"
 
 namespace imageproc {
@@ -48,7 +50,6 @@ static bool checkAlignedImage(const ConnCompEraserExt& eraser, const BinaryImage
       return false;
     }
   }
-
   return true;
 }
 

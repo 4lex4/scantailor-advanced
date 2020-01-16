@@ -6,6 +6,7 @@
 
 #include <QRectF>
 #include <QSizeF>
+
 #include "Alignment.h"
 #include "Margins.h"
 

@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "FillColorProperty.h"
+
 #include <QDomDocument>
+
 #include "PropertyFactory.h"
 
 namespace output {
@@ -22,7 +24,6 @@ QDomElement FillColorProperty::toXml(QDomDocument& doc, const QString& name) con
   QDomElement el(doc.createElement(name));
   el.setAttribute("type", m_propertyName);
   el.setAttribute("color", rgbToString(m_rgb));
-
   return el;
 }
 

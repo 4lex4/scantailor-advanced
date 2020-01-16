@@ -2,8 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include <MatrixCalc.h>
-#include <boost/test/unit_test.hpp>
+
 #include <boost/test/tools/floating_point_comparison.hpp>
+#include <boost/test/unit_test.hpp>
 
 namespace imageproc {
 namespace tests {

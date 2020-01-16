@@ -5,9 +5,11 @@
 #define SCANTAILOR_OUTPUT_SETTINGS_H_
 
 #include <DistortionModel.h>
+
 #include <QMutex>
 #include <memory>
 #include <unordered_map>
+
 #include "ColorParams.h"
 #include "DespeckleLevel.h"
 #include "DewarpingOptions.h"

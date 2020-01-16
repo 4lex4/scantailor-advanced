@@ -7,6 +7,7 @@
 #include <QLineF>
 #include <QPolygonF>
 #include <QString>
+
 #include "LayoutType.h"
 #include "PageId.h"
 

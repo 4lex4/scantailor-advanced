@@ -2,13 +2,16 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DetectVertContentBounds.h"
+
 #include <BinaryImage.h>
 #include <Constants.h>
+
 #include <QImage>
 #include <QPainter>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
+
 #include "DebugImages.h"
 #include "VecNT.h"
 
@@ -148,7 +151,6 @@ void SequentialColumnProcessor::process(int x, const VertRange& range) {
     if (range.top != range.bottom) {  // We don't want zero length segments in m_path.
       m_path.push_back(m_leadingBottom);
     }
-
     return;
   }
 
@@ -202,7 +204,6 @@ void SequentialColumnProcessor::process(int x, const VertRange& range) {
 
 bool SequentialColumnProcessor::topMidBottomConcave(QPoint top, QPoint mid, QPoint bottom) const {
   const int crossZ = this->crossZ(mid - top, bottom - mid);
-
   return crossZ * m_leftMinusOneRightOne < 0;
 }
 
@@ -213,7 +214,6 @@ int SequentialColumnProcessor::crossZ(QPoint v1, QPoint v2) {
 bool SequentialColumnProcessor::segmentIsTooLong(const QPoint p1, const QPoint p2) const {
   const QPoint v(p2 - p1);
   const int sqlen = v.x() * v.x() + v.y() * v.y();
-
   return sqlen > m_maxSegmentSqLen;
 }
 
@@ -272,7 +272,6 @@ QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbgS
     // Has to be the last thing we do with best model.
     dbgSegments->swap(ransac.bestModel().segments);
   }
-
   return line;
 }  // SequentialColumnProcessor::approximateWithLine
 
@@ -305,7 +304,6 @@ QLineF SequentialColumnProcessor::interpolateSegments(const std::vector<Segment>
       line.setP2(line.p1() + accumVec);
     }
   }
-
   return line;
 }
 
@@ -332,7 +330,6 @@ QImage SequentialColumnProcessor::visualizeEnvelope(const QImage& background) {
     rect.moveCenter(pt + QPointF(0.5, 0.5));
     painter.drawEllipse(rect);
   }
-
   return canvas;
 }
 
@@ -349,7 +346,6 @@ QImage visualizeSegments(const QImage& background, const std::vector<Segment>& s
   for (const Segment& seg : segments) {
     painter.drawLine(seg.line);
   }
-
   return canvas;
 }
 
@@ -398,7 +394,6 @@ QLineF extendLine(const QLineF& line, int height) {
 
   line.intersect(topLine, &topIntersection);
   line.intersect(bottomLine, &bottomIntersection);
-
   return QLineF(topIntersection, bottomIntersection);
 }
 }  // namespace
@@ -444,7 +439,6 @@ std::pair<QLineF, QLineF> detectVertContentBounds(const imageproc::BinaryImage& 
   if (dbg) {
     dbg->add(visualizeSegments(image.toQImage(), *dbgSegments), "right_ransac_model");
   }
-
   return bounds;
 }  // detectVertContentBounds
 }  // namespace dewarping

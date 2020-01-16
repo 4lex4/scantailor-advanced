@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "PhysSizeCalc.h"
+
 #include <UnitsConverter.h>
+
 #include "ImageTransformation.h"
 
 namespace select_content {
@@ -14,7 +16,6 @@ PhysSizeCalc::PhysSizeCalc(const ImageTransformation& xform)
 QSizeF PhysSizeCalc::sizeMM(const QRectF& rectPx) const {
   const QPolygonF polyMm(m_virtToPhys.map(rectPx));
   const QSizeF sizeMm(QLineF(polyMm[0], polyMm[1]).length(), QLineF(polyMm[1], polyMm[2]).length());
-
   return sizeMm;
 }
 }  // namespace select_content

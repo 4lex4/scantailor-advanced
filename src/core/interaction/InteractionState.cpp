@@ -6,7 +6,6 @@
 InteractionState::Captor& InteractionState::Captor::operator=(Captor& other) {
   swap_nodes(other);
   other.unlink();
-
   return *this;
 }
 
@@ -64,7 +63,6 @@ bool InteractionState::betterProximity(const Proximity& proximity, const int pri
   if (priority != m_bestProximityPriority) {
     return priority > m_bestProximityPriority;
   }
-
   return proximity < m_bestProximity;
 }
 

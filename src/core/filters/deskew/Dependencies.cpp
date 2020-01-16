@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Dependencies.h"
+
 #include <PolygonUtils.h>
+
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
@@ -24,7 +26,6 @@ bool Dependencies::matches(const Dependencies& other) const {
   if (m_rotation != other.m_rotation) {
     return false;
   }
-
   return PolygonUtils::fuzzyCompare(m_pageOutline, other.m_pageOutline);
 }
 
@@ -34,7 +35,6 @@ QDomElement Dependencies::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.appendChild(m_rotation.toXml(doc, "rotation"));
   el.appendChild(marshaller.polygonF(m_pageOutline, "page-outline"));
-
   return el;
 }
 }  // namespace deskew

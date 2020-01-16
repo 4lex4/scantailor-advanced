@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputFileNameGenerator.h"
+
 #include <QDir>
 #include <QFileInfo>
 #include <utility>
+
 #include "AbstractRelinker.h"
 #include "PageId.h"
 #include "RelinkablePath.h"
@@ -42,12 +44,10 @@ QString OutputFileNameGenerator::fileNameFor(const PageId& page) const {
     name += QLatin1Char(subPage == PageId::LEFT_PAGE ? 'L' : 'R');
   }
   name += QString::fromLatin1(".tif");
-
   return name;
 }
 
 QString OutputFileNameGenerator::filePathFor(const PageId& page) const {
   const QString fileName(fileNameFor(page));
-
   return QDir(m_outDir).absoluteFilePath(fileName);
 }

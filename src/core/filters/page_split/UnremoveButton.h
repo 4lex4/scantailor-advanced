@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QPointF>
 #include <boost/function.hpp>
+
 #include "InteractionHandler.h"
 #include "InteractionState.h"
 #include "Proximity.h"

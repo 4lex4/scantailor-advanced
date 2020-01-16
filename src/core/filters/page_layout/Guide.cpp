@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Guide.h"
+
 #include <foundation/Utils.h>
 
 using namespace foundation;
@@ -47,7 +48,6 @@ QDomElement Guide::toXml(QDomDocument& doc, const QString& name) const {
 
   el.setAttribute("orientation", orientationToString(m_orientation));
   el.setAttribute("position", Utils::doubleToString(m_position));
-
   return el;
 }
 

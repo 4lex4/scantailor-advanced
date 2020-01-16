@@ -5,6 +5,7 @@
 #define SCANTAILOR_DEWARPING_DEWARPINGPOINTMAPPER_H_
 
 #include <QtGui/QTransform>
+
 #include "CylindricalSurfaceDewarper.h"
 
 class QRect;

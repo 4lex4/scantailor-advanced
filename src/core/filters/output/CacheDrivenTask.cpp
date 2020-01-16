@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "CacheDrivenTask.h"
+
 #include <QDir>
 #include <QFileInfo>
 #include <utility>
+
 #include "FillZoneComparator.h"
 #include "IncompleteThumbnail.h"
 #include "OutputGenerator.h"

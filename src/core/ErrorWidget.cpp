@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ErrorWidget.h"
+
 #include <QIcon>
 #include <QStyle>
+
 #include "ui_ErrorWidget.h"
 
 ErrorWidget::ErrorWidget(const QString& text, Qt::TextFormat fmt) : ui(std::make_unique<Ui::ErrorWidget>()) {

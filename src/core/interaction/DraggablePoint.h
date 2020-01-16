@@ -6,6 +6,7 @@
 
 #include <QPointF>
 #include <boost/function.hpp>
+
 #include "DraggableObject.h"
 
 class DraggablePoint : public DraggableObject {

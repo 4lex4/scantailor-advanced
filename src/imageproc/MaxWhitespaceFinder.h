@@ -10,6 +10,7 @@
 #include <deque>
 #include <memory>
 #include <vector>
+
 #include "BinaryImage.h"
 #include "IntegralImage.h"
 #include "NonCopyable.h"

@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ConnCompEraserExt.h"
+
 #include "RasterOp.h"
 
 namespace imageproc {
@@ -32,7 +33,6 @@ ConnComp ConnCompEraserExt::nextConnComp() {
   }
 
   m_lastCC = m_eraser.nextConnComp();
-
   return m_lastCC;
 }
 
@@ -40,7 +40,6 @@ BinaryImage ConnCompEraserExt::computeConnCompImage() const {
   if (m_lastCC.isNull()) {
     return BinaryImage();
   }
-
   return computeDiffImage(m_lastCC.rect());
 }
 
@@ -54,7 +53,6 @@ BinaryImage ConnCompEraserExt::computeConnCompImageAligned(QRect* rect) const {
   if (rect) {
     *rect = r;
   }
-
   return computeDiffImage(r);
 }
 
@@ -62,7 +60,6 @@ BinaryImage ConnCompEraserExt::computeDiffImage(const QRect& rect) const {
   BinaryImage diff(rect.width(), rect.height());
   rasterOp<RopSrc>(diff, diff.rect(), m_eraser.image(), rect.topLeft());
   rasterOp<RopXor<RopSrc, RopDst>>(diff, diff.rect(), m_lastImage, rect.topLeft());
-
   return diff;
 }
 }  // namespace imageproc

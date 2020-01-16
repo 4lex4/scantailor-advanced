@@ -15,7 +15,6 @@ QColor colorInterpolation(const QColor& from, const QColor& to, double dist) {
   const qreal g = g1 + (g2 - g1) * dist;
   const qreal b = b1 + (b2 - b1) * dist;
   const qreal a = a1 + (a2 - a1) * dist;
-
   return QColor::fromRgbF(r, g, b, a);
 }
 }  // namespace imageproc

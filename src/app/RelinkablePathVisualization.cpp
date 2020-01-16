@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "RelinkablePathVisualization.h"
+
 #include <QHBoxLayout>
 #include <QPaintEvent>
 #include <QPushButton>
@@ -9,6 +10,7 @@
 #include <QStyleOption>
 #include <QStylePainter>
 #include <boost/bind.hpp>
+
 #include "ColorSchemeManager.h"
 #include "RelinkablePath.h"
 
@@ -233,7 +235,6 @@ void RelinkablePathVisualization::checkForExistence(std::vector<PathComponent>& 
     for (PathComponent& comp : components) {
       comp.exists = true;
     }
-
     return;
   }
 

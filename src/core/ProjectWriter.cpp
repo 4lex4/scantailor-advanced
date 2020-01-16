@@ -2,10 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ProjectWriter.h"
+
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
 #include <QtXml>
+
 #include "AbstractFilter.h"
 #include "FileNameDisambiguator.h"
 #include "ImageId.h"
@@ -91,7 +93,6 @@ bool ProjectWriter::write(const QString& filePath, const std::vector<FilterPtr>&
     doc.save(strm, 2);
     return true;
   }
-
   return false;
 }  // ProjectWriter::write
 
@@ -104,7 +105,6 @@ QDomElement ProjectWriter::processDirectories(QDomDocument& doc) const {
     dirEl.setAttribute("path", dir.path);
     dirsEl.appendChild(dirEl);
   }
-
   return dirsEl;
 }
 
@@ -120,7 +120,6 @@ QDomElement ProjectWriter::processFiles(QDomDocument& doc) const {
     fileEl.setAttribute("name", fileInfo.fileName());
     filesEl.appendChild(fileEl);
   }
-
   return filesEl;
 }
 
@@ -140,7 +139,6 @@ QDomElement ProjectWriter::processImages(QDomDocument& doc) const {
     writeImageMetadata(doc, imageEl, image.id);
     imagesEl.appendChild(imageEl);
   }
-
   return imagesEl;
 }
 
@@ -187,7 +185,6 @@ QDomElement ProjectWriter::processPages(QDomDocument& doc) const {
     }
     pagesEl.appendChild(pageEl);
   }
-
   return pagesEl;
 }  // ProjectWriter::processPages
 

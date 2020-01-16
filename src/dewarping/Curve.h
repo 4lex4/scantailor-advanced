@@ -6,6 +6,7 @@
 
 #include <QPointF>
 #include <vector>
+
 #include "XSpline.h"
 
 class QDomDocument;

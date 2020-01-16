@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Units.h"
+
 #include <QtCore/QObject>
 
 QString unitsToString(Units units) {
@@ -20,7 +21,6 @@ QString unitsToString(Units units) {
       unitsStr = "in";
       break;
   }
-
   return unitsStr;
 }
 
@@ -52,6 +52,5 @@ QString unitsToLocalizedString(Units units) {
       unitsStr = QObject::tr("in");
       break;
   }
-
   return unitsStr;
 }

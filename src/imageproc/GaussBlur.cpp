@@ -3,9 +3,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "GaussBlur.h"
+
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <cmath>
+
 #include "Constants.h"
 #include "GrayImage.h"
 
@@ -83,7 +85,6 @@ GrayImage gaussBlur(const GrayImage& src, float hSigma, float vSigma) {
   GrayImage dst(src.size());
   gaussBlurGeneric(src.size(), hSigma, vSigma, src.data(), src.stride(), StaticCastValueConv<float>(), dst.data(),
                    dst.stride(), _1 = bind<uint8_t>(RoundAndClipValueConv<uint8_t>(), _2));
-
   return dst;
 }
 }  // namespace imageproc

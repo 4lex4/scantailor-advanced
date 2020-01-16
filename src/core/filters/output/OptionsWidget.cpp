@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OptionsWidget.h"
+
 #include <QToolTip>
 #include <utility>
+
 #include "../../Utils.h"
 #include "ApplyColorsDialog.h"
 #include "ChangeDewarpingDialog.h"
@@ -497,11 +499,9 @@ void OptionsWidget::reloadIfNecessary() {
 
   if (!PictureZoneComparator::equal(savedPictureZones, m_settings->pictureZonesForPage(m_pageId))) {
     emit reloadRequested();
-
     return;
   } else if (!FillZoneComparator::equal(savedFillZones, m_settings->fillZonesForPage(m_pageId))) {
     emit reloadRequested();
-
     return;
   }
 
@@ -509,25 +509,21 @@ void OptionsWidget::reloadIfNecessary() {
 
   if (savedDespeckleLevel != params.despeckleLevel()) {
     emit reloadRequested();
-
     return;
   }
 
   if ((savedDewarpingOptions.dewarpingMode() == OFF) && (params.dewarpingOptions().dewarpingMode() == OFF)) {
   } else if (savedDepthPerception.value() != params.depthPerception().value()) {
     emit reloadRequested();
-
     return;
   } else if ((savedDewarpingOptions.dewarpingMode() == AUTO) && (params.dewarpingOptions().dewarpingMode() == AUTO)) {
   } else if ((savedDewarpingOptions.dewarpingMode() == MARGINAL)
              && (params.dewarpingOptions().dewarpingMode() == MARGINAL)) {
   } else if (!savedDistortionModel.matches(params.distortionModel())) {
     emit reloadRequested();
-
     return;
   } else if ((savedDewarpingOptions.dewarpingMode() == OFF) != (params.dewarpingOptions().dewarpingMode() == OFF)) {
     emit reloadRequested();
-
     return;
   }
 }  // OptionsWidget::reloadIfNecessary

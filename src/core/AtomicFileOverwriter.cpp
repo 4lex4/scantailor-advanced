@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "AtomicFileOverwriter.h"
+
 #include <QFile>
 #include <QTemporaryFile>
+
 #include "Utils.h"
 
 using namespace core;
@@ -22,7 +24,6 @@ QIODevice* AtomicFileOverwriter::startWriting(const QString& filePath) {
   if (!m_tempFile->open()) {
     m_tempFile.reset();
   }
-
   return m_tempFile.get();
 }
 
@@ -41,10 +42,8 @@ bool AtomicFileOverwriter::commit() {
 
   if (!Utils::overwritingRename(tempFilePath, targetPath)) {
     QFile::remove(tempFilePath);
-
     return false;
   }
-
   return true;
 }
 

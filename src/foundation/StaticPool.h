@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <stdexcept>
+
 #include "NonCopyable.h"
 
 template <typename T>
@@ -61,7 +62,6 @@ T* StaticPoolBase<T>::alloc(size_t numElements) {
   T* sequence = m_next;
   m_next += numElements;
   m_sizeRemaining -= numElements;
-
   return sequence;
 }
 

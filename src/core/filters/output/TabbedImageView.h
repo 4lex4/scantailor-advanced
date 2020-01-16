@@ -9,6 +9,7 @@
 #include <QWidget>
 #include <memory>
 #include <unordered_map>
+
 #include "ImageViewTab.h"
 
 class ImageViewBase;

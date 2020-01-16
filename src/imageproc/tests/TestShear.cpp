@@ -4,8 +4,10 @@
 #include <BWColor.h>
 #include <BinaryImage.h>
 #include <Shear.h>
+
 #include <QImage>
 #include <boost/test/unit_test.hpp>
+
 #include "Utils.h"
 
 namespace imageproc {

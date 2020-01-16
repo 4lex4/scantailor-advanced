@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "XSpline.h"
+
 #include <QDebug>
 #include <boost/foreach.hpp>
 #include <cmath>
+
 #include "ToLineProjector.h"
 #include "VecNT.h"
 #include "adiff/Function.h"
@@ -77,7 +79,6 @@ struct XSpline::DecomposedDerivs {
 
   bool hasNonZeroCoeffs(int idx) const {
     double sum = std::fabs(zeroDerivCoeffs[idx]) + std::fabs(firstDerivCoeffs[idx]) + std::fabs(secondDerivCoeffs[idx]);
-
     return sum > std::numeric_limits<double>::epsilon();
   }
 };
@@ -93,7 +94,6 @@ int XSpline::numSegments() const {
 
 double XSpline::controlPointIndexToT(int idx) const {
   assert(idx >= 0 || idx <= (int) m_controlPoints.size());
-
   return double(idx) / (m_controlPoints.size() - 1);
 }
 
@@ -122,7 +122,6 @@ void XSpline::moveControlPoint(int idx, const QPointF& pos) {
 
 double XSpline::controlPointTension(int idx) const {
   assert(idx >= 0 && idx < (int) m_controlPoints.size());
-
   return m_controlPoints[idx].tension;
 }
 
@@ -143,7 +142,6 @@ QPointF XSpline::pointAt(double t) const {
   } else {
     const double t2 = t * numSegments;
     const double segment = std::floor(t2);
-
     return pointAtImpl((int) segment, t2 - segment);
   }
 }
@@ -157,7 +155,6 @@ QPointF XSpline::pointAtImpl(int segment, double t) const {
     const LinearCoefficient& c = coeffs[i];
     pt += m_controlPoints[c.controlPointIdx].pos * c.coeff;
   }
-
   return pt;
 }
 
@@ -318,7 +315,6 @@ int XSpline::linearCombinationFor(LinearCoefficient* coeffs, int segment, double
     coeffs[outIdx++] = LinearCoefficient(idxs[2], A[2]);
     coeffs[outIdx++] = LinearCoefficient(idxs[3], A[3]);
   }
-
   return outIdx;
 }  // XSpline::linearCombinationFor
 
@@ -333,7 +329,6 @@ XSpline::PointAndDerivs XSpline::pointAndDtsAt(double t) const {
     pd.firstDeriv += cp * derivs.firstDerivCoeffs[i];
     pd.secondDeriv += cp * derivs.secondDerivCoeffs[i];
   }
-
   return pd;
 }
 
@@ -350,7 +345,6 @@ XSpline::DecomposedDerivs XSpline::decomposedDerivs(const double t) const {
   } else {
     const double t2 = t * numSegments;
     const double segment = std::floor(t2);
-
     return decomposedDerivsImpl((int) segment, t2 - segment);
   }
 }
@@ -505,7 +499,6 @@ XSpline::DecomposedDerivs XSpline::decomposedDerivsImpl(const int segment, const
     ++readIdx;
   }
   derivs.numControlPoints = writeIdx;
-
   return derivs;
 }  // XSpline::decomposedDerivsImpl
 
@@ -547,7 +540,6 @@ QuadraticFunction XSpline::controlPointsAttractionForce(int segBegin, int segEnd
   f.A = 0.5 * force.hessian(sparseMap);
   f.b = force.gradient(sparseMap);
   f.c = force.value;
-
   return f;
 }  // XSpline::controlPointsAttractionForce
 
@@ -605,7 +597,6 @@ QuadraticFunction XSpline::junctionPointsAttractionForce(int segBegin, int segEn
   f.A = 0.5 * force.hessian(sparseMap);
   f.b = force.gradient(sparseMap);
   f.c = force.value;
-
   return f;
 }  // XSpline::junctionPointsAttractionForce
 
@@ -614,7 +605,6 @@ QPointF XSpline::pointClosestTo(const QPointF to, double* t, double accuracy) co
     if (t) {
       *t = 0;
     }
-
     return QPointF();
   }
 
@@ -623,7 +613,6 @@ QPointF XSpline::pointClosestTo(const QPointF to, double* t, double accuracy) co
     if (t) {
       *t = 0;
     }
-
     return m_controlPoints.front().pos;
   }
 
@@ -669,13 +658,11 @@ QPointF XSpline::pointClosestTo(const QPointF to, double* t, double accuracy) co
     if (t) {
       *t = (bestSegment + prevT) / numSegments;
     }
-
     return prevPt;
   } else {
     if (t) {
       *t = (bestSegment + nextT) / numSegments;
     }
-
     return nextPt;
   }
 }  // XSpline::pointClosestTo
@@ -689,7 +676,6 @@ std::vector<QPointF> XSpline::toPolyline(const SamplingParams& params, double fr
 
   auto sink = [&polyline](const QPointF& pt, double, SampleFlags) { polyline.push_back(pt); };
   sample(ProxyFunction<decltype(sink), void, const QPointF&, double, SampleFlags>(sink), params, fromT, toT);
-
   return polyline;
 }
 
@@ -704,7 +690,6 @@ double XSpline::sqDistToLine(const QPointF& pt, const QLineF& line) {
   } else {
     ppt = line.pointAt(p);
   }
-
   return Vec2d(pt - ppt).squaredNorm();
 }
 
@@ -761,7 +746,6 @@ double XSpline::GBlendFunc::value(double u) const {
   const double u3 = u2 * u;
   const double u4 = u3 * u;
   const double u5 = u4 * u;
-
   return m_c1 * u + m_c2 * u2 + m_c3 * u3 + m_c4 * u4 + m_c5 * u5;
 }
 
@@ -769,14 +753,12 @@ double XSpline::GBlendFunc::firstDerivative(double u) const {
   const double u2 = u * u;
   const double u3 = u2 * u;
   const double u4 = u3 * u;
-
   return m_c1 + 2 * m_c2 * u + 3 * m_c3 * u2 + 4 * m_c4 * u3 + 5 * m_c5 * u4;
 }
 
 double XSpline::GBlendFunc::secondDerivative(double u) const {
   const double u2 = u * u;
   const double u3 = u2 * u;
-
   return 2 * m_c2 + 6 * m_c3 * u + 12 * m_c4 * u2 + 20 * m_c5 * u3;
 }
 
@@ -794,7 +776,6 @@ double XSpline::HBlendFunc::value(double u) const {
   const double u3 = u2 * u;
   const double u4 = u3 * u;
   const double u5 = u4 * u;
-
   return m_c1 * u + m_c2 * u2 + m_c4 * u4 + m_c5 * u5;
 }
 
@@ -802,14 +783,12 @@ double XSpline::HBlendFunc::firstDerivative(double u) const {
   const double u2 = u * u;
   const double u3 = u2 * u;
   const double u4 = u3 * u;
-
   return m_c1 + 2 * m_c2 * u + 4 * m_c4 * u3 + 5 * m_c5 * u4;
 }
 
 double XSpline::HBlendFunc::secondDerivative(double u) const {
   const double u2 = u * u;
   const double u3 = u2 * u;
-
   return 2 * m_c2 + 12 * m_c4 * u2 + 20 * m_c5 * u3;
 }
 
@@ -818,6 +797,5 @@ double XSpline::HBlendFunc::secondDerivative(double u) const {
 double XSpline::PointAndDerivs::signedCurvature() const {
   const double cross = firstDeriv.x() * secondDeriv.y() - firstDeriv.y() * secondDeriv.x();
   double tlen = std::sqrt(firstDeriv.x() * firstDeriv.x() + firstDeriv.y() * firstDeriv.y());
-
   return cross / (tlen * tlen * tlen);
 }

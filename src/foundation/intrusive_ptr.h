@@ -131,21 +131,18 @@ inline intrusive_ptr<T>::~intrusive_ptr() noexcept {
 template <typename T>
 inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(std::nullptr_t) noexcept {
   reset();
-
   return *this;
 }
 
 template <typename T>
 inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(const intrusive_ptr& rhs) noexcept {
   intrusive_ptr(rhs).swap(*this);
-
   return *this;
 }
 
 template <typename T>
 inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr&& rhs) noexcept {
   intrusive_ptr(std::move(rhs)).swap(*this);
-
   return *this;
 }
 
@@ -153,7 +150,6 @@ template <typename T>
 template <typename OT, typename>
 inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(const intrusive_ptr<OT>& rhs) noexcept {
   intrusive_ptr(rhs).swap(*this);
-
   return *this;
 }
 
@@ -161,7 +157,6 @@ template <typename T>
 template <typename OT, typename>
 inline intrusive_ptr<T>& intrusive_ptr<T>::operator=(intrusive_ptr<OT>&& rhs) noexcept {
   intrusive_ptr(std::move(rhs)).swap(*this);
-
   return *this;
 }
 
@@ -184,7 +179,6 @@ template <typename T>
 inline T* intrusive_ptr<T>::release() noexcept {
   T* obj = m_obj;
   m_obj = nullptr;
-
   return obj;
 }
 
@@ -216,7 +210,6 @@ inline T* intrusive_ptr<T>::fork() const noexcept {
   if (obj) {
     intrusive_ref(*obj);
   }
-
   return obj;
 }
 

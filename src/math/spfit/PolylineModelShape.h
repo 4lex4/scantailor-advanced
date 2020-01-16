@@ -6,6 +6,7 @@
 
 #include <QPointF>
 #include <vector>
+
 #include "FlagOps.h"
 #include "ModelShape.h"
 #include "NonCopyable.h"

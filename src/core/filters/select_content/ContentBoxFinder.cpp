@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ContentBoxFinder.h"
+
 #include <Binarize.h>
 #include <BinaryImage.h>
 #include <ConnComp.h>
@@ -18,10 +19,12 @@
 #include <SeedFill.h>
 #include <SlicedHistogram.h>
 #include <Transform.h>
+
 #include <QDebug>
 #include <QPainter>
 #include <cmath>
 #include <queue>
+
 #include "DebugImages.h"
 #include "Despeckle.h"
 #include "FilterData.h"
@@ -379,7 +382,6 @@ QRectF ContentBoxFinder::findContentBox(const TaskStatus& status,
   // Transform back from 150dpi.
   QTransform combinedXform(xform150dpi.transform().inverted());
   combinedXform *= data.xform().transform();
-
   return combinedXform.map(QRectF(contentRect)).boundingRect().intersected(data.xform().resultingRect());
 }  // ContentBoxFinder::findContentBox
 
@@ -861,7 +863,6 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
       rasterOp<RopOr<RopSrc, RopDst>>(textMask, lineRect, ccImg, QPoint(0, top));
     }
   }
-
   return textMask;
 }  // ContentBoxFinder::estimateTextMask
 
@@ -907,7 +908,6 @@ QRect ContentBoxFinder::trimLeft(const imageproc::BinaryImage& content,
       return res;
     }
   }
-
   return area;
 }  // ContentBoxFinder::trimLeft
 
@@ -953,7 +953,6 @@ QRect ContentBoxFinder::trimRight(const imageproc::BinaryImage& content,
       return res;
     }
   }
-
   return area;
 }  // ContentBoxFinder::trimRight
 
@@ -999,7 +998,6 @@ QRect ContentBoxFinder::trimTop(const imageproc::BinaryImage& content,
       return res;
     }
   }
-
   return area;
 }  // ContentBoxFinder::trimTop
 
@@ -1045,7 +1043,6 @@ QRect ContentBoxFinder::trimBottom(const imageproc::BinaryImage& content,
       return res;
     }
   }
-
   return area;
 }  // ContentBoxFinder::trimBottom
 
@@ -1097,7 +1094,6 @@ QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
       painter.end();
       dbg->add(visualized, "trim_too_much");
     }
-
     return area;
   }
 
@@ -1191,7 +1187,6 @@ QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
       painter.end();
       dbg->add(visualized, "trimmed");
     }
-
     return newArea;
   } else {
     if (dbg) {
@@ -1204,7 +1199,6 @@ QRect ContentBoxFinder::trim(const imageproc::BinaryImage& content,
       dbg->add(visualized, "not_trimmed");
     }
     canRetryGrouped = (proximityBias < 0.85);
-
     return area;
   }
 }  // ContentBoxFinder::trim
@@ -1331,7 +1325,6 @@ const SEDM& ContentBoxFinder::Garbage::sedm() {
   if (m_sedmUpdatePending) {
     m_sedm = SEDM(m_garbage, SEDM::DIST_TO_BLACK, m_sedmBorders);
   }
-
   return m_sedm;
 }
 }  // namespace select_content

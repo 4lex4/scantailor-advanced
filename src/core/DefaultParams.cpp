@@ -2,7 +2,9 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DefaultParams.h"
+
 #include <foundation/Utils.h>
+
 #include "XmlMarshaller.h"
 #include "XmlUnmarshaller.h"
 
@@ -90,7 +92,6 @@ QDomElement DefaultParams::toXml(QDomDocument& doc, const QString& name) const {
   el.appendChild(m_pageLayoutParams.toXml(doc, "page-layout-params"));
   el.appendChild(m_outputParams.toXml(doc, "output-params"));
   el.setAttribute("units", unitsToString(m_units));
-
   return el;
 }
 
@@ -121,7 +122,6 @@ DefaultParams::FixOrientationParams::FixOrientationParams(const QDomElement& el)
 QDomElement DefaultParams::FixOrientationParams::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.appendChild(m_imageRotation.toXml(doc, "imageRotation"));
-
   return el;
 }
 
@@ -154,7 +154,6 @@ QDomElement DefaultParams::DeskewParams::toXml(QDomDocument& doc, const QString&
   QDomElement el(doc.createElement(name));
   el.setAttribute("deskewAngleDeg", Utils::doubleToString(m_deskewAngleDeg));
   el.setAttribute("mode", (m_mode == MODE_AUTO) ? "auto" : "manual");
-
   return el;
 }
 
@@ -176,7 +175,6 @@ DefaultParams::PageSplitParams::PageSplitParams(const QDomElement& el)
 QDomElement DefaultParams::PageSplitParams::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.setAttribute("layoutType", layoutTypeToString(m_layoutType));
-
   return el;
 }
 
@@ -231,7 +229,6 @@ QDomElement DefaultParams::SelectContentParams::toXml(QDomDocument& doc, const Q
   el.setAttribute("contentDetectEnabled", m_contentDetectEnabled ? "1" : "0");
   el.setAttribute("pageDetectMode", autoManualModeToString(m_pageDetectMode));
   el.setAttribute("fineTuneCorners", m_fineTuneCorners ? "1" : "0");
-
   return el;
 }
 
@@ -284,7 +281,6 @@ QDomElement DefaultParams::PageLayoutParams::toXml(QDomDocument& doc, const QStr
   el.appendChild(m_hardMargins.toXml(doc, "hardMargins"));
   el.appendChild(m_alignment.toXml(doc, "alignment"));
   el.setAttribute("autoMargins", m_autoMargins ? "1" : "0");
-
   return el;
 }
 
@@ -379,6 +375,5 @@ QDomElement DefaultParams::OutputParams::toXml(QDomDocument& doc, const QString&
   el.setAttribute("depthPerception", Utils::doubleToString(m_depthPerception.value()));
   el.appendChild(m_dewarpingOptions.toXml(doc, "dewarpingOptions"));
   el.setAttribute("despeckleLevel", Utils::doubleToString(m_despeckleLevel));
-
   return el;
 }

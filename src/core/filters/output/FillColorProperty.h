@@ -6,6 +6,7 @@
 
 #include <QColor>
 #include <Qt>
+
 #include "Property.h"
 #include "intrusive_ptr.h"
 

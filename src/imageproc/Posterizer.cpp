@@ -2,9 +2,11 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Posterizer.h"
+
 #include <cassert>
 #include <set>
 #include <unordered_set>
+
 #include "BinaryImage.h"
 
 namespace imageproc {
@@ -43,7 +45,6 @@ QVector<QRgb> paletteFromRgb(const QImage& image) {
 
   QVector<QRgb> palette(colorSet.size());
   std::copy(colorSet.begin(), colorSet.end(), std::back_inserter(palette));
-
   return palette;
 }
 }  // namespace
@@ -103,7 +104,6 @@ QImage Posterizer::convertToIndexed(const QImage& image, const QVector<QRgb>& pa
 
   dst.setDotsPerMeterX(image.dotsPerMeterX());
   dst.setDotsPerMeterY(image.dotsPerMeterY());
-
   return dst;
 }
 
@@ -127,7 +127,6 @@ std::unordered_map<uint32_t, int> paletteFromIndexedWithStatistics(const QImage&
     }
     imgLine += imgStride;
   }
-
   return palette;
 }
 
@@ -147,7 +146,6 @@ std::unordered_map<uint32_t, int> paletteFromRgbWithStatistics(const QImage& ima
     }
     imgLine += imgStride;
   }
-
   return palette;
 }
 
@@ -211,7 +209,6 @@ QVector<QRgb> paletteFromColorMap(const std::unordered_map<uint32_t, uint32_t>& 
 
   QVector<QRgb> palette(static_cast<int>(colorSet.size()));
   std::copy(colorSet.begin(), colorSet.end(), std::back_inserter(palette));
-
   return palette;
 }
 
@@ -289,7 +286,6 @@ std::unordered_map<uint32_t, uint32_t> normalizePalette(const QImage& image,
 
     colorToNormalizedMap[color] = qRgb(normalizedRed, normalizedGreen, normalizedBlue);
   }
-
   return colorToNormalizedMap;
 }
 
@@ -298,7 +294,6 @@ bool isGray(const QColor& color) {
   const double value = color.valueF();
 
   const double coefficient = std::max(.0, ((std::max(saturation, value) - 0.28) / 0.72)) + 1;
-
   return (saturation * value) < (0.1 * coefficient);
 }
 
@@ -397,7 +392,6 @@ QImage Posterizer::posterize(const QImage& image) const {
       return Posterizer::convertToIndexed(dst, paletteFromColorMap(oldToNewColorMap));
     }
   }
-
   return dst;
 }
 }  // namespace imageproc

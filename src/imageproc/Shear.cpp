@@ -2,8 +2,10 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "Shear.h"
+
 #include <cassert>
 #include <cmath>
+
 #include "RasterOp.h"
 
 namespace imageproc {
@@ -30,7 +32,6 @@ void hShearFromTo(const BinaryImage& src,
   if (shift1 == std::floor(shiftEnd)) {
     assert(shift1 == 0);
     dst = src;
-
     return;
   }
 
@@ -101,7 +102,6 @@ void vShearFromTo(const BinaryImage& src,
   if (shift1 == std::floor(shiftEnd)) {
     assert(shift1 == 0);
     dst = src;
-
     return;
   }
 
@@ -152,14 +152,12 @@ void vShearFromTo(const BinaryImage& src,
 BinaryImage hShear(const BinaryImage& src, const double shear, const double yOrigin, const BWColor backgroundColor) {
   BinaryImage dst(src.width(), src.height());
   hShearFromTo(src, dst, shear, yOrigin, backgroundColor);
-
   return dst;
 }
 
 BinaryImage vShear(const BinaryImage& src, const double shear, const double xOrigin, const BWColor backgroundColor) {
   BinaryImage dst(src.width(), src.height());
   vShearFromTo(src, dst, shear, xOrigin, backgroundColor);
-
   return dst;
 }
 

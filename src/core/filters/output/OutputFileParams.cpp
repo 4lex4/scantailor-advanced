@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OutputFileParams.h"
+
 #include <QDateTime>
 #include <QDomDocument>
 #include <QFileInfo>
@@ -30,7 +31,6 @@ QDomElement OutputFileParams::toXml(QDomDocument& doc, const QString& name) cons
     QDomElement el(doc.createElement(name));
     el.setAttribute("size", QString::number(m_size));
     el.setAttribute("mtime", QString::number(m_modifiedTime));
-
     return el;
   } else {
     return QDomElement();

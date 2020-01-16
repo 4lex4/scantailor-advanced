@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "LayoutType.h"
+
 #include <cassert>
 
 namespace page_split {
@@ -17,7 +18,6 @@ QString layoutTypeToString(const LayoutType layoutType) {
       return "two-pages";
   }
   assert(!"unreachable");
-
   return QString();
 }
 

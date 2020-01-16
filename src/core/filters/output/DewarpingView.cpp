@@ -2,12 +2,15 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DewarpingView.h"
+
 #include <Constants.h>
 #include <CylindricalSurfaceDewarper.h>
+
 #include <QDebug>
 #include <QPainter>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+
 #include "ImagePresentation.h"
 #include "ToLineProjector.h"
 #include "spfit/ConstraintSet.h"
@@ -336,7 +339,6 @@ QPolygonF DewarpingView::virtMarginArea(int marginIdx) const {
   poly << vertBoundary.pointAt(max);
   poly << vertBoundary.pointAt(max) + normal.pointAt(normalMax) - normal.p1();
   poly << vertBoundary.pointAt(min) + normal.pointAt(normalMax) - normal.p1();
-
   return m_virtDisplayArea.intersected(poly);
 }  // DewarpingView::virtMarginArea
 }  // namespace output

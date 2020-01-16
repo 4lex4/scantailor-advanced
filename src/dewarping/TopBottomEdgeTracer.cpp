@@ -2,16 +2,19 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "TopBottomEdgeTracer.h"
+
 #include <Constants.h>
 #include <GaussBlur.h>
 #include <GrayImage.h>
 #include <Scale.h>
+
 #include <QDebug>
 #include <QPainter>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <cmath>
+
 #include "DebugImages.h"
 #include "DistortionModelBuilder.h"
 #include "GridLineTraverser.h"
@@ -148,7 +151,6 @@ float TopBottomEdgeTracer::interpolatedGridValue(const Grid<GridNode>& grid,
 
   const int stride = grid.stride();
   const GridNode* base = grid.data() + yBaseI * stride + xBaseI;
-
   return extractor(base[0]) * x1 * y1 + extractor(base[1]) * x * y1 + extractor(base[stride]) * x1 * y
          + extractor(base[stride + 1]) * x * y;
 }
@@ -404,7 +406,6 @@ Vec2f TopBottomEdgeTracer::calcAvgUnitVector(const std::pair<QLineF, QLineF>& bo
 
   Vec2f v3(v1 + v2);
   v3 /= std::sqrt(v3.squaredNorm());
-
   return v3;
 }
 
@@ -414,7 +415,6 @@ Vec2f TopBottomEdgeTracer::directionFromPointToLine(const QPointF& pt, const QLi
   if (sqlen > 1e-5) {
     vec /= std::sqrt(sqlen);
   }
-
   return vec;
 }
 
@@ -503,7 +503,6 @@ int TopBottomEdgeTracer::initNeighbours(int* nextNbhOffsets, int* prevNbhIndexes
       ++outIdx;
     }
   }
-
   return outIdx;
 }  // TopBottomEdgeTracer::initNeighbours
 
@@ -577,7 +576,6 @@ std::vector<QPoint> TopBottomEdgeTracer::locateBestPathEndpoints(const Grid<Grid
       bestEndpoints.push_back(path.pt);
     }
   }
-
   return bestEndpoints;
 }  // TopBottomEdgeTracer::locateBestPathEndpoints
 
@@ -605,7 +603,6 @@ std::vector<QPoint> TopBottomEdgeTracer::tracePathFromEndpoint(const Grid<GridNo
     gridOffset += grid_offsets[nbhIdx];
     pt += QPoint(dx[nbhIdx], dy[nbhIdx]);
   }
-
   return path;
 }  // TopBottomEdgeTracer::tracePathFromEndpoint
 
@@ -650,7 +647,6 @@ std::vector<QPointF> TopBottomEdgeTracer::pathToSnake(const Grid<GridNode>& grid
     gridOffset += grid_offsets[nbhIdx];
     pt += QPoint(dx[nbhIdx], dy[nbhIdx]);
   }
-
   return snake;
 }  // TopBottomEdgeTracer::pathToSnake
 
@@ -959,7 +955,6 @@ int TopBottomEdgeTracer::initDisplacementVectors(Vec2f vectors[], Vec2f validDir
       vectors[outIdx++] = vec;
     }
   }
-
   return outIdx;
 }
 
@@ -1019,7 +1014,6 @@ QImage TopBottomEdgeTracer::visualizeGradient(const Grid<GridNode>& grid, const 
 
   QPainter painter(&canvas);
   painter.drawImage(0, 0, overlay);
-
   return canvas;
 }  // TopBottomEdgeTracer::visualizeGradient
 
@@ -1068,7 +1062,6 @@ QImage TopBottomEdgeTracer::visualizeBlurredGradient(const Grid<GridNode>& grid)
   canvas.fill(0xffffffff);  // Opaque white.
   QPainter painter(&canvas);
   painter.drawImage(0, 0, overlay);
-
   return canvas;
 }  // TopBottomEdgeTracer::visualizeBlurredGradient
 
@@ -1113,7 +1106,6 @@ QImage TopBottomEdgeTracer::visualizePaths(const QImage& background,
   painter.setPen(pen);
   painter.drawLine(bounds.first);
   painter.drawLine(bounds.second);
-
   return canvas;
 }  // TopBottomEdgeTracer::visualizePaths
 
@@ -1137,7 +1129,6 @@ QImage TopBottomEdgeTracer::visualizePaths(const QImage& background,
   painter.setPen(pen);
   painter.drawLine(bounds.first);
   painter.drawLine(bounds.second);
-
   return canvas;
 }
 
@@ -1175,7 +1166,6 @@ QImage TopBottomEdgeTracer::visualizeSnakes(const QImage& background,
   painter.setPen(boundsPen);
   painter.drawLine(bounds.first);
   painter.drawLine(bounds.second);
-
   return canvas;
 }  // TopBottomEdgeTracer::visualizeSnakes
 
@@ -1203,7 +1193,6 @@ QImage TopBottomEdgeTracer::visualizePolylines(const QImage& background,
   painter.setPen(boundsPen);
   painter.drawLine(bounds.first);
   painter.drawLine(bounds.second);
-
   return canvas;
 }
 }  // namespace dewarping

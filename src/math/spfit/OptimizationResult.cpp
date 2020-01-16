@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "OptimizationResult.h"
+
 #include <algorithm>
 
 namespace spfit {
@@ -14,7 +15,6 @@ OptimizationResult::OptimizationResult(double forceBefore, double forceAfter)
 double OptimizationResult::improvementPercentage() const {
   double improvement = m_forceBefore - m_forceAfter;
   improvement /= (m_forceBefore + std::numeric_limits<double>::epsilon());
-
   return improvement * 100;  // Convert to percents.
 }
 }  // namespace spfit

@@ -2,6 +2,7 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "ArcLengthMapper.h"
+
 #include <cassert>
 #include <cmath>
 
@@ -57,12 +58,10 @@ double ArcLengthMapper::arcLenToX(double arcLen, Hint& hint) const {
   if (arcLen < 0) {
     // Beyond the first sample.
     hint.update(0);
-
     return interpolateArcLenInSegment(arcLen, 0);
   } else if (arcLen > m_samples.back().arcLen) {
     // Beyond the last sample.
     hint.update(static_cast<int>(m_samples.size() - 2));
-
     return interpolateArcLenInSegment(arcLen, hint.m_lastSegment);
   }
 
@@ -72,11 +71,9 @@ double ArcLengthMapper::arcLenToX(double arcLen, Hint& hint) const {
     return interpolateArcLenInSegment(arcLen, hint.m_lastSegment);
   } else if (checkSegmentForArcLen(arcLen, hint.m_lastSegment + hint.m_direction)) {
     hint.update(hint.m_lastSegment + hint.m_direction);
-
     return interpolateArcLenInSegment(arcLen, hint.m_lastSegment);
   } else if (checkSegmentForArcLen(arcLen, hint.m_lastSegment - hint.m_direction)) {
     hint.update(hint.m_lastSegment - hint.m_direction);
-
     return interpolateArcLenInSegment(arcLen, hint.m_lastSegment);
   }
   // Do a binary search.
@@ -97,7 +94,6 @@ double ArcLengthMapper::arcLenToX(double arcLen, Hint& hint) const {
   }
 
   hint.update(leftIdx);
-
   return interpolateArcLenInSegment(arcLen, leftIdx);
 }  // ArcLengthMapper::arcLenToX
 
@@ -112,12 +108,10 @@ double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
   if (x < m_samples.front().x) {
     // Beyond the first sample.
     hint.update(0);
-
     return interpolateXInSegment(x, 0);
   } else if (x > m_samples.back().x) {
     // Beyond the last sample.
     hint.update(static_cast<int>(m_samples.size() - 2));
-
     return interpolateXInSegment(x, hint.m_lastSegment);
   }
 
@@ -127,11 +121,9 @@ double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
     return interpolateXInSegment(x, hint.m_lastSegment);
   } else if (checkSegmentForX(x, hint.m_lastSegment + hint.m_direction)) {
     hint.update(hint.m_lastSegment + hint.m_direction);
-
     return interpolateXInSegment(x, hint.m_lastSegment);
   } else if (checkSegmentForX(x, hint.m_lastSegment - hint.m_direction)) {
     hint.update(hint.m_lastSegment - hint.m_direction);
-
     return interpolateXInSegment(x, hint.m_lastSegment);
   }
   // Do a binary search.
@@ -152,7 +144,6 @@ double ArcLengthMapper::xToArcLen(double x, Hint& hint) const {
   }
 
   hint.update(leftIdx);
-
   return interpolateXInSegment(x, leftIdx);
 }  // ArcLengthMapper::xToArcLen
 
@@ -164,7 +155,6 @@ bool ArcLengthMapper::checkSegmentForArcLen(double arcLen, int segment) const {
 
   const double leftArcLen = m_samples[segment].arcLen;
   const double rightArcLen = m_samples[segment + 1].arcLen;
-
   return (arcLen - leftArcLen) * (arcLen - rightArcLen) <= 0;
 }
 
@@ -176,7 +166,6 @@ bool ArcLengthMapper::checkSegmentForX(double x, int segment) const {
 
   const double leftX = m_samples[segment].x;
   const double rightX = m_samples[segment + 1].x;
-
   return (x - leftX) * (x - rightX) <= 0;
 }
 
@@ -192,7 +181,6 @@ double ArcLengthMapper::interpolateArcLenInSegment(double arcLen, int segment) c
   const double x1 = m_samples[segment + 1].x;
   const double a1 = m_samples[segment + 1].arcLen;
   const double x = x0 + (arcLen - a0) * (x1 - x0) / (a1 - a0);
-
   return x;
 }
 
@@ -208,6 +196,5 @@ double ArcLengthMapper::interpolateXInSegment(double x, int segment) const {
   const double x1 = m_samples[segment + 1].x;
   const double a1 = m_samples[segment + 1].arcLen;
   const double a = a0 + (a1 - a0) * (x - x0) / (x1 - x0);
-
   return a;
 }

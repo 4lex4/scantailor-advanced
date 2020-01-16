@@ -5,6 +5,7 @@
 #define SCANTAILOR_OUTPUT_OUTPUTIMAGEWITHORIGINALBACKGROUNDMASK_H_
 
 #include <memory>
+
 #include "OutputImageWithForegroundMask.h"
 #include "OutputImageWithOriginalBackground.h"
 

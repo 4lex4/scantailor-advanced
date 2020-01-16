@@ -6,6 +6,7 @@
 
 #include <QSizeF>
 #include <memory>
+
 #include "NonCopyable.h"
 #include "ThumbnailPixmapCache.h"
 #include "intrusive_ptr.h"

@@ -2,9 +2,12 @@
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
 #include "DespeckleVisualization.h"
+
 #include <BinaryImage.h>
 #include <SEDM.h>
+
 #include <QPainter>
+
 #include "Dpi.h"
 #include "ImageViewBase.h"
 

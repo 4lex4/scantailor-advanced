@@ -207,20 +207,14 @@ QToolButton:pressed {
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_2">
+        <widget class="Line" name="line">
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Preferred</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>1</width>
-           <height>4</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="prevPageBtn">
@@ -372,7 +366,7 @@ QToolButton:pressed {
           </font>
          </property>
          <property name="toolTip">
-          <string>Filter selected pages only.</string>
+          <string>Navigate through selected pages only.</string>
          </property>
          <property name="styleSheet">
           <string notr="true">QToolButton:!hover {
@@ -399,6 +393,155 @@ QToolButton:pressed {
          <property name="icon">
           <iconset resource="../resources/resources.qrc">
            <normaloff>:/icons/check-mark.svg</normaloff>:/icons/check-mark.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="gotoPageBtn">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>sta_thumbnail_panel_icons</family>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Go To Page...</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton:!hover {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+QToolButton:hover {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(base);
+}
+
+QToolButton:pressed {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(alternative-base);
+}</string>
+         </property>
+         <property name="text">
+          <string notr="true"/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/resources.qrc">
+           <normaloff>:/icons/right-pointing.svg</normaloff>:/icons/right-pointing.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="selectionModeBtn">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>sta_thumbnail_panel_icons</family>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Enable multi page selection mode.</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton:!hover {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+QToolButton:hover {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(base);
+}
+
+QToolButton:pressed {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(alternative-base);
+}
+
+QToolButton:checked:hover {
+  padding: 0;
+  border: 1px solid palette(window-text);
+  background-color: palette(base);
+}
+
+QToolButton:checked {
+  padding: 0;
+  border: 1px solid palette(window-text);
+  background-color: palette(alternative-base);
+}</string>
+         </property>
+         <property name="text">
+          <string notr="true"/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/resources.qrc">
+           <normaloff>:/icons/checkbox-styled.svg</normaloff>:/icons/checkbox-styled.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -937,6 +1080,14 @@ QToolButton:pressed {
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionGotoPage">
+   <property name="text">
+    <string>Go To Page</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>

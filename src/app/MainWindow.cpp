@@ -2074,4 +2074,6 @@ void MainWindow::setupIcons() {
   prevPageBtn->setIcon(iconProvider.getIcon("triangle-up-arrow"));
   nextPageBtn->setIcon(iconProvider.getIcon("triangle-down-arrow"));
   filterSelectedBtn->setIcon(iconProvider.getIcon("check-mark"));
+  gotoPageBtn->setIcon(iconProvider.getIcon("right-pointing"));
+  selectionModeBtn->setIcon(iconProvider.getIcon("checkbox-styled"));
 }

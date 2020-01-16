@@ -222,13 +222,16 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     Now that's set via the slider. It allows to adjust the despeckle strength more smoothly and exactly.
     Value 1.0 matches the old cautious mode, 2.0 - normal and 3.0 - aggressive.
     
-  * Improvements on the thumbnails view:  
+  * Improvements on the thumbnails view and navigation:  
     * Saving selection of pages on filter switch.
     * Separate highlighting for selection leader in thumbnails.
     * Navigating between selected pages.
       Use **`Shift+PgUp/Q`** and **`Shift+PgDown/W`** to navigate between selected pages.
     * Added buttons to navigate between pages.
-      
+    * Multi page selection mode without using keyboard.
+    * The question as to whether cancel multi page selection.
+    * Go to a page by its number (**`Ctrl+G`** shortcut).
+
   * Added options in the settings to manage the quality and size of thumbnails.  
     It's possible to switch thumbnail quality while working on a project with the changes applied immediately.
     For every quality chosen a cache is created.  

@@ -164,4 +164,8 @@
   <icon name="right-pointing" styled="on">
     <file>:icons/right-pointing.svg</file>
   </icon>
+  <icon name="column-view" styled="on">
+    <file state="off">:/icons/multi-column-view.svg</file>
+    <file state="on">:/icons/single-column-view.svg</file>
+  </icon> 
 </icons>

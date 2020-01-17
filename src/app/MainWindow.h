@@ -289,6 +289,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void updateMaxLogicalThumbSize();
 
+  void updateThumbnailViewMode();
+
   void setupIcons();
 
   QSizeF m_maxLogicalThumbSize;

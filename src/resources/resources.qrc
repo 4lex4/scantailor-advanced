@@ -55,6 +55,8 @@
     <file>icons/expand.svg</file>
     <file>icons/checkbox-styled.svg</file>
     <file>icons/right-pointing.svg</file>
+    <file>icons/multi-column-view.svg</file>
+    <file>icons/single-column-view.svg</file>
     <file>icons.xml</file>
     <file>font-icons.xml</file>
     <file>GPLv3.html</file>

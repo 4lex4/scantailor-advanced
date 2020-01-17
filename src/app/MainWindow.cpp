@@ -113,7 +113,6 @@ MainWindow::MainWindow()
   const ThumbnailSequence::ViewMode viewMode = settings.isSingleColumnThumbnailDisplayEnabled()
                                                    ? ThumbnailSequence::SINGLE_COLUMN
                                                    : ThumbnailSequence::MULTI_COLUMN;
-
   m_thumbSequence = std::make_unique<ThumbnailSequence>(m_maxLogicalThumbSize, viewMode);
 
   m_autoSaveTimer.setSingleShot(true);
@@ -194,6 +193,8 @@ MainWindow::MainWindow()
     }
   });
 
+  thumbColumnViewBtn->setChecked(settings.isSingleColumnThumbnailDisplayEnabled());
+
   addAction(actionFirstPage);
   addAction(actionLastPage);
   addAction(actionNextPage);
@@ -271,6 +272,11 @@ MainWindow::MainWindow()
   connect(thumbView->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(thumbViewScrolled()));
   connect(focusButton, SIGNAL(clicked(bool)), this, SLOT(thumbViewFocusToggled(bool)));
   connect(sortOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(pageOrderingChanged(int)));
+  connect(thumbColumnViewBtn, &QToolButton::clicked, this, [this, &settings](bool checked) {
+    settings.setSingleColumnThumbnailDisplayEnabled(checked);
+    updateThumbnailViewMode();
+    m_thumbSequence->updateSceneItemsPos();
+  });
 
   connect(actionFixDpi, SIGNAL(triggered(bool)), SLOT(fixDpiDialogRequested()));
   connect(actionRelinking, SIGNAL(triggered(bool)), SLOT(showRelinkingDialog()));
@@ -1423,15 +1429,7 @@ void MainWindow::onSettingsChanged() {
     }
   }
 
-  {
-    const ThumbnailSequence::ViewMode viewMode
-        = (ApplicationSettings::getInstance().isSingleColumnThumbnailDisplayEnabled())
-              ? ThumbnailSequence::SINGLE_COLUMN
-              : ThumbnailSequence::MULTI_COLUMN;
-    if (m_thumbSequence->getViewMode() != viewMode) {
-      m_thumbSequence->setViewMode(viewMode);
-    }
-  }
+  updateThumbnailViewMode();
 
   const QSizeF maxLogicalThumbSize = settings.getMaxLogicalThumbnailSize();
   if (m_maxLogicalThumbSize != maxLogicalThumbSize) {
@@ -2068,6 +2066,7 @@ void MainWindow::setupIcons() {
   filterSelectedBtn->setIcon(iconProvider.getIcon("check-mark"));
   gotoPageBtn->setIcon(iconProvider.getIcon("right-pointing"));
   selectionModeBtn->setIcon(iconProvider.getIcon("checkbox-styled"));
+  thumbColumnViewBtn->setIcon(iconProvider.getIcon("column-view"));
 }
 
 void MainWindow::execGotoPageDialog() {
@@ -2085,5 +2084,14 @@ void MainWindow::execGotoPageDialog() {
     if (selectionLeader != newSelectionLeader) {
       goToPage(newSelectionLeader);
     }
+  }
+}
+
+void MainWindow::updateThumbnailViewMode() {
+  const ThumbnailSequence::ViewMode viewMode
+      = (ApplicationSettings::getInstance().isSingleColumnThumbnailDisplayEnabled()) ? ThumbnailSequence::SINGLE_COLUMN
+                                                                                     : ThumbnailSequence::MULTI_COLUMN;
+  if (m_thumbSequence->getViewMode() != viewMode) {
+    m_thumbSequence->setViewMode(viewMode);
   }
 }

@@ -133,39 +133,19 @@ Margins Utils::calcSoftMarginsMM(const QSizeF& hardSizeMm,
       aggTopBorder = qBound(.0, aggTopBorder, deltaHeight);
       aggBottomBorder = deltaHeight - aggTopBorder;
     }
-
-    if ((correctedAlignment.horizontal() == Alignment::HAUTO) || (correctedAlignment.vertical() == Alignment::VAUTO)) {
-      const double goldenRatio = (1 + std::sqrt(5)) / 2;
-
-      if (correctedAlignment.horizontal() == Alignment::HAUTO) {
-        const double rightGridLine = pageRectSizeMm.width() / goldenRatio;
-        const double leftGridLine = pageRectSizeMm.width() - rightGridLine;
-
-        if (contentRectCenterXInMm < leftGridLine) {
-          correctedAlignment.setHorizontal(Alignment::LEFT);
-        } else if (contentRectCenterXInMm > rightGridLine) {
-          correctedAlignment.setHorizontal(Alignment::RIGHT);
-        } else {
-          correctedAlignment.setHorizontal(Alignment::HCENTER);
-        }
-      }
-
-      if (correctedAlignment.vertical() == Alignment::VAUTO) {
-        const double bottomGridLine = pageRectSizeMm.height() / goldenRatio;
-        const double topGridLine = pageRectSizeMm.height() - bottomGridLine;
-
-        if (contentRectCenterYInMm < topGridLine) {
-          correctedAlignment.setVertical(Alignment::TOP);
-        } else if (contentRectCenterYInMm > bottomGridLine) {
-          correctedAlignment.setVertical(Alignment::BOTTOM);
-        } else {
-          correctedAlignment.setVertical(Alignment::VCENTER);
-        }
-      }
-    }
   }
 
   if (deltaWidth > .0) {
+    if (correctedAlignment.horizontal() == Alignment::HAUTO) {
+      if (3 * aggLeftBorder < aggRightBorder) {
+        correctedAlignment.setHorizontal(Alignment::LEFT);
+      } else if (3 * aggRightBorder < aggLeftBorder) {
+        correctedAlignment.setHorizontal(Alignment::RIGHT);
+      } else {
+        correctedAlignment.setHorizontal(Alignment::HCENTER);
+      }
+    }
+
     switch (correctedAlignment.horizontal()) {
       case Alignment::LEFT:
         right = deltaWidth;
@@ -184,6 +164,16 @@ Margins Utils::calcSoftMarginsMM(const QSizeF& hardSizeMm,
   }
 
   if (deltaHeight > .0) {
+    if (correctedAlignment.vertical() == Alignment::VAUTO) {
+      if (3 * aggTopBorder < aggBottomBorder) {
+        correctedAlignment.setVertical(Alignment::TOP);
+      } else if (3 * aggBottomBorder < aggTopBorder) {
+        correctedAlignment.setVertical(Alignment::BOTTOM);
+      } else {
+        correctedAlignment.setVertical(Alignment::VCENTER);
+      }
+    }
+
     switch (correctedAlignment.vertical()) {
       case Alignment::TOP:
         bottom = deltaHeight;

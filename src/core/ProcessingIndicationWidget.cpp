@@ -53,10 +53,10 @@ void ProcessingIndicationWidget::paintEvent(QPaintEvent* event) {
 
   QPainter painter(this);
 
-  QColor fade_color
+  QColor fadeColor
       = ColorSchemeManager::instance().getColorParam(ColorScheme::ProcessingIndicationFade, palette().window().color());
-  fade_color.setAlpha(127);
-  painter.fillRect(rect(), fade_color);
+  fadeColor.setAlpha(127);
+  painter.fillRect(rect(), fadeColor);
 
   m_animation.nextFrame(headColor, m_tailColor, &painter, animationRect);
 

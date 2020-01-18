@@ -140,7 +140,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
   QFileInfo specklesFileInfo(specklesFilePath);
 
   const bool needPictureEditor = renderParams.mixedOutput() && !m_batchProcessing;
-  const bool need_speckles_image
+  const bool needSpecklesImage
       = params.despeckleLevel() != DESPECKLE_OFF && renderParams.needBinarization() && !m_batchProcessing;
 
   {
@@ -236,7 +236,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
       }
     }
 
-    if (need_speckles_image) {
+    if (needSpecklesImage) {
       if (!specklesFileInfo.exists()) {
         needReprocess = true;
         break;
@@ -285,7 +285,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
       needReprocess = automaskImg.isNull() || automaskImg.size() != outImg.size();
     }
 
-    if (need_speckles_image && !needReprocess) {
+    if (needSpecklesImage && !needReprocess) {
       QFile specklesFile(specklesFilePath);
       if (specklesFile.open(QIODevice::ReadOnly)) {
         specklesImg = BinaryImage(ImageLoader::load(specklesFile, 0));
@@ -536,10 +536,10 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   boost::function<QPointF(const QPointF&)> origToOutput;
   boost::function<QPointF(const QPointF&)> outputToOrig;
   if ((m_params.dewarpingOptions().dewarpingMode() != OFF) && m_params.distortionModel().isValid()) {
-    const QTransform rotate_xform
+    const QTransform rotateXform
         = Utils::rotate(m_params.dewarpingOptions().getPostDeskewAngle(), m_xform.resultingRect().toRect());
     auto mapper = std::make_shared<DewarpingPointMapper>(m_params.distortionModel(), m_params.depthPerception().value(),
-                                                         m_xform.transform(), m_virtContentRect, rotate_xform);
+                                                         m_xform.transform(), m_virtContentRect, rotateXform);
     origToOutput = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
     outputToOrig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
   } else {

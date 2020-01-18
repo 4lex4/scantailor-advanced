@@ -1085,25 +1085,25 @@ void ImageView::attachContentToNearestGuide(const QPointF& pos, const Qt::Keyboa
       // Correct the delta in case of the middle rect size changed.
       // It means that the center is shifted resulting
       // the guide will change its position, so we need an extra addition to delta.
-      const double x_correction
+      const double xCorrection
           = std::copysign(std::max(0.0, correctedMiddleRect.width() - m_middleRect.width()), delta.x());
-      const double y_correction
+      const double yCorrection
           = std::copysign(std::max(0.0, correctedMiddleRect.height() - m_middleRect.height()), delta.y());
-      delta.setX(delta.x() + x_correction);
-      delta.setY(delta.y() + y_correction);
+      delta.setX(delta.x() + xCorrection);
+      delta.setY(delta.y() + yCorrection);
 
-      correctedMiddleRect.translate(-x_correction, -y_correction);
+      correctedMiddleRect.translate(-xCorrection, -yCorrection);
       correctedMiddleRect |= m_innerRect;
     }
 
     {
       // Restrict the delta value in order not to be out of the outer rect.
-      const double x_correction
+      const double xCorrection
           = std::copysign(std::max(0.0, correctedMiddleRect.width() - m_outerRect.width()), delta.x());
-      const double y_correction
+      const double yCorrection
           = std::copysign(std::max(0.0, correctedMiddleRect.height() - m_outerRect.height()), delta.y());
-      delta.setX(delta.x() - x_correction);
-      delta.setY(delta.y() - y_correction);
+      delta.setX(delta.x() - xCorrection);
+      delta.setY(delta.y() - yCorrection);
     }
   }
 

@@ -471,10 +471,10 @@ void TopBottomEdgeTracer::propagateShortestPaths(const Vec2f& direction, PrioQue
       GridNode* nbhNode = data + nbhGridIdx;
 
       assert(std::fabs(node->dirDeriv) <= 1.0);
-      const float new_cost
+      const float newCost
           = std::max<float>(node->pathCost, static_cast<const float&>(1.0f - std::fabs(node->dirDeriv)));
-      if (new_cost < nbhNode->pathCost) {
-        nbhNode->pathCost = new_cost;
+      if (newCost < nbhNode->pathCost) {
+        nbhNode->pathCost = newCost;
         nbhNode->setPrevNeighbourIdx(prevNbhIndexes[i]);
         if (nbhNode->heapIdx() == GridNode::INVALID_HEAP_IDX) {
           queue.push(nbhGridIdx);
@@ -723,17 +723,17 @@ void TopBottomEdgeTracer::downTheHillSnake(std::vector<QPointF>& snake, const Gr
         step.pt = pt + displacements[displacementIdx];
         step.pathCost = 0;
 
-        const float adjusted_external_energy
+        const float adjustedExternalEnergy
             = interpolatedGridValue(grid, bind<float>(&GridNode::blurred, _1), step.pt, 1000);
         if (displacementIdx == 0) {
           step.pathCost += 100;
         } else if (curExternalEnergy < 0.01) {
-          if (curExternalEnergy - adjusted_external_energy < 0.01f) {
+          if (curExternalEnergy - adjustedExternalEnergy < 0.01f) {
             continue;
           }
         }
 
-        step.pathCost += externalWeight * adjusted_external_energy;
+        step.pathCost += externalWeight * adjustedExternalEnergy;
 
         float bestCost = NumericTraits<float>::max();
         uint32_t bestPrevStepIdx = step.prevStepIdx;
@@ -855,15 +855,15 @@ void TopBottomEdgeTracer::upTheHillSnake(std::vector<QPointF>& snake, const Grid
         step.pt = pt + displacements[displacementIdx];
         step.pathCost = 0;
 
-        const float adjusted_external_energy
+        const float adjustedExternalEnergy
             = -interpolatedGridValue(grid, bind<float>(&GridNode::absDirDeriv, _1), step.pt, 1000);
-        if ((displacementIdx == 0) && (adjusted_external_energy > -0.02)) {
+        if ((displacementIdx == 0) && (adjustedExternalEnergy > -0.02)) {
           // Discorage staying on the spot if the gradient magnitude is too
           // small at that point.
           step.pathCost += 100;
         }
 
-        step.pathCost += externalWeight * adjusted_external_energy;
+        step.pathCost += externalWeight * adjustedExternalEnergy;
 
         float bestCost = NumericTraits<float>::max();
         uint32_t bestPrevStepIdx = step.prevStepIdx;

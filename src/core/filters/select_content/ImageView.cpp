@@ -533,16 +533,15 @@ void ImageView::correctContentBox(const QPointF& pos, const Qt::KeyboardModifier
   }
 
   const QPointF posInVirtual = widgetToVirtual().map(pos);
-  const QRectF found_area_in_virtual
-      = contentImageToVirtual.mapRect(QRectF(foundArea)).intersected(virtualDisplayRect());
-  if (found_area_in_virtual.isEmpty()) {
+  const QRectF foundAreaInVirtual = contentImageToVirtual.mapRect(QRectF(foundArea)).intersected(virtualDisplayRect());
+  if (foundAreaInVirtual.isEmpty()) {
     return;
   }
 
   // If click position is inside the content rect, adjust the nearest side of the rect,
   // else include the content at the position into the content rect.
   if (!m_contentRect.contains(posInVirtual)) {
-    m_contentRect |= found_area_in_virtual;
+    m_contentRect |= foundAreaInVirtual;
     forcePageRectDescribeContent();
   } else {
     const bool onlyHorizontalDirection = (mask == m_adjustmentHorizontalModifier);
@@ -572,14 +571,14 @@ void ImageView::correctContentBox(const QPointF& pos, const Qt::KeyboardModifier
 
     QPointF movePoint;
     if (edgeMask & TOP) {
-      movePoint.setY(found_area_in_virtual.top());
+      movePoint.setY(foundAreaInVirtual.top());
     } else if (edgeMask & BOTTOM) {
-      movePoint.setY(found_area_in_virtual.bottom());
+      movePoint.setY(foundAreaInVirtual.bottom());
     }
     if (edgeMask & LEFT) {
-      movePoint.setX(found_area_in_virtual.left());
+      movePoint.setX(foundAreaInVirtual.left());
     } else if (edgeMask & RIGHT) {
-      movePoint.setX(found_area_in_virtual.right());
+      movePoint.setX(foundAreaInVirtual.right());
     }
 
     contentRectCornerMoveRequest(edgeMask, virtualToWidget().map(movePoint));

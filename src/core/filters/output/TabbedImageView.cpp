@@ -87,12 +87,12 @@ void TabbedImageView::copyViewZoomAndPos(const int oldIdx, const int newIdx) con
   }
 
   if (oldImageView->zoomLevel() != 1.0) {
-    const QPointF view_focus
+    const QPointF viewFocus
         = getFocus(oldViewRect, *oldImageView->horizontalScrollBar(), *oldImageView->verticalScrollBar());
     const double zoomFactor
         = std::max(newViewRect.width(), newViewRect.height()) / std::max(oldViewRect.width(), oldViewRect.height());
     newImageView->setZoomLevel(qMax(1., oldImageView->zoomLevel() * zoomFactor));
-    setFocus(*newImageView->horizontalScrollBar(), *newImageView->verticalScrollBar(), newViewRect, view_focus);
+    setFocus(*newImageView->horizontalScrollBar(), *newImageView->verticalScrollBar(), newViewRect, viewFocus);
   }
 }
 
@@ -109,16 +109,16 @@ void TabbedImageView::setFocus(QScrollBar& horBar, QScrollBar& verBar, const QRe
   const int horBarLength = horBar.maximum() - horBar.minimum() + horBar.pageStep();
   const int verBarLength = verBar.maximum() - verBar.minimum() + verBar.pageStep();
 
-  auto hor_value
+  auto horValue
       = (int) std::round(((focal.x() - rect.left()) / rect.width()) * horBarLength - (horBar.pageStep() / 2.0));
-  auto ver_value
+  auto verValue
       = (int) std::round(((focal.y() - rect.top()) / rect.height()) * verBarLength - (verBar.pageStep() / 2.0));
 
-  hor_value = qBound(horBar.minimum(), hor_value, horBar.maximum());
-  ver_value = qBound(verBar.minimum(), ver_value, verBar.maximum());
+  horValue = qBound(horBar.minimum(), horValue, horBar.maximum());
+  verValue = qBound(verBar.minimum(), verValue, verBar.maximum());
 
-  horBar.setValue(hor_value);
-  verBar.setValue(ver_value);
+  horBar.setValue(horValue);
+  verBar.setValue(verValue);
 }
 
 void TabbedImageView::keyReleaseEvent(QKeyEvent* event) {

@@ -214,15 +214,15 @@ QPointF ImageView::getImageRotationOrigin() const {
  * Get the square in widget coordinates where two rotation arcs will be drawn.
  */
 QRectF ImageView::getRotationArcSquare() const {
-  const double h_margin
+  const double hMargin
       = 0.5 * m_handlePixmap.width()
         + verticalScrollBar()->style()->pixelMetric(QStyle::PM_ScrollBarExtent, nullptr, verticalScrollBar());
-  const double v_margin
+  const double vMargin
       = 0.5 * m_handlePixmap.height()
         + horizontalScrollBar()->style()->pixelMetric(QStyle::PM_ScrollBarExtent, nullptr, horizontalScrollBar());
 
   QRectF reducedScreenRect(maxViewportRect());
-  reducedScreenRect.adjust(h_margin, v_margin, -h_margin, -v_margin);
+  reducedScreenRect.adjust(hMargin, vMargin, -hMargin, -vMargin);
 
   QSizeF arcSize(1.0, m_maxRotationSin);
   arcSize.scale(reducedScreenRect.size(), Qt::KeepAspectRatio);

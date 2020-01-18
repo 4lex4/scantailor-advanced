@@ -116,19 +116,19 @@ Margins Utils::calcSoftMarginsMM(const QSizeF& hardSizeMm,
 
     const QSizeF pageRectSizeMm(pageRect.width() / pixelsPerMmHorizontal, pageRect.height() / pixelsPerMmVertical);
 
-    const double content_rect_center_x_in_mm
+    const double contentRectCenterXInMm
         = ((contentRect.center().x() - pageRect.left()) / pageRect.width()) * pageRectSizeMm.width();
-    const double content_rect_center_y_in_mm
+    const double contentRectCenterYInMm
         = ((contentRect.center().y() - pageRect.top()) / pageRect.height()) * pageRectSizeMm.height();
 
     if (deltaWidth > .0) {
-      aggLeftBorder = ((content_rect_center_x_in_mm / pageRectSizeMm.width()) * aggregateHardSizeMm.width())
+      aggLeftBorder = ((contentRectCenterXInMm / pageRectSizeMm.width()) * aggregateHardSizeMm.width())
                       - (hardSizeMm.width() / 2);
       aggLeftBorder = qBound(.0, aggLeftBorder, deltaWidth);
       aggRightBorder = deltaWidth - aggLeftBorder;
     }
     if (deltaHeight > .0) {
-      aggTopBorder = ((content_rect_center_y_in_mm / pageRectSizeMm.height()) * aggregateHardSizeMm.height())
+      aggTopBorder = ((contentRectCenterYInMm / pageRectSizeMm.height()) * aggregateHardSizeMm.height())
                      - (hardSizeMm.height() / 2);
       aggTopBorder = qBound(.0, aggTopBorder, deltaHeight);
       aggBottomBorder = deltaHeight - aggTopBorder;
@@ -141,9 +141,9 @@ Margins Utils::calcSoftMarginsMM(const QSizeF& hardSizeMm,
         const double rightGridLine = pageRectSizeMm.width() / goldenRatio;
         const double leftGridLine = pageRectSizeMm.width() - rightGridLine;
 
-        if (content_rect_center_x_in_mm < leftGridLine) {
+        if (contentRectCenterXInMm < leftGridLine) {
           correctedAlignment.setHorizontal(Alignment::LEFT);
-        } else if (content_rect_center_x_in_mm > rightGridLine) {
+        } else if (contentRectCenterXInMm > rightGridLine) {
           correctedAlignment.setHorizontal(Alignment::RIGHT);
         } else {
           correctedAlignment.setHorizontal(Alignment::HCENTER);
@@ -154,9 +154,9 @@ Margins Utils::calcSoftMarginsMM(const QSizeF& hardSizeMm,
         const double bottomGridLine = pageRectSizeMm.height() / goldenRatio;
         const double topGridLine = pageRectSizeMm.height() - bottomGridLine;
 
-        if (content_rect_center_y_in_mm < topGridLine) {
+        if (contentRectCenterYInMm < topGridLine) {
           correctedAlignment.setVertical(Alignment::TOP);
-        } else if (content_rect_center_y_in_mm > bottomGridLine) {
+        } else if (contentRectCenterYInMm > bottomGridLine) {
           correctedAlignment.setVertical(Alignment::BOTTOM);
         } else {
           correctedAlignment.setVertical(Alignment::VCENTER);

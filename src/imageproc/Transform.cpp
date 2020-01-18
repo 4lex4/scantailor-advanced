@@ -302,7 +302,7 @@ QImage transform(const QImage& src,
     throw std::invalid_argument("transform: dstRect is invalid");
   }
 
-  auto is_opaque_gray
+  auto isOpaqueGray
       = [](QRgb rgba) { return qAlpha(rgba) == 0xff && qRed(rgba) == qBlue(rgba) && qRed(rgba) == qGreen(rgba); };
   switch (src.format()) {
     case QImage::Format_Invalid:
@@ -310,7 +310,7 @@ QImage transform(const QImage& src,
     case QImage::Format_Indexed8:
     case QImage::Format_Mono:
     case QImage::Format_MonoLSB:
-      if (src.allGray() && is_opaque_gray(outsidePixels.rgba())) {
+      if (src.allGray() && isOpaqueGray(outsidePixels.rgba())) {
         // The palette of src may be non-standard, so we create a GrayImage,
         // which is guaranteed to have a standard palette.
         GrayImage graySrc(src);

@@ -105,16 +105,16 @@ void ZoneVertexDragInteraction::onMouseMoveEvent(QMouseEvent* event, Interaction
     QPointF next = toScreen.map(m_vertex->next(SplineVertex::LOOP)->point());
 
     if (!((current == prev) && (current == next))) {
-      double prev_angle_cos
+      double prevAngleCos
           = std::abs((prev.x() - current.x())
                      / std::sqrt(std::pow((prev.y() - current.y()), 2) + std::pow((prev.x() - current.x()), 2)));
-      double next_angle_cos
+      double nextAngleCos
           = std::abs((next.x() - current.x())
                      / std::sqrt(std::pow((next.y() - current.y()), 2) + std::pow((next.x() - current.x()), 2)));
 
 
-      if ((prev_angle_cos < next_angle_cos) || (std::isnan(prev_angle_cos) && (next_angle_cos > (1.0 / std::sqrt(2))))
-          || (std::isnan(next_angle_cos) && (prev_angle_cos < (1.0 / std::sqrt(2))))) {
+      if ((prevAngleCos < nextAngleCos) || (std::isnan(prevAngleCos) && (nextAngleCos > (1.0 / std::sqrt(2))))
+          || (std::isnan(nextAngleCos) && (prevAngleCos < (1.0 / std::sqrt(2))))) {
         prev.setX(current.x());
         next.setY(current.y());
       } else {

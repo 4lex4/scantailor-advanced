@@ -1500,12 +1500,12 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
   // 2. With illumination normalized over the content area, if required.
   // 3. With margins filled with white, if required.
   QImage normalizedOriginal;
-  const QTransform working_to_orig
+  const QTransform workingToOrig
       = QTransform().translate(m_workingBoundingRect.left(), m_workingBoundingRect.top()) * m_xform.transformBack();
   if (!m_renderParams.normalizeIllumination()) {
     normalizedOriginal = (m_colorOriginal) ? m_inputOrigImage : m_inputGrayImage;
   } else {
-    GrayImage normalizedGray = transformToGray(warpedGrayOutput, working_to_orig, m_inputOrigImage.rect(),
+    GrayImage normalizedGray = transformToGray(warpedGrayOutput, workingToOrig, m_inputOrigImage.rect(),
                                                OutsidePixels::assumeWeakColor(m_outsideBackgroundColor));
     if (!m_colorOriginal) {
       normalizedOriginal = normalizedGray;
@@ -1551,7 +1551,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
   }
 
   if (m_dewarpingOptions.dewarpingMode() == AUTO) {
-    distortionModel = buildAutoDistortionModel(warpedGrayOutput, working_to_orig);
+    distortionModel = buildAutoDistortionModel(warpedGrayOutput, workingToOrig);
   } else if (m_dewarpingOptions.dewarpingMode() == MARGINAL) {
     distortionModel = buildMarginalDistortionModel();
   }
@@ -1667,10 +1667,10 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
   BinaryImage dewarpedBwMask;
   BinaryImage dewarpedBwContent;
   if (m_renderParams.mixedOutput()) {
-    const QTransform orig_to_working_cs
+    const QTransform origToWorkingCs
         = m_xform.transform() * QTransform().translate(-m_workingBoundingRect.left(), -m_workingBoundingRect.top());
     QTransform workingToOutputCs = QTransform().translate(m_workingBoundingRect.left(), m_workingBoundingRect.top());
-    dewarpedBwMask = BinaryImage(dewarp(orig_to_working_cs, warpedBwMask.toQImage(), workingToOutputCs, distortionModel,
+    dewarpedBwMask = BinaryImage(dewarp(origToWorkingCs, warpedBwMask.toQImage(), workingToOutputCs, distortionModel,
                                         depthPerception, Qt::black));
     warpedBwMask.release();
     applyAffineTransform(dewarpedBwMask, rotateXform, BLACK);

@@ -308,8 +308,6 @@ MainWindow::MainWindow()
     }
   }
 
-  m_autoSaveProject = settings.isAutoSaveProjectEnabled();
-
   m_maxLogicalThumbSizeUpdater.setSingleShot(true);
   connect(&m_maxLogicalThumbSizeUpdater, &QTimer::timeout, this, &MainWindow::updateMaxLogicalThumbSize);
 
@@ -866,10 +864,6 @@ void MainWindow::goToPage(const PageId& pageId, const ThumbnailSequence::Selecti
   // If the page was already selected, it will be reloaded.
   // That's by design.
   updateMainArea();
-
-  if (m_autoSaveTimer.remainingTime() <= 0) {
-    m_autoSaveTimer.start(30000);
-  }
 }
 
 void MainWindow::currentPageChanged(const PageInfo& pageInfo,
@@ -892,23 +886,18 @@ void MainWindow::currentPageChanged(const PageInfo& pageInfo,
     }
   }
 
-  if (flags & ThumbnailSequence::SELECTED_BY_USER) {
-    if (m_autoSaveTimer.remainingTime() <= 0) {
-      m_autoSaveTimer.start(30000);
-    }
-  }
-
   if ((flags & ThumbnailSequence::SELECTION_CLEARED) && selectionModeBtn->isChecked()) {
     selectionModeBtn->setChecked(false);
   }
+
+  updateAutoSaveTimer();
 }
 
 void MainWindow::autoSaveProject() {
   if (m_projectFile.isEmpty()) {
     return;
   }
-
-  if (!m_autoSaveProject) {
+  if (!ApplicationSettings::getInstance().isAutoSaveProjectEnabled()) {
     return;
   }
 
@@ -1417,8 +1406,6 @@ void MainWindow::openDefaultParamsDialog() {
 void MainWindow::onSettingsChanged() {
   ApplicationSettings& settings = ApplicationSettings::getInstance();
   bool needInvalidate = true;
-
-  m_autoSaveProject = ApplicationSettings::getInstance().isAutoSaveProjectEnabled();
 
   static_cast<Application*>(qApp)->installLanguage(settings.getLanguage());
 
@@ -2093,5 +2080,11 @@ void MainWindow::updateThumbnailViewMode() {
                                                                                      : ThumbnailSequence::MULTI_COLUMN;
   if (m_thumbSequence->getViewMode() != viewMode) {
     m_thumbSequence->setViewMode(viewMode);
+  }
+}
+
+void MainWindow::updateAutoSaveTimer() {
+  if (m_autoSaveTimer.remainingTime() <= 0) {
+    m_autoSaveTimer.start(60000);
   }
 }

@@ -291,6 +291,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void updateThumbnailViewMode();
 
+  void updateAutoSaveTimer();
+
   void setupIcons();
 
   QSizeF m_maxLogicalThumbSize;
@@ -323,7 +325,6 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   bool m_debug;
   bool m_closing;
   QTimer m_autoSaveTimer;
-  bool m_autoSaveProject;
   std::unique_ptr<StatusBarPanel> m_statusBarPanel;
   std::unique_ptr<QActionGroup> m_unitsMenuActionGroup;
   QTimer m_maxLogicalThumbSizeUpdater;

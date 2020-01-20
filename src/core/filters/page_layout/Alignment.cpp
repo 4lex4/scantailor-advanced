@@ -126,12 +126,4 @@ bool Alignment::isAutoVertical() const {
 bool Alignment::isAutoHorizontal() const {
   return (m_horizontal == HAUTO) || (m_horizontal == HORIGINAL);
 }
-
-bool Alignment::isOriginal() const {
-  return (m_vertical == VORIGINAL) || (m_horizontal == HORIGINAL);
-}
-
-bool Alignment::isAuto() const {
-  return (m_vertical == VAUTO) || (m_horizontal == HAUTO);
-}
 }  // namespace page_layout

@@ -71,7 +71,9 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   void autoMarginsToggled(bool checked);
 
-  void alignmentModeChanged(int idx);
+  void horizontalAlignmentModeChanged(int idx);
+
+  void verticalAlignmentModeChanged(int idx);
 
   void topBottomLinkClicked();
 
@@ -80,10 +82,6 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
   void alignWithOthersToggled();
 
   void alignmentButtonClicked();
-
-  void autoHorizontalAligningToggled(bool checked);
-
-  void autoVerticalAligningToggled(bool checked);
 
   void showApplyMarginsDialog();
 

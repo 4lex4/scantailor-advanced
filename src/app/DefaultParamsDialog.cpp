@@ -218,41 +218,40 @@ void DefaultParamsDialog::updatePageLayoutDisplay(const DefaultParams::PageLayou
   setLinkButtonLinked(leftRightLink, m_leftRightLinkEnabled);
 
   const Alignment& alignment = params.getAlignment();
-  if (alignment.isAuto()) {
-    alignmentMode->setCurrentIndex(0);
-    autoAlignSettingsGroup->setVisible(true);
-    autoVerticalAligningCB->setChecked(alignment.isAutoVertical());
-    autoHorizontalAligningCB->setChecked(alignment.isAutoHorizontal());
-  } else if (alignment.isOriginal()) {
-    alignmentMode->setCurrentIndex(2);
-    autoAlignSettingsGroup->setVisible(true);
-    autoVerticalAligningCB->setChecked(alignment.isAutoVertical());
-    autoHorizontalAligningCB->setChecked(alignment.isAutoHorizontal());
+  if (alignment.horizontal() == Alignment::HAUTO) {
+    hAlignmentModeCB->setCurrentIndex(0);
+  } else if (alignment.horizontal() == Alignment::HORIGINAL) {
+    hAlignmentModeCB->setCurrentIndex(2);
   } else {
-    alignmentMode->setCurrentIndex(1);
-    autoAlignSettingsGroup->setVisible(false);
+    hAlignmentModeCB->setCurrentIndex(1);
+  }
+  if (alignment.vertical() == Alignment::VAUTO) {
+    vAlignmentModeCB->setCurrentIndex(0);
+  } else if (alignment.vertical() == Alignment::VORIGINAL) {
+    vAlignmentModeCB->setCurrentIndex(2);
+  } else {
+    vAlignmentModeCB->setCurrentIndex(1);
   }
   alignWithOthersCB->setChecked(!alignment.isNull());
 
-  for (const auto& kv : m_alignmentByButton) {
-    if (alignment.isAuto() || alignment.isOriginal()) {
-      if (!alignment.isAutoHorizontal() && (kv.second.vertical() == Alignment::VCENTER)
-          && (kv.second.horizontal() == alignment.horizontal())) {
-        kv.first->setChecked(true);
-        break;
-      } else if (!alignment.isAutoVertical() && (kv.second.horizontal() == Alignment::HCENTER)
-                 && (kv.second.vertical() == alignment.vertical())) {
-        kv.first->setChecked(true);
+  for (const auto& [button, btnAlignment] : m_alignmentByButton) {
+    if (alignment.isAutoVertical()) {
+      if ((btnAlignment.vertical() == Alignment::VCENTER) && (btnAlignment.horizontal() == alignment.horizontal())) {
+        button->setChecked(true);
         break;
       }
-    } else if (kv.second == alignment) {
-      kv.first->setChecked(true);
+    } else if (alignment.isAutoHorizontal()) {
+      if ((btnAlignment.horizontal() == Alignment::HCENTER) && (btnAlignment.vertical() == alignment.vertical())) {
+        button->setChecked(true);
+        break;
+      }
+    } else if (btnAlignment == alignment) {
+      button->setChecked(true);
       break;
     }
   }
 
   updateAlignmentModeEnabled();
-  updateAlignmentButtonsEnabled();
   updateAutoModeButtons();
 }
 
@@ -351,7 +350,8 @@ void DefaultParamsDialog::setupUiConnections() {
   CONNECT(pageDetectManualBtn, SIGNAL(pressed()), this, SLOT(pageDetectManualToggled()));
   CONNECT(pageDetectDisableBtn, SIGNAL(pressed()), this, SLOT(pageDetectDisableToggled()));
   CONNECT(autoMargins, SIGNAL(toggled(bool)), this, SLOT(autoMarginsToggled(bool)));
-  CONNECT(alignmentMode, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
+  CONNECT(hAlignmentModeCB, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
+  CONNECT(vAlignmentModeCB, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
   CONNECT(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled(bool)));
   CONNECT(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
   CONNECT(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
@@ -378,8 +378,6 @@ void DefaultParamsDialog::setupUiConnections() {
   CONNECT(profileDeleteButton, SIGNAL(pressed()), this, SLOT(profileDeletePressed()));
   CONNECT(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
   CONNECT(posterizeCB, SIGNAL(clicked(bool)), this, SLOT(posterizeToggled(bool)));
-  CONNECT(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
-  CONNECT(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
   CONNECT(despeckleCB, SIGNAL(clicked(bool)), this, SLOT(despeckleToggled(bool)));
   CONNECT(despeckleSlider, SIGNAL(valueChanged(int)), this, SLOT(despeckleSliderValueChanged(int)));
 }
@@ -479,15 +477,13 @@ void DefaultParamsDialog::autoMarginsToggled(const bool checked) {
   marginsWidget->setEnabled(!checked);
 }
 
-void DefaultParamsDialog::alignmentModeChanged(const int idx) {
-  autoAlignSettingsGroup->setVisible((idx == 0) || (idx == 2));
+void DefaultParamsDialog::alignmentModeChanged(int) {
   updateAlignmentButtonsEnabled();
   updateAutoModeButtons();
 }
 
-void DefaultParamsDialog::alignWithOthersToggled(const bool state) {
+void DefaultParamsDialog::alignWithOthersToggled(bool) {
   updateAlignmentModeEnabled();
-  updateAlignmentButtonsEnabled();
 }
 
 void DefaultParamsDialog::colorModeChanged(const int idx) {
@@ -615,38 +611,34 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
                                                          fineTuneBtn->isChecked());
 
   Alignment alignment;
-  switch (alignmentMode->currentIndex()) {
+  switch (hAlignmentModeCB->currentIndex()) {
     case 0:
-      if (autoVerticalAligningCB->isChecked()) {
-        alignment.setVertical(Alignment::VAUTO);
-      } else {
-        alignment.setVertical(m_alignmentByButton.at(getCheckedAlignmentButton()).vertical());
-      }
-      if (autoHorizontalAligningCB->isChecked()) {
-        alignment.setHorizontal(Alignment::HAUTO);
-      } else {
-        alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
-      }
+      alignment.setHorizontal(Alignment::HAUTO);
       break;
     case 1:
-      alignment = m_alignmentByButton.at(getCheckedAlignmentButton());
+      alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
       break;
     case 2:
-      if (autoVerticalAligningCB->isChecked()) {
-        alignment.setVertical(Alignment::VORIGINAL);
-      } else {
-        alignment.setVertical(m_alignmentByButton.at(getCheckedAlignmentButton()).vertical());
-      }
-      if (autoHorizontalAligningCB->isChecked()) {
-        alignment.setHorizontal(Alignment::HORIGINAL);
-      } else {
-        alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
-      }
+      alignment.setHorizontal(Alignment::HORIGINAL);
+      break;
+    default:
+      break;
+  }
+  switch (vAlignmentModeCB->currentIndex()) {
+    case 0:
+      alignment.setVertical(Alignment::VAUTO);
+      break;
+    case 1:
+      alignment.setVertical(m_alignmentByButton.at(getCheckedAlignmentButton()).vertical());
+      break;
+    case 2:
+      alignment.setVertical(Alignment::VORIGINAL);
       break;
     default:
       break;
   }
   alignment.setNull(!alignWithOthersCB->isChecked());
+
   DefaultParams::PageLayoutParams pageLayoutParams(Margins(leftMarginSpinBox->value(), topMarginSpinBox->value(),
                                                            rightMarginSpinBox->value(), bottomMarginSpinBox->value()),
                                                    alignment, autoMargins->isChecked());
@@ -1029,14 +1021,8 @@ void DefaultParamsDialog::posterizeToggled(bool checked) {
 }
 
 void DefaultParamsDialog::updateAlignmentButtonsEnabled() {
-  bool enableHorizontalButtons;
-  bool enableVerticalButtons;
-  if ((alignmentMode->currentIndex() == 0) || (alignmentMode->currentIndex() == 2)) {
-    enableHorizontalButtons = !autoHorizontalAligningCB->isChecked() ? alignWithOthersCB->isChecked() : false;
-    enableVerticalButtons = !autoVerticalAligningCB->isChecked() ? alignWithOthersCB->isChecked() : false;
-  } else {
-    enableHorizontalButtons = enableVerticalButtons = alignWithOthersCB->isChecked();
-  }
+  bool enableHorizontalButtons = (hAlignmentModeCB->currentIndex() == 1) ? alignWithOthersCB->isChecked() : false;
+  bool enableVerticalButtons = (vAlignmentModeCB->currentIndex() == 1) ? alignWithOthersCB->isChecked() : false;
 
   alignTopLeftBtn->setEnabled(enableHorizontalButtons && enableVerticalButtons);
   alignTopBtn->setEnabled(enableVerticalButtons);
@@ -1050,18 +1036,10 @@ void DefaultParamsDialog::updateAlignmentButtonsEnabled() {
 }
 
 void DefaultParamsDialog::updateAutoModeButtons() {
-  if ((alignmentMode->currentIndex() == 0) || (alignmentMode->currentIndex() == 2)) {
-    if (autoVerticalAligningCB->isChecked() && !autoHorizontalAligningCB->isChecked()) {
-      autoVerticalAligningCB->setEnabled(false);
-    } else if (autoHorizontalAligningCB->isChecked() && !autoVerticalAligningCB->isChecked()) {
-      autoHorizontalAligningCB->setEnabled(false);
-    } else {
-      autoVerticalAligningCB->setEnabled(true);
-      autoHorizontalAligningCB->setEnabled(true);
-    }
-  }
+  bool isAutoHorizontalAlignment = ((hAlignmentModeCB->currentIndex() == 0) || (hAlignmentModeCB->currentIndex() == 2));
+  bool isAutoVerticalAlignment = ((vAlignmentModeCB->currentIndex() == 0) || (vAlignmentModeCB->currentIndex() == 2));
 
-  if (autoVerticalAligningCB->isChecked() && !autoHorizontalAligningCB->isChecked()) {
+  if (isAutoVerticalAlignment && !isAutoHorizontalAlignment) {
     switch (m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal()) {
       case Alignment::LEFT:
         alignLeftBtn->setChecked(true);
@@ -1073,7 +1051,7 @@ void DefaultParamsDialog::updateAutoModeButtons() {
         alignCenterBtn->setChecked(true);
         break;
     }
-  } else if (autoHorizontalAligningCB->isChecked() && !autoVerticalAligningCB->isChecked()) {
+  } else if (isAutoHorizontalAlignment && !isAutoVerticalAlignment) {
     switch (m_alignmentByButton.at(getCheckedAlignmentButton()).vertical()) {
       case Alignment::TOP:
         alignTopBtn->setChecked(true);
@@ -1094,16 +1072,6 @@ QToolButton* DefaultParamsDialog::getCheckedAlignmentButton() const {
     checkedButton = alignCenterBtn;
   }
   return checkedButton;
-}
-
-void DefaultParamsDialog::autoHorizontalAligningToggled(bool) {
-  updateAlignmentButtonsEnabled();
-  updateAutoModeButtons();
-}
-
-void DefaultParamsDialog::autoVerticalAligningToggled(bool) {
-  updateAlignmentButtonsEnabled();
-  updateAutoModeButtons();
 }
 
 void DefaultParamsDialog::despeckleToggled(bool checked) {
@@ -1128,8 +1096,10 @@ void DefaultParamsDialog::despeckleSliderValueChanged(int value) {
 void DefaultParamsDialog::updateAlignmentModeEnabled() {
   const bool isAlignmentNull = !alignWithOthersCB->isChecked();
 
-  alignmentMode->setEnabled(!isAlignmentNull);
-  autoAlignSettingsGroup->setEnabled(!isAlignmentNull);
+  vAlignmentModeCB->setEnabled(!isAlignmentNull);
+  hAlignmentModeCB->setEnabled(!isAlignmentNull);
+
+  updateAlignmentButtonsEnabled();
 }
 
 void DefaultParamsDialog::setupIcons() {

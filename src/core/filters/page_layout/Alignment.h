@@ -44,10 +44,6 @@ class Alignment {
 
   bool isAutoHorizontal() const;
 
-  bool isOriginal() const;
-
-  bool isAuto() const;
-
   bool operator==(const Alignment& other) const;
 
   bool operator!=(const Alignment& other) const;

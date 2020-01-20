@@ -68,43 +68,43 @@ void OptionsWidget::preUpdateUI(const PageInfo& pageInfo, const Margins& margins
   auto oldIgnore = static_cast<bool>(m_ignoreMarginChanges);
   m_ignoreMarginChanges = true;
 
-  for (const auto& kv : m_alignmentByButton) {
-    if (m_alignment.isAuto() || m_alignment.isOriginal()) {
-      if (!m_alignment.isAutoHorizontal() && (kv.second.vertical() == Alignment::VCENTER)
-          && (kv.second.horizontal() == m_alignment.horizontal())) {
-        kv.first->setChecked(true);
-        break;
-      } else if (!m_alignment.isAutoVertical() && (kv.second.horizontal() == Alignment::HCENTER)
-                 && (kv.second.vertical() == m_alignment.vertical())) {
-        kv.first->setChecked(true);
+  for (const auto& [button, btnAlignment] : m_alignmentByButton) {
+    if (alignment.isAutoVertical()) {
+      if ((btnAlignment.vertical() == Alignment::VCENTER) && (btnAlignment.horizontal() == alignment.horizontal())) {
+        button->setChecked(true);
         break;
       }
-    } else if (kv.second == m_alignment) {
-      kv.first->setChecked(true);
+    } else if (alignment.isAutoHorizontal()) {
+      if ((btnAlignment.horizontal() == Alignment::HCENTER) && (btnAlignment.vertical() == alignment.vertical())) {
+        button->setChecked(true);
+        break;
+      }
+    } else if (btnAlignment == alignment) {
+      button->setChecked(true);
       break;
     }
   }
-
-  onUnitsChanged(UnitsProvider::getInstance().getUnits());
 
   alignWithOthersCB->blockSignals(true);
   alignWithOthersCB->setChecked(!alignment.isNull());
   alignWithOthersCB->blockSignals(false);
 
-  alignmentMode->blockSignals(true);
-  if (alignment.isAuto()) {
-    alignmentMode->setCurrentIndex(0);
-    autoAlignSettingsGroup->setVisible(true);
-  } else if (alignment.isOriginal()) {
-    alignmentMode->setCurrentIndex(2);
-    autoAlignSettingsGroup->setVisible(true);
+  if (alignment.horizontal() == Alignment::HAUTO) {
+    hAlignmentModeCB->setCurrentIndex(0);
+  } else if (alignment.horizontal() == Alignment::HORIGINAL) {
+    hAlignmentModeCB->setCurrentIndex(2);
   } else {
-    alignmentMode->setCurrentIndex(1);
-    autoAlignSettingsGroup->setVisible(false);
+    hAlignmentModeCB->setCurrentIndex(1);
   }
-  alignmentMode->blockSignals(false);
+  if (alignment.vertical() == Alignment::VAUTO) {
+    vAlignmentModeCB->setCurrentIndex(0);
+  } else if (alignment.vertical() == Alignment::VORIGINAL) {
+    vAlignmentModeCB->setCurrentIndex(2);
+  } else {
+    vAlignmentModeCB->setCurrentIndex(1);
+  }
+
   updateAlignmentModeEnabled();
-  updateAlignmentButtonsEnabled();
   updateAutoModeButtons();
 
   autoMargins->setChecked(m_settings->isPageAutoMarginsEnabled(m_pageId));
@@ -120,6 +120,7 @@ void OptionsWidget::preUpdateUI(const PageInfo& pageInfo, const Margins& margins
 
   m_ignoreMarginChanges = oldIgnore;
 
+  onUnitsChanged(UnitsProvider::getInstance().getUnits());
   setupUiConnections();
 }  // OptionsWidget::preUpdateUI
 
@@ -246,7 +247,6 @@ void OptionsWidget::alignWithOthersToggled() {
   m_alignment.setNull(!alignWithOthersCB->isChecked());
 
   updateAlignmentModeEnabled();
-  updateAlignmentButtonsEnabled();
   emit alignmentChanged(m_alignment);
 }
 
@@ -261,26 +261,38 @@ void OptionsWidget::autoMarginsToggled(bool checked) {
   emit reloadRequested();
 }
 
-void OptionsWidget::alignmentModeChanged(int idx) {
+void OptionsWidget::horizontalAlignmentModeChanged(int idx) {
   switch (idx) {
     case 0:
-      m_alignment.setVertical(Alignment::VAUTO);
       m_alignment.setHorizontal(Alignment::HAUTO);
-      autoAlignSettingsGroup->setVisible(true);
       updateAutoModeButtons();
       break;
     case 1:
-      m_alignment = m_alignmentByButton.at(getCheckedAlignmentButton());
-      autoAlignSettingsGroup->setVisible(false);
+      m_alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
+      break;
+    case 2:
+      m_alignment.setHorizontal(Alignment::HORIGINAL);
+      updateAutoModeButtons();
+      break;
+    default:
+      break;
+  }
+
+  updateAlignmentButtonsEnabled();
+  emit alignmentChanged(m_alignment);
+}
+
+void OptionsWidget::verticalAlignmentModeChanged(int idx) {
+  switch (idx) {
+    case 0:
+      m_alignment.setVertical(Alignment::VAUTO);
+      updateAutoModeButtons();
+      break;
+    case 1:
+      m_alignment.setVertical(m_alignmentByButton.at(getCheckedAlignmentButton()).vertical());
       break;
     case 2:
       m_alignment.setVertical(Alignment::VORIGINAL);
-      if (m_settings->isPageAutoMarginsEnabled(m_pageId)) {
-        m_alignment.setHorizontal(Alignment::HORIGINAL);
-      } else {
-        m_alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
-      }
-      autoAlignSettingsGroup->setVisible(true);
       updateAutoModeButtons();
       break;
     default:
@@ -426,14 +438,13 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(leftMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
   CONNECT(rightMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(horMarginsChanged(double)));
   CONNECT(autoMargins, SIGNAL(toggled(bool)), this, SLOT(autoMarginsToggled(bool)));
-  CONNECT(alignmentMode, SIGNAL(currentIndexChanged(int)), this, SLOT(alignmentModeChanged(int)));
+  CONNECT(hAlignmentModeCB, SIGNAL(currentIndexChanged(int)), this, SLOT(horizontalAlignmentModeChanged(int)));
+  CONNECT(vAlignmentModeCB, SIGNAL(currentIndexChanged(int)), this, SLOT(verticalAlignmentModeChanged(int)));
   CONNECT(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
   CONNECT(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
   CONNECT(applyMarginsBtn, SIGNAL(clicked()), this, SLOT(showApplyMarginsDialog()));
   CONNECT(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled()));
   CONNECT(applyAlignmentBtn, SIGNAL(clicked()), this, SLOT(showApplyAlignmentDialog()));
-  CONNECT(autoHorizontalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoHorizontalAligningToggled(bool)));
-  CONNECT(autoVerticalAligningCB, SIGNAL(toggled(bool)), this, SLOT(autoVerticalAligningToggled(bool)));
   for (const auto& kv : m_alignmentByButton) {
     CONNECT(kv.first, SIGNAL(clicked()), this, SLOT(alignmentButtonClicked()));
   }
@@ -464,54 +475,8 @@ const Alignment& OptionsWidget::alignment() const {
   return m_alignment;
 }
 
-void OptionsWidget::autoHorizontalAligningToggled(const bool checked) {
-  if (m_ignoreAlignmentButtonsChanges) {
-    return;
-  }
-
-  if (checked) {
-    m_alignment.setHorizontal((alignmentMode->currentIndex() == 0) ? Alignment::HAUTO : Alignment::HORIGINAL);
-  } else {
-    m_alignment.setHorizontal(m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal());
-  }
-
-  updateAlignmentButtonsEnabled();
-  updateAutoModeButtons();
-  emit alignmentChanged(m_alignment);
-}
-
-void OptionsWidget::autoVerticalAligningToggled(const bool checked) {
-  if (m_ignoreAlignmentButtonsChanges) {
-    return;
-  }
-
-  if (checked) {
-    m_alignment.setVertical((alignmentMode->currentIndex() == 0) ? Alignment::VAUTO : Alignment::VORIGINAL);
-  } else {
-    m_alignment.setVertical(m_alignmentByButton.at(getCheckedAlignmentButton()).vertical());
-  }
-
-  updateAlignmentButtonsEnabled();
-  updateAutoModeButtons();
-  emit alignmentChanged(m_alignment);
-}
-
 void OptionsWidget::updateAutoModeButtons() {
   const ScopedIncDec<int> scopeGuard(m_ignoreAlignmentButtonsChanges);
-
-  if (m_alignment.isAuto() || m_alignment.isOriginal()) {
-    autoVerticalAligningCB->setChecked(m_alignment.isAutoVertical());
-    autoHorizontalAligningCB->setChecked(m_alignment.isAutoHorizontal());
-
-    if (autoVerticalAligningCB->isChecked() && !autoHorizontalAligningCB->isChecked()) {
-      autoVerticalAligningCB->setEnabled(false);
-    } else if (autoHorizontalAligningCB->isChecked() && !autoVerticalAligningCB->isChecked()) {
-      autoHorizontalAligningCB->setEnabled(false);
-    } else {
-      autoVerticalAligningCB->setEnabled(true);
-      autoHorizontalAligningCB->setEnabled(true);
-    }
-  }
 
   if (m_alignment.isAutoVertical() && !m_alignment.isAutoHorizontal()) {
     switch (m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal()) {
@@ -551,8 +516,10 @@ QToolButton* OptionsWidget::getCheckedAlignmentButton() const {
 void OptionsWidget::updateAlignmentModeEnabled() {
   const bool isAlignmentNull = m_alignment.isNull();
 
-  alignmentMode->setEnabled(!isAlignmentNull);
-  autoAlignSettingsGroup->setEnabled(!isAlignmentNull);
+  vAlignmentModeCB->setEnabled(!isAlignmentNull);
+  hAlignmentModeCB->setEnabled(!isAlignmentNull);
+
+  updateAlignmentButtonsEnabled();
 }
 
 void OptionsWidget::setupIcons() {

@@ -42,13 +42,9 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
 
   void autoMarginsToggled(bool checked);
 
-  void alignmentModeChanged(int idx);
+  void alignmentModeChanged(int);
 
-  void alignWithOthersToggled(bool state);
-
-  void autoHorizontalAligningToggled(bool);
-
-  void autoVerticalAligningToggled(bool);
+  void alignWithOthersToggled(bool);
 
   void topBottomLinkClicked();
 

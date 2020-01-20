@@ -1499,9 +1499,9 @@ QToolButton:pressed {
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_24">
+               <layout class="QHBoxLayout" name="horizontalLayout_20">
                 <item>
-                 <spacer name="horizontalSpacer_55">
+                 <spacer name="horizontalSpacer_74">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -1514,36 +1514,69 @@ QToolButton:pressed {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QLabel" name="alignmentModeLabel">
-                  <property name="text">
-                   <string>Mode:</string>
-                  </property>
-                 </widget>
+                 <layout class="QGridLayout" name="gridLayout_15">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="hAlignmentModeLabel">
+                    <property name="text">
+                     <string>Horizontal mode:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="vAlignmentModeLabel">
+                    <property name="text">
+                     <string>Vertical mode:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QComboBox" name="hAlignmentModeCB">
+                    <property name="currentIndex">
+                     <number>1</number>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string comment="auto">Auto</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string comment="manual">Manual</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string comment="original">Original</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QComboBox" name="vAlignmentModeCB">
+                    <property name="currentIndex">
+                     <number>1</number>
+                    </property>
+                    <item>
+                     <property name="text">
+                      <string comment="auto">Auto</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string comment="manual">Manual</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string comment="original">Original</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item>
-                 <widget class="QComboBox" name="alignmentMode">
-                  <property name="currentIndex">
-                   <number>1</number>
-                  </property>
-                  <item>
-                   <property name="text">
-                    <string comment="auto">Auto</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string comment="manual">Manual</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string comment="original">Original</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_56">
+                 <spacer name="horizontalSpacer_75">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -1556,107 +1589,6 @@ QToolButton:pressed {
                  </spacer>
                 </item>
                </layout>
-              </item>
-              <item>
-               <widget class="QGroupBox" name="autoAlignSettingsGroup">
-                <property name="title">
-                 <string>Auto aligning</string>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_9">
-                 <property name="leftMargin">
-                  <number>6</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>6</number>
-                 </property>
-                 <property name="rightMargin">
-                  <number>6</number>
-                 </property>
-                 <property name="bottomMargin">
-                  <number>6</number>
-                 </property>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_35">
-                   <item>
-                    <spacer name="horizontalSpacer_74">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>1</width>
-                       <height>1</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="autoHorizontalAligningCB">
-                     <property name="text">
-                      <string>Enable horizontal</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_75">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>1</width>
-                       <height>1</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_36">
-                   <item>
-                    <spacer name="horizontalSpacer_76">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>1</width>
-                       <height>1</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QCheckBox" name="autoVerticalAligningCB">
-                     <property name="text">
-                      <string>Enable vertical</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_77">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>1</width>
-                       <height>1</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_5">

@@ -3,7 +3,6 @@
 
 #include "OptionsWidget.h"
 
-#include <Constants.h>
 #include <UnitsProvider.h>
 #include <core/IconProvider.h>
 
@@ -12,18 +11,17 @@
 
 #include "../../Utils.h"
 #include "ApplyDialog.h"
-#include "ScopedIncDec.h"
 #include "Settings.h"
 
 using namespace core;
-using namespace constants;
 
 namespace page_layout {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor)
     : m_settings(std::move(settings)),
       m_pageSelectionAccessor(pageSelectionAccessor),
       m_leftRightLinked(true),
-      m_topBottomLinked(true) {
+      m_topBottomLinked(true),
+      m_connectionManager(std::bind(&OptionsWidget::setupUiConnections, this)) {
   {
     QSettings appSettings;
     m_leftRightLinked = appSettings.value("margins/leftRightLinked", true).toBool();
@@ -58,15 +56,12 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
 OptionsWidget::~OptionsWidget() = default;
 
 void OptionsWidget::preUpdateUI(const PageInfo& pageInfo, const Margins& marginsMm, const Alignment& alignment) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   m_pageId = pageInfo.id();
   m_dpi = pageInfo.metadata().dpi();
   m_marginsMM = marginsMm;
   m_alignment = alignment;
-
-  auto oldIgnore = static_cast<bool>(m_ignoreMarginChanges);
-  m_ignoreMarginChanges = true;
 
   for (const auto& [button, btnAlignment] : m_alignmentByButton) {
     if (alignment.isAutoVertical()) {
@@ -85,9 +80,7 @@ void OptionsWidget::preUpdateUI(const PageInfo& pageInfo, const Margins& margins
     }
   }
 
-  alignWithOthersCB->blockSignals(true);
   alignWithOthersCB->setChecked(!alignment.isNull());
-  alignWithOthersCB->blockSignals(false);
 
   if (alignment.horizontal() == Alignment::HAUTO) {
     hAlignmentModeCB->setCurrentIndex(0);
@@ -118,22 +111,17 @@ void OptionsWidget::preUpdateUI(const PageInfo& pageInfo, const Margins& margins
   marginsGroup->setEnabled(false);
   alignmentGroup->setEnabled(false);
 
-  m_ignoreMarginChanges = oldIgnore;
-
   onUnitsChanged(UnitsProvider::getInstance().getUnits());
-  setupUiConnections();
 }  // OptionsWidget::preUpdateUI
 
 void OptionsWidget::postUpdateUI() {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   marginsGroup->setEnabled(true);
   alignmentGroup->setEnabled(true);
 
   m_marginsMM = m_settings->getHardMarginsMM(m_pageId);
   updateMarginsDisplay();
-
-  setupUiConnections();
 }
 
 void OptionsWidget::marginsSetExternally(const Margins& marginsMm) {
@@ -149,7 +137,7 @@ void OptionsWidget::marginsSetExternally(const Margins& marginsMm) {
 }
 
 void OptionsWidget::onUnitsChanged(Units units) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   int decimals;
   double step;
@@ -175,17 +163,11 @@ void OptionsWidget::onUnitsChanged(Units units) {
   rightMarginSpinBox->setSingleStep(step);
 
   updateMarginsDisplay();
-
-  setupUiConnections();
 }
 
 void OptionsWidget::horMarginsChanged(const double val) {
-  if (m_ignoreMarginChanges) {
-    return;
-  }
-
   if (m_leftRightLinked) {
-    const ScopedIncDec<int> ignoreScope(m_ignoreMarginChanges);
+    auto block = m_connectionManager.getScopedBlock();
     leftMarginSpinBox->setValue(val);
     rightMarginSpinBox->setValue(val);
   }
@@ -203,12 +185,8 @@ void OptionsWidget::horMarginsChanged(const double val) {
 }
 
 void OptionsWidget::vertMarginsChanged(const double val) {
-  if (m_ignoreMarginChanges) {
-    return;
-  }
-
   if (m_topBottomLinked) {
-    const ScopedIncDec<int> ignoreScope(m_ignoreMarginChanges);
+    auto block = m_connectionManager.getScopedBlock();
     topMarginSpinBox->setValue(val);
     bottomMarginSpinBox->setValue(val);
   }
@@ -240,10 +218,6 @@ void OptionsWidget::leftRightLinkClicked() {
 }
 
 void OptionsWidget::alignWithOthersToggled() {
-  if (m_ignoreAlignmentButtonsChanges) {
-    return;
-  }
-
   m_alignment.setNull(!alignWithOthersCB->isChecked());
 
   updateAlignmentModeEnabled();
@@ -251,10 +225,6 @@ void OptionsWidget::alignWithOthersToggled() {
 }
 
 void OptionsWidget::autoMarginsToggled(bool checked) {
-  if (m_ignoreMarginChanges) {
-    return;
-  }
-
   m_settings->setPageAutoMarginsEnabled(m_pageId, checked);
   updateMarginsControlsEnabled();
 
@@ -304,10 +274,6 @@ void OptionsWidget::verticalAlignmentModeChanged(int idx) {
 }
 
 void OptionsWidget::alignmentButtonClicked() {
-  if (m_ignoreAlignmentButtonsChanges) {
-    return;
-  }
-
   auto* const button = dynamic_cast<QToolButton*>(sender());
   assert(button);
 
@@ -380,7 +346,7 @@ void OptionsWidget::applyAlignment(const std::set<PageId>& pages) {
 }
 
 void OptionsWidget::updateMarginsDisplay() {
-  const ScopedIncDec<int> ignoreScope(m_ignoreMarginChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   double topMarginValue = m_marginsMM.top();
   double bottomMarginValue = m_marginsMM.bottom();
@@ -430,7 +396,7 @@ void OptionsWidget::updateMarginsControlsEnabled() {
   leftRightLink->setEnabled(enabled);
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(topMarginSpinBox, SIGNAL(valueChanged(double)), this, SLOT(vertMarginsChanged(double)));
@@ -452,13 +418,6 @@ void OptionsWidget::setupUiConnections() {
 
 #undef CONNECT
 
-void OptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
-
 bool OptionsWidget::leftRightLinked() const {
   return m_leftRightLinked;
 }
@@ -476,7 +435,7 @@ const Alignment& OptionsWidget::alignment() const {
 }
 
 void OptionsWidget::updateAutoModeButtons() {
-  const ScopedIncDec<int> scopeGuard(m_ignoreAlignmentButtonsChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   if (m_alignment.isAutoVertical() && !m_alignment.isAutoHorizontal()) {
     switch (m_alignmentByButton.at(getCheckedAlignmentButton()).horizontal()) {

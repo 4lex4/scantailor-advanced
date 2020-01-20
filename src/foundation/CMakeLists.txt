@@ -4,7 +4,7 @@ set(sources
     AlignedArray.h
     FastQueue.h
     SafeDeletingQObjectPtr.h
-    ScopedIncDec.h ScopedDecInc.h
+    ScopedIncDec.h
     Span.h VirtualFunction.h FlagOps.h
     AutoRemovingFile.cpp AutoRemovingFile.h
     Proximity.cpp Proximity.h

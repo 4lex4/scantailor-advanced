@@ -11,6 +11,7 @@
 #include <memory>
 #include <set>
 #include <unordered_map>
+#include <core/ConnectionManager.h>
 
 #include "Alignment.h"
 #include "FilterOptionsWidget.h"
@@ -110,8 +111,6 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   void setupIcons();
 
   intrusive_ptr<Settings> m_settings;
@@ -127,10 +126,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
   bool m_topBottomLinked;
   std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
 
-  int m_ignoreMarginChanges = 0;
-  int m_ignoreAlignmentButtonsChanges = 0;
-
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace page_layout
 #endif  // ifndef SCANTAILOR_PAGE_LAYOUT_OPTIONSWIDGET_H_

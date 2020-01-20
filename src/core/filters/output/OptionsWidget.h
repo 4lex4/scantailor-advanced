@@ -11,6 +11,7 @@
 #include <list>
 #include <memory>
 #include <set>
+#include <core/ConnectionManager.h>
 
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
@@ -174,8 +175,6 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   intrusive_ptr<Settings> m_settings;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
@@ -189,7 +188,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   ImageViewTab m_lastTab;
   QTimer m_delayedReloadRequest;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_OPTIONSWIDGET_H_

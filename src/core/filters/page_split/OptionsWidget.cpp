@@ -22,8 +22,7 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
     : m_settings(std::move(settings)),
       m_pages(std::move(pageSequence)),
       m_pageSelectionAccessor(pageSelectionAccessor),
-      m_ignoreAutoManualToggle(0),
-      m_ignoreLayoutTypeToggle(0) {
+      m_connectionManager(std::bind(&OptionsWidget::setupUiConnections, this)) {
   setupUi(this);
   setupIcons();
 
@@ -38,10 +37,7 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
 OptionsWidget::~OptionsWidget() = default;
 
 void OptionsWidget::preUpdateUI(const PageId& pageId) {
-  removeUiConnections();
-
-  ScopedIncDec<int> guard1(m_ignoreAutoManualToggle);
-  ScopedIncDec<int> guard2(m_ignoreLayoutTypeToggle);
+  auto block = m_connectionManager.getScopedBlock();
 
   m_pageId = pageId;
   const Settings::Record record(m_settings->getPageRecord(pageId.imageId()));
@@ -85,15 +81,10 @@ void OptionsWidget::preUpdateUI(const PageId& pageId) {
   // And disable both of them.
   autoBtn->setEnabled(false);
   manualBtn->setEnabled(false);
-
-  setupUiConnections();
 }  // OptionsWidget::preUpdateUI
 
 void OptionsWidget::postUpdateUI(const UiData& uiData) {
-  removeUiConnections();
-
-  ScopedIncDec<int> guard1(m_ignoreAutoManualToggle);
-  ScopedIncDec<int> guard2(m_ignoreLayoutTypeToggle);
+  auto block = m_connectionManager.getScopedBlock();
 
   m_uiData = uiData;
 
@@ -126,12 +117,10 @@ void OptionsWidget::postUpdateUI(const UiData& uiData) {
   if (uiData.layoutTypeAutoDetected()) {
     scopeLabel->setText(tr("Auto detected"));
   }
-
-  setupUiConnections();
 }  // OptionsWidget::postUpdateUI
 
 void OptionsWidget::pageLayoutSetExternally(const PageLayout& pageLayout) {
-  ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
+  auto block = m_connectionManager.getScopedBlock();
 
   m_uiData.setPageLayout(pageLayout);
   m_uiData.setSplitLineMode(MODE_MANUAL);
@@ -143,7 +132,7 @@ void OptionsWidget::pageLayoutSetExternally(const PageLayout& pageLayout) {
 }
 
 void OptionsWidget::layoutTypeButtonToggled(const bool checked) {
-  if (!checked || m_ignoreLayoutTypeToggle) {
+  if (!checked) {
     return;
   }
 
@@ -264,10 +253,6 @@ void OptionsWidget::layoutTypeSet(const std::set<PageId>& pages, const LayoutTyp
 }  // OptionsWidget::layoutTypeSet
 
 void OptionsWidget::splitLineModeChanged(const bool autoMode) {
-  if (m_ignoreAutoManualToggle) {
-    return;
-  }
-
   if (autoMode) {
     Settings::UpdateAction update;
     update.clearParams();
@@ -287,7 +272,7 @@ void OptionsWidget::commitCurrentParams() {
   m_settings->updatePage(m_pageId.imageId(), update);
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(singlePageUncutBtn, SIGNAL(toggled(bool)), this, SLOT(layoutTypeButtonToggled(bool)));
@@ -298,13 +283,6 @@ void OptionsWidget::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void OptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 
 void OptionsWidget::setupIcons() {
   auto& iconProvider = IconProvider::getInstance();

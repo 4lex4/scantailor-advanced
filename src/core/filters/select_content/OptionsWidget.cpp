@@ -6,16 +6,16 @@
 #include <UnitsProvider.h>
 
 #include <boost/bind.hpp>
-#include <iostream>
 #include <utility>
 
 #include "ApplyDialog.h"
-#include "ScopedIncDec.h"
 #include "Settings.h"
 
 namespace select_content {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor)
-    : m_settings(std::move(settings)), m_pageSelectionAccessor(pageSelectionAccessor), m_ignorePageSizeChanges(0) {
+    : m_settings(std::move(settings)),
+      m_pageSelectionAccessor(pageSelectionAccessor),
+      m_connectionManager(std::bind(&OptionsWidget::setupUiConnections, this)) {
   setupUi(this);
 
   setupUiConnections();
@@ -24,7 +24,7 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
 OptionsWidget::~OptionsWidget() = default;
 
 void OptionsWidget::preUpdateUI(const PageInfo& pageInfo) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   m_pageId = pageInfo.id();
   m_dpi = pageInfo.metadata().dpi();
@@ -37,12 +37,10 @@ void OptionsWidget::preUpdateUI(const PageInfo& pageInfo) {
   dimensionsWidget->setVisible(false);
 
   onUnitsChanged(UnitsProvider::getInstance().getUnits());
-
-  setupUiConnections();
 }
 
 void OptionsWidget::postUpdateUI(const UiData& uiData) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   m_uiData = uiData;
 
@@ -54,8 +52,6 @@ void OptionsWidget::postUpdateUI(const UiData& uiData) {
 
   updatePageDetectOptionsDisplay();
   updatePageRectSize(m_uiData.pageRect().size());
-
-  setupUiConnections();
 }
 
 void OptionsWidget::manualContentRectSet(const QRectF& contentRect) {
@@ -81,7 +77,7 @@ void OptionsWidget::manualPageRectSet(const QRectF& pageRect) {
 }
 
 void OptionsWidget::updatePageRectSize(const QSizeF& size) {
-  const ScopedIncDec<int> ignoreScope(m_ignorePageSizeChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   double width = size.width();
   double height = size.height();
@@ -159,10 +155,6 @@ void OptionsWidget::updatePageDetectOptionsDisplay() {
 }
 
 void OptionsWidget::dimensionsChangedLocally(double) {
-  if (m_ignorePageSizeChanges) {
-    return;
-  }
-
   double widthSpinBoxValue = widthSpinBox->value();
   double heightSpinBoxValue = heightSpinBox->value();
   UnitsProvider::getInstance().convertTo(widthSpinBoxValue, heightSpinBoxValue, PIXELS, m_dpi);
@@ -266,7 +258,7 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages, const bool app
 
 
 void OptionsWidget::onUnitsChanged(Units units) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   int decimals;
   double step;
@@ -288,11 +280,9 @@ void OptionsWidget::onUnitsChanged(Units units) {
   heightSpinBox->setSingleStep(step);
 
   updatePageRectSize(m_uiData.pageRect().size());
-
-  setupUiConnections();
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(widthSpinBox, SIGNAL(valueChanged(double)), this, SLOT(dimensionsChangedLocally(double)));
@@ -314,13 +304,6 @@ void OptionsWidget::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void OptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 
 
 /*========================= OptionsWidget::UiData ======================*/

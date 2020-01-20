@@ -4,6 +4,8 @@
 #ifndef SCANTAILOR_FIX_ORIENTATION_OPTIONSWIDGET_H_
 #define SCANTAILOR_FIX_ORIENTATION_OPTIONSWIDGET_H_
 
+#include <core/ConnectionManager.h>
+
 #include <list>
 
 #include "FilterOptionsWidget.h"
@@ -52,8 +54,6 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   void setupIcons();
 
   intrusive_ptr<Settings> m_settings;
@@ -61,7 +61,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   PageId m_pageId;
   OrthogonalRotation m_rotation;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace fix_orientation
 #endif  // ifndef SCANTAILOR_FIX_ORIENTATION_OPTIONSWIDGET_H_

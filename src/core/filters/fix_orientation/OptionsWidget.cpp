@@ -15,7 +15,9 @@
 
 namespace fix_orientation {
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor)
-    : m_settings(std::move(settings)), m_pageSelectionAccessor(pageSelectionAccessor) {
+    : m_settings(std::move(settings)),
+      m_pageSelectionAccessor(pageSelectionAccessor),
+      m_connectionManager(std::bind(&OptionsWidget::setupUiConnections, this)) {
   setupUi(this);
   setupIcons();
 
@@ -25,21 +27,17 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
 OptionsWidget::~OptionsWidget() = default;
 
 void OptionsWidget::preUpdateUI(const PageId& pageId, const OrthogonalRotation rotation) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   m_pageId = pageId;
   m_rotation = rotation;
   setRotationPixmap();
-
-  setupUiConnections();
 }
 
 void OptionsWidget::postUpdateUI(const OrthogonalRotation rotation) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   setRotation(rotation);
-
-  setupUiConnections();
 }
 
 void OptionsWidget::rotateLeft() {
@@ -123,7 +121,7 @@ void OptionsWidget::setRotationPixmap() {
   rotationIndicator->setPixmap(icon.pixmap(32, 32));
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
@@ -133,13 +131,6 @@ void OptionsWidget::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void OptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 
 void OptionsWidget::setupIcons() {
   auto& iconProvider = IconProvider::getInstance();

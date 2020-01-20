@@ -8,7 +8,8 @@
 namespace output {
 
 WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-    : m_settings(std::move(settings)) {
+    : m_settings(std::move(settings)),
+      m_connectionManager(std::bind(&WolfBinarizationOptionsWidget::setupUiConnections, this)) {
   setupUi(this);
 
   m_delayedStateChanger.setSingleShot(true);
@@ -17,7 +18,7 @@ WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Setti
 }
 
 void WolfBinarizationOptionsWidget::updateUi(const PageId& pageId) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   const Params params(m_settings->getParams(pageId));
   m_pageId = pageId;
@@ -25,8 +26,6 @@ void WolfBinarizationOptionsWidget::updateUi(const PageId& pageId) {
   m_outputProcessingParams = m_settings->getOutputProcessingParams(pageId);
 
   updateView();
-
-  setupUiConnections();
 }
 
 void WolfBinarizationOptionsWidget::windowSizeChanged(int value) {
@@ -77,7 +76,7 @@ void WolfBinarizationOptionsWidget::sendStateChanged() {
   emit stateChanged();
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void WolfBinarizationOptionsWidget::setupUiConnections() {
   CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
@@ -88,11 +87,4 @@ void WolfBinarizationOptionsWidget::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void WolfBinarizationOptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 }  // namespace output

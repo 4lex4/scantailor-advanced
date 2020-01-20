@@ -4,6 +4,8 @@
 #ifndef SCANTAILOR_OUTPUT_WOLFBINARIZATIONOPTIONSWIDGET_H_
 #define SCANTAILOR_OUTPUT_WOLFBINARIZATIONOPTIONSWIDGET_H_
 
+#include <core/ConnectionManager.h>
+
 #include <QtCore>
 #include <list>
 
@@ -40,15 +42,13 @@ class WolfBinarizationOptionsWidget : public BinarizationOptionsWidget, private 
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   intrusive_ptr<Settings> m_settings;
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer m_delayedStateChanger;
   OutputProcessingParams m_outputProcessingParams;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace output
 

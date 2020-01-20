@@ -6,6 +6,7 @@
 
 #include <QtCore>
 #include <list>
+#include <core/ConnectionManager.h>
 
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
@@ -44,15 +45,12 @@ class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private 
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   intrusive_ptr<Settings> m_settings;
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer m_delayedStateChanger;
-  int m_ignoreSliderChanges;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace output
 

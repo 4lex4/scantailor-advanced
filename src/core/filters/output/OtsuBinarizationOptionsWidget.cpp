@@ -15,7 +15,8 @@ using namespace core;
 namespace output {
 
 OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-    : m_settings(std::move(settings)), m_ignoreSliderChanges(0) {
+    : m_settings(std::move(settings)),
+      m_connectionManager(std::bind(&OtsuBinarizationOptionsWidget::setupUiConnections, this)) {
   setupUi(this);
 
   darkerThresholdLink->setText(Utils::richTextForLink(darkerThresholdLink->text()));
@@ -32,15 +33,13 @@ OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Setti
 }
 
 void OtsuBinarizationOptionsWidget::updateUi(const PageId& pageId) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   const Params params(m_settings->getParams(pageId));
   m_pageId = pageId;
   m_colorParams = params.colorParams();
 
   updateView();
-
-  setupUiConnections();
 }
 
 void OtsuBinarizationOptionsWidget::thresholdSliderReleased() {
@@ -51,10 +50,6 @@ void OtsuBinarizationOptionsWidget::thresholdSliderReleased() {
 }
 
 void OtsuBinarizationOptionsWidget::thresholdSliderValueChanged(int value) {
-  if (m_ignoreSliderChanges) {
-    return;
-  }
-
   thresholLabel->setText(QString::number(value));
 
   const QString tooltipText(QString::number(value));
@@ -91,7 +86,7 @@ void OtsuBinarizationOptionsWidget::setThresholdAdjustment(int value) {
 }
 
 void OtsuBinarizationOptionsWidget::setLighterThreshold() {
-  const ScopedIncDec<int> scopeGuard(m_ignoreSliderChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   thresholdSlider->setValue(thresholdSlider->value() - 1);
   setThresholdAdjustment(thresholdSlider->value());
@@ -100,7 +95,7 @@ void OtsuBinarizationOptionsWidget::setLighterThreshold() {
 }
 
 void OtsuBinarizationOptionsWidget::setDarkerThreshold() {
-  const ScopedIncDec<int> scopeGuard(m_ignoreSliderChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   thresholdSlider->setValue(thresholdSlider->value() + 1);
   setThresholdAdjustment(thresholdSlider->value());
@@ -109,7 +104,7 @@ void OtsuBinarizationOptionsWidget::setDarkerThreshold() {
 }
 
 void OtsuBinarizationOptionsWidget::setNeutralThreshold() {
-  const ScopedIncDec<int> scopeGuard(m_ignoreSliderChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   thresholdSlider->setValue(0);
   setThresholdAdjustment(thresholdSlider->value());
@@ -123,7 +118,7 @@ void OtsuBinarizationOptionsWidget::updateView() {
   thresholLabel->setText(QString::number(blackWhiteOptions.thresholdAdjustment()));
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void OtsuBinarizationOptionsWidget::setupUiConnections() {
   CONNECT(lighterThresholdLink, SIGNAL(linkActivated(const QString&)), this, SLOT(setLighterThreshold()));
@@ -135,13 +130,6 @@ void OtsuBinarizationOptionsWidget::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void OtsuBinarizationOptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 
 void OtsuBinarizationOptionsWidget::sendStateChanged() {
   emit stateChanged();

@@ -23,7 +23,8 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
     : m_settings(std::move(settings)),
       m_pageSelectionAccessor(pageSelectionAccessor),
       m_despeckleLevel(1.0),
-      m_lastTab(TAB_OUTPUT) {
+      m_lastTab(TAB_OUTPUT),
+      m_connectionManager(std::bind(&OptionsWidget::setupUiConnections, this)) {
   setupUi(this);
 
   m_delayedReloadRequest.setSingleShot(true);
@@ -74,7 +75,7 @@ OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelecti
 OptionsWidget::~OptionsWidget() = default;
 
 void OptionsWidget::preUpdateUI(const PageId& pageId) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   const Params params = m_settings->getParams(pageId);
   m_pageId = pageId;
@@ -90,18 +91,14 @@ void OptionsWidget::preUpdateUI(const PageId& pageId) {
   updateColorsDisplay();
   updateDewarpingDisplay();
   updateProcessingDisplay();
-
-  setupUiConnections();
 }
 
 void OptionsWidget::postUpdateUI() {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   updateProcessingDisplay();
   m_dewarpingOptions = m_settings->getParams(m_pageId).dewarpingOptions();
   updateDewarpingDisplay();
-
-  setupUiConnections();
 }
 
 void OptionsWidget::tabChanged(const ImageViewTab tab) {
@@ -883,7 +880,7 @@ void OptionsWidget::sendReloadRequested() {
   emit reloadRequested();
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(changeDpiButton, SIGNAL(clicked()), this, SLOT(changeDpiButtonClicked()));
@@ -934,13 +931,6 @@ void OptionsWidget::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void OptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 
 ImageViewTab OptionsWidget::lastTab() const {
   return m_lastTab;

@@ -6,6 +6,7 @@
 
 #include <QtCore>
 #include <list>
+#include <core/ConnectionManager.h>
 
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
@@ -37,15 +38,13 @@ class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   intrusive_ptr<Settings> m_settings;
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer m_delayedStateChanger;
   OutputProcessingParams m_outputProcessingParams;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace output
 

@@ -6,6 +6,7 @@
 
 #include <list>
 #include <set>
+#include <core/ConnectionManager.h>
 
 #include "AutoManualMode.h"
 #include "Dependencies.h"
@@ -90,8 +91,6 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   void setupIcons();
 
   intrusive_ptr<Settings> m_settings;
@@ -99,10 +98,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
   UiData m_uiData;
-  int m_ignoreAutoManualToggle;
-  int m_ignoreLayoutTypeToggle;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace page_split
 #endif  // ifndef SCANTAILOR_PAGE_SPLIT_OPTIONSWIDGET_H_

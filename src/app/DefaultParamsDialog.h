@@ -9,6 +9,7 @@
 #include <list>
 #include <set>
 #include <unordered_map>
+#include <core/ConnectionManager.h>
 
 #include "DefaultParams.h"
 #include "DefaultParamsProfileManager.h"
@@ -115,8 +116,6 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   void setRotation(const OrthogonalRotation& rotation);
 
   void setRotationPixmap();
@@ -145,7 +144,6 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
   QIcon m_brokenChainIcon;
   bool m_leftRightLinkEnabled;
   bool m_topBottomLinkEnabled;
-  int m_ignoreMarginChanges;
   OrthogonalRotation m_orthogonalRotation;
   std::unordered_map<QToolButton*, page_layout::Alignment> m_alignmentByButton;
   std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
@@ -155,9 +153,8 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
   int m_customProfileItemIdx;
   Units m_currentUnits;
   std::set<QString> m_reservedProfileNames;
-  int m_ignoreProfileChanges;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 
 

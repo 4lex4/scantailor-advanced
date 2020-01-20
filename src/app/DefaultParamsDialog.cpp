@@ -9,7 +9,6 @@
 #include <filters/output/DewarpingOptions.h>
 #include <filters/output/PictureShapeOptions.h>
 #include <filters/page_split/LayoutType.h>
-#include <foundation/ScopedIncDec.h>
 
 #include <QLineEdit>
 #include <QtWidgets/QMessageBox>
@@ -30,9 +29,8 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
     : QDialog(parent),
       m_leftRightLinkEnabled(true),
       m_topBottomLinkEnabled(true),
-      m_ignoreMarginChanges(0),
       m_currentUnits(MILLIMETRES),
-      m_ignoreProfileChanges(0) {
+      m_connectionManager(std::bind(&DefaultParamsDialog::setupUiConnections, this)) {
   setupUi(this);
   setupIcons();
 
@@ -124,6 +122,8 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
   profileChanged(profileCB->currentIndex());
 
   connect(buttonBox, SIGNAL(accepted()), this, SLOT(commitChanges()));
+
+  setupUiConnections();
 }
 
 void DefaultParamsDialog::updateFixOrientationDisplay(const DefaultParams::FixOrientationParams& params) {
@@ -338,7 +338,7 @@ void DefaultParamsDialog::updateOutputDisplay(const DefaultParams::OutputParams&
   despeckleToggled(despeckleCB->isChecked());
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void DefaultParamsDialog::setupUiConnections() {
   CONNECT(rotateLeftBtn, SIGNAL(clicked()), this, SLOT(rotateLeft()));
@@ -383,13 +383,6 @@ void DefaultParamsDialog::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void DefaultParamsDialog::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 
 void DefaultParamsDialog::rotateLeft() {
   OrthogonalRotation rotation(m_orthogonalRotation);
@@ -572,7 +565,7 @@ void DefaultParamsDialog::colorForegroundToggled(bool checked) {
 }
 
 void DefaultParamsDialog::loadParams(const DefaultParams& params) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   // must be done before updating the displays in order to set the precise of the spin boxes
   updateUnits(params.getUnits());
@@ -583,8 +576,6 @@ void DefaultParamsDialog::loadParams(const DefaultParams& params) {
   updateSelectContentDisplay(params.getSelectContentParams());
   updatePageLayoutDisplay(params.getPageLayoutParams());
   updateOutputDisplay(params.getOutputParams());
-
-  setupUiConnections();
 }
 
 std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
@@ -793,22 +784,16 @@ void DefaultParamsDialog::leftRightLinkClicked() {
 }
 
 void DefaultParamsDialog::horMarginsChanged(double val) {
-  if (m_ignoreMarginChanges) {
-    return;
-  }
   if (m_leftRightLinkEnabled) {
-    const ScopedIncDec<int> scopeGuard(m_ignoreMarginChanges);
+    auto block = m_connectionManager.getScopedBlock();
     leftMarginSpinBox->setValue(val);
     rightMarginSpinBox->setValue(val);
   }
 }
 
 void DefaultParamsDialog::vertMarginsChanged(double val) {
-  if (m_ignoreMarginChanges) {
-    return;
-  }
   if (m_topBottomLinkEnabled) {
-    const ScopedIncDec<int> scopeGuard(m_ignoreMarginChanges);
+    auto block = m_connectionManager.getScopedBlock();
     topMarginSpinBox->setValue(val);
     bottomMarginSpinBox->setValue(val);
   }
@@ -875,10 +860,6 @@ void DefaultParamsDialog::depthPerceptionChangedSlot(const int val) {
 }
 
 void DefaultParamsDialog::profileChanged(const int index) {
-  if (m_ignoreProfileChanges) {
-    return;
-  }
-
   profileCB->setEditable(index == m_customProfileItemIdx);
   if (index == m_customProfileItemIdx) {
     profileCB->setEditText(profileCB->currentText());
@@ -944,7 +925,7 @@ void DefaultParamsDialog::profileChanged(const int index) {
 }
 
 void DefaultParamsDialog::profileSavePressed() {
-  const ScopedIncDec<int> scopeGuard(m_ignoreProfileChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   if (isProfileNameReserved(profileCB->currentText())) {
     QMessageBox::information(this, tr("Error"),
@@ -971,7 +952,7 @@ void DefaultParamsDialog::profileSavePressed() {
 void DefaultParamsDialog::profileDeletePressed() {
   if (m_profileManager.deleteProfile(profileCB->currentText())) {
     {
-      const ScopedIncDec<int> scopeGuard(m_ignoreProfileChanges);
+      auto block = m_connectionManager.getScopedBlock();
 
       const int deletedProfileIndex = profileCB->currentIndex();
       profileCB->setCurrentIndex(m_customProfileItemIdx--);

@@ -9,7 +9,8 @@
 namespace output {
 
 SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
-    : m_settings(std::move(settings)) {
+    : m_settings(std::move(settings)),
+      m_connectionManager(std::bind(&SauvolaBinarizationOptionsWidget::setupUiConnections, this)) {
   setupUi(this);
 
   m_delayedStateChanger.setSingleShot(true);
@@ -18,7 +19,7 @@ SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr
 }
 
 void SauvolaBinarizationOptionsWidget::updateUi(const PageId& pageId) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   const Params params(m_settings->getParams(pageId));
   m_pageId = pageId;
@@ -26,8 +27,6 @@ void SauvolaBinarizationOptionsWidget::updateUi(const PageId& pageId) {
   m_outputProcessingParams = m_settings->getOutputProcessingParams(pageId);
 
   updateView();
-
-  setupUiConnections();
 }
 
 void SauvolaBinarizationOptionsWidget::windowSizeChanged(int value) {
@@ -58,7 +57,7 @@ void SauvolaBinarizationOptionsWidget::sendStateChanged() {
   emit stateChanged();
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void SauvolaBinarizationOptionsWidget::setupUiConnections() {
   CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
@@ -67,11 +66,4 @@ void SauvolaBinarizationOptionsWidget::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void SauvolaBinarizationOptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 }  // namespace output

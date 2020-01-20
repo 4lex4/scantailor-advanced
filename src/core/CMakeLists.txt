@@ -111,7 +111,8 @@ set(common_sources
     IconPack.h
     AbstractIconPack.cpp AbstractIconPack.h
     StyledIconPack.cpp StyledIconPack.h
-    FontIconPack.cpp FontIconPack.h)
+    FontIconPack.cpp FontIconPack.h
+    ConnectionManager.cpp ConnectionManager.h)
 
 add_library(core STATIC ${common_sources} ${common_ui_files})
 target_link_libraries(

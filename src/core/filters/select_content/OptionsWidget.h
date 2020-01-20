@@ -6,6 +6,7 @@
 
 #include <AutoManualMode.h>
 #include <UnitsListener.h>
+#include <core/ConnectionManager.h>
 
 #include <QRectF>
 #include <QSizeF>
@@ -124,16 +125,13 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   intrusive_ptr<Settings> m_settings;
   UiData m_uiData;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
   Dpi m_dpi;
-  int m_ignorePageSizeChanges;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace select_content
 #endif  // ifndef SCANTAILOR_SELECT_CONTENT_OPTIONSWIDGET_H_

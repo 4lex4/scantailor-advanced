@@ -4,6 +4,8 @@
 #ifndef SCANTAILOR_DESKEW_OPTIONSWIDGET_H_
 #define SCANTAILOR_DESKEW_OPTIONSWIDGET_H_
 
+#include <core/ConnectionManager.h>
+
 #include <list>
 #include <set>
 
@@ -87,8 +89,6 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void setupUiConnections();
 
-  void removeUiConnections();
-
   static double spinBoxToDegrees(double sbValue);
 
   static double degreesToSpinBox(double degrees);
@@ -103,7 +103,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   PageSelectionAccessor m_pageSelectionAccessor;
 
-  std::list<QMetaObject::Connection> m_connectionList;
+  ConnectionManager m_connectionManager;
 };
 }  // namespace deskew
 #endif  // ifndef SCANTAILOR_DESKEW_OPTIONSWIDGET_H_

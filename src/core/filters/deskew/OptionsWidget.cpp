@@ -6,7 +6,6 @@
 #include <utility>
 
 #include "ApplyDialog.h"
-#include "ScopedIncDec.h"
 #include "Settings.h"
 
 namespace deskew {
@@ -14,9 +13,8 @@ const double OptionsWidget::MAX_ANGLE = 45.0;
 
 OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor)
     : m_settings(std::move(settings)),
-      m_ignoreAutoManualToggle(0),
-      m_ignoreSpinBoxChanges(0),
-      m_pageSelectionAccessor(pageSelectionAccessor) {
+      m_pageSelectionAccessor(pageSelectionAccessor),
+      m_connectionManager(std::bind(&OptionsWidget::setupUiConnections, this)) {
   setupUi(this);
   angleSpinBox->setSuffix(QChar(0x00B0));  // the degree symbol
   angleSpinBox->setRange(-MAX_ANGLE, MAX_ANGLE);
@@ -76,29 +74,23 @@ void OptionsWidget::manualDeskewAngleSetExternally(const double degrees) {
 }
 
 void OptionsWidget::preUpdateUI(const PageId& pageId) {
-  removeUiConnections();
-
-  ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
+  auto block = m_connectionManager.getScopedBlock();
 
   m_pageId = pageId;
   setSpinBoxUnknownState();
   autoBtn->setChecked(true);
   autoBtn->setEnabled(false);
   manualBtn->setEnabled(false);
-
-  setupUiConnections();
 }
 
 void OptionsWidget::postUpdateUI(const UiData& uiData) {
-  removeUiConnections();
+  auto block = m_connectionManager.getScopedBlock();
 
   m_uiData = uiData;
   autoBtn->setEnabled(true);
   manualBtn->setEnabled(true);
   updateModeIndication(uiData.mode());
   setSpinBoxKnownState(degreesToSpinBox(uiData.effectiveDeskewAngle()));
-
-  setupUiConnections();
 }
 
 void OptionsWidget::spinBoxValueChanged(const double value) {
@@ -117,10 +109,6 @@ void OptionsWidget::spinBoxValueChanged(const double value) {
 }
 
 void OptionsWidget::modeChanged(const bool autoMode) {
-  if (m_ignoreAutoManualToggle) {
-    return;
-  }
-
   if (autoMode) {
     m_uiData.setMode(MODE_AUTO);
     m_settings->clearPageParams(m_pageId);
@@ -132,7 +120,7 @@ void OptionsWidget::modeChanged(const bool autoMode) {
 }
 
 void OptionsWidget::updateModeIndication(const AutoManualMode mode) {
-  ScopedIncDec<int> guard(m_ignoreAutoManualToggle);
+  auto block = m_connectionManager.getScopedBlock();
 
   if (mode == MODE_AUTO) {
     autoBtn->setChecked(true);
@@ -142,7 +130,7 @@ void OptionsWidget::updateModeIndication(const AutoManualMode mode) {
 }
 
 void OptionsWidget::setSpinBoxUnknownState() {
-  ScopedIncDec<int> guard(m_ignoreSpinBoxChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   angleSpinBox->setSpecialValueText("?");
   angleSpinBox->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -151,7 +139,7 @@ void OptionsWidget::setSpinBoxUnknownState() {
 }
 
 void OptionsWidget::setSpinBoxKnownState(const double angle) {
-  ScopedIncDec<int> guard(m_ignoreSpinBoxChanges);
+  auto block = m_connectionManager.getScopedBlock();
 
   angleSpinBox->setSpecialValueText("");
   angleSpinBox->setValue(angle);
@@ -179,7 +167,7 @@ double OptionsWidget::degreesToSpinBox(const double degrees) {
   return -degrees;
 }
 
-#define CONNECT(...) m_connectionList.push_back(connect(__VA_ARGS__))
+#define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void OptionsWidget::setupUiConnections() {
   CONNECT(angleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(spinBoxValueChanged(double)));
@@ -188,13 +176,6 @@ void OptionsWidget::setupUiConnections() {
 }
 
 #undef CONNECT
-
-void OptionsWidget::removeUiConnections() {
-  for (const auto& connection : m_connectionList) {
-    disconnect(connection);
-  }
-  m_connectionList.clear();
-}
 
 /*========================== OptionsWidget::UiData =========================*/
 

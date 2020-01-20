@@ -78,7 +78,7 @@ QCheckBox::indicator:unchecked, QTreeView::indicator:unchecked, QTableView::indi
   border-radius: 2.75px;
 }
 
-QMenu::indicator:non-exclusive:unchecked {
+QMenu::indicator:non-exclusive:unchecked, QMenu::indicator:non-exclusive:unchecked:selected {
   border: 1px solid #666666;
   margin: 0px 0px 0px 2px;
   background-color: palette(base);
@@ -163,7 +163,7 @@ QRadioButton::indicator:unchecked {
   border-radius: 7.75px;
 }
 
-QMenu::indicator:exclusive:unchecked {
+QMenu::indicator:exclusive:unchecked, QMenu::indicator:exclusive:unchecked:selected {
   border: 1px solid #666666;
   margin: 0px 0px 0px 2px;
   background-color: palette(base);

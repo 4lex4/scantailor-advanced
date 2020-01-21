@@ -15,7 +15,7 @@ class PageSequence {
  public:
   void append(const PageInfo& pageInfo);
 
-  size_t numPages() const { return m_pages.size(); }
+  size_t numPages() const;
 
   const PageInfo& pageAt(PageId page) const;
 
@@ -29,13 +29,13 @@ class PageSequence {
 
   std::set<PageId> selectEveryOther(const PageId& base) const;
 
-  std::vector<PageInfo>::iterator begin() { return m_pages.begin(); }
+  std::vector<PageInfo>::iterator begin();
 
-  std::vector<PageInfo>::iterator end() { return m_pages.end(); }
+  std::vector<PageInfo>::iterator end();
 
-  std::vector<PageInfo>::const_iterator begin() const { return m_pages.cbegin(); }
+  std::vector<PageInfo>::const_iterator begin() const;
 
-  std::vector<PageInfo>::const_iterator end() const { return m_pages.cend(); }
+  std::vector<PageInfo>::const_iterator end() const;
 
  private:
   std::vector<PageInfo> m_pages;

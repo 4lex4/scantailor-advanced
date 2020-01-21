@@ -620,6 +620,71 @@ QToolButton:pressed {
         </widget>
        </item>
        <item>
+        <widget class="QToolButton" name="sortingOrderBtn">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>22</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>sta_thumbnail_panel_icons</family>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Sorting order.</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton:!hover {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+}
+
+QToolButton:hover {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(base);
+}
+
+QToolButton:pressed {
+  padding: 0;
+  border: 1px solid palette(highlight);
+  background-color: palette(alternative-base);
+}</string>
+         </property>
+         <property name="text">
+          <string notr="true"/>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/resources.qrc">
+           <normaloff>:/icons/ascending_sorting_order.svg</normaloff>:/icons/ascending_sorting_order.svg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

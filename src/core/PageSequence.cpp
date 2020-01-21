@@ -7,6 +7,8 @@ void PageSequence::append(const PageInfo& pageInfo) {
   m_pages.push_back(pageInfo);
 }
 
+size_t PageSequence::numPages() const { return m_pages.size(); }
+
 const PageInfo& PageSequence::pageAt(const size_t idx) const {
   return m_pages.at(idx);  // may throw
 }
@@ -73,3 +75,11 @@ std::set<PageId> PageSequence::selectEveryOther(const PageId& base) const {
   }
   return selection;
 }
+
+std::vector<PageInfo>::iterator PageSequence::begin() { return m_pages.begin(); }
+
+std::vector<PageInfo>::iterator PageSequence::end() { return m_pages.end(); }
+
+std::vector<PageInfo>::const_iterator PageSequence::begin() const { return m_pages.cbegin(); }
+
+std::vector<PageInfo>::const_iterator PageSequence::end() const { return m_pages.cend(); }

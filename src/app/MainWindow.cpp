@@ -277,6 +277,9 @@ MainWindow::MainWindow()
     updateThumbnailViewMode();
     m_thumbSequence->updateSceneItemsPos();
   });
+  connect(sortingOrderBtn, &QToolButton::clicked, this, [this](bool) {
+    pageOrderingChanged(m_stages->filterAt(m_curFilter)->selectedPageOrder());
+  });
 
   connect(actionFixDpi, SIGNAL(triggered(bool)), SLOT(fixDpiDialogRequested()));
   connect(actionRelinking, SIGNAL(triggered(bool)), SLOT(showRelinkingDialog()));
@@ -579,7 +582,9 @@ intrusive_ptr<const PageOrderProvider> MainWindow::currentPageOrderProvider() co
   }
 
   const intrusive_ptr<AbstractFilter> filter(m_stages->filterAt(m_curFilter));
-  return filter->pageOrderOptions()[idx].provider();
+  intrusive_ptr<const PageOrderProvider> currentOrderProvider = filter->pageOrderOptions()[idx].provider();
+  return (currentOrderProvider && sortingOrderBtn->isChecked()) ? currentOrderProvider->reversed()
+                                                                : currentOrderProvider;
 }
 
 void MainWindow::updateSortOptions() {
@@ -609,7 +614,7 @@ void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>
         make_intrusive<ThumbnailFactory>(m_thumbnailCache, m_maxLogicalThumbSize, task));
   }
 
-  m_thumbSequence->reset(m_pages->toPageSequence(getCurrentView()), selectionAction, pageOrderProvider);
+  m_thumbSequence->reset(currentPageSequence(), selectionAction, pageOrderProvider);
 
   if (!m_thumbnailCache) {
     // Empty project.
@@ -1078,8 +1083,7 @@ void MainWindow::pageOrderingChanged(int idx) {
 
   m_stages->filterAt(m_curFilter)->selectPageOrder(idx);
 
-  m_thumbSequence->reset(m_pages->toPageSequence(getCurrentView()), ThumbnailSequence::KEEP_SELECTION,
-                         currentPageOrderProvider());
+  m_thumbSequence->reset(currentPageSequence(), ThumbnailSequence::KEEP_SELECTION, currentPageOrderProvider());
 
   if (!focusButton->isChecked()) {
     thumbView->horizontalScrollBar()->setValue(horScrollBarPos);
@@ -1262,7 +1266,7 @@ void MainWindow::fixedDpiSubmitted() {
   m_pages->updateMetadataFrom(m_fixDpiDialog->files());
 
   // The thumbnail list also stores page metadata, including the DPI.
-  m_thumbSequence->reset(m_pages->toPageSequence(getCurrentView()), ThumbnailSequence::KEEP_SELECTION,
+  m_thumbSequence->reset(currentPageSequence(), ThumbnailSequence::KEEP_SELECTION,
                          m_thumbSequence->pageOrderProvider());
 
   const PageInfo selectedPageAfter(m_thumbSequence->selectionLeader());
@@ -2054,6 +2058,7 @@ void MainWindow::setupIcons() {
   gotoPageBtn->setIcon(iconProvider.getIcon("right-pointing"));
   selectionModeBtn->setIcon(iconProvider.getIcon("checkbox-styled"));
   thumbColumnViewBtn->setIcon(iconProvider.getIcon("column-view"));
+  sortingOrderBtn->setIcon(iconProvider.getIcon("sorting-order"));
 }
 
 void MainWindow::execGotoPageDialog() {
@@ -2087,4 +2092,12 @@ void MainWindow::updateAutoSaveTimer() {
   if (m_autoSaveTimer.remainingTime() <= 0) {
     m_autoSaveTimer.start(60000);
   }
+}
+
+PageSequence MainWindow::currentPageSequence() {
+  PageSequence pageSequence = m_pages->toPageSequence(getCurrentView());
+  if (sortingOrderBtn->isChecked()) {
+    std::reverse(pageSequence.begin(), pageSequence.end());
+  }
+  return pageSequence;
 }

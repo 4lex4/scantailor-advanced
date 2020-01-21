@@ -4,12 +4,13 @@
 #ifndef SCANTAILOR_CORE_PAGEORDERPROVIDER_H_
 #define SCANTAILOR_CORE_PAGEORDERPROVIDER_H_
 
-#include "ref_countable.h"
+#include <foundation/intrusive_ptr.h>
+#include <foundation/ref_countable.h>
 
 class PageId;
 
 /**
- * A base class for different page ordering strategies.
+ * A base interface for different page ordering strategies.
  */
 class PageOrderProvider : public ref_countable {
  public:
@@ -19,6 +20,8 @@ class PageOrderProvider : public ref_countable {
    * a page is represented by IncompleteThumbnail.
    */
   virtual bool precedes(const PageId& lhsPage, bool lhsIncomplete, const PageId& rhsPage, bool rhsIncomplete) const = 0;
+
+  virtual intrusive_ptr<const PageOrderProvider> reversed() const;
 };
 
 

@@ -293,6 +293,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void updateAutoSaveTimer();
 
+  PageSequence currentPageSequence();
+
   void setupIcons();
 
   QSizeF m_maxLogicalThumbSize;

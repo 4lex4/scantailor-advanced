@@ -167,5 +167,9 @@
   <icon name="column-view" styled="on">
     <file state="off">:/icons/multi-column-view.svg</file>
     <file state="on">:/icons/single-column-view.svg</file>
-  </icon> 
+  </icon>
+  <icon name="sorting-order" styled="on">
+    <file state="off">:icons/ascending_sorting_order.svg</file>
+    <file state="on">:icons/descending_sorting_order.svg</file>
+  </icon>
 </icons>

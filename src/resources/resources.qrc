@@ -57,6 +57,8 @@
     <file>icons/right-pointing.svg</file>
     <file>icons/multi-column-view.svg</file>
     <file>icons/single-column-view.svg</file>
+    <file>icons/ascending_sorting_order.svg</file>
+    <file>icons/descending_sorting_order.svg</file>
     <file>icons.xml</file>
     <file>font-icons.xml</file>
     <file>GPLv3.html</file>

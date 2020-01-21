@@ -282,8 +282,10 @@ static void transformGeneric(const StorageUnit* const srcData,
 
 template <typename ImageT>
 void fixDpiInPlace(ImageT& dst, const QImage& src, const QTransform& xform) {
-  dst.setDotsPerMeterX(qRound(src.dotsPerMeterX() * xform.m11()));
-  dst.setDotsPerMeterY(qRound(src.dotsPerMeterY() * xform.m22()));
+  QLineF horLine(0, 0, src.dotsPerMeterX(), 0);
+  QLineF verLine(0, 0, 0, src.dotsPerMeterY());
+  dst.setDotsPerMeterX(qRound(xform.map(horLine).length()));
+  dst.setDotsPerMeterY(qRound(xform.map(verLine).length()));
 }
 }  // namespace
 

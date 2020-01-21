@@ -713,7 +713,7 @@ void ImageView::onContextMenuEvent(QContextMenuEvent* event, InteractionState& i
 
 void ImageView::setupGuides() {
   for (const Guide& guide : m_settings->guides()) {
-    m_guides[m_guidesFreeIndex] = guide;
+    m_guides[m_guidesFreeIndex] = m_mmToPixelsXform.map(guide);
     setupGuideInteraction(m_guidesFreeIndex++);
   }
 }
@@ -787,7 +787,7 @@ QTransform ImageView::guideToWidgetCs() const {
 void ImageView::syncGuidesSettings() {
   m_settings->guides().clear();
   for (const auto& idxAndGuide : m_guides) {
-    m_settings->guides().push_back(idxAndGuide.second);
+    m_settings->guides().emplace_back(m_pixelsToMmXform.map(idxAndGuide.second));
   }
 }
 

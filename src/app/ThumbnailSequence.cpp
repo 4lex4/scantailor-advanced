@@ -720,7 +720,7 @@ bool ThumbnailSequence::Impl::cancelingSelectionAccepted() {
 }
 
 bool ThumbnailSequence::Impl::setSelection(const PageId& pageId, const SelectionAction selectionAction) {
-  if ((selectionAction != KEEP_SELECTION) && !cancelingSelectionAccepted()) {
+  if ((selectionAction == RESET_SELECTION) && !cancelingSelectionAccepted()) {
     return false;
   }
 

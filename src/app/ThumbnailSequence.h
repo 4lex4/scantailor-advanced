@@ -32,7 +32,7 @@ class ThumbnailSequence : public QObject {
   DECLARE_NON_COPYABLE(ThumbnailSequence)
 
  public:
-  enum SelectionAction { KEEP_SELECTION, RESET_SELECTION };
+  enum SelectionAction { KEEP_SELECTION, RESET_SELECTION, FORCE_RESET_SELECTION };
 
   enum SelectionFlags {
     DEFAULT_SELECTION_FLAGS = 0,
@@ -138,7 +138,7 @@ class ThumbnailSequence : public QObject {
    * with REDUNDANT_SELECTION flag set, in case our page was already the
    * selection leader.
    */
-  bool setSelection(const PageId& pageId, SelectionAction selectionAction = RESET_SELECTION);
+  bool setSelection(const PageId& pageId, SelectionAction selectionAction = FORCE_RESET_SELECTION);
 
   /**
    * \brief Returns the current selection leader.

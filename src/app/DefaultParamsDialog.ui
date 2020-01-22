@@ -393,8 +393,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>193</width>
-            <height>162</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -638,8 +638,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>208</width>
-            <height>116</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -810,8 +810,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>208</width>
-            <height>314</height>
+            <width>637</width>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -1208,14 +1208,14 @@
                       <widget class="QToolButton" name="topBottomLink">
                        <property name="minimumSize">
                         <size>
-                         <width>18</width>
-                         <height>46</height>
+                         <width>20</width>
+                         <height>36</height>
                         </size>
                        </property>
                        <property name="maximumSize">
                         <size>
-                         <width>18</width>
-                         <height>46</height>
+                         <width>20</width>
+                         <height>36</height>
                         </size>
                        </property>
                        <property name="styleSheet">
@@ -1246,8 +1246,8 @@ QToolButton:pressed {
                        </property>
                        <property name="iconSize">
                         <size>
-                         <width>10</width>
-                         <height>30</height>
+                         <width>18</width>
+                         <height>24</height>
                         </size>
                        </property>
                       </widget>
@@ -1277,14 +1277,14 @@ QToolButton:pressed {
                       <widget class="QToolButton" name="leftRightLink">
                        <property name="minimumSize">
                         <size>
-                         <width>18</width>
-                         <height>46</height>
+                         <width>20</width>
+                         <height>36</height>
                         </size>
                        </property>
                        <property name="maximumSize">
                         <size>
-                         <width>18</width>
-                         <height>46</height>
+                         <width>20</width>
+                         <height>36</height>
                         </size>
                        </property>
                        <property name="styleSheet">
@@ -1315,8 +1315,8 @@ QToolButton:pressed {
                        </property>
                        <property name="iconSize">
                         <size>
-                         <width>10</width>
-                         <height>30</height>
+                         <width>18</width>
+                         <height>24</height>
                         </size>
                        </property>
                        <property name="checked">
@@ -1876,7 +1876,7 @@ QToolButton:pressed {
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>615</width>
+            <width>620</width>
             <height>496</height>
            </rect>
           </property>

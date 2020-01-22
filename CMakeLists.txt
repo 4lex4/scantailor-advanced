@@ -40,8 +40,8 @@ if (NOT DEFAULT_COMPILER_FLAGS_IS_SET)
   endif()
 
   if (UNIX)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    option(CMAKE_POSITION_INDEPENDENT_CODE "" ON)
+    option(CMAKE_INSTALL_RPATH_USE_LINK_PATH "" ON)
   endif()
 
   if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_COMPILER_IS_GNUCXX)
@@ -57,10 +57,6 @@ if (NOT DEFAULT_COMPILER_FLAGS_IS_SET)
       CACHE STRING "Common link flags for all build configurations." FORCE)
 
   set(DEFAULT_COMPILER_FLAGS_IS_SET YES CACHE INTERNAL "" FORCE)
-endif()
-
-if (UNIX)
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
 
 include(cmake/SetDefaultBuildType.cmake)

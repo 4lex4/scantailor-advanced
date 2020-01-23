@@ -433,10 +433,6 @@ QScrollBar::up-arrow:vertical {
   image: url(:/light_scheme/icons/scroll_bar_up_arrow.svg);
 }
 
-QTabWidget > QWidget {
-  qproperty-drawBase:0;
-}
-
 QTabWidget::pane {
   background-color: palette(window);
   border: 1px solid #cccccc;

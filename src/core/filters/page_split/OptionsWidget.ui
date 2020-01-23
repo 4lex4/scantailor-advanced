@@ -51,8 +51,7 @@
          <widget class="QToolButton" name="singlePageUncutBtn">
           <property name="icon">
            <iconset resource="../../../resources/resources.qrc">
-            <normaloff>:/icons/single_page_uncut.svg</normaloff>
-            <normalon>:/icons/single_page_uncut_selected.svg</normalon>:/icons/single_page_uncut.svg</iconset>
+            <normaloff>:/icons/single_page_uncut.svg</normaloff>:/icons/single_page_uncut.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -75,8 +74,7 @@
          <widget class="QToolButton" name="pagePlusOffcutBtn">
           <property name="icon">
            <iconset resource="../../../resources/resources.qrc">
-            <normaloff>:/icons/right_page_plus_offcut.svg</normaloff>
-            <normalon>:/icons/right_page_plus_offcut_selected.svg</normalon>:/icons/right_page_plus_offcut.svg</iconset>
+            <normaloff>:/icons/right_page_plus_offcut.svg</normaloff>:/icons/right_page_plus_offcut.svg</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -99,8 +97,7 @@
          <widget class="QToolButton" name="twoPagesBtn">
           <property name="icon">
            <iconset resource="../../../resources/resources.qrc">
-            <normaloff>:/icons/two_pages.svg</normaloff>
-            <normalon>:/icons/two_pages_selected.svg</normalon>:/icons/two_pages.svg</iconset>
+            <normaloff>:/icons/two_pages.svg</normaloff>:/icons/two_pages.svg</iconset>
           </property>
           <property name="iconSize">
            <size>

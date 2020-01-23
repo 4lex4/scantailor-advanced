@@ -15,7 +15,6 @@ using namespace core;
 NewOpenProjectPanel::NewOpenProjectPanel(QWidget* parent) : QWidget(parent) {
   setupUi(this);
 
-  recentProjectsGroup->setLayout(new QVBoxLayout);
   newProjectLabel->setText(Utils::richTextForLink(newProjectLabel->text()));
   openProjectLabel->setText(Utils::richTextForLink(openProjectLabel->text()));
 

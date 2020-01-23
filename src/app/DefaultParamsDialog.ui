@@ -470,8 +470,7 @@
                  <widget class="QToolButton" name="singlePageUncutBtn">
                   <property name="icon">
                    <iconset resource="../resources/resources.qrc">
-                    <normaloff>:/icons/single_page_uncut.svg</normaloff>
-                    <normalon>:/icons/single_page_uncut_selected.svg</normalon>:/icons/single_page_uncut.svg</iconset>
+                    <normaloff>:/icons/single_page_uncut.svg</normaloff>:/icons/single_page_uncut.svg</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -497,8 +496,7 @@
                  <widget class="QToolButton" name="pagePlusOffcutBtn">
                   <property name="icon">
                    <iconset resource="../resources/resources.qrc">
-                    <normaloff>:/icons/right_page_plus_offcut.svg</normaloff>
-                    <normalon>:/icons/right_page_plus_offcut_selected.svg</normalon>:/icons/right_page_plus_offcut.svg</iconset>
+                    <normaloff>:/icons/right_page_plus_offcut.svg</normaloff>:/icons/right_page_plus_offcut.svg</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -521,8 +519,7 @@
                  <widget class="QToolButton" name="twoPagesBtn">
                   <property name="icon">
                    <iconset resource="../resources/resources.qrc">
-                    <normaloff>:/icons/two_pages.svg</normaloff>
-                    <normalon>:/icons/two_pages_selected.svg</normalon>:/icons/two_pages.svg</iconset>
+                    <normaloff>:/icons/two_pages.svg</normaloff>:/icons/two_pages.svg</iconset>
                   </property>
                   <property name="iconSize">
                    <size>
@@ -638,8 +635,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>208</width>
+            <height>116</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -810,8 +807,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>208</width>
+            <height>314</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_7">
@@ -1117,8 +1114,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>637</width>
-            <height>442</height>
+            <width>406</width>
+            <height>237</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_10">
@@ -1876,7 +1873,7 @@ QToolButton:pressed {
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>620</width>
+            <width>615</width>
             <height>496</height>
            </rect>
           </property>

@@ -39,11 +39,6 @@ if (NOT DEFAULT_COMPILER_FLAGS_IS_SET)
     message(WARNING "Only MSVC toolchain is supported to build for Windows XP.")
   endif()
 
-  if (UNIX)
-    option(CMAKE_POSITION_INDEPENDENT_CODE "" ON)
-    option(CMAKE_INSTALL_RPATH_USE_LINK_PATH "" ON)
-  endif()
-
   if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror=return-type -Wno-unused")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror=return-type -Wno-unused")
@@ -57,6 +52,11 @@ if (NOT DEFAULT_COMPILER_FLAGS_IS_SET)
       CACHE STRING "Common link flags for all build configurations." FORCE)
 
   set(DEFAULT_COMPILER_FLAGS_IS_SET YES CACHE INTERNAL "" FORCE)
+endif()
+
+if (UNIX)
+  option(CMAKE_POSITION_INDEPENDENT_CODE "" ON)
+  option(CMAKE_INSTALL_RPATH_USE_LINK_PATH "" ON)
 endif()
 
 include(cmake/SetDefaultBuildType.cmake)

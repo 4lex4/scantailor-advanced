@@ -15,6 +15,7 @@
 #include "InteractionHandler.h"
 #include "InteractionState.h"
 #include "ZoomHandler.h"
+#include "ZoneCreationMode.h"
 
 class ZoneInteractionContext;
 
@@ -40,6 +41,8 @@ class ZoneCreationInteraction : public InteractionHandler {
   void updateStatusTip();
 
   bool isDragHandlerPermitted(const InteractionState& interaction) const;
+
+  ZoneCreationMode currentZoneCreationMode() const;
 
   ZoneInteractionContext& m_context;
 
@@ -68,11 +71,10 @@ class ZoneCreationInteraction : public InteractionHandler {
   InteractionState::Captor m_interaction;
   EditableSpline::Ptr m_spline;
   QPointF m_nextVertexImagePos;
-  bool m_rectangularZoneType;
   QPointF m_nextVertexImagePos_mid1;
   QPointF m_nextVertexImagePos_mid2;
-  bool m_lassoMode;
-  Qt::KeyboardModifiers m_lassoModeModifiers;
+  ZoneCreationMode m_initialZoneCreationMode;
+  bool m_leftMouseButtonPressed;
 };
 
 

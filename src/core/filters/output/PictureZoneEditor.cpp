@@ -79,23 +79,22 @@ PictureZoneEditor::PictureZoneEditor(const QImage& image,
                                      const QPolygonF& virtDisplayArea,
                                      const PageId& pageId,
                                      intrusive_ptr<Settings> settings)
-    : ImageViewBase(image, downscaledImage, ImagePresentation(imageToVirt, virtDisplayArea), OutputMargins()),
-      m_context(*this, m_zones),
+    : ZoneEditorBase(image, downscaledImage, ImagePresentation(imageToVirt, virtDisplayArea), OutputMargins()),
       m_dragHandler(*this),
       m_zoomHandler(*this),
       m_origPictureMask(pictureMask),
       m_pictureMaskAnimationPhase(270),
       m_pageId(pageId),
       m_settings(std::move(settings)) {
-  m_zones.setDefaultProperties(m_settings->defaultPictureZoneProperties());
+  zones().setDefaultProperties(m_settings->defaultPictureZoneProperties());
 
   setMouseTracking(true);
 
-  m_context.setShowPropertiesCommand(boost::bind(&PictureZoneEditor::showPropertiesDialog, this, _1));
+  context().setShowPropertiesCommand(boost::bind(&PictureZoneEditor::showPropertiesDialog, this, _1));
 
-  connect(&m_zones, SIGNAL(committed()), SLOT(commitZones()));
+  connect(&zones(), SIGNAL(committed()), SLOT(commitZones()));
 
-  makeLastFollower(*m_context.createDefaultInteraction());
+  makeLastFollower(*context().createDefaultInteraction());
 
   rootInteractionHandler().makeLastFollower(*this);
 
@@ -115,12 +114,12 @@ PictureZoneEditor::PictureZoneEditor(const QImage& image,
 
   for (const Zone& zone : m_settings->pictureZonesForPage(pageId)) {
     auto spline = make_intrusive<EditableSpline>(zone.spline());
-    m_zones.addZone(spline, zone.properties());
+    zones().addZone(spline, zone.properties());
   }
 }
 
 PictureZoneEditor::~PictureZoneEditor() {
-  m_settings->setDefaultPictureZoneProperties(m_zones.defaultProperties());
+  m_settings->setDefaultPictureZoneProperties(zones().defaultProperties());
 }
 
 void PictureZoneEditor::onPaint(QPainter& painter, const InteractionState& interaction) {
@@ -216,7 +215,7 @@ void PictureZoneEditor::paintOverPictureMask(QPainter& painter) {
   painter.setCompositionMode(QPainter::CompositionMode_Clear);
 
   // First pass: ERASER1
-  for (const EditableZoneSet::Zone& zone : m_zones) {
+  for (const EditableZoneSet::Zone& zone : zones()) {
     if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER1) {
       painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
     }
@@ -225,7 +224,7 @@ void PictureZoneEditor::paintOverPictureMask(QPainter& painter) {
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
   // Second pass: PAINTER2
-  for (const EditableZoneSet::Zone& zone : m_zones) {
+  for (const EditableZoneSet::Zone& zone : zones()) {
     if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::PAINTER2) {
       painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
     }
@@ -234,7 +233,7 @@ void PictureZoneEditor::paintOverPictureMask(QPainter& painter) {
   painter.setCompositionMode(QPainter::CompositionMode_Clear);
 
   // Third pass: ERASER3
-  for (const EditableZoneSet::Zone& zone : m_zones) {
+  for (const EditableZoneSet::Zone& zone : zones()) {
     if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
       painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
     }
@@ -253,9 +252,9 @@ void PictureZoneEditor::showPropertiesDialog(const EditableZoneSet::Zone& zone) 
   connect(&dialog, SIGNAL(updated()), SLOT(updateRequested()));
 
   if (dialog.exec() == QDialog::Accepted) {
-    m_zones.setDefaultProperties(*zone.properties());
-    m_zones.commit();
-    m_settings->setDefaultPictureZoneProperties(m_zones.defaultProperties());
+    zones().setDefaultProperties(*zone.properties());
+    zones().commit();
+    m_settings->setDefaultPictureZoneProperties(zones().defaultProperties());
   } else {
     zone.properties()->swap(savedProperties);
     update();
@@ -265,7 +264,7 @@ void PictureZoneEditor::showPropertiesDialog(const EditableZoneSet::Zone& zone) 
 void PictureZoneEditor::commitZones() {
   ZoneSet zones;
 
-  for (const EditableZoneSet::Zone& zone : m_zones) {
+  for (const EditableZoneSet::Zone& zone : this->zones()) {
     zones.add(Zone(*zone.spline(), *zone.properties()));
   }
 

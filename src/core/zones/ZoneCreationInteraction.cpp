@@ -18,16 +18,14 @@ ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context
       m_dragWatcher(m_dragHandler),
       m_zoomHandler(context.imageView(), boost::lambda::constant(true)),
       m_spline(new EditableSpline),
-      m_lassoModeModifiers(Qt::ShiftModifier | Qt::AltModifier) {
+      m_initialZoneCreationMode(context.getZoneCreationMode()),
+      m_leftMouseButtonPressed(m_initialZoneCreationMode == ZoneCreationMode::LASSO) {
   const QPointF screenMousePos(m_context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5));
   const QTransform fromScreen(m_context.imageView().widgetToImage());
   m_nextVertexImagePos = fromScreen.map(screenMousePos);
 
   m_nextVertexImagePos_mid1 = m_nextVertexImagePos;
   m_nextVertexImagePos_mid2 = m_nextVertexImagePos;
-  m_rectangularZoneType = false;
-
-  m_lassoMode = false;
 
   makeLastFollower(m_dragHandler);
   m_dragHandler.makeFirstFollower(m_dragWatcher);
@@ -82,7 +80,7 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState&
   gradientMid2.setColorAt(0.0, midColor);
   gradientMid2.setColorAt(1.0, stopColor);
 
-  if (m_rectangularZoneType) {
+  if (currentZoneCreationMode() == ZoneCreationMode::RECTANGULAR) {
     if (m_nextVertexImagePos != m_spline->firstVertex()->point()) {
       m_visualizer.drawVertex(painter, toScreen.map(m_nextVertexImagePos_mid1), m_visualizer.highlightBrightColor());
       m_visualizer.drawVertex(painter, toScreen.map(m_nextVertexImagePos_mid2), m_visualizer.highlightBrightColor());
@@ -156,11 +154,7 @@ void ZoneCreationInteraction::onMousePressEvent(QMouseEvent* event, InteractionS
   if (event->button() != Qt::LeftButton) {
     return;
   }
-
-  if (!m_rectangularZoneType && (event->modifiers() == m_lassoModeModifiers)) {
-    m_lassoMode = true;
-  }
-
+  m_leftMouseButtonPressed = true;
   event->accept();
 }
 
@@ -168,17 +162,19 @@ void ZoneCreationInteraction::onMouseReleaseEvent(QMouseEvent* event, Interactio
   if (event->button() != Qt::LeftButton) {
     return;
   }
-  if (m_dragWatcher.haveSignificantDrag() && !m_lassoMode) {
+  m_leftMouseButtonPressed = false;
+
+  ZoneCreationMode currentCreationMode = currentZoneCreationMode();
+  if (m_dragWatcher.haveSignificantDrag() && !(currentCreationMode == ZoneCreationMode::LASSO)) {
     return;
   }
-  m_lassoMode = false;
 
   const QTransform toScreen(m_context.imageView().imageToWidget());
   const QTransform fromScreen(m_context.imageView().widgetToImage());
   const QPointF screenMousePos(event->pos() + QPointF(0.5, 0.5));
   const QPointF imageMousePos(fromScreen.map(screenMousePos));
 
-  if (m_rectangularZoneType) {
+  if (currentCreationMode == ZoneCreationMode::RECTANGULAR) {
     if (m_nextVertexImagePos != m_spline->firstVertex()->point()) {
       QPointF firstPoint = m_spline->firstVertex()->point();
 
@@ -239,26 +235,19 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
   const QPointF first(toScreen.map(m_spline->firstVertex()->point()));
   const QPointF last(toScreen.map(m_spline->lastVertex()->point()));
 
-  if (!m_rectangularZoneType) {
-    if (event->modifiers() == Qt::ControlModifier) {
-      m_rectangularZoneType = true;
-      m_lassoMode = false;
-      updateStatusTip();
-    } else if (!m_lassoMode && (event->modifiers() == m_lassoModeModifiers) && (event->buttons() & Qt::LeftButton)) {
-      m_lassoMode = true;
-    }
-  }
+  ZoneCreationMode currentCreationMode = currentZoneCreationMode();
 
   if (Proximity(last, screenMousePos) <= interaction.proximityThreshold()) {
     m_nextVertexImagePos = m_spline->lastVertex()->point();
-  } else if (m_spline->hasAtLeastSegments(2) || m_rectangularZoneType) {
+  } else if (m_spline->hasAtLeastSegments(2) || (currentCreationMode == ZoneCreationMode::RECTANGULAR)) {
     if (Proximity(first, screenMousePos) <= interaction.proximityThreshold()) {
       m_nextVertexImagePos = m_spline->firstVertex()->point();
       updateStatusTip();
     }
   }
 
-  if (m_rectangularZoneType && (m_nextVertexImagePos != m_spline->firstVertex()->point())) {
+  if ((currentCreationMode == ZoneCreationMode::RECTANGULAR)
+      && (m_nextVertexImagePos != m_spline->firstVertex()->point())) {
     QPointF screenMousePosMid1;
     screenMousePosMid1.setX(first.x());
     screenMousePosMid1.setY(screenMousePos.y());
@@ -279,10 +268,20 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
     }
   }
 
-  if (m_lassoMode) {
-    Proximity minDistance = Proximity::fromDist(10);
+  if ((currentCreationMode == ZoneCreationMode::LASSO) && m_leftMouseButtonPressed) {
+    Proximity minDistance = interaction.proximityThreshold();
     if ((Proximity(last, screenMousePos) > minDistance) && (Proximity(first, screenMousePos) > minDistance)) {
       m_spline->appendVertex(m_nextVertexImagePos);
+    } else if (m_spline->hasAtLeastSegments(2) && (m_nextVertexImagePos == m_spline->firstVertex()->point())) {
+      // Finishing the spline.  Bridging the first and the last points
+      // will create another segment.
+      m_spline->setBridged(true);
+      m_context.zones().addZone(m_spline);
+      m_context.zones().commit();
+
+      makePeerPreceeder(*m_context.createDefaultInteraction());
+      m_context.imageView().update();
+      delete this;
     }
   }
 
@@ -292,7 +291,9 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
 void ZoneCreationInteraction::updateStatusTip() {
   QString tip;
 
-  if (m_rectangularZoneType) {
+  ZoneCreationMode currentCreationMode = currentZoneCreationMode();
+
+  if (currentCreationMode == ZoneCreationMode::RECTANGULAR) {
     if (m_nextVertexImagePos != m_spline->firstVertex()->point()) {
       tip = tr("Click to finish this rectangular zone.  ESC to cancel.");
     }
@@ -304,13 +305,31 @@ void ZoneCreationInteraction::updateStatusTip() {
         tip = tr("Connect first and last points to finish this zone.  ESC to cancel.");
       }
     } else {
-      tip = tr("Hold Ctrl to create a rectangular zone or Shift+Alt+LMB to use lasso mode.  ESC to cancel.");
+      tip = tr("Use Z and X keys to switch zone creation mode.  ESC to cancel.");
     }
   }
 
   m_interaction.setInteractionStatusTip(tip);
 }
 
-bool ZoneCreationInteraction::isDragHandlerPermitted(const InteractionState& interaction) const {
-  return !m_lassoMode;
+bool ZoneCreationInteraction::isDragHandlerPermitted(const InteractionState&) const {
+  return !(currentZoneCreationMode() == ZoneCreationMode::LASSO);
+}
+
+ZoneCreationMode ZoneCreationInteraction::currentZoneCreationMode() const {
+  switch (m_initialZoneCreationMode) {
+    case ZoneCreationMode::RECTANGULAR:
+      return ZoneCreationMode::RECTANGULAR;
+    case ZoneCreationMode::POLYGONAL:
+    case ZoneCreationMode::LASSO:
+      switch (m_context.getZoneCreationMode()) {
+        case ZoneCreationMode::POLYGONAL:
+          return ZoneCreationMode::POLYGONAL;
+        case ZoneCreationMode::LASSO:
+          return ZoneCreationMode::LASSO;
+        default:
+          break;
+      }
+  }
+  return ZoneCreationMode::POLYGONAL;
 }

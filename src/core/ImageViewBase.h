@@ -246,6 +246,8 @@ class ImageViewBase : public QAbstractScrollArea {
 
   void showEvent(QShowEvent* event) override;
 
+  void hideEvent(QHideEvent* event) override;
+
   /**
    * Returns the maximum viewport size (as if scrollbars are hidden)
    * reduced by margins.

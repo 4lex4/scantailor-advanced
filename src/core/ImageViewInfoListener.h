@@ -20,7 +20,7 @@ class ImageViewInfoListener {
 
   virtual void onDpiChanged(const Dpi& dpi) = 0;
 
-  virtual void onProviderStopped() = 0;
+  virtual void onImageViewInfoProviderStopped() = 0;
 };
 
 

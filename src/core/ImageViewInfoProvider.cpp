@@ -12,7 +12,7 @@ ImageViewInfoProvider::ImageViewInfoProvider(const Dpi& dpi) : m_dpi(dpi) {}
 
 ImageViewInfoProvider::~ImageViewInfoProvider() {
   for (ImageViewInfoListener* listener : m_infoListeners) {
-    listener->onProviderStopped();
+    listener->onImageViewInfoProviderStopped();
   }
 }
 
@@ -25,6 +25,7 @@ void ImageViewInfoProvider::addListener(ImageViewInfoListener* listener) {
 }
 
 void ImageViewInfoProvider::removeListener(ImageViewInfoListener* listener) {
+  listener->onImageViewInfoProviderStopped();
   m_infoListeners.remove(listener);
 }
 

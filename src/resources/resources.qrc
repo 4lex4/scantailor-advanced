@@ -59,6 +59,9 @@
     <file>icons/single-column-view.svg</file>
     <file>icons/ascending_sorting_order.svg</file>
     <file>icons/descending_sorting_order.svg</file>
+    <file>icons/lasso-zone-mode.svg</file>
+    <file>icons/polygonal-zone-mode.svg</file>
+    <file>icons/rectangular-zone-mode.svg</file>    
     <file>icons.xml</file>
     <file>font-icons.xml</file>
     <file>GPLv3.html</file>

@@ -37,25 +37,24 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
                                const boost::function<QPointF(const QPointF&)>& imageToOrig,
                                const PageId& pageId,
                                intrusive_ptr<Settings> settings)
-    : ImageViewBase(image, downscaledVersion, ImagePresentation(QTransform(), QRectF(image.rect())), OutputMargins()),
-      m_colorAdapter(colorAdapterFor(image)),
-      m_context(*this, m_zones),
-      m_colorPickupInteraction(m_zones, m_context),
+    : ZoneEditorBase(image, downscaledVersion, ImagePresentation(QTransform(), QRectF(image.rect())), OutputMargins()),
       m_dragHandler(*this),
       m_zoomHandler(*this),
+      m_colorAdapter(colorAdapterFor(image)),
+      m_colorPickupInteraction(zones(), context()),
       m_origToImage(origToImage),
       m_imageToOrig(imageToOrig),
       m_pageId(pageId),
       m_settings(std::move(settings)) {
-  m_zones.setDefaultProperties(m_settings->defaultFillZoneProperties());
+  zones().setDefaultProperties(m_settings->defaultFillZoneProperties());
 
   setMouseTracking(true);
 
-  m_context.setContextMenuInteractionCreator(boost::bind(&FillZoneEditor::createContextMenuInteraction, this, _1));
+  context().setContextMenuInteractionCreator(boost::bind(&FillZoneEditor::createContextMenuInteraction, this, _1));
 
-  connect(&m_zones, SIGNAL(committed()), SLOT(commitZones()));
+  connect(&zones(), SIGNAL(committed()), SLOT(commitZones()));
 
-  makeLastFollower(*m_context.createDefaultInteraction());
+  makeLastFollower(*context().createDefaultInteraction());
 
   rootInteractionHandler().makeLastFollower(*this);
 
@@ -67,12 +66,12 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
 
   for (const Zone& zone : m_settings->fillZonesForPage(pageId)) {
     auto spline = make_intrusive<EditableSpline>(zone.spline().transformed(m_origToImage));
-    m_zones.addZone(spline, zone.properties());
+    zones().addZone(spline, zone.properties());
   }
 }
 
 FillZoneEditor::~FillZoneEditor() {
-  m_settings->setDefaultFillZoneProperties(m_zones.defaultProperties());
+  m_settings->setDefaultFillZoneProperties(zones().defaultProperties());
 }
 
 void FillZoneEditor::onPaint(QPainter& painter, const InteractionState& interaction) {
@@ -86,7 +85,7 @@ void FillZoneEditor::onPaint(QPainter& painter, const InteractionState& interact
 
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
-  for (const EditableZoneSet::Zone& zone : m_zones) {
+  for (const EditableZoneSet::Zone& zone : zones()) {
     using FCP = FillColorProperty;
     const QColor color(zone.properties()->locateOrDefault<FCP>()->color());
     painter.setBrush(m_colorAdapter(color));
@@ -96,7 +95,7 @@ void FillZoneEditor::onPaint(QPainter& painter, const InteractionState& interact
 
 InteractionHandler* FillZoneEditor::createContextMenuInteraction(InteractionState& interaction) {
   // Return a standard ZoneContextMenuInteraction but with a customized menu.
-  return ZoneContextMenuInteraction::create(m_context, interaction, MenuCustomizer(this));
+  return ZoneContextMenuInteraction::create(context(), interaction, MenuCustomizer(this));
 }
 
 InteractionHandler* FillZoneEditor::createColorPickupInteraction(const EditableZoneSet::Zone& zone,
@@ -108,7 +107,7 @@ InteractionHandler* FillZoneEditor::createColorPickupInteraction(const EditableZ
 void FillZoneEditor::commitZones() {
   ZoneSet zones;
 
-  for (const EditableZoneSet::Zone& zone : m_zones) {
+  for (const EditableZoneSet::Zone& zone : this->zones()) {
     const SerializableSpline spline = SerializableSpline(*zone.spline()).transformed(m_imageToOrig);
     zones.add(Zone(spline, *zone.properties()));
   }

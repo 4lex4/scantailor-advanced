@@ -568,6 +568,16 @@ void ImageViewBase::showEvent(QShowEvent* event) {
   }
 }
 
+void ImageViewBase::hideEvent(QHideEvent* event) {
+  QWidget::hideEvent(event);
+
+  if (auto* mainWindow = dynamic_cast<QMainWindow*>(window())) {
+    if (auto* zoneModeListener = Utils::castOrFindChild<ImageViewInfoListener*>(mainWindow->statusBar())) {
+      infoProvider().removeListener(zoneModeListener);
+    }
+  }
+}
+
 /**
  * Called when any of the transformations change.
  */

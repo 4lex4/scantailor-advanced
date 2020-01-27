@@ -75,7 +75,7 @@ class ZoneDefaultInteraction : public InteractionHandler {
   SplineSegment m_nearestSegment;
   EditableSpline::Ptr m_nearestSegmentSpline;
   QPointF m_screenPointOnSegment;
-  EditableSpline::Ptr m_underCursorSpline;
+  EditableSpline::Ptr m_splineUnderMouse;
 };
 
 

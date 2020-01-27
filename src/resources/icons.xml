@@ -172,4 +172,13 @@
     <file state="off">:icons/ascending_sorting_order.svg</file>
     <file state="on">:icons/descending_sorting_order.svg</file>
   </icon>
+  <icon name="lasso-zone-mode" styled="on">
+    <file>:icons/lasso-zone-mode.svg</file>
+  </icon>
+  <icon name="polygonal-zone-mode" styled="on">
+    <file>:icons/polygonal-zone-mode.svg</file>
+  </icon>
+  <icon name="rectangular-zone-mode" styled="on">
+    <file>:icons/rectangular-zone-mode.svg</file>
+  </icon>
 </icons>

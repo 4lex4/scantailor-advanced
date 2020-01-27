@@ -16,9 +16,9 @@
 #include "EditableSpline.h"
 #include "EditableZoneSet.h"
 #include "ImagePixmapUnion.h"
-#include "ImageViewBase.h"
 #include "NonCopyable.h"
 #include "PageId.h"
+#include "ZoneEditorBase.h"
 #include "ZoneInteractionContext.h"
 #include "ZoomHandler.h"
 #include "intrusive_ptr.h"
@@ -33,7 +33,7 @@ namespace output {
 class Settings;
 
 
-class PictureZoneEditor : public ImageViewBase, private InteractionHandler {
+class PictureZoneEditor : public ZoneEditorBase {
   Q_OBJECT
  public:
   PictureZoneEditor(const QImage& image,
@@ -75,11 +75,6 @@ class PictureZoneEditor : public ImageViewBase, private InteractionHandler {
   void paintOverPictureMask(QPainter& painter);
 
   void showPropertiesDialog(const EditableZoneSet::Zone& zone);
-
-  EditableZoneSet m_zones;
-
-  // Must go after m_zones.
-  ZoneInteractionContext m_context;
 
   DragHandler m_dragHandler;
   ZoomHandler m_zoomHandler;

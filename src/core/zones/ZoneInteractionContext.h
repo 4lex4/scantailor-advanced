@@ -9,6 +9,7 @@
 #include "EditableSpline.h"
 #include "EditableZoneSet.h"
 #include "SplineVertex.h"
+#include "ZoneCreationMode.h"
 
 class InteractionHandler;
 class InteractionState;
@@ -86,6 +87,14 @@ class ZoneInteractionContext {
 
   void setShowPropertiesCommand(const ShowPropertiesCommand& command) { m_showPropertiesCommand = command; }
 
+  ZoneCreationMode getZoneCreationMode() const {
+    return m_zoneCreationMode;
+  }
+
+  void setZoneCreationMode(ZoneCreationMode zoneCreationMode) {
+    m_zoneCreationMode = zoneCreationMode;
+  }
+
  private:
   /**
    * Creates an instance of ZoneDefaultInteraction.
@@ -124,6 +133,7 @@ class ZoneInteractionContext {
   ZoneDragInteractionCreator m_zoneDragInteractionCreator;
   ContextMenuInteractionCreator m_contextMenuInteractionCreator;
   ShowPropertiesCommand m_showPropertiesCommand;
+  ZoneCreationMode m_zoneCreationMode;
 };
 
 

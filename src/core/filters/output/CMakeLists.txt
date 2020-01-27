@@ -68,7 +68,7 @@ set(sources
     OutputImageBuilder.cpp OutputImageBuilder.h ForegroundType.h)
 
 add_library(output STATIC ${sources} ${ui_files})
-target_link_libraries(output PUBLIC core interaction PRIVATE dewarping zones)
+target_link_libraries(output PUBLIC core PRIVATE dewarping)
 target_include_directories(output PRIVATE "$<TARGET_PROPERTY:TIFF::TIFF,INTERFACE_INCLUDE_DIRECTORIES>")
 
 translation_sources(scantailor ${sources} ${ui_files})

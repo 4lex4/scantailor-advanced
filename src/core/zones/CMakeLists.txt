@@ -13,7 +13,8 @@ set(sources
     ZoneVertexDragInteraction.cpp ZoneVertexDragInteraction.h
     ZoneContextMenuInteraction.cpp ZoneContextMenuInteraction.h
     ZoneContextMenuItem.h
-    ZoneDragInteraction.cpp ZoneDragInteraction.h)
+    ZoneDragInteraction.cpp ZoneDragInteraction.h
+    ZoneCreationMode.h)
 
 add_library(zones STATIC ${sources})
 target_link_libraries(zones PUBLIC interaction)

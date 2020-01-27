@@ -174,7 +174,7 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   
   * Page splitting settings now influence on the output by filling offcut.
     Fill offcut option has been added.
-     
+  
   * Page layout and all the other views now consider splitting settings.
     Corresponding improvements are done for thumbnails.
   
@@ -186,8 +186,6 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     2. Added check to reject invalid cut settings in manual mode.
     3. UI: Added cutters interaction between each other. They can't more intersect each other,
        which created a wrong page layout configuration before.
-  
-  * Optimized memory usage on the output stage.
   
   * Reworking on [multi column thumbnails view](#multi-column-thumbnails-view-reworked) feature from ver. Enhanced. 
     Now thumbnails are shown evenly.
@@ -315,13 +313,19 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   Added sensitivity option. If sensitivity equals 25%, the results will be the same as they were in old "Quadro" mode, if 100% - as in old "Rectangular".
 
 * ##### New zone interaction modes  
-  **`Shift+LMB`** on a zone - drag the zone.  
-  **`Ctrl+Shift+LMB`** on a zone - drag the zone copying.  
-  **`Del`** when the cursor is over a zone - delete the zone.  
-  Hold **`Ctrl`** when dragging a zone vertex - make the angle of the vertex right.  
-  **`Ctrl+Alt+Click`** - copy the latest created zone to the cursor position.  
-  **`Ctrl`** while creating a new zone - switch to rectangular mode.  
-  Hold **`Shift+Alt+LMB`** while creating a new zone - use lasso (free drawing) mode.  
+  * Zone creation mode:  
+    Press **`Z`** to switch to polygonal mode.  
+    Press **`X`** to switch to lasso (free drawing) mode.  
+    Press **`C`** to switch to rectangular mode.  
+    Press **`Z`** or **`X`** while creating a new zone to switch between polygonal and rectangular modes respectively.  
+  * Zone:  
+    **`Shift+LMB`** on a zone - drag the zone.  
+    **`Ctrl+Shift+LMB`** on a zone - drag the zone copying.  
+    **`Ctrl+Alt+Click`** - copy the latest created zone to the current cursor position.  
+    **`Del`** when the cursor is over a zone - delete the zone.  
+  * Zone vertex:  
+    **`D`** when the cursor is over a zone vertex - delete the vertex.  
+    Hold **`Ctrl`** when dragging a zone vertex - make the angle of the vertex right.  
 
 * ##### Saving zoom and focus on switching output tabs
   The save is precise and considers the images transformations.  
@@ -334,7 +338,7 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   The system affects every aspect of the program, so, for example, it's now possible to adjust margins in pixels, but not only in millimetres or inches.
 
 * ##### Status bar panel
-  The panel shows the next information: mouse position relative to the image, physical size of the image, position of the selected page in current order and the page name and type (`[L]` or `[R]` - left or right page, if the page has been splitted).
+  The panel shows the next information: zone creation mode icon, mouse position relative to the image, physical size of the image, position of the selected page in current order and the page name and type (`[L]` or `[R]` - left or right page, if the page has been splitted).
   
   This feature is also affected by [measurement units system](#measurement-units-system).
 

@@ -15,9 +15,9 @@
 #include "EditableSpline.h"
 #include "EditableZoneSet.h"
 #include "ImagePixmapUnion.h"
-#include "ImageViewBase.h"
 #include "NonCopyable.h"
 #include "PageId.h"
+#include "ZoneEditorBase.h"
 #include "ZoneInteractionContext.h"
 #include "ZoomHandler.h"
 #include "intrusive_ptr.h"
@@ -29,7 +29,7 @@ class QPainter;
 namespace output {
 class Settings;
 
-class FillZoneEditor : public ImageViewBase, private InteractionHandler {
+class FillZoneEditor : public ZoneEditorBase {
   Q_OBJECT
  public:
   FillZoneEditor(const QImage& image,
@@ -71,16 +71,11 @@ class FillZoneEditor : public ImageViewBase, private InteractionHandler {
 
   static ColorAdapter colorAdapterFor(const QImage& image);
 
-
-  ColorAdapter m_colorAdapter;
-  EditableZoneSet m_zones;
-
-  // Must go after m_zones.
-  ZoneInteractionContext m_context;
-  // Must go after m_context.
-  ColorPickupInteraction m_colorPickupInteraction;
   DragHandler m_dragHandler;
   ZoomHandler m_zoomHandler;
+
+  ColorAdapter m_colorAdapter;
+  ColorPickupInteraction m_colorPickupInteraction;
 
   boost::function<QPointF(const QPointF&)> m_origToImage;
   boost::function<QPointF(const QPointF&)> m_imageToOrig;

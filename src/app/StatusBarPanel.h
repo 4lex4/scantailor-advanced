@@ -4,6 +4,8 @@
 #ifndef SCANTAILOR_APP_STATUSBARPANEL_H_
 #define SCANTAILOR_APP_STATUSBARPANEL_H_
 
+#include <core/ZoneModeListener.h>
+
 #include <QtCore/QMutex>
 #include <QtWidgets/QWidget>
 
@@ -15,7 +17,7 @@
 
 class PageId;
 
-class StatusBarPanel : public QWidget, public UnitsListener, public ImageViewInfoListener {
+class StatusBarPanel : public QWidget, public UnitsListener, public ImageViewInfoListener, public ZoneModeListener {
   Q_OBJECT
  public:
   StatusBarPanel();
@@ -29,13 +31,17 @@ class StatusBarPanel : public QWidget, public UnitsListener, public ImageViewInf
 
   void onDpiChanged(const Dpi& dpi) override;
 
-  void onProviderStopped() override;
+  void onImageViewInfoProviderStopped() override;
 
   void updatePage(int pageNumber, size_t pageCount, const PageId& pageId);
 
   void clear();
 
   void onUnitsChanged(Units) override;
+
+  void onZoneModeChanged(ZoneCreationMode mode) override;
+
+  void onZoneModeProviderStopped() override;
 
  private:
   void mousePosChanged();

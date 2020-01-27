@@ -3,6 +3,8 @@
 
 #include "StatusBarPanel.h"
 
+#include <core/IconProvider.h>
+
 #include <QtCore/QFileInfo>
 #include <cmath>
 
@@ -28,7 +30,7 @@ void StatusBarPanel::onDpiChanged(const Dpi& dpi) {
   StatusBarPanel::m_dpi = dpi;
 }
 
-void StatusBarPanel::onProviderStopped() {
+void StatusBarPanel::onImageViewInfoProviderStopped() {
   onMousePosChanged(QPointF());
   onPhysSizeChanged(QRectF().size());
   m_dpi = Dpi();
@@ -36,6 +38,7 @@ void StatusBarPanel::onProviderStopped() {
 
 void StatusBarPanel::updatePage(int pageNumber, size_t pageCount, const PageId& pageId) {
   ui.pageNoLabel->setText(tr("p. %1 / %2").arg(pageNumber).arg(pageCount));
+  ui.pageNoLabel->setVisible(true);
 
   QString pageFileInfo = QFileInfo(pageId.imageId().filePath()).completeBaseName();
   if (pageFileInfo.size() > 15) {
@@ -46,18 +49,28 @@ void StatusBarPanel::updatePage(int pageNumber, size_t pageCount, const PageId& 
   }
 
   ui.pageInfoLine->setVisible(true);
-  ui.pageInfo->setText(pageFileInfo);
+  ui.pageInfoLabel->setText(pageFileInfo);
+  ui.pageInfoLabel->setVisible(true);
 }
 
+namespace {
+inline void clearAndHideLabel(QLabel* widget) {
+  widget->clear();
+  widget->hide();
+}
+}  // namespace
+
 void StatusBarPanel::clear() {
-  ui.mousePosLabel->clear();
-  ui.physSizeLabel->clear();
-  ui.pageNoLabel->clear();
-  ui.pageInfo->clear();
+  clearAndHideLabel(ui.mousePosLabel);
+  clearAndHideLabel(ui.physSizeLabel);
+  clearAndHideLabel(ui.pageNoLabel);
+  clearAndHideLabel(ui.pageInfoLabel);
+  clearAndHideLabel(ui.zoneModeLabel);
 
   ui.mousePosLine->setVisible(false);
   ui.physSizeLine->setVisible(false);
   ui.pageInfoLine->setVisible(false);
+  ui.zoneModeLine->setVisible(false);
 }
 
 void StatusBarPanel::onUnitsChanged(Units) {
@@ -85,8 +98,9 @@ void StatusBarPanel::mousePosChanged() {
 
     ui.mousePosLine->setVisible(true);
     ui.mousePosLabel->setText(QString("%1, %2").arg(x).arg(y));
+    ui.mousePosLabel->setVisible(true);
   } else {
-    ui.mousePosLabel->clear();
+    clearAndHideLabel(ui.mousePosLabel);
     ui.mousePosLine->setVisible(false);
   }
 }
@@ -119,8 +133,30 @@ void StatusBarPanel::physSizeChanged() {
 
     ui.physSizeLine->setVisible(true);
     ui.physSizeLabel->setText(QString("%1 x %2 %3").arg(width).arg(height).arg(unitsToLocalizedString(units)));
+    ui.physSizeLabel->setVisible(true);
   } else {
-    ui.physSizeLabel->clear();
+    clearAndHideLabel(ui.physSizeLabel);
     ui.physSizeLine->setVisible(false);
   }
+}
+
+void StatusBarPanel::onZoneModeChanged(ZoneCreationMode mode) {
+  switch (mode) {
+    case ZoneCreationMode::RECTANGULAR:
+      ui.zoneModeLabel->setPixmap(IconProvider::getInstance().getIcon("rectangular-zone-mode").pixmap(16, 16));
+      break;
+    case ZoneCreationMode::LASSO:
+      ui.zoneModeLabel->setPixmap(IconProvider::getInstance().getIcon("lasso-zone-mode").pixmap(16, 16));
+      break;
+    case ZoneCreationMode::POLYGONAL:
+      ui.zoneModeLabel->setPixmap(IconProvider::getInstance().getIcon("polygonal-zone-mode").pixmap(16, 16));
+      break;
+  }
+  ui.zoneModeLabel->setVisible(true);
+  ui.zoneModeLine->setVisible(true);
+}
+
+void StatusBarPanel::onZoneModeProviderStopped() {
+  clearAndHideLabel(ui.zoneModeLabel);
+  ui.zoneModeLine->setVisible(false);
 }

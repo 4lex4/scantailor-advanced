@@ -14,8 +14,8 @@
 #include "EditableSpline.h"
 #include "InteractionHandler.h"
 #include "InteractionState.h"
-#include "ZoomHandler.h"
 #include "ZoneCreationMode.h"
+#include "ZoomHandler.h"
 
 class ZoneInteractionContext;
 

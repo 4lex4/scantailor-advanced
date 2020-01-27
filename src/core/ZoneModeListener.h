@@ -16,4 +16,4 @@ class ZoneModeListener {
 };
 
 
-#endif //SCANTAILOR_CORE_ZONEMODELISTENER_H_
+#endif  // SCANTAILOR_CORE_ZONEMODELISTENER_H_

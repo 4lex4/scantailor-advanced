@@ -4,9 +4,10 @@
 #ifndef SCANTAILOR_PAGE_SPLIT_OPTIONSWIDGET_H_
 #define SCANTAILOR_PAGE_SPLIT_OPTIONSWIDGET_H_
 
+#include <core/ConnectionManager.h>
+
 #include <list>
 #include <set>
-#include <core/ConnectionManager.h>
 
 #include "AutoManualMode.h"
 #include "Dependencies.h"

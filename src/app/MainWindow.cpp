@@ -277,9 +277,8 @@ MainWindow::MainWindow()
     updateThumbnailViewMode();
     m_thumbSequence->updateSceneItemsPos();
   });
-  connect(sortingOrderBtn, &QToolButton::clicked, this, [this](bool) {
-    pageOrderingChanged(m_stages->filterAt(m_curFilter)->selectedPageOrder());
-  });
+  connect(sortingOrderBtn, &QToolButton::clicked, this,
+          [this](bool) { pageOrderingChanged(m_stages->filterAt(m_curFilter)->selectedPageOrder()); });
 
   connect(actionFixDpi, SIGNAL(triggered(bool)), SLOT(fixDpiDialogRequested()));
   connect(actionRelinking, SIGNAL(triggered(bool)), SLOT(showRelinkingDialog()));

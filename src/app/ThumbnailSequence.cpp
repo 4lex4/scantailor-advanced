@@ -946,13 +946,13 @@ void ThumbnailSequence::Impl::insert(const PageInfo& newPage, BeforeOrAfter befo
 void ThumbnailSequence::Impl::removePages(const std::set<PageId>& pagesToRemove) {
   m_sceneRect = QRectF(0, 0, 0, 0);
 
-  const std::set<PageId>::const_iterator to_remove_end(pagesToRemove.end());
+  const std::set<PageId>::const_iterator toRemoveEnd(pagesToRemove.end());
   QPointF posDelta(0, 0);
 
   ItemsInOrder::iterator ordIt(m_itemsInOrder.begin());
   const ItemsInOrder::iterator ordEnd(m_itemsInOrder.end());
   while (ordIt != ordEnd) {
-    if (pagesToRemove.find(ordIt->pageInfo.id()) == to_remove_end) {
+    if (pagesToRemove.find(ordIt->pageInfo.id()) == toRemoveEnd) {
       // Keeping this page.
       if (posDelta != QPointF(0, 0)) {
         ordIt->composite->setPos(ordIt->composite->pos() + posDelta);

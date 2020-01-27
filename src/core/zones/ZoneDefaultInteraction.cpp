@@ -26,7 +26,8 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
   m_zoneAreaDragCopyProximity.setProximityStatusTip(tr("Hold left mouse button to copy and drag the zone."));
   m_zoneAreaDragCopyProximity.setProximityCursor(Qt::DragCopyCursor);
   m_context.imageView().interactionState().setDefaultStatusTip(
-      tr("Click to start creating a new zone. Ctrl+Alt+Click to copy the latest created zone. Use Z, X and C keys to switch zone creation mode."));
+      tr("Click to start creating a new zone. Ctrl+Alt+Click to copy the latest created zone. Use Z, X and C keys to "
+         "switch zone creation mode."));
 }
 
 void ZoneDefaultInteraction::onPaint(QPainter& painter, const InteractionState& interaction) {
@@ -211,9 +212,9 @@ void ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, Interaction
   if (m_activeKeyboardModifiers == (Qt::ControlModifier | Qt::AltModifier)) {
     const QTransform fromScreen(m_context.imageView().widgetToImage());
 
-    EditableZoneSet::const_iterator latest_zone = --m_context.zones().end();
-    if (latest_zone != m_context.zones().end()) {
-      SerializableSpline serializableSpline(*(*latest_zone).spline());
+    EditableZoneSet::const_iterator latestZone = --m_context.zones().end();
+    if (latestZone != m_context.zones().end()) {
+      SerializableSpline serializableSpline(*(*latestZone).spline());
 
       const QPointF oldCenter = serializableSpline.toPolygon().boundingRect().center();
       const QPointF newCenter = fromScreen.map(event->pos() + QPointF(0.5, 0.5));
@@ -222,7 +223,7 @@ void ZoneDefaultInteraction::onMouseReleaseEvent(QMouseEvent* event, Interaction
       serializableSpline = serializableSpline.transformed(QTransform().translate(shift.x(), shift.y()));
 
       auto newSpline = make_intrusive<EditableSpline>(serializableSpline);
-      m_context.zones().addZone(newSpline, *(*latest_zone).properties());
+      m_context.zones().addZone(newSpline, *(*latestZone).properties());
       m_context.zones().commit();
     }
 

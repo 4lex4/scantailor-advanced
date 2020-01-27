@@ -4,9 +4,10 @@
 #ifndef SCANTAILOR_OUTPUT_OTSUBINARIZATIONOPTIONSWIDGET_H_
 #define SCANTAILOR_OUTPUT_OTSUBINARIZATIONOPTIONSWIDGET_H_
 
+#include <core/ConnectionManager.h>
+
 #include <QtCore>
 #include <list>
-#include <core/ConnectionManager.h>
 
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"

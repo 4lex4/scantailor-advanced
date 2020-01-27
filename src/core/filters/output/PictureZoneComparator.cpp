@@ -8,16 +8,16 @@
 
 namespace output {
 bool PictureZoneComparator::equal(const ZoneSet& lhs, const ZoneSet& rhs) {
-  ZoneSet::const_iterator lhs_it(lhs.begin());
-  ZoneSet::const_iterator rhs_it(rhs.begin());
-  const ZoneSet::const_iterator lhs_end(lhs.end());
-  const ZoneSet::const_iterator rhs_end(rhs.end());
-  for (; lhs_it != lhs_end && rhs_it != rhs_end; ++lhs_it, ++rhs_it) {
-    if (!equal(*lhs_it, *rhs_it)) {
+  ZoneSet::const_iterator lhsIt(lhs.begin());
+  ZoneSet::const_iterator rhsIt(rhs.begin());
+  const ZoneSet::const_iterator lhsEnd(lhs.end());
+  const ZoneSet::const_iterator rhsEnd(rhs.end());
+  for (; lhsIt != lhsEnd && rhsIt != rhsEnd; ++lhsIt, ++rhsIt) {
+    if (!equal(*lhsIt, *rhsIt)) {
       return false;
     }
   }
-  return lhs_it == lhs_end && rhs_it == rhs_end;
+  return lhsIt == lhsEnd && rhsIt == rhsEnd;
 }
 
 bool PictureZoneComparator::equal(const Zone& lhs, const Zone& rhs) {

@@ -4,12 +4,13 @@
 #ifndef SCANTAILOR_APP_DEFAULTPARAMSDIALOG_H_
 #define SCANTAILOR_APP_DEFAULTPARAMSDIALOG_H_
 
+#include <core/ConnectionManager.h>
+
 #include <QButtonGroup>
 #include <QWidget>
 #include <list>
 #include <set>
 #include <unordered_map>
-#include <core/ConnectionManager.h>
 
 #include "DefaultParams.h"
 #include "DefaultParamsProfileManager.h"

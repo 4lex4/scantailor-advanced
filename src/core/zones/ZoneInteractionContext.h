@@ -87,13 +87,9 @@ class ZoneInteractionContext {
 
   void setShowPropertiesCommand(const ShowPropertiesCommand& command) { m_showPropertiesCommand = command; }
 
-  ZoneCreationMode getZoneCreationMode() const {
-    return m_zoneCreationMode;
-  }
+  ZoneCreationMode getZoneCreationMode() const { return m_zoneCreationMode; }
 
-  void setZoneCreationMode(ZoneCreationMode zoneCreationMode) {
-    m_zoneCreationMode = zoneCreationMode;
-  }
+  void setZoneCreationMode(ZoneCreationMode zoneCreationMode) { m_zoneCreationMode = zoneCreationMode; }
 
  private:
   /**

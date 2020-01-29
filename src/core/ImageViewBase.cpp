@@ -560,7 +560,6 @@ void ImageViewBase::leaveEvent(QEvent* event) {
 
 void ImageViewBase::showEvent(QShowEvent* event) {
   QWidget::showEvent(event);
-
   if (auto* mainWindow = dynamic_cast<QMainWindow*>(window())) {
     if (auto* infoListener = Utils::castOrFindChild<ImageViewInfoListener*>(mainWindow->statusBar())) {
       infoProvider().addListener(infoListener);
@@ -569,13 +568,8 @@ void ImageViewBase::showEvent(QShowEvent* event) {
 }
 
 void ImageViewBase::hideEvent(QHideEvent* event) {
+  infoProvider().removeAllListeners();
   QWidget::hideEvent(event);
-
-  if (auto* mainWindow = dynamic_cast<QMainWindow*>(window())) {
-    if (auto* zoneModeListener = Utils::castOrFindChild<ImageViewInfoListener*>(mainWindow->statusBar())) {
-      infoProvider().removeListener(zoneModeListener);
-    }
-  }
 }
 
 /**

@@ -24,7 +24,7 @@ class ImageViewInfoProvider {
 
   void addListener(ImageViewInfoListener* listener);
 
-  void removeListener(ImageViewInfoListener* listener);
+  void removeAllListeners();
 
   void setPhysSize(const QSizeF& physSize);
 
@@ -41,7 +41,9 @@ class ImageViewInfoProvider {
 
   void mousePosChanged(const QPointF& mousePos) const;
 
-  std::list<ImageViewInfoListener*> m_infoListeners;
+  void notifyProviderStopped() const;
+
+  std::list<ImageViewInfoListener*> m_listeners;
   Dpi m_dpi;
   QPointF m_mousePos;
   QSizeF m_physSize;

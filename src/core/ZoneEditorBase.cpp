@@ -19,12 +19,14 @@ class ZoneEditorBase::ZoneModeProvider {
 
   void addListener(ZoneModeListener* listener);
 
-  void removeListener(ZoneModeListener* listener);
+  void removeAllListeners();
 
   void updateZoneMode();
 
  private:
-  std::list<ZoneModeListener*> m_infoListeners;
+  void notifyProviderStopped() const;
+
+  std::list<ZoneModeListener*> m_listeners;
   const ZoneEditorBase& m_parent;
 };
 
@@ -62,7 +64,6 @@ void ZoneEditorBase::onKeyPressEvent(QKeyEvent* event, InteractionState&) {
 
 void ZoneEditorBase::showEvent(QShowEvent* event) {
   ImageViewBase::showEvent(event);
-
   if (auto* mainWindow = dynamic_cast<QMainWindow*>(window())) {
     if (auto* zoneModeListener = core::Utils::castOrFindChild<ZoneModeListener*>(mainWindow->statusBar())) {
       m_zoneModeProvider->addListener(zoneModeListener);
@@ -71,36 +72,35 @@ void ZoneEditorBase::showEvent(QShowEvent* event) {
 }
 
 void ZoneEditorBase::hideEvent(QHideEvent* event) {
+  m_zoneModeProvider->removeAllListeners();
   ImageViewBase::hideEvent(event);
-
-  if (auto* mainWindow = dynamic_cast<QMainWindow*>(window())) {
-    if (auto* zoneModeListener = core::Utils::castOrFindChild<ZoneModeListener*>(mainWindow->statusBar())) {
-      m_zoneModeProvider->removeListener(zoneModeListener);
-    }
-  }
 }
 
 ZoneEditorBase::ZoneModeProvider::ZoneModeProvider(const ZoneEditorBase& parent) : m_parent(parent) {}
 
 ZoneEditorBase::ZoneModeProvider::~ZoneModeProvider() {
-  for (ZoneModeListener* listener : m_infoListeners) {
-    listener->onZoneModeProviderStopped();
-  }
+  notifyProviderStopped();
 }
 
 void ZoneEditorBase::ZoneModeProvider::addListener(ZoneModeListener* listener) {
   listener->onZoneModeChanged(m_parent.context().getZoneCreationMode());
-  m_infoListeners.push_back(listener);
+  m_listeners.push_back(listener);
 }
 
-void ZoneEditorBase::ZoneModeProvider::removeListener(ZoneModeListener* listener) {
-  listener->onZoneModeProviderStopped();
-  m_infoListeners.remove(listener);
+void ZoneEditorBase::ZoneModeProvider::removeAllListeners() {
+  notifyProviderStopped();
+  m_listeners.clear();
 }
 
 void ZoneEditorBase::ZoneModeProvider::updateZoneMode() {
   ZoneCreationMode mode = m_parent.context().getZoneCreationMode();
-  for (ZoneModeListener* listener : m_infoListeners) {
+  for (ZoneModeListener* listener : m_listeners) {
     listener->onZoneModeChanged(mode);
+  }
+}
+
+void ZoneEditorBase::ZoneModeProvider::notifyProviderStopped() const {
+  for (ZoneModeListener* listener : m_listeners) {
+    listener->onZoneModeProviderStopped();
   }
 }

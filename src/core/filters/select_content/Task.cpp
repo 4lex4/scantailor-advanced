@@ -30,7 +30,7 @@ class Task::UiUpdater : public FilterResult {
             std::unique_ptr<DebugImages> dbg,
             const QImage& image,
             const ImageTransformation& xform,
-            const GrayImage& grayImage,
+            const ContentMask& contentMask,
             const OptionsWidget::UiData& uiData,
             bool batch);
 
@@ -44,7 +44,7 @@ class Task::UiUpdater : public FilterResult {
   std::unique_ptr<DebugImages> m_dbg;
   QImage m_image;
   QImage m_downscaledImage;
-  GrayImage m_grayImage;
+  ContentMask m_contentMask;
   ImageTransformation m_xform;
   OptionsWidget::UiData m_uiData;
   bool m_batchProcessing;
@@ -146,7 +146,8 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     return m_nextTask->process(status, FilterData(data, data.xform()), uiData.pageRect(), uiData.contentRect());
   } else {
     return make_intrusive<UiUpdater>(m_filter, m_pageId, std::move(m_dbg), data.origImage(), data.xform(),
-                                     data.grayImageBlackOnWhite(), uiData, m_batchProcessing);
+                                     ContentMask(data.grayImageBlackOnWhite(), data.xform(), status), uiData,
+                                     m_batchProcessing);
   }
 }  // Task::process
 
@@ -157,7 +158,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            std::unique_ptr<DebugImages> dbg,
                            const QImage& image,
                            const ImageTransformation& xform,
-                           const GrayImage& grayImage,
+                           const ContentMask& contentMask,
                            const OptionsWidget::UiData& uiData,
                            const bool batch)
     : m_filter(std::move(filter)),
@@ -165,7 +166,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
       m_dbg(std::move(dbg)),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
-      m_grayImage(grayImage),
+      m_contentMask(contentMask),
       m_xform(xform),
       m_uiData(uiData),
       m_batchProcessing(batch) {}
@@ -182,7 +183,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   optWidget->postUpdateUI(m_uiData);
   ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
-  auto* view = new ImageView(m_image, m_downscaledImage, m_grayImage, m_xform, m_uiData.contentRect(),
+  auto* view = new ImageView(m_image, m_downscaledImage, m_contentMask, m_xform, m_uiData.contentRect(),
                              m_uiData.pageRect(), m_uiData.pageDetectionMode() != MODE_DISABLED);
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP, m_dbg.get());
 

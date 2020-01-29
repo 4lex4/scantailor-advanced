@@ -4,7 +4,7 @@
 #ifndef SCANTAILOR_SELECT_CONTENT_IMAGEVIEW_H_
 #define SCANTAILOR_SELECT_CONTENT_IMAGEVIEW_H_
 
-#include <imageproc/BinaryImage.h>
+#include <core/ContentMask.h>
 #include <interaction/DraggablePolygon.h>
 
 #include <QRectF>
@@ -21,10 +21,6 @@
 class ImageTransformation;
 class QMenu;
 
-namespace imageproc {
-class GrayImage;
-}
-
 namespace select_content {
 class ImageView : public ImageViewBase, private InteractionHandler {
   Q_OBJECT
@@ -34,7 +30,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
    */
   ImageView(const QImage& image,
             const QImage& downscaledImage,
-            const imageproc::GrayImage& grayImage,
+            const ContentMask& contentMask,
             const ImageTransformation& xform,
             const QRectF& contentRect,
             const QRectF& pageRect,
@@ -103,11 +99,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   void pageRectMoveRequest(const QPolygonF& polyMoved);
 
-  void buildContentImage(const imageproc::GrayImage& grayImage, const ImageTransformation& xform);
-
   void correctContentBox(const QPointF& pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
-
-  QRect findContentInArea(const QRect& area) const;
 
   void enableContentRectInteraction(bool state);
 
@@ -156,9 +148,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   QSizeF m_minBoxSize;
 
-  imageproc::BinaryImage m_contentImage;
-  QTransform m_originalToContentImage;
-  QTransform m_contentImageToOriginal;
+  ContentMask m_contentMask;
 
   Qt::KeyboardModifier m_adjustmentVerticalModifier;
   Qt::KeyboardModifier m_adjustmentHorizontalModifier;

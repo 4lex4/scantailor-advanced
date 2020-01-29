@@ -114,7 +114,8 @@ set(common_sources
     FontIconPack.cpp FontIconPack.h
     ConnectionManager.cpp ConnectionManager.h
     ZoneEditorBase.cpp ZoneEditorBase.h
-    ZoneModeListener.h)
+    ZoneModeListener.h
+    ContentMask.cpp ContentMask.h)
 
 add_library(core STATIC ${common_sources} ${common_ui_files})
 target_link_libraries(

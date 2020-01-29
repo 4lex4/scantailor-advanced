@@ -4,7 +4,7 @@
 #ifndef SCANTAILOR_PAGE_LAYOUT_IMAGEVIEW_H_
 #define SCANTAILOR_PAGE_LAYOUT_IMAGEVIEW_H_
 
-#include <imageproc/BinaryImage.h>
+#include <core/ContentMask.h>
 #include <interaction/DraggableLineSegment.h>
 
 #include <QMenu>
@@ -29,10 +29,6 @@
 
 class Margins;
 
-namespace imageproc {
-class GrayImage;
-}
-
 namespace page_layout {
 class OptionsWidget;
 class Settings;
@@ -44,7 +40,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
             const PageId& pageId,
             const QImage& image,
             const QImage& downscaledImage,
-            const imageproc::GrayImage& grayImage,
+            const ContentMask& contentMask,
             const ImageTransformation& xform,
             const QRectF& adaptedContentRect,
             const OptionsWidget& optWidget);
@@ -181,11 +177,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   void innerRectMoveRequest(const QPointF& mousePos, Qt::KeyboardModifiers mask = Qt::NoModifier);
 
-  void buildContentImage(const imageproc::GrayImage& grayImage, const ImageTransformation& xform);
-
   void attachContentToNearestGuide(const QPointF& pos, Qt::KeyboardModifiers mask = Qt::NoModifier);
-
-  QRect findContentInArea(const QRect& area) const;
 
   void enableMiddleRectInteraction(bool state);
 
@@ -296,11 +288,9 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   Qt::KeyboardModifier m_innerRectVerticalDragModifier;
   Qt::KeyboardModifier m_innerRectHorizontalDragModifier;
 
-  imageproc::BinaryImage m_contentImage;
-  QTransform m_originalToContentImage;
-  QTransform m_contentImageToOriginal;
-
   const bool m_nullContentRect;
+
+  ContentMask m_contentMask;
 };
 }  // namespace page_layout
 #endif  // ifndef SCANTAILOR_PAGE_LAYOUT_IMAGEVIEW_H_

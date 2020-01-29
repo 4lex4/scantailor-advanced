@@ -3,8 +3,6 @@
 
 #include "Task.h"
 
-#include <UnitsProvider.h>
-
 #include <utility>
 
 #include "Dpm.h"
@@ -29,7 +27,7 @@ class Task::UiUpdater : public FilterResult {
             const PageId& pageId,
             const QImage& image,
             const ImageTransformation& xform,
-            const GrayImage& grayImage,
+            const ContentMask& contentMask,
             const QRectF& adaptedContentRect,
             bool aggSizeChanged,
             bool batch);
@@ -44,7 +42,7 @@ class Task::UiUpdater : public FilterResult {
   PageId m_pageId;
   QImage m_image;
   QImage m_downscaledImage;
-  GrayImage m_grayImage;
+  ContentMask m_contentMask;
   ImageTransformation m_xform;
   QRectF m_adaptedContentRect;
   bool m_aggSizeChanged;
@@ -95,8 +93,8 @@ FilterResultPtr Task::process(const TaskStatus& status,
     return m_nextTask->process(status, FilterData(data, newXform), contentRectPhys);
   } else {
     return make_intrusive<UiUpdater>(m_filter, m_settings, m_pageId, data.origImage(), data.xform(),
-                                     data.grayImageBlackOnWhite(), adaptedContentRect,
-                                     aggHardSizeBefore != aggHardSizeAfter, m_batchProcessing);
+                                     ContentMask(data.grayImageBlackOnWhite(), data.xform(), status),
+                                     adaptedContentRect, aggHardSizeBefore != aggHardSizeAfter, m_batchProcessing);
   }
 }
 
@@ -107,7 +105,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
                            const PageId& pageId,
                            const QImage& image,
                            const ImageTransformation& xform,
-                           const GrayImage& grayImage,
+                           const ContentMask& contentMask,
                            const QRectF& adaptedContentRect,
                            const bool aggSizeChanged,
                            const bool batch)
@@ -116,7 +114,7 @@ Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
       m_pageId(pageId),
       m_image(image),
       m_downscaledImage(ImageView::createDownscaledImage(image)),
-      m_grayImage(grayImage),
+      m_contentMask(contentMask),
       m_xform(xform),
       m_adaptedContentRect(adaptedContentRect),
       m_aggSizeChanged(aggSizeChanged),
@@ -138,7 +136,7 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   optWidget->postUpdateUI();
   ui->setOptionsWidget(optWidget, ui->KEEP_OWNERSHIP);
 
-  auto* view = new ImageView(m_settings, m_pageId, m_image, m_downscaledImage, m_grayImage, m_xform,
+  auto* view = new ImageView(m_settings, m_pageId, m_image, m_downscaledImage, m_contentMask, m_xform,
                              m_adaptedContentRect, *optWidget);
   ui->setImageWidget(view, ui->TRANSFER_OWNERSHIP);
 

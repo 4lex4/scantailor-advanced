@@ -12,9 +12,9 @@ Alignment::Alignment(Vertical vertical, Horizontal horizontal)
     : m_vertical(vertical), m_horizontal(horizontal), m_isNull(false) {}
 
 Alignment::Alignment(const QDomElement& el) {
-  const QString vert(el.attribute("vert"));
-  const QString hor(el.attribute("hor"));
-  m_isNull = el.attribute("null").toInt() != 0;
+  const QString vert = el.attribute("vert");
+  const QString hor = el.attribute("hor");
+  m_isNull = (el.attribute("null").toInt() != 0);
 
   if (vert == "top") {
     m_vertical = TOP;
@@ -34,7 +34,7 @@ Alignment::Alignment(const QDomElement& el) {
     m_horizontal = RIGHT;
   } else if (hor == "auto") {
     m_horizontal = HAUTO;
-  } else if (vert == "original") {
+  } else if (hor == "original") {
     m_horizontal = HORIGINAL;
   } else {
     m_horizontal = HCENTER;
@@ -48,7 +48,7 @@ QDomElement Alignment::toXml(QDomDocument& doc, const QString& name) const {
       vert = "top";
       break;
     case VCENTER:
-      vert = "vcenter";
+      vert = "center";
       break;
     case BOTTOM:
       vert = "bottom";
@@ -67,7 +67,7 @@ QDomElement Alignment::toXml(QDomDocument& doc, const QString& name) const {
       hor = "left";
       break;
     case HCENTER:
-      hor = "hcenter";
+      hor = "center";
       break;
     case RIGHT:
       hor = "right";

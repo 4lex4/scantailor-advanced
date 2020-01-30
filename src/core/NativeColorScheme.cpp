@@ -39,14 +39,14 @@ void NativeColorScheme::loadStyleSheet() {
 void NativeColorScheme::loadColorParams() {
   const QPalette palette = QPalette();
 
-  m_customColors[ThumbnailSequenceSelectedItemBackground] = palette.color(QPalette::Highlight).lighter(130);
-  m_customColors[ThumbnailSequenceSelectionLeaderBackground] = palette.color(QPalette::Highlight);
-  m_customColors[ProcessingIndicationFade] = palette.window().color().darker(115);
+  m_customColors["ThumbnailSequenceSelectedItemBackground"] = palette.color(QPalette::Highlight).lighter(130);
+  m_customColors["ThumbnailSequenceSelectionLeaderBackground"] = palette.color(QPalette::Highlight);
+  m_customColors["ProcessingIndicationFade"] = palette.window().color().darker(115);
   if (palette.window().color().lightnessF() < 0.5) {
     // If system scheme is dark, adapt some colors.
-    m_customColors[ProcessingIndicationHeadColor] = palette.color(QPalette::Window).lighter(200);
-    m_customColors[ProcessingIndicationTail] = palette.color(QPalette::Window).lighter(130);
-    m_customColors[StageListHead] = m_customColors.at(ProcessingIndicationHeadColor);
-    m_customColors[StageListTail] = m_customColors.at(ProcessingIndicationTail);
+    m_customColors["ProcessingIndicationHead"] = palette.color(QPalette::Window).lighter(200);
+    m_customColors["ProcessingIndicationTail"] = palette.color(QPalette::Window).lighter(130);
+    m_customColors["StageListHead"] = m_customColors.at("ProcessingIndicationHead");
+    m_customColors["StageListTail"] = m_customColors.at("ProcessingIndicationTail");
   }
 }

@@ -22,9 +22,9 @@ class ColorSchemeManager {
 
   void setColorScheme(const ColorScheme& colorScheme);
 
-  QBrush getColorParam(ColorScheme::ColorParam colorParam, const QBrush& defaultBrush) const;
+  QBrush getColorParam(const QString& colorParam, const QBrush& defaultBrush) const;
 
-  QColor getColorParam(ColorScheme::ColorParam colorParam, const QColor& defaultColor) const;
+  QColor getColorParam(const QString& colorParam, const QColor& defaultColor) const;
 
  private:
   std::unique_ptr<ColorScheme::ColorParams> m_colorParams;

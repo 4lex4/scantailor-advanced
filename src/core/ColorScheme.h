@@ -4,12 +4,13 @@
 #ifndef SCANTAILOR_CORE_COLORSCHEME_H_
 #define SCANTAILOR_CORE_COLORSCHEME_H_
 
+#include <foundation/Hashes.h>
+
 #include <QColor>
 #include <unordered_map>
 
 class QStyle;
 class QPalette;
-class QString;
 
 class ColorScheme {
  public:
@@ -21,23 +22,7 @@ class ColorScheme {
 
   virtual const QString* getStyleSheet() const = 0;
 
-  enum ColorParam {
-    ThumbnailSequenceItemText,
-    ThumbnailSequenceSelectedItemText,
-    ThumbnailSequenceSelectedItemBackground,
-    ThumbnailSequenceSelectionLeaderText,
-    ThumbnailSequenceSelectionLeaderBackground,
-    RelinkablePathVisualizationBorder,
-    OpenNewProjectBorder,
-    ProcessingIndicationHeadColor,
-    ProcessingIndicationTail,
-    ProcessingIndicationFade,
-    StageListHead,
-    StageListTail,
-    FixDpiDialogErrorText
-  };
-
-  using ColorParams = std::unordered_map<ColorParam, QColor, std::hash<int>>;
+  using ColorParams = std::unordered_map<QString, QColor, hashes::hash<QString>>;
 
   /**
    * List of colors for elements that don't support styling.

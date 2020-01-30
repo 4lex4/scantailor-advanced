@@ -25,7 +25,7 @@ void ColorSchemeManager::setColorScheme(const ColorScheme& colorScheme) {
   }
 }
 
-QBrush ColorSchemeManager::getColorParam(const ColorScheme::ColorParam colorParam, const QBrush& defaultBrush) const {
+QBrush ColorSchemeManager::getColorParam(const QString& colorParam, const QBrush& defaultBrush) const {
   if (!m_colorParams) {
     return defaultBrush;
   }
@@ -38,7 +38,7 @@ QBrush ColorSchemeManager::getColorParam(const ColorScheme::ColorParam colorPara
   }
 }
 
-QColor ColorSchemeManager::getColorParam(const ColorScheme::ColorParam colorParam, const QColor& defaultColor) const {
+QColor ColorSchemeManager::getColorParam(const QString& colorParam, const QColor& defaultColor) const {
   if (!m_colorParams) {
     return defaultColor;
   }

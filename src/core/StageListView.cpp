@@ -260,10 +260,10 @@ void StageListView::createBatchAnimationSequence(const int squareSide) {
   const int numFrames = 8;
   m_batchAnimationPixmaps.resize(numFrames);
 
-  const QColor headColor = ColorSchemeManager::instance().getColorParam(ColorScheme::StageListHead,
-                                                                        palette().color(QPalette::Window).darker(200));
-  const QColor tailColor = ColorSchemeManager::instance().getColorParam(ColorScheme::StageListTail,
-                                                                        palette().color(QPalette::Window).darker(130));
+  const QColor headColor
+      = ColorSchemeManager::instance().getColorParam("StageListHead", palette().color(QPalette::Window).darker(200));
+  const QColor tailColor
+      = ColorSchemeManager::instance().getColorParam("StageListTail", palette().color(QPalette::Window).darker(130));
 
   BubbleAnimation animation(numFrames);
   for (int i = 0; i < numFrames; ++i) {

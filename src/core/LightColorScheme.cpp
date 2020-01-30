@@ -80,15 +80,15 @@ void LightColorScheme::loadStyleSheet() {
 }
 
 void LightColorScheme::loadColorParams() {
-  m_customColors[ThumbnailSequenceSelectedItemBackground] = "#727272";
-  m_customColors[ThumbnailSequenceSelectedItemText] = Qt::white;
-  m_customColors[ThumbnailSequenceItemText] = Qt::black;
-  m_customColors[ThumbnailSequenceSelectionLeaderBackground] = "#5E5E5E";
-  m_customColors[OpenNewProjectBorder] = "#CCCCCC";
-  m_customColors[ProcessingIndicationFade] = "#939393";
-  m_customColors[ProcessingIndicationHeadColor] = m_palette.color(QPalette::WindowText);
-  m_customColors[ProcessingIndicationTail] = m_palette.color(QPalette::Highlight);
-  m_customColors[StageListHead] = m_customColors.at(ProcessingIndicationHeadColor);
-  m_customColors[StageListTail] = m_customColors.at(ProcessingIndicationTail);
-  m_customColors[FixDpiDialogErrorText] = "#FB0000";
+  m_customColors["ThumbnailSequenceSelectedItemBackground"] = "#727272";
+  m_customColors["ThumbnailSequenceSelectedItemText"] = Qt::white;
+  m_customColors["ThumbnailSequenceItemText"] = Qt::black;
+  m_customColors["ThumbnailSequenceSelectionLeaderBackground"] = "#5E5E5E";
+  m_customColors["OpenNewProjectBorder"] = "#CCCCCC";
+  m_customColors["ProcessingIndicationFade"] = "#939393";
+  m_customColors["ProcessingIndicationHead"] = m_palette.color(QPalette::WindowText);
+  m_customColors["ProcessingIndicationTail"] = m_palette.color(QPalette::Highlight);
+  m_customColors["StageListHead"] = m_customColors.at("ProcessingIndicationHead");
+  m_customColors["StageListTail"] = m_customColors.at("ProcessingIndicationTail");
+  m_customColors["FixDpiDialogErrorText"] = "#FB0000";
 }

@@ -1312,9 +1312,9 @@ std::unique_ptr<ThumbnailSequence::LabelGroup> ThumbnailSequence::Impl::getLabel
   boldTextItem->setText(text);
 
   const QBrush selectedItemTextColor = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::ThumbnailSequenceSelectedItemText, QApplication::palette().highlightedText());
-  const QBrush selectionLeaderTextColor = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::ThumbnailSequenceSelectionLeaderText, selectedItemTextColor);
+      "ThumbnailSequenceSelectedItemText", QApplication::palette().highlightedText());
+  const QBrush selectionLeaderTextColor
+      = ColorSchemeManager::instance().getColorParam("ThumbnailSequenceSelectionLeaderText", selectedItemTextColor);
   boldTextItem->setBrush(selectionLeaderTextColor);
 
   QRectF normalTextBox(normalTextItem->boundingRect());
@@ -1471,10 +1471,10 @@ void ThumbnailSequence::LabelGroup::updateAppearence(bool selected, bool selecti
   m_normalLabel->setVisible(!selectionLeader);
   m_boldLabel->setVisible(selectionLeader);
 
-  const QBrush itemTextColor = ColorSchemeManager::instance().getColorParam(ColorScheme::ThumbnailSequenceItemText,
-                                                                            QApplication::palette().text());
+  const QBrush itemTextColor
+      = ColorSchemeManager::instance().getColorParam("ThumbnailSequenceItemText", QApplication::palette().text());
   const QBrush selectedItemTextColor = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::ThumbnailSequenceSelectedItemText, QApplication::palette().highlightedText());
+      "ThumbnailSequenceSelectedItemText", QApplication::palette().highlightedText());
 
   if (selectionLeader) {
     assert(selected);
@@ -1543,9 +1543,9 @@ void ThumbnailSequence::CompositeItem::paint(QPainter* painter,
                                              const QStyleOptionGraphicsItem* option,
                                              QWidget* widget) {
   const QBrush selectedItemBackgroundColor = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::ThumbnailSequenceSelectedItemBackground, QApplication::palette().color(QPalette::Highlight));
+      "ThumbnailSequenceSelectedItemBackground", QApplication::palette().color(QPalette::Highlight));
   const QBrush selectionLeaderBackgroundColor = ColorSchemeManager::instance().getColorParam(
-      ColorScheme::ThumbnailSequenceSelectionLeaderBackground, selectedItemBackgroundColor);
+      "ThumbnailSequenceSelectionLeaderBackground", selectedItemBackgroundColor);
 
   if (m_item->isSelectionLeader()) {
     painter->fillRect(boundingRect(), selectionLeaderBackgroundColor);

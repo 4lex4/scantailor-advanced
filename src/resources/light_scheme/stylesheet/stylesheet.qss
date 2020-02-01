@@ -433,19 +433,12 @@ QScrollBar::up-arrow:vertical {
   image: url(:/light_scheme/icons/scroll_bar_up_arrow.svg);
 }
 
-QTabWidget::pane {
-  background-color: palette(window);
-  border: 1px solid #cccccc;
-  qproperty-drawBase:0;
-}
-
 QTabWidget::tab-bar {
   top: 1px;
 }
 
-QTabBar {
-  background-color: transparent;
-  border: none;
+QTabBar, QTabWidget::pane {
+  qproperty-drawBase:0;
 }
 
 QTabBar::tab {

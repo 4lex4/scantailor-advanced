@@ -236,11 +236,6 @@ QToolButton:pressed {
            <height>22</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
-         </property>
          <property name="toolTip">
           <string>Previous page.</string>
          </property>
@@ -298,11 +293,6 @@ QToolButton:pressed {
            <height>22</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
-         </property>
          <property name="toolTip">
           <string>Next page.</string>
          </property>
@@ -359,11 +349,6 @@ QToolButton:pressed {
            <width>22</width>
            <height>22</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
          </property>
          <property name="toolTip">
           <string>Navigate through selected pages only.</string>
@@ -435,11 +420,6 @@ QToolButton:pressed {
            <height>22</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
-         </property>
          <property name="toolTip">
           <string>Magnify thumbnails.  (Ctrl++)</string>
          </property>
@@ -496,11 +476,6 @@ QToolButton:pressed {
            <width>22</width>
            <height>22</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
          </property>
          <property name="toolTip">
           <string>Diminish thumbnails.  (Ctrl+-)</string>
@@ -569,11 +544,6 @@ QToolButton:pressed {
            <height>22</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
-         </property>
          <property name="toolTip">
           <string>Go To Page...  (Ctrl+G)</string>
          </property>
@@ -630,11 +600,6 @@ QToolButton:pressed {
            <width>22</width>
            <height>22</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
          </property>
          <property name="toolTip">
           <string>Enable multi page selection mode.</string>
@@ -708,11 +673,6 @@ QToolButton:checked {
            <height>22</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
-         </property>
          <property name="toolTip">
           <string>Single/multi column display.</string>
          </property>
@@ -772,11 +732,6 @@ QToolButton:pressed {
            <width>22</width>
            <height>22</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
          </property>
          <property name="toolTip">
           <string>Sorting order.</string>
@@ -838,13 +793,8 @@ QToolButton:pressed {
            <height>22</height>
           </size>
          </property>
-         <property name="font">
-          <font>
-           <family>sta_thumbnail_panel_icons</family>
-          </font>
-         </property>
          <property name="toolTip">
-          <string>Show deviation.</string>
+          <string>Highlight deviation.</string>
          </property>
          <property name="styleSheet">
           <string notr="true">QToolButton:!hover {

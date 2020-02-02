@@ -104,11 +104,6 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="font">
-          <font>
-           <family>sta_project_dialog_icons</family>
-          </font>
-         </property>
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -120,7 +115,7 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="icon">
           <iconset resource="../resources/resources.qrc">
-           <normaloff>:/icons/rigth-arrow-inscribed.svg</normaloff>:/icons/rigth-arrow-inscribed.svg</iconset>
+           <normaloff>:/icons/right-arrow-inscribed.svg</normaloff>:/icons/right-arrow-inscribed.svg</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -137,11 +132,6 @@ p, li { white-space: pre-wrap; }
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <family>sta_project_dialog_icons</family>
-          </font>
          </property>
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;

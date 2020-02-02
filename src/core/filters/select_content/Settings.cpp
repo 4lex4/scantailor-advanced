@@ -18,10 +18,10 @@ Settings::Settings() : m_pageDetectionBox(0.0, 0.0), m_pageDetectionTolerance(0.
     if (it != m_pageParams.end()) {
       const Params& params = it->second;
       const QSizeF& contentSizeMM = params.contentSizeMM();
-      return std::sqrt(contentSizeMM.width() * contentSizeMM.height() / 4 / 25.4);
-    } else {
-      return .0;
-    };
+      if (!contentSizeMM.toSize().isEmpty())
+        return std::sqrt(std::pow(contentSizeMM.width(), 2) + std::pow(contentSizeMM.height(), 2));
+    }
+    return NAN;
   });
 }
 

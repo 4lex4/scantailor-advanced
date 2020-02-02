@@ -351,16 +351,14 @@ Settings::Impl::Impl()
       m_autoMarginsDefault(false),
       m_showMiddleRect(true) {
   m_deviationProvider.setComputeValueByKey([this](const PageId& pageId) -> double {
-    auto it(m_items.find(pageId));
+    auto it = m_items.find(pageId);
     if (it != m_items.end()) {
-      if (it->alignment.isNull()) {
-        return std::sqrt(it->hardWidthMM() * it->hardHeightMM() / 4 / 25.4);
-      } else {
-        return .0;
-      }
-    } else {
-      return .0;
-    };
+      const Margins& marginsMm = it->hardMarginsMM;
+      double horHardMargins = marginsMm.left() + marginsMm.right();
+      double vertHardMargins = marginsMm.top() + marginsMm.bottom();
+      return std::sqrt(std::pow(horHardMargins, 2) + std::pow(vertHardMargins, 2));
+    }
+    return NAN;
   });
 }
 

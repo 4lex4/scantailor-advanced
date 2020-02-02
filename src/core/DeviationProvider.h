@@ -18,7 +18,7 @@ class DeviationProvider {
 
   explicit DeviationProvider(const std::function<double(const K&)>& computeValueByKey);
 
-  bool isDeviant(const K& key, double coefficient = 1.0, double threshold = 0.0) const;
+  bool isDeviant(const K& key, double coefficient = 1.0, double threshold = 0.0, bool defaultVal = false) const;
 
   double getDeviationValue(const K& key) const;
 
@@ -51,7 +51,7 @@ DeviationProvider<K, Hash>::DeviationProvider(const std::function<double(const K
     : m_computeValueByKey(computeValueByKey) {}
 
 template <typename K, typename Hash>
-bool DeviationProvider<K, Hash>::isDeviant(const K& key, const double coefficient, const double threshold) const {
+bool DeviationProvider<K, Hash>::isDeviant(const K& key, double coefficient, double threshold, bool defaultVal) const {
   if (m_keyValueMap.find(key) == m_keyValueMap.end()) {
     return false;
   }
@@ -59,17 +59,28 @@ bool DeviationProvider<K, Hash>::isDeviant(const K& key, const double coefficien
     return false;
   }
 
+  double value = m_keyValueMap.at(key);
+  if (std::isnan(value)) {
+    return defaultVal;
+  }
+
   update();
-  return (std::abs(m_keyValueMap.at(key) - m_meanValue) > std::max((coefficient * m_standardDeviation), threshold));
+  return (std::abs(value - m_meanValue)
+          > std::max((coefficient * m_standardDeviation), (threshold / 100) * m_meanValue));
 }
 
 template <typename K, typename Hash>
 double DeviationProvider<K, Hash>::getDeviationValue(const K& key) const {
   if (m_keyValueMap.find(key) == m_keyValueMap.end()) {
-    return .0;
+    return -1.0;
   }
   if (m_keyValueMap.size() < 2) {
     return .0;
+  }
+
+  double value = m_keyValueMap.at(key);
+  if (std::isnan(value)) {
+    return -1.0;
   }
 
   update();
@@ -97,7 +108,6 @@ void DeviationProvider<K, Hash>::remove(const K& key) {
   if (m_keyValueMap.find(key) == m_keyValueMap.end()) {
     return;
   }
-
   m_keyValueMap.erase(key);
 }
 
@@ -110,20 +120,26 @@ void DeviationProvider<K, Hash>::update() const {
     return;
   }
 
+  int count = 0;
   {
     double sum = .0;
-    for (const std::pair<K, double>& keyAndValue : m_keyValueMap) {
-      sum += keyAndValue.second;
+    for (const auto& [key, value] : m_keyValueMap) {
+      if (!std::isnan(value)) {
+        sum += value;
+        count++;
+      }
     }
-    m_meanValue = sum / m_keyValueMap.size();
+    m_meanValue = sum / count;
   }
 
   {
     double differencesSum = .0;
-    for (const std::pair<K, double>& keyAndValue : m_keyValueMap) {
-      differencesSum += std::pow(keyAndValue.second - m_meanValue, 2);
+    for (const auto& [key, value] : m_keyValueMap) {
+      if (!std::isnan(value)) {
+        differencesSum += std::pow(value - m_meanValue, 2);
+      }
     }
-    m_standardDeviation = std::sqrt(differencesSum / (m_keyValueMap.size() - 1));
+    m_standardDeviation = std::sqrt(differencesSum / (count - 1));
   }
 
   m_needUpdate = false;

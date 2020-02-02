@@ -16,9 +16,8 @@ Settings::Settings() {
     if (it != m_perPageParams.end()) {
       const Params& params = it->second;
       return params.deskewAngle();
-    } else {
-      return .0;
-    };
+    }
+    return NAN;
   });
 }
 

@@ -398,11 +398,14 @@
                  <property name="toolTip">
                   <string>The minimum deviation to be highlighted.</string>
                  </property>
+                 <property name="decimals">
+                  <number>1</number>
+                 </property>
                  <property name="maximum">
-                  <double>45.000000000000000</double>
+                  <double>999.000000000000000</double>
                  </property>
                  <property name="singleStep">
-                  <double>0.100000000000000</double>
+                  <double>1.000000000000000</double>
                  </property>
                 </widget>
                </item>

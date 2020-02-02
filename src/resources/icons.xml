@@ -181,4 +181,8 @@
   <icon name="rectangular-zone-mode" styled="on">
     <file>:icons/rectangular-zone-mode.svg</file>
   </icon>
+  <icon name="six-spoked-asterisk" styled="on">
+    <file state="off">:icons/six-spoked-asterisk-disabled.svg</file>
+    <file state="on">:icons/six-spoked-asterisk.svg</file>
+  </icon>
 </icons>

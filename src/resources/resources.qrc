@@ -61,7 +61,9 @@
     <file>icons/descending_sorting_order.svg</file>
     <file>icons/lasso-zone-mode.svg</file>
     <file>icons/polygonal-zone-mode.svg</file>
-    <file>icons/rectangular-zone-mode.svg</file>    
+    <file>icons/rectangular-zone-mode.svg</file>
+    <file>icons/six-spoked-asterisk.svg</file>
+    <file>icons/six-spoked-asterisk-disabled.svg</file>
     <file>icons.xml</file>
     <file>font-icons.xml</file>
     <file>GPLv3.html</file>

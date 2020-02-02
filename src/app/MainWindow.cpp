@@ -194,6 +194,7 @@ MainWindow::MainWindow()
   });
 
   thumbColumnViewBtn->setChecked(settings.isSingleColumnThumbnailDisplayEnabled());
+  deviationHighlightingBtn->setChecked(settings.isHighlightDeviationEnabled());
 
   addAction(actionFirstPage);
   addAction(actionLastPage);
@@ -279,6 +280,10 @@ MainWindow::MainWindow()
   });
   connect(sortingOrderBtn, &QToolButton::clicked, this,
           [this](bool) { pageOrderingChanged(m_stages->filterAt(m_curFilter)->selectedPageOrder()); });
+  connect(deviationHighlightingBtn, &QToolButton::clicked, this, [this, &settings](bool checked) {
+    settings.setHighlightDeviationEnabled(checked);
+    m_thumbSequence->invalidateAllThumbnails();
+  });
 
   connect(actionFixDpi, SIGNAL(triggered(bool)), SLOT(fixDpiDialogRequested()));
   connect(actionRelinking, SIGNAL(triggered(bool)), SLOT(showRelinkingDialog()));
@@ -2058,6 +2063,7 @@ void MainWindow::setupIcons() {
   selectionModeBtn->setIcon(iconProvider.getIcon("checkbox-styled"));
   thumbColumnViewBtn->setIcon(iconProvider.getIcon("column-view"));
   sortingOrderBtn->setIcon(iconProvider.getIcon("sorting-order"));
+  deviationHighlightingBtn->setIcon(iconProvider.getIcon("six-spoked-asterisk"));
 }
 
 void MainWindow::execGotoPageDialog() {

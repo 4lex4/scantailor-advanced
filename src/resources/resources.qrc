@@ -64,6 +64,8 @@
     <file>icons/rectangular-zone-mode.svg</file>
     <file>icons/six-spoked-asterisk.svg</file>
     <file>icons/six-spoked-asterisk-disabled.svg</file>
+    <file>icons/diminishing-glass.svg</file>
+    <file>icons/magnifying-glass.svg</file>
     <file>icons.xml</file>
     <file>font-icons.xml</file>
     <file>GPLv3.html</file>

@@ -285,7 +285,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   void setDockWidgetsVisible(bool state);
 
-  void scaleThumbnails(const QWheelEvent* wheelEvent);
+  void scaleThumbnails(int scaleFactor);
 
   void updateMaxLogicalThumbSize();
 

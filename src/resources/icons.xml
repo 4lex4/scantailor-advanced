@@ -185,4 +185,10 @@
     <file state="off">:icons/six-spoked-asterisk-disabled.svg</file>
     <file state="on">:icons/six-spoked-asterisk.svg</file>
   </icon>
+  <icon name="diminishing-glass" styled="on">
+    <file>:icons/diminishing-glass.svg</file>
+  </icon>
+  <icon name="magnifying-glass" styled="on">
+    <file>:icons/magnifying-glass.svg</file>
+  </icon>
 </icons>

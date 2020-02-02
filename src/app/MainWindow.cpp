@@ -207,6 +207,8 @@ MainWindow::MainWindow()
   addAction(actionNextSelectedPageW);
   addAction(actionPrevSelectedPageQ);
   addAction(actionGotoPage);
+  addAction(actionMagnifyThumbnails);
+  addAction(actionDiminishThumbnails);
 
   addAction(actionSwitchFilter1);
   addAction(actionSwitchFilter2);
@@ -245,6 +247,13 @@ MainWindow::MainWindow()
     }
   });
   connect(gotoPageBtn, SIGNAL(clicked()), this, SLOT(execGotoPageDialog()));
+
+  auto magnifyThumbnails = [this]() { scaleThumbnails(1); };
+  auto diminishThumbnails = [this]() { scaleThumbnails(-1); };
+  connect(magnifyThumbnailsBtn, &QPushButton::clicked, magnifyThumbnails);
+  connect(diminishThumbnailsBtn, &QPushButton::clicked, diminishThumbnails);
+  connect(actionMagnifyThumbnails, &QAction::triggered, magnifyThumbnails);
+  connect(actionDiminishThumbnails, &QAction::triggered, diminishThumbnails);
 
   connect(actionSwitchFilter1, SIGNAL(triggered(bool)), SLOT(switchFilter1()));
   connect(actionSwitchFilter2, SIGNAL(triggered(bool)), SLOT(switchFilter2()));
@@ -503,7 +512,11 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* ev) {
   if ((obj == thumbView || obj == thumbView->verticalScrollBar()) && (ev->type() == QEvent::Wheel)) {
     auto* wheelEvent = static_cast<QWheelEvent*>(ev);
     if (wheelEvent->modifiers() == Qt::AltModifier) {
-      scaleThumbnails(wheelEvent);
+      const QPoint& angleDelta = wheelEvent->angleDelta();
+      const int wheelDist = angleDelta.x() + angleDelta.y();
+      if (std::abs(wheelDist) >= 30) {
+        scaleThumbnails(std::copysign(1, wheelDist));
+      }
       wheelEvent->accept();
       return true;
     }
@@ -2029,22 +2042,16 @@ void MainWindow::setDockWidgetsVisible(bool state) {
   thumbnailsDockWidget->setVisible(state);
 }
 
-void MainWindow::scaleThumbnails(const QWheelEvent* wheelEvent) {
-  const QPoint& angleDelta = wheelEvent->angleDelta();
-  const int wheelDist = angleDelta.x() + angleDelta.y();
-
-  if (std::abs(wheelDist) >= 30) {
-    const double dx = std::copysign(25.0, wheelDist);
-    const double dy = std::copysign(16.0, wheelDist);
-    const double width = qBound(100.0, m_maxLogicalThumbSize.width() + dx, 1000.0);
-    const double height = qBound(64.0, m_maxLogicalThumbSize.height() + dy, 640.0);
-    m_maxLogicalThumbSize = QSizeF(width, height);
-    if (!m_maxLogicalThumbSizeUpdater.isActive()) {
-      m_maxLogicalThumbSizeUpdater.start(350);
-    }
-
-    ApplicationSettings::getInstance().setMaxLogicalThumbnailSize(m_maxLogicalThumbSize);
+void MainWindow::scaleThumbnails(int scaleFactor) {
+  const double dx = 25.0 * scaleFactor;
+  const double dy = 16.0 * scaleFactor;
+  const double width = qBound(100.0, m_maxLogicalThumbSize.width() + dx, 1000.0);
+  const double height = qBound(64.0, m_maxLogicalThumbSize.height() + dy, 640.0);
+  m_maxLogicalThumbSize = QSizeF(width, height);
+  if (!m_maxLogicalThumbSizeUpdater.isActive()) {
+    m_maxLogicalThumbSizeUpdater.start(350);
   }
+  ApplicationSettings::getInstance().setMaxLogicalThumbnailSize(m_maxLogicalThumbSize);
 }
 
 void MainWindow::updateMaxLogicalThumbSize() {
@@ -2064,6 +2071,8 @@ void MainWindow::setupIcons() {
   thumbColumnViewBtn->setIcon(iconProvider.getIcon("column-view"));
   sortingOrderBtn->setIcon(iconProvider.getIcon("sorting-order"));
   deviationHighlightingBtn->setIcon(iconProvider.getIcon("six-spoked-asterisk"));
+  diminishThumbnailsBtn->setIcon(iconProvider.getIcon("diminishing-glass"));
+  magnifyThumbnailsBtn->setIcon(iconProvider.getIcon("magnifying-glass"));
 }
 
 void MainWindow::execGotoPageDialog() {

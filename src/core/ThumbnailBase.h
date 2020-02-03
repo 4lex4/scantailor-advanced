@@ -69,16 +69,6 @@ class ThumbnailBase : public QGraphicsItem {
 
   virtual void paintDeviant(QPainter& painter);
 
-  /**
-   * By default, the image is clipped by both the crop area (as defined
-   * by imageXform().resultingPostCropArea()), and the physical boundaries of
-   * the image itself.  Basically a point won't be clipped only if it's both
-   * inside of the crop area and inside the image.
-   * Extended clipping area only includes the cropping area, so it's possible
-   * to draw outside of the image but inside the crop area.
-   */
-  void setExtendedClipArea(bool enabled) { m_extendedClipArea = enabled; }
-
   void setImageXform(const ImageTransformation& imageXform);
 
   const ImageTransformation& imageXform() const { return m_imageXform; }
@@ -109,7 +99,6 @@ class ThumbnailBase : public QGraphicsItem {
   QTransform m_postScaleXform;
 
   std::shared_ptr<LoadCompletionHandler> m_completionHandler;
-  bool m_extendedClipArea;
 };
 
 

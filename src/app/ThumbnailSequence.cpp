@@ -1499,7 +1499,7 @@ ThumbnailSequence::CompositeItem::CompositeItem(ThumbnailSequence::Impl& owner,
   const QSizeF thumbSize(thumbnail->boundingRect().size());
   const QSizeF labelSize(labelGroup->boundingRect().size());
 
-  const int thumbLabelSpacing = 1;
+  const int thumbLabelSpacing = 2;
   thumbnail->setPos(0.0, 0.0);
   labelGroup->setPos(thumbnail->pos().x() + 0.5 * (thumbSize.width() - labelSize.width()),
                      thumbSize.height() + thumbLabelSpacing);

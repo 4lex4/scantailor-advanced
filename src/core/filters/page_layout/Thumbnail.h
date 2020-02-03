@@ -24,7 +24,6 @@ class Thumbnail : public ThumbnailBase {
             const Params& params,
             const ImageTransformation& xform,
             const QPolygonF& physContentRect,
-            const QRectF& displayArea,
             bool deviant);
 
   void paintOverImage(QPainter& painter, const QTransform& imageToDisplay, const QTransform& thumbToDisplay) override;

@@ -34,11 +34,7 @@ ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
                              const QSizeF& maxSize,
                              const ImageId& imageId,
                              const ImageTransformation& imageXform)
-    : ThumbnailBase(std::move(thumbnailCache),
-                    maxSize,
-                    imageId,
-                    imageXform,
-                    imageXform.resultingPostCropArea().boundingRect()) {}
+    : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, imageXform, imageXform.resultingRect()) {}
 
 ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
                              const QSizeF& maxSize,
@@ -49,8 +45,7 @@ ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
       m_maxSize(maxSize),
       m_imageId(imageId),
       m_imageXform(imageXform),
-      m_displayArea(displayArea),
-      m_extendedClipArea(false) {
+      m_displayArea(displayArea) {
   setImageXform(m_imageXform);
 }
 
@@ -71,8 +66,8 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     }
   }
 
-  const QTransform imageToDisplay(m_postScaleXform * painter->worldTransform());
-  const QTransform thumbToDisplay(painter->worldTransform());
+  const QTransform thumbToDisplay = painter->worldTransform();
+  const QTransform imageToDisplay = m_postScaleXform * thumbToDisplay;
 
   if (pixmap.isNull()) {
     const double border = 1.0;
@@ -87,7 +82,6 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
     return;
   }
 
-
   const QSizeF origImageSize(m_imageXform.origRect().size());
   const double xPreScale = origImageSize.width() / pixmap.width();
   const double yPreScale = origImageSize.height() / pixmap.height();
@@ -97,11 +91,8 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
   const QTransform pixmapToThumb(preScaleXform * m_imageXform.transform() * m_postScaleXform);
 
   // The polygon to draw into in original image coordinates.
-  QPolygonF imagePoly(PolygonUtils::round(m_imageXform.resultingPreCropArea()));
-  if (!m_extendedClipArea) {
-    imagePoly = imagePoly.intersected(PolygonUtils::round(m_imageXform.resultingRect()));
-  }
-
+  QPolygonF imagePoly
+      = PolygonUtils::round(m_imageXform.resultingPreCropArea().intersected(m_imageXform.resultingRect()));
   // The polygon to draw into in display coordinates.
   QPolygonF displayPoly(imageToDisplay.map(imagePoly));
 
@@ -134,13 +125,10 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
   tempAdjustment.translate(-displayRect.left(), -displayRect.top());
 
   tempPainter.setWorldTransform(pixmapToThumb * thumbToDisplay * tempAdjustment);
-
   // Turn off alpha compositing.
   tempPainter.setCompositionMode(QPainter::CompositionMode_Source);
-
   tempPainter.setRenderHint(QPainter::SmoothPixmapTransform);
   tempPainter.setRenderHint(QPainter::Antialiasing);
-
   PixmapRenderer::drawPixmap(tempPainter, pixmap);
 
   // Turn alpha compositing on again.
@@ -148,7 +136,6 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
   // Setup the painter for drawing in thumbnail coordinates,
   // as required for paintOverImage().
   tempPainter.setWorldTransform(thumbToDisplay * tempAdjustment);
-
   tempPainter.save();
   prePaintOverImage(tempPainter, imageToDisplay * tempAdjustment, thumbToDisplay * tempAdjustment);
   tempPainter.restore();
@@ -156,15 +143,12 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
   tempPainter.setPen(Qt::NoPen);
   tempPainter.setBrush(Qt::transparent);
   tempPainter.setWorldTransform(tempAdjustment);
-
   tempPainter.setCompositionMode(QPainter::CompositionMode_Clear);
-
   {
     QPainterPath outerPath;
     outerPath.addRect(displayRect);
     QPainterPath innerPath;
     innerPath.addPolygon(displayPoly);
-
     tempPainter.drawPath(outerPath.subtracted(innerPath));
   }
 
@@ -173,17 +157,17 @@ void ThumbnailBase::paint(QPainter* painter, const QStyleOptionGraphicsItem* opt
   // Setup the painter for drawing in thumbnail coordinates,
   // as required for paintOverImage().
   tempPainter.setWorldTransform(thumbToDisplay * tempAdjustment);
-
   tempPainter.save();
   paintOverImage(tempPainter, imageToDisplay * tempAdjustment, thumbToDisplay * tempAdjustment);
   tempPainter.restore();
 
   tempPainter.end();
 
-  painter->setClipRect(QRectF(QPointF(0, 0), displayRect.size()));
+  painter->setWorldTransform(QTransform());
+  painter->setClipRect(displayRect);
   painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
   painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
-  painter->drawPixmap(QPointF(0, 0), tempPixmap);
+  painter->drawPixmap(displayRect.topLeft(), tempPixmap);
 }  // ThumbnailBase::paint
 
 void ThumbnailBase::paintDeviant(QPainter& painter) {
@@ -191,12 +175,10 @@ void ThumbnailBase::paintDeviant(QPainter& painter) {
     return;
   }
 
-  QPen pen(QColor(0xdd, 0x00, 0x00, 0xee));
+  QPen pen(QColor(0xdd, 0x00, 0x00, 0xcc));
   pen.setWidth(5);
   pen.setCosmetic(true);
   painter.setPen(pen);
-
-  painter.setBrush(QColor(0xdd, 0x00, 0x00, 0xee));
 
   QFont font("Serif");
   font.setWeight(QFont::Bold);

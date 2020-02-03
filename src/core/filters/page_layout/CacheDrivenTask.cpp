@@ -58,10 +58,9 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
   const double deviationThreshold = settings.getMarginsDeviationThreshold();
 
   if (auto* thumbCol = dynamic_cast<ThumbnailCollector*>(collector)) {
-    thumbCol->processThumbnail(std::unique_ptr<QGraphicsItem>(
-        new Thumbnail(thumbCol->thumbnailCache(), thumbCol->maxLogicalThumbSize(), pageInfo.imageId(), newParams, xform,
-                      contentRectPhys, xform.transform().map(pageRectPhys).boundingRect(),
-                      m_settings->deviationProvider().isDeviant(pageInfo.id(), deviationCoef, deviationThreshold))));
+    thumbCol->processThumbnail(std::unique_ptr<QGraphicsItem>(new Thumbnail(
+        thumbCol->thumbnailCache(), thumbCol->maxLogicalThumbSize(), pageInfo.imageId(), newParams, newXform,
+        contentRectPhys, m_settings->deviationProvider().isDeviant(pageInfo.id(), deviationCoef, deviationThreshold))));
   }
 }
 }  // namespace page_layout

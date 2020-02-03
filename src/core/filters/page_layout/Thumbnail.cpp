@@ -19,15 +19,12 @@ Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
                      const Params& params,
                      const ImageTransformation& xform,
                      const QPolygonF& physContentRect,
-                     const QRectF& displayArea,
                      bool deviant)
-    : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, xform, displayArea),
+    : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, xform, xform.resultingRect()),
       m_params(params),
       m_virtContentRect(xform.transform().map(physContentRect).boundingRect()),
-      m_virtOuterRect(displayArea),
-      m_deviant(deviant) {
-  setExtendedClipArea(true);
-}
+      m_virtOuterRect(xform.resultingRect()),
+      m_deviant(deviant) {}
 
 void Thumbnail::paintOverImage(QPainter& painter, const QTransform& imageToDisplay, const QTransform& thumbToDisplay) {
   // We work in display coordinates because we want to be
@@ -94,6 +91,7 @@ void Thumbnail::paintOverImage(QPainter& painter, const QTransform& imageToDispl
   painter.drawRect(outerRect);
 
   if (m_deviant) {
+    painter.setWorldTransform(thumbToDisplay);
     paintDeviant(painter);
   }
 }  // Thumbnail::paintOverImage

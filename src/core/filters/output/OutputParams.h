@@ -16,6 +16,7 @@ namespace output {
 class OutputParams {
  public:
   OutputParams(const OutputImageParams& outputImageParams,
+               const OutputFileParams& sourceFileParams,
                const OutputFileParams& outputFileParams,
                const OutputFileParams& foregroundFileParams,
                const OutputFileParams& backgroundFileParams,
@@ -30,6 +31,8 @@ class OutputParams {
   QDomElement toXml(QDomDocument& doc, const QString& name) const;
 
   const OutputImageParams& outputImageParams() const;
+
+  const OutputFileParams& sourceFileParams() const;
 
   const OutputFileParams& outputFileParams() const;
 
@@ -49,6 +52,7 @@ class OutputParams {
 
  private:
   OutputImageParams m_outputImageParams;
+  OutputFileParams m_sourceFileParams;
   OutputFileParams m_outputFileParams;
   OutputFileParams m_foregroundFileParams;
   OutputFileParams m_backgroundFileParams;

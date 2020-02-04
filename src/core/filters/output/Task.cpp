@@ -115,20 +115,21 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
   Params params = m_settings->getParams(m_pageId);
 
   RenderParams renderParams(params.colorParams(), params.splittingOptions());
-  const QString outFilePath(m_outFileNameGen.filePathFor(m_pageId));
-  const QFileInfo outFileInfo(outFilePath);
 
   ImageTransformation newXform(data.xform());
   newXform.postScaleToDpi(params.outputDpi());
 
+  const QFileInfo sourceFileInfo(m_pageId.imageId().filePath());
+  const QString outFilePath(m_outFileNameGen.filePathFor(m_pageId));
+  const QFileInfo outFileInfo(outFilePath);
   const QString foregroundDir(Utils::foregroundDir(m_outFileNameGen.outDir()));
   const QString backgroundDir(Utils::backgroundDir(m_outFileNameGen.outDir()));
   const QString originalBackgroundDir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
   const QString foregroundFilePath(QDir(foregroundDir).absoluteFilePath(outFileInfo.fileName()));
-  const QString backgroundFilePath(QDir(backgroundDir).absoluteFilePath(outFileInfo.fileName()));
-  const QString originalBackgroundFilePath(QDir(originalBackgroundDir).absoluteFilePath(outFileInfo.fileName()));
   const QFileInfo foregroundFileInfo(foregroundFilePath);
+  const QString backgroundFilePath(QDir(backgroundDir).absoluteFilePath(outFileInfo.fileName()));
   const QFileInfo backgroundFileInfo(backgroundFilePath);
+  const QString originalBackgroundFilePath(QDir(originalBackgroundDir).absoluteFilePath(outFileInfo.fileName()));
   const QFileInfo originalBackgroundFileInfo(originalBackgroundFilePath);
 
   const QString automaskDir(Utils::automaskDir(m_outFileNameGen.outDir()));
@@ -141,7 +142,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
 
   const bool needPictureEditor = renderParams.mixedOutput() && !m_batchProcessing;
   const bool needSpecklesImage
-      = params.despeckleLevel() != DESPECKLE_OFF && renderParams.needBinarization() && !m_batchProcessing;
+      = ((params.despeckleLevel() != .0) && renderParams.needBinarization() && !m_batchProcessing);
 
   {
     std::unique_ptr<OutputParams> storedOutputParams(m_settings->getOutputParams(m_pageId));
@@ -190,12 +191,15 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
       break;
     }
 
+    if (!storedOutputParams->sourceFileParams().matches(OutputFileParams(sourceFileInfo))) {
+      needReprocess = true;
+      break;
+    }
     if (!renderParams.splitOutput()) {
       if (!outFileInfo.exists()) {
         needReprocess = true;
         break;
       }
-
       if (!storedOutputParams->outputFileParams().matches(OutputFileParams(outFileInfo))) {
         needReprocess = true;
         break;
@@ -210,7 +214,6 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
         needReprocess = true;
         break;
       }
-
       if (renderParams.originalBackground()) {
         if (!originalBackgroundFileInfo.exists()) {
           needReprocess = true;
@@ -301,7 +304,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     // for visualization purposes, but also for re-doing despeckling at
     // different levels without going through the whole output generation process.
     const bool writeAutomask = renderParams.mixedOutput();
-    const bool writeSpecklesFile = params.despeckleLevel() != DESPECKLE_OFF && renderParams.needBinarization();
+    const bool writeSpecklesFile = ((params.despeckleLevel() != .0) && renderParams.needBinarization());
 
     automaskImg = BinaryImage();
     specklesImg = BinaryImage();
@@ -407,7 +410,7 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
       // Note that we can't reuse *_file_info objects
       // as we've just overwritten those files.
       const OutputParams outParams(
-          newOutputImageParams, OutputFileParams(QFileInfo(outFilePath)),
+          newOutputImageParams, OutputFileParams(sourceFileInfo), OutputFileParams(QFileInfo(outFilePath)),
           renderParams.splitOutput() ? OutputFileParams(QFileInfo(foregroundFilePath)) : OutputFileParams(),
           renderParams.splitOutput() ? OutputFileParams(QFileInfo(backgroundFilePath)) : OutputFileParams(),
           renderParams.originalBackground() ? OutputFileParams(QFileInfo(originalBackgroundFilePath))

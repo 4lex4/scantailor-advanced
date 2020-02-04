@@ -10,6 +10,7 @@
 
 namespace output {
 OutputParams::OutputParams(const OutputImageParams& outputImageParams,
+                           const OutputFileParams& sourceFileParams,
                            const OutputFileParams& outputFileParams,
                            const OutputFileParams& foregroundFileParams,
                            const OutputFileParams& backgroundFileParams,
@@ -19,6 +20,7 @@ OutputParams::OutputParams(const OutputImageParams& outputImageParams,
                            const ZoneSet& pictureZones,
                            const ZoneSet& fillZones)
     : m_outputImageParams(outputImageParams),
+      m_sourceFileParams(sourceFileParams),
       m_outputFileParams(outputFileParams),
       m_foregroundFileParams(foregroundFileParams),
       m_backgroundFileParams(backgroundFileParams),
@@ -30,6 +32,7 @@ OutputParams::OutputParams(const OutputImageParams& outputImageParams,
 
 OutputParams::OutputParams(const QDomElement& el)
     : m_outputImageParams(el.namedItem("image").toElement()),
+      m_sourceFileParams(el.namedItem("source_file").toElement()),
       m_outputFileParams(el.namedItem("file").toElement()),
       m_foregroundFileParams(el.namedItem("foreground_file").toElement()),
       m_backgroundFileParams(el.namedItem("background_file").toElement()),
@@ -42,6 +45,7 @@ OutputParams::OutputParams(const QDomElement& el)
 QDomElement OutputParams::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
   el.appendChild(m_outputImageParams.toXml(doc, "image"));
+  el.appendChild(m_sourceFileParams.toXml(doc, "source_file"));
   el.appendChild(m_outputFileParams.toXml(doc, "file"));
   el.appendChild(m_foregroundFileParams.toXml(doc, "foreground_file"));
   el.appendChild(m_backgroundFileParams.toXml(doc, "background_file"));
@@ -87,5 +91,9 @@ const ZoneSet& OutputParams::pictureZones() const {
 
 const ZoneSet& OutputParams::fillZones() const {
   return m_fillZones;
+}
+
+const OutputFileParams& OutputParams::sourceFileParams() const {
+  return m_sourceFileParams;
 }
 }  // namespace output

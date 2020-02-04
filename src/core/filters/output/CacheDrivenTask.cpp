@@ -32,16 +32,17 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
                               const ImageTransformation& xform,
                               const QPolygonF& contentRectPhys) {
   if (auto* thumbCol = dynamic_cast<ThumbnailCollector*>(collector)) {
+    const QFileInfo sourceFileInfo(pageInfo.id().imageId().filePath());
     const QString outFilePath(m_outFileNameGen.filePathFor(pageInfo.id()));
     const QFileInfo outFileInfo(outFilePath);
     const QString foregroundDir(Utils::foregroundDir(m_outFileNameGen.outDir()));
     const QString backgroundDir(Utils::backgroundDir(m_outFileNameGen.outDir()));
     const QString originalBackgroundDir(Utils::originalBackgroundDir(m_outFileNameGen.outDir()));
     const QString foregroundFilePath(QDir(foregroundDir).absoluteFilePath(outFileInfo.fileName()));
-    const QString backgroundFilePath(QDir(backgroundDir).absoluteFilePath(outFileInfo.fileName()));
-    const QString originalBackgroundFilePath(QDir(originalBackgroundDir).absoluteFilePath(outFileInfo.fileName()));
     const QFileInfo foregroundFileInfo(foregroundFilePath);
+    const QString backgroundFilePath(QDir(backgroundDir).absoluteFilePath(outFileInfo.fileName()));
     const QFileInfo backgroundFileInfo(backgroundFilePath);
+    const QString originalBackgroundFilePath(QDir(originalBackgroundDir).absoluteFilePath(outFileInfo.fileName()));
     const QFileInfo originalBackgroundFileInfo(originalBackgroundFilePath);
 
     const Params params(m_settings->getParams(pageInfo.id()));
@@ -84,12 +85,15 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
         break;
       }
 
+      if (!storedOutputParams->sourceFileParams().matches(OutputFileParams(sourceFileInfo))) {
+        needReprocess = true;
+        break;
+      }
       if (!renderParams.splitOutput()) {
         if (!outFileInfo.exists()) {
           needReprocess = true;
           break;
         }
-
         if (!storedOutputParams->outputFileParams().matches(OutputFileParams(outFileInfo))) {
           needReprocess = true;
           break;
@@ -104,7 +108,6 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
           needReprocess = true;
           break;
         }
-
         if (renderParams.originalBackground()) {
           if (!originalBackgroundFileInfo.exists()) {
             needReprocess = true;

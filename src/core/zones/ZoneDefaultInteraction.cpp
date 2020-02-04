@@ -190,7 +190,7 @@ void ZoneDefaultInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
     makePeerPreceeder(*m_context.createZoneDragInteraction(interaction, newSpline));
     delete this;
     event->accept();
-  } else if (m_context.getZoneCreationMode() == ZoneCreationMode::LASSO) {
+  } else if ((m_context.getZoneCreationMode() == ZoneCreationMode::LASSO) && (event->modifiers() == Qt::NoModifier)) {
     makePeerPreceeder(*m_context.createZoneCreationInteraction(interaction));
     delete this;
     event->accept();

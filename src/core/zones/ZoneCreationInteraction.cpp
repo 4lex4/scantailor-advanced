@@ -155,6 +155,7 @@ void ZoneCreationInteraction::onMousePressEvent(QMouseEvent* event, InteractionS
     return;
   }
   m_leftMouseButtonPressed = true;
+  m_mouseButtonModifiers = event->modifiers();
   event->accept();
 }
 
@@ -165,7 +166,7 @@ void ZoneCreationInteraction::onMouseReleaseEvent(QMouseEvent* event, Interactio
   m_leftMouseButtonPressed = false;
 
   ZoneCreationMode currentCreationMode = currentZoneCreationMode();
-  if (m_dragWatcher.haveSignificantDrag() && !(currentCreationMode == ZoneCreationMode::LASSO)) {
+  if (m_dragWatcher.haveSignificantDrag()) {
     return;
   }
 
@@ -268,7 +269,8 @@ void ZoneCreationInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionSt
     }
   }
 
-  if ((currentCreationMode == ZoneCreationMode::LASSO) && m_leftMouseButtonPressed) {
+  if ((currentCreationMode == ZoneCreationMode::LASSO) && m_leftMouseButtonPressed
+      && (m_mouseButtonModifiers == Qt::NoModifier)) {
     Proximity minDistance = interaction.proximityThreshold();
     if ((Proximity(last, screenMousePos) > minDistance) && (Proximity(first, screenMousePos) > minDistance)) {
       m_spline->appendVertex(m_nextVertexImagePos);
@@ -313,7 +315,8 @@ void ZoneCreationInteraction::updateStatusTip() {
 }
 
 bool ZoneCreationInteraction::isDragHandlerPermitted(const InteractionState&) const {
-  return !(currentZoneCreationMode() == ZoneCreationMode::LASSO);
+  return !((currentZoneCreationMode() == ZoneCreationMode::LASSO) && m_leftMouseButtonPressed
+           && (m_mouseButtonModifiers == Qt::NoModifier));
 }
 
 ZoneCreationMode ZoneCreationInteraction::currentZoneCreationMode() const {

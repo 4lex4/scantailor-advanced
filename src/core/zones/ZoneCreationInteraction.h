@@ -75,6 +75,7 @@ class ZoneCreationInteraction : public InteractionHandler {
   QPointF m_nextVertexImagePos_mid2;
   ZoneCreationMode m_initialZoneCreationMode;
   bool m_leftMouseButtonPressed;
+  Qt::KeyboardModifiers m_mouseButtonModifiers;
 };
 
 

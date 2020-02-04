@@ -385,7 +385,7 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   Capabilities:  
     * **`Right-click`** to create/remove guides from the **context menu** called.  
     * **`Right-click`** on a guide to delete that guide from the **context menu** called.  
-    * **`Shift+LMB`** - drag the guide under the cursor.  
+    * **`Ctrl+Alt+LMB`** - drag the guide under the cursor.  
     * **`Shift/Ctrl+LMB`** on the content rectangle - drag the page content.
       Hold **`Shift`** pressed to restrict moving along the horizontal axis only or **`Ctrl`** for the vertical one.
       Hold **`Shift+Ctrl`** for usual dragging.  

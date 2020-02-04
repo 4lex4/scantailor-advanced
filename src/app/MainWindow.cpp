@@ -209,6 +209,7 @@ MainWindow::MainWindow()
   addAction(actionGotoPage);
   addAction(actionMagnifyThumbnails);
   addAction(actionDiminishThumbnails);
+  addAction(actionReloadPage);
 
   addAction(actionSwitchFilter1);
   addAction(actionSwitchFilter2);
@@ -254,6 +255,7 @@ MainWindow::MainWindow()
   connect(diminishThumbnailsBtn, &QPushButton::clicked, diminishThumbnails);
   connect(actionMagnifyThumbnails, &QAction::triggered, magnifyThumbnails);
   connect(actionDiminishThumbnails, &QAction::triggered, diminishThumbnails);
+  connect(actionReloadPage, SIGNAL(triggered(bool)), SLOT(reloadCurrentPage()));
 
   connect(actionSwitchFilter1, SIGNAL(triggered(bool)), SLOT(switchFilter1()));
   connect(actionSwitchFilter2, SIGNAL(triggered(bool)), SLOT(switchFilter2()));
@@ -2114,4 +2116,11 @@ PageSequence MainWindow::currentPageSequence() {
     std::reverse(pageSequence.begin(), pageSequence.end());
   }
   return pageSequence;
+}
+
+void MainWindow::reloadCurrentPage() {
+  if (isBatchProcessingInProgress() || !isProjectLoaded())
+    return;
+
+  updateMainArea();
 }

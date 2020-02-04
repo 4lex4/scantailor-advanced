@@ -1385,6 +1385,17 @@ QToolButton:pressed {
     <string notr="true">Ctrl+-</string>
    </property>
   </action>
+  <action name="actionReloadPage">
+   <property name="text">
+    <string>Reload current page</string>
+   </property>
+   <property name="toolTip">
+    <string>Reload current page</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

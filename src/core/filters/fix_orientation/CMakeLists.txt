@@ -11,7 +11,8 @@ set(sources
     ApplyDialog.cpp ApplyDialog.h
     Settings.cpp Settings.h
     Task.cpp Task.h
-    CacheDrivenTask.cpp CacheDrivenTask.h)
+    CacheDrivenTask.cpp CacheDrivenTask.h
+    Utils.cpp Utils.h)
 
 add_library(fix_orientation STATIC ${sources} ${ui_files})
 target_link_libraries(fix_orientation PUBLIC core)

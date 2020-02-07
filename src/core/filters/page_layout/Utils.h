@@ -10,6 +10,7 @@ class QSizeF;
 class QRectF;
 class Margins;
 class ImageTransformation;
+class Dpi;
 
 namespace page_layout {
 class Alignment;
@@ -17,6 +18,8 @@ class Params;
 
 class Utils {
  public:
+  Utils() = delete;
+
   /**
    * \brief Replace an empty content rectangle with a tiny centered one.
    *
@@ -75,6 +78,8 @@ class Utils {
                                     const QSizeF& aggregateHardSizeMm);
 
   static QPolygonF shiftToRoundedOrigin(const QPolygonF& poly);
+
+  static Params buildDefaultParams(const Dpi& dpi);
 
  private:
   static QPointF getRightUnitVector(const QPolygonF& polyRect);

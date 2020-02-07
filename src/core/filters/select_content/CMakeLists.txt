@@ -19,7 +19,8 @@ set(sources
     Thumbnail.cpp Thumbnail.h
     PhysSizeCalc.cpp PhysSizeCalc.h
     OrderByWidthProvider.cpp OrderByWidthProvider.h
-    OrderByHeightProvider.cpp OrderByHeightProvider.h)
+    OrderByHeightProvider.cpp OrderByHeightProvider.h
+    Utils.cpp Utils.h)
 
 add_library(select_content STATIC ${sources} ${ui_files})
 target_link_libraries(select_content PUBLIC core)

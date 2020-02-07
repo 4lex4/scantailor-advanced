@@ -3,13 +3,9 @@
 
 #include "Filter.h"
 
-#include <DefaultParams.h>
-#include <DefaultParamsProvider.h>
 #include <filters/deskew/CacheDrivenTask.h>
 #include <filters/deskew/Task.h>
 
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <utility>
 
 #include "CacheDrivenTask.h"
@@ -21,6 +17,7 @@
 #include "ProjectWriter.h"
 #include "Settings.h"
 #include "Task.h"
+#include "Utils.h"
 
 namespace page_split {
 Filter::Filter(intrusive_ptr<ProjectPages> pageSequence, const PageSelectionAccessor& pageSelectionAccessor)
@@ -168,15 +165,10 @@ void Filter::selectPageOrder(int option) {
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
-  if (!m_settings->getPageRecord(pageInfo.id().imageId()).isNull()) {
+  if (!m_settings->getPageRecord(pageInfo.id().imageId()).isNull())
     return;
-  }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
-  const DefaultParams::PageSplitParams& pageSplitParams = defaultParams.getPageSplitParams();
 
-  Settings::UpdateAction update;
-  update.setLayoutType(pageSplitParams.getLayoutType());
-  m_settings->updatePage(pageInfo.id().imageId(), update);
+  m_settings->updatePage(pageInfo.id().imageId(), Utils::buildDefaultUpdateAction());
 }
 
 OptionsWidget* Filter::optionsWidget() {

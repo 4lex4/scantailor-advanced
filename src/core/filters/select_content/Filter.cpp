@@ -3,18 +3,13 @@
 
 #include "Filter.h"
 
-#include <DefaultParams.h>
-#include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
-#include <UnitsConverter.h>
 #include <XmlMarshaller.h>
 #include <XmlUnmarshaller.h>
 #include <filters/page_layout/CacheDrivenTask.h>
 #include <filters/page_layout/Task.h>
 #include <foundation/Utils.h>
 
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <utility>
 
 #include "CacheDrivenTask.h"
@@ -25,6 +20,7 @@
 #include "ProjectReader.h"
 #include "ProjectWriter.h"
 #include "Task.h"
+#include "Utils.h"
 
 using namespace foundation;
 
@@ -78,7 +74,8 @@ QDomElement Filter::saveSettings(const ProjectWriter& writer, QDomDocument& doc)
   QDomElement filterEl(doc.createElement("select-content"));
 
   filterEl.appendChild(XmlMarshaller(doc).sizeF(m_settings->pageDetectionBox(), "page-detection-box"));
-  filterEl.setAttribute("pageDetectionTolerance", Utils::doubleToString(m_settings->pageDetectionTolerance()));
+  filterEl.setAttribute("pageDetectionTolerance",
+                        foundation::Utils::doubleToString(m_settings->pageDetectionTolerance()));
 
   writer.enumPages(
       [&](const PageId& pageId, int numericId) { this->writePageSettings(doc, filterEl, pageId, numericId); });
@@ -150,23 +147,10 @@ intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<page_
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
-  if (!m_settings->isParamsNull(pageInfo.id())) {
+  if (!m_settings->isParamsNull(pageInfo.id()))
     return;
-  }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
-  const DefaultParams::SelectContentParams& selectContentParams = defaultParams.getSelectContentParams();
 
-  const UnitsConverter unitsConverter(pageInfo.metadata().dpi());
-
-  const QSizeF& pageRectSize = selectContentParams.getPageRectSize();
-  double pageRectWidth = pageRectSize.width();
-  double pageRectHeight = pageRectSize.height();
-  unitsConverter.convert(pageRectWidth, pageRectHeight, defaultParams.getUnits(), PIXELS);
-
-  m_settings->setPageParams(
-      pageInfo.id(), Params(QRectF(), QSizeF(), QRectF(QPointF(0, 0), QSizeF(pageRectWidth, pageRectHeight)),
-                            Dependencies(), selectContentParams.isContentDetectEnabled() ? MODE_AUTO : MODE_DISABLED,
-                            selectContentParams.getPageDetectMode(), selectContentParams.isFineTuneCorners()));
+  m_settings->setPageParams(pageInfo.id(), select_content::Utils::buildDefaultParams(pageInfo.metadata().dpi()));
 }
 
 OptionsWidget* Filter::optionsWidget() {

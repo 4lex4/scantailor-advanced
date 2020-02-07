@@ -3,14 +3,10 @@
 
 #include "Filter.h"
 
-#include <DefaultParams.h>
-#include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
 #include <filters/select_content/CacheDrivenTask.h>
 #include <filters/select_content/Task.h>
 
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <utility>
 
 #include "AbstractRelinker.h"
@@ -20,6 +16,7 @@
 #include "ProjectReader.h"
 #include "ProjectWriter.h"
 #include "Task.h"
+#include "Utils.h"
 
 namespace deskew {
 Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor)
@@ -140,14 +137,10 @@ void Filter::selectPageOrder(int option) {
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
-  if (!m_settings->isParamsNull(pageInfo.id())) {
+  if (!m_settings->isParamsNull(pageInfo.id()))
     return;
-  }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
-  const DefaultParams::DeskewParams& deskewParams = defaultParams.getDeskewParams();
 
-  m_settings->setPageParams(pageInfo.id(),
-                            Params(deskewParams.getDeskewAngleDeg(), Dependencies(), deskewParams.getMode()));
+  m_settings->setPageParams(pageInfo.id(), Utils::buildDefaultParams());
 }
 
 OptionsWidget* Filter::optionsWidget() {

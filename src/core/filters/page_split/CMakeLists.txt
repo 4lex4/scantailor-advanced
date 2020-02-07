@@ -22,7 +22,8 @@ set(sources
     LayoutType.cpp LayoutType.h
     UnremoveButton.cpp UnremoveButton.h
     OrderBySplitTypeProvider.cpp OrderBySplitTypeProvider.h
-    PageLayoutAdapter.cpp PageLayoutAdapter.h)
+    PageLayoutAdapter.cpp PageLayoutAdapter.h
+    Utils.cpp Utils.h)
 
 add_library(page_split STATIC ${sources} ${ui_files})
 target_link_libraries(page_split PUBLIC core)

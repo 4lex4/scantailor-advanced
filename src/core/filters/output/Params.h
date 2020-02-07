@@ -4,7 +4,7 @@
 #ifndef SCANTAILOR_OUTPUT_PARAMS_H_
 #define SCANTAILOR_OUTPUT_PARAMS_H_
 
-#include <DistortionModel.h>
+#include <dewarping/DistortionModel.h>
 
 #include "ColorParams.h"
 #include "DepthPerception.h"

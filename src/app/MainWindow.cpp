@@ -1058,13 +1058,6 @@ void MainWindow::filterSelectionChanged(const QItemSelection& selected) {
     thumbView->verticalScrollBar()->setValue(verScrollBarPos);
   }
 
-  // load default settings for all the pages
-  for (const PageInfo& pageInfo : m_thumbSequence->toPageSequence()) {
-    for (int i = 0; i < m_stages->count(); i++) {
-      m_stages->filterAt(i)->loadDefaultSettings(pageInfo);
-    }
-  }
-
   updateMainArea();
 }  // MainWindow::filterSelectionChanged
 

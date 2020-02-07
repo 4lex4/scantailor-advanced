@@ -10,8 +10,12 @@ class QTransform;
 class QRect;
 
 namespace output {
+class Params;
+
 class Utils {
  public:
+  Utils() = default;
+
   static QString automaskDir(const QString& outDir);
 
   static QString predespeckleDir(const QString& outDir);
@@ -28,7 +32,7 @@ class Utils {
 
   static QTransform rotate(double degrees, const QRect& imageRect);
 
-  Utils() = delete;
+  static Params buildDefaultParams();
 };
 }  // namespace output
 #endif

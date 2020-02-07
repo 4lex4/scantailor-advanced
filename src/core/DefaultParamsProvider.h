@@ -21,7 +21,7 @@ class DefaultParamsProvider {
 
   const QString& getProfileName() const;
 
-  DefaultParams getParams() const;
+  const DefaultParams& getParams() const;
 
   void setParams(std::unique_ptr<DefaultParams> params, const QString& name);
 

@@ -3,11 +3,15 @@
 
 #include "Utils.h"
 
+#include <core/DefaultParams.h>
+#include <core/DefaultParamsProvider.h>
+
 #include <QDir>
 #include <QString>
 #include <QTransform>
 
 #include "Dpi.h"
+#include "Params.h"
 
 namespace output {
 QString Utils::automaskDir(const QString& outDir) {
@@ -51,5 +55,14 @@ QTransform Utils::rotate(double degrees, const QRect& imageRect) {
   rotateXform *= QTransform().rotate(degrees);
   rotateXform *= QTransform().translate(origin.x(), origin.y());
   return rotateXform;
+}
+
+Params Utils::buildDefaultParams() {
+  const DefaultParams& defaultParams = DefaultParamsProvider::getInstance().getParams();
+  const DefaultParams::OutputParams& outputParams = defaultParams.getOutputParams();
+
+  return Params(outputParams.getDpi(), outputParams.getColorParams(), outputParams.getSplittingOptions(),
+                outputParams.getPictureShapeOptions(), dewarping::DistortionModel(), outputParams.getDepthPerception(),
+                outputParams.getDewarpingOptions(), outputParams.getDespeckleLevel());
 }
 }  // namespace output

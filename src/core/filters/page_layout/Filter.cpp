@@ -3,15 +3,10 @@
 
 #include "Filter.h"
 
-#include <DefaultParams.h>
-#include <DefaultParamsProvider.h>
 #include <OrderByDeviationProvider.h>
-#include <UnitsConverter.h>
 #include <filters/output/CacheDrivenTask.h>
 #include <filters/output/Task.h>
 
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <utility>
 
 #include "CacheDrivenTask.h"
@@ -188,25 +183,10 @@ intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<outpu
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
-  if (!m_settings->isParamsNull(pageInfo.id())) {
+  if (!m_settings->isParamsNull(pageInfo.id()))
     return;
-  }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
-  const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
 
-  const UnitsConverter unitsConverter(pageInfo.metadata().dpi());
-
-  const Margins& margins = pageLayoutParams.getHardMargins();
-  double leftMargin = margins.left();
-  double topMargin = margins.top();
-  double rightMargin = margins.right();
-  double bottomMargin = margins.bottom();
-  unitsConverter.convert(leftMargin, topMargin, defaultParams.getUnits(), MILLIMETRES);
-  unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getUnits(), MILLIMETRES);
-
-  m_settings->setPageParams(
-      pageInfo.id(), Params(Margins(leftMargin, topMargin, rightMargin, bottomMargin), QRectF(), QRectF(), QSizeF(),
-                            pageLayoutParams.getAlignment(), pageLayoutParams.isAutoMargins()));
+  m_settings->setPageParams(pageInfo.id(), Utils::buildDefaultParams(pageInfo.metadata().dpi()));
 }
 
 OptionsWidget* Filter::optionsWidget() {

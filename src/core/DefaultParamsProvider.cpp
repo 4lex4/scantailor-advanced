@@ -42,7 +42,7 @@ const QString& DefaultParamsProvider::getProfileName() const {
   return m_profileName;
 }
 
-DefaultParams DefaultParamsProvider::getParams() const {
+const DefaultParams& DefaultParamsProvider::getParams() const {
   assert(m_params != nullptr);
   return *m_params;
 }

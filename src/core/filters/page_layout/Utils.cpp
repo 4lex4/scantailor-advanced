@@ -4,6 +4,8 @@
 #include "Utils.h"
 
 #include <UnitsConverter.h>
+#include <core/DefaultParams.h>
+#include <core/DefaultParamsProvider.h>
 
 #include <cassert>
 #include <cmath>
@@ -228,5 +230,23 @@ QPolygonF Utils::shiftToRoundedOrigin(const QPolygonF& poly) {
   const double shiftValueX = -(x - std::round(x));
   const double shiftValueY = -(y - std::round(y));
   return poly.translated(shiftValueX, shiftValueY);
+}
+
+Params Utils::buildDefaultParams(const Dpi& dpi) {
+  const DefaultParams& defaultParams = DefaultParamsProvider::getInstance().getParams();
+  const DefaultParams::PageLayoutParams& pageLayoutParams = defaultParams.getPageLayoutParams();
+
+  const UnitsConverter unitsConverter(dpi);
+
+  const Margins& margins = pageLayoutParams.getHardMargins();
+  double leftMargin = margins.left();
+  double topMargin = margins.top();
+  double rightMargin = margins.right();
+  double bottomMargin = margins.bottom();
+  unitsConverter.convert(leftMargin, topMargin, defaultParams.getUnits(), MILLIMETRES);
+  unitsConverter.convert(rightMargin, bottomMargin, defaultParams.getUnits(), MILLIMETRES);
+
+  return Params(Margins(leftMargin, topMargin, rightMargin, bottomMargin), QRectF(), QRectF(), QSizeF(),
+                pageLayoutParams.getAlignment(), pageLayoutParams.isAutoMargins());
 }
 }  // namespace page_layout

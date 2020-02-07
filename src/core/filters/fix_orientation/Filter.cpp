@@ -3,14 +3,10 @@
 
 #include "Filter.h"
 
-#include <DefaultParams.h>
-#include <DefaultParamsProvider.h>
 #include <filters/page_split/CacheDrivenTask.h>
 #include <filters/page_split/Task.h>
 
 #include <QCoreApplication>
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <utility>
 
 #include "CacheDrivenTask.h"
@@ -21,8 +17,8 @@
 #include "ProjectWriter.h"
 #include "Settings.h"
 #include "Task.h"
+#include "Utils.h"
 #include "XmlMarshaller.h"
-#include "XmlUnmarshaller.h"
 
 namespace fix_orientation {
 Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor)
@@ -123,13 +119,10 @@ void Filter::writeParams(QDomDocument& doc, QDomElement& filterEl, const ImageId
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
-  if (!m_settings->isRotationNull(pageInfo.id().imageId())) {
+  if (!m_settings->isRotationNull(pageInfo.id().imageId()))
     return;
-  }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
-  const DefaultParams::FixOrientationParams& fixOrientationParams = defaultParams.getFixOrientationParams();
 
-  m_settings->applyRotation(pageInfo.id().imageId(), fixOrientationParams.getImageRotation());
+  m_settings->applyRotation(pageInfo.id().imageId(), Utils::getDefaultOrthogonalRotation());
 }
 
 OptionsWidget* Filter::optionsWidget() {

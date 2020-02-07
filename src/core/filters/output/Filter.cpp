@@ -3,13 +3,8 @@
 
 #include "Filter.h"
 
-#include <DefaultParams.h>
-#include <DefaultParamsProvider.h>
 #include <OrderByCompletenessProvider.h>
-#include <tiff.h>
 
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <utility>
 
 #include "CacheDrivenTask.h"
@@ -20,6 +15,7 @@
 #include "Settings.h"
 #include "Task.h"
 #include "ThumbnailPixmapCache.h"
+#include "Utils.h"
 
 namespace output {
 Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor) : m_settings(new Settings), m_selectedPageOrder(0) {
@@ -152,16 +148,10 @@ intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(const OutputFileNam
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {
-  if (!m_settings->isParamsNull(pageInfo.id())) {
+  if (!m_settings->isParamsNull(pageInfo.id()))
     return;
-  }
-  const DefaultParams defaultParams = DefaultParamsProvider::getInstance().getParams();
-  const DefaultParams::OutputParams& outputParams = defaultParams.getOutputParams();
 
-  m_settings->setParams(pageInfo.id(), Params(outputParams.getDpi(), outputParams.getColorParams(),
-                                              outputParams.getSplittingOptions(), outputParams.getPictureShapeOptions(),
-                                              dewarping::DistortionModel(), outputParams.getDepthPerception(),
-                                              outputParams.getDewarpingOptions(), outputParams.getDespeckleLevel()));
+  m_settings->setParams(pageInfo.id(), Utils::buildDefaultParams());
 }
 
 OptionsWidget* Filter::optionsWidget() {

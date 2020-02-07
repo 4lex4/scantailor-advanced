@@ -59,6 +59,7 @@
 #include "UnitsProvider.h"
 #include "Utils.h"
 #include "WorkerThreadPool.h"
+#include "config.h"
 #include "filters/deskew/CacheDrivenTask.h"
 #include "filters/deskew/Task.h"
 #include "filters/fix_orientation/CacheDrivenTask.h"
@@ -298,7 +299,7 @@ MainWindow::MainWindow()
 
   connect(actionFixDpi, SIGNAL(triggered(bool)), SLOT(fixDpiDialogRequested()));
   connect(actionRelinking, SIGNAL(triggered(bool)), SLOT(showRelinkingDialog()));
-#ifndef NDEBUG
+#ifdef ENABLE_DEBUG_FEATURES
   connect(actionDebug, SIGNAL(toggled(bool)), SLOT(debugToggled(bool)));
 #else
   actionDebug->setVisible(false);

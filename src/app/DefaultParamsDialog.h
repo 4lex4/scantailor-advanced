@@ -147,7 +147,7 @@ class DefaultParamsDialog : public QDialog, private Ui::DefaultParamsDialog {
   bool m_topBottomLinkEnabled;
   OrthogonalRotation m_orthogonalRotation;
   std::unordered_map<QToolButton*, page_layout::Alignment> m_alignmentByButton;
-  std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
+  QButtonGroup* m_alignmentButtonGroup;
   DefaultParamsProfileManager m_profileManager;
   int m_customDpiItemIdx;
   QString m_customDpiValue;

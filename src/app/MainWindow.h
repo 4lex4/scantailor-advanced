@@ -328,8 +328,8 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   bool m_debug;
   bool m_closing;
   QTimer m_autoSaveTimer;
-  std::unique_ptr<StatusBarPanel> m_statusBarPanel;
-  std::unique_ptr<QActionGroup> m_unitsMenuActionGroup;
+  StatusBarPanel* m_statusBarPanel;
+  QActionGroup* m_unitsMenuActionGroup;
   QTimer m_maxLogicalThumbSizeUpdater;
   QTimer m_sceneItemsPosUpdater;
 };

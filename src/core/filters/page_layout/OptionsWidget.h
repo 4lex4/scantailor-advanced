@@ -123,7 +123,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
   Alignment m_alignment;
   bool m_leftRightLinked;
   bool m_topBottomLinked;
-  std::unique_ptr<QButtonGroup> m_alignmentButtonGroup;
+  QButtonGroup* m_alignmentButtonGroup;
 
   ConnectionManager m_connectionManager;
 };

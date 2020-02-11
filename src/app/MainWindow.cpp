@@ -140,8 +140,8 @@ MainWindow::MainWindow()
 
   m_optionsFrameLayout = new QStackedLayout(filterOptions);
 
-  m_statusBarPanel = std::make_unique<StatusBarPanel>();
-  QMainWindow::statusBar()->addPermanentWidget(m_statusBarPanel.get());
+  m_statusBarPanel = new StatusBarPanel;
+  QMainWindow::statusBar()->addPermanentWidget(m_statusBarPanel);
   connect(m_thumbSequence.get(), &ThumbnailSequence::newSelectionLeader, [this](const PageInfo& pageInfo) {
     PageSequence pageSequence = m_thumbSequence->toPageSequence();
     if (pageSequence.numPages() > 0) {
@@ -151,7 +151,7 @@ MainWindow::MainWindow()
     }
   });
 
-  m_unitsMenuActionGroup = std::make_unique<QActionGroup>(this);
+  m_unitsMenuActionGroup = new QActionGroup(this);
   for (QAction* action : menuUnits->actions()) {
     m_unitsMenuActionGroup->addAction(action);
   }

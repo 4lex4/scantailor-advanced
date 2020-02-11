@@ -96,7 +96,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
   Utils::mapSetValue(m_alignmentByButton, alignBottomBtn, Alignment(Alignment::BOTTOM, Alignment::HCENTER));
   Utils::mapSetValue(m_alignmentByButton, alignBottomRightBtn, Alignment(Alignment::BOTTOM, Alignment::RIGHT));
 
-  m_alignmentButtonGroup = std::make_unique<QButtonGroup>(this);
+  m_alignmentButtonGroup = new QButtonGroup(this);
   for (const auto& buttonAndAlignment : m_alignmentByButton) {
     m_alignmentButtonGroup->addButton(buttonAndAlignment.first);
   }

@@ -4,20 +4,20 @@
 #ifndef SCANTAILOR_CORE_PAGESELECTIONACCESSOR_H_
 #define SCANTAILOR_CORE_PAGESELECTIONACCESSOR_H_
 
+#include <memory>
 #include <set>
 #include <vector>
 
 #include "PageId.h"
 #include "PageRange.h"
 #include "PageSelectionProvider.h"
-#include "intrusive_ptr.h"
 
 class PageSequence;
 
 class PageSelectionAccessor {
   // Member-wise copying is OK.
  public:
-  explicit PageSelectionAccessor(intrusive_ptr<const PageSelectionProvider> provider);
+  explicit PageSelectionAccessor(std::shared_ptr<const PageSelectionProvider> provider);
 
   PageSequence allPages() const;
 
@@ -26,7 +26,7 @@ class PageSelectionAccessor {
   std::vector<PageRange> selectedRanges() const;
 
  private:
-  intrusive_ptr<const PageSelectionProvider> m_provider;
+  std::shared_ptr<const PageSelectionProvider> m_provider;
 };
 
 

@@ -7,14 +7,15 @@
 #include <set>
 #include <vector>
 
-#include "ref_countable.h"
 
 class PageSequence;
 class PageId;
 class PageRange;
 
-class PageSelectionProvider : public ref_countable {
+class PageSelectionProvider {
  public:
+  virtual ~PageSelectionProvider() = default;
+
   virtual PageSequence allPages() const = 0;
 
   virtual std::set<PageId> selectedPages() const = 0;

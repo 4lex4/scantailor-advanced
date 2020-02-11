@@ -5,9 +5,13 @@
 
 #include "SerializableSpline.h"
 
-EditableSpline::EditableSpline() = default;
+EditableSpline::EditableSpline() {
+  m_sentinel->init();
+}
 
 EditableSpline::EditableSpline(const SerializableSpline& spline) {
+  m_sentinel->init();
+
   for (const QPointF& pt : spline.toPolygon()) {
     appendVertex(pt);
   }
@@ -20,8 +24,12 @@ EditableSpline::EditableSpline(const SerializableSpline& spline) {
   setBridged(true);
 }
 
+EditableSpline::~EditableSpline() {
+  m_sentinel->finalize();
+}
+
 void EditableSpline::appendVertex(const QPointF& pt) {
-  m_sentinel.insertBefore(pt);
+  m_sentinel->insertBefore(pt);
 }
 
 bool EditableSpline::hasAtLeastSegments(int num) const {

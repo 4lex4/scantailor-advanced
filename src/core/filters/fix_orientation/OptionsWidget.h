@@ -7,12 +7,12 @@
 #include <core/ConnectionManager.h>
 
 #include <list>
+#include <memory>
 
 #include "FilterOptionsWidget.h"
 #include "OrthogonalRotation.h"
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
-#include "intrusive_ptr.h"
 #include "ui_OptionsWidget.h"
 
 namespace fix_orientation {
@@ -21,7 +21,7 @@ class Settings;
 class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   Q_OBJECT
  public:
-  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
+  OptionsWidget(std::shared_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
@@ -56,7 +56,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void setupIcons();
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
   OrthogonalRotation m_rotation;

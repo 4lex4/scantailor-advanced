@@ -13,18 +13,17 @@
 #include "NonCopyable.h"
 #include "PageId.h"
 #include "Params.h"
-#include "ref_countable.h"
 
 class AbstractRelinker;
 
 namespace select_content {
-class Settings : public ref_countable {
+class Settings {
   DECLARE_NON_COPYABLE(Settings)
 
  public:
   Settings();
 
-  ~Settings() override;
+  virtual ~Settings();
 
   void clear();
 

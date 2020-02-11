@@ -21,20 +21,19 @@
 #include "Params.h"
 #include "PropertySet.h"
 #include "ZoneSet.h"
-#include "ref_countable.h"
 
 class AbstractRelinker;
 
 namespace output {
 class Params;
 
-class Settings : public ref_countable {
+class Settings {
   DECLARE_NON_COPYABLE(Settings)
 
  public:
   Settings();
 
-  ~Settings() override;
+  virtual ~Settings();
 
   void clear();
 

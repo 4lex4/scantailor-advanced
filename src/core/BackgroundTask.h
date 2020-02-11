@@ -6,11 +6,11 @@
 
 #include <QAtomicInt>
 #include <exception>
+#include <memory>
 
 #include "AbstractCommand.h"
 #include "FilterResult.h"
 #include "TaskStatus.h"
-#include "intrusive_ptr.h"
 
 class BackgroundTask : public AbstractCommand<FilterResultPtr>, public TaskStatus {
  public:
@@ -41,6 +41,6 @@ class BackgroundTask : public AbstractCommand<FilterResultPtr>, public TaskStatu
 };
 
 
-using BackgroundTaskPtr = intrusive_ptr<BackgroundTask>;
+using BackgroundTaskPtr = std::shared_ptr<BackgroundTask>;
 
 #endif  // ifndef SCANTAILOR_CORE_BACKGROUNDTASK_H_

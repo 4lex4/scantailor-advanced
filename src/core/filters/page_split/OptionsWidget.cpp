@@ -16,8 +16,8 @@
 #include "SplitModeDialog.h"
 
 namespace page_split {
-OptionsWidget::OptionsWidget(intrusive_ptr<Settings> settings,
-                             intrusive_ptr<ProjectPages> pageSequence,
+OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings,
+                             std::shared_ptr<ProjectPages> pageSequence,
                              const PageSelectionAccessor& pageSelectionAccessor)
     : m_settings(std::move(settings)),
       m_pages(std::move(pageSequence)),

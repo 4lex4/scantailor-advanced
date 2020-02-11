@@ -9,7 +9,6 @@
 #include "FilterResult.h"
 #include "NonCopyable.h"
 #include "PageId.h"
-#include "ref_countable.h"
 
 class TaskStatus;
 class FilterData;
@@ -25,18 +24,18 @@ namespace page_layout {
 class Filter;
 class Settings;
 
-class Task : public ref_countable {
+class Task {
   DECLARE_NON_COPYABLE(Task)
 
  public:
-  Task(intrusive_ptr<Filter> filter,
-       intrusive_ptr<output::Task> nextTask,
-       intrusive_ptr<Settings> settings,
+  Task(std::shared_ptr<Filter> filter,
+       std::shared_ptr<output::Task> nextTask,
+       std::shared_ptr<Settings> settings,
        const PageId& pageId,
        bool batch,
        bool debug);
 
-  ~Task() override;
+  virtual ~Task();
 
   FilterResultPtr process(const TaskStatus& status,
                           const FilterData& data,
@@ -46,9 +45,9 @@ class Task : public ref_countable {
  private:
   class UiUpdater;
 
-  intrusive_ptr<Filter> m_filter;
-  intrusive_ptr<output::Task> m_nextTask;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Filter> m_filter;
+  std::shared_ptr<output::Task> m_nextTask;
+  std::shared_ptr<Settings> m_settings;
   PageId m_pageId;
   bool m_batchProcessing;
 };

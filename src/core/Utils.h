@@ -35,7 +35,7 @@ class Utils {
 
   static QString outputDirToThumbDir(const QString& outputDir);
 
-  static intrusive_ptr<ThumbnailPixmapCache> createThumbnailCache(const QString& outputDir);
+  static std::shared_ptr<ThumbnailPixmapCache> createThumbnailCache(const QString& outputDir);
 
   /**
    * Unlike QFile::rename(), this one overwrites existing files.

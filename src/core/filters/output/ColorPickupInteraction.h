@@ -7,12 +7,12 @@
 #include <QCoreApplication>
 #include <QRect>
 #include <cstdint>
+#include <memory>
 
 #include "EditableZoneSet.h"
 #include "FillColorProperty.h"
 #include "InteractionHandler.h"
 #include "InteractionState.h"
-#include "intrusive_ptr.h"
 
 class ZoneInteractionContext;
 
@@ -49,7 +49,7 @@ class ColorPickupInteraction : public InteractionHandler {
   EditableZoneSet& m_zones;
   ZoneInteractionContext& m_context;
   InteractionState::Captor m_interaction;
-  intrusive_ptr<FillColorProperty> m_fillColorProp;
+  std::shared_ptr<FillColorProperty> m_fillColorProp;
   int m_dontDrawCircle;
 
   static const uint32_t m_sBitMixingLUT[3][256];

@@ -20,14 +20,14 @@ PropertySet::PropertySet(const QDomElement& el, const PropertyFactory& factory) 
     }
 
     QDomElement propEl(node.toElement());
-    intrusive_ptr<Property> prop = factory.construct(propEl);
+    std::shared_ptr<Property> prop = factory.construct(propEl);
     if (prop) {
       m_props[typeid(*prop)] = prop;
     }
   }
 }
 
-PropertySet::PropertySet(const PropertySet& other) : ref_countable(other) {
+PropertySet::PropertySet(const PropertySet& other) {
   m_props.reserve(other.m_props.size());
   for (const auto& [type, prop] : other.m_props) {
     m_props[type] = prop->clone();

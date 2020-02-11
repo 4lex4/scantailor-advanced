@@ -9,10 +9,9 @@
 #include <QString>
 #include <boost/function.hpp>
 #include <deque>
+#include <memory>
 
 #include "AutoRemovingFile.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 /**
  * \brief A sequence of image + label pairs.
@@ -42,16 +41,18 @@ class DebugImagesImpl : public DebugImages {
                                 boost::function<QWidget*(const QImage&)>* imageViewFactory = nullptr) override;
 
  private:
-  struct Item : public ref_countable {
+  struct Item {
     AutoRemovingFile file;
     QString label;
     boost::function<QWidget*(const QImage&)> imageViewFactory;
 
     Item(AutoRemovingFile f, const QString& l, const boost::function<QWidget*(const QImage&)>& imf)
         : file(f), label(l), imageViewFactory(imf) {}
+
+    virtual ~Item() = default;
   };
 
-  std::deque<intrusive_ptr<Item>> m_sequence;
+  std::deque<std::shared_ptr<Item>> m_sequence;
 };
 
 

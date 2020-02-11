@@ -35,7 +35,7 @@ class DebugImageView::ImageLoader : public AbstractCommand<BackgroundExecutor::T
 
   BackgroundExecutor::TaskResultPtr operator()() override {
     QImage image(m_filePath);
-    return make_intrusive<ImageLoadResult>(m_owner, image);
+    return std::make_shared<ImageLoadResult>(m_owner, image);
   }
 
  private:
@@ -57,7 +57,7 @@ DebugImageView::DebugImageView(AutoRemovingFile file,
 
 void DebugImageView::setLive(const bool live) {
   if (live && !m_isLive) {
-    ImageViewBase::backgroundExecutor().enqueueTask(make_intrusive<ImageLoader>(this, m_file.get()));
+    ImageViewBase::backgroundExecutor().enqueueTask(std::make_shared<ImageLoader>(this, m_file.get()));
   } else if (!live && m_isLive) {
     if (QWidget* wgt = currentWidget()) {
       if (wgt != m_placeholderWidget) {

@@ -204,7 +204,7 @@ class Settings::Impl {
 
 /*=============================== Settings ==================================*/
 
-Settings::Settings() : m_impl(new Impl()) {}
+Settings::Settings() : m_impl(std::make_unique<Impl>()) {}
 
 Settings::~Settings() = default;
 

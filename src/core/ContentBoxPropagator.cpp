@@ -31,8 +31,8 @@ class ContentBoxPropagator::Collector : public ContentBoxCollector {
 };
 
 
-ContentBoxPropagator::ContentBoxPropagator(intrusive_ptr<page_layout::Filter> pageLayoutFilter,
-                                           intrusive_ptr<CompositeCacheDrivenTask> task)
+ContentBoxPropagator::ContentBoxPropagator(std::shared_ptr<page_layout::Filter> pageLayoutFilter,
+                                           std::shared_ptr<CompositeCacheDrivenTask> task)
     : m_pageLayoutFilter(std::move(pageLayoutFilter)), m_task(std::move(task)) {}
 
 ContentBoxPropagator::~ContentBoxPropagator() = default;

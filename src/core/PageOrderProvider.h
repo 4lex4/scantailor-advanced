@@ -4,16 +4,17 @@
 #ifndef SCANTAILOR_CORE_PAGEORDERPROVIDER_H_
 #define SCANTAILOR_CORE_PAGEORDERPROVIDER_H_
 
-#include <foundation/intrusive_ptr.h>
-#include <foundation/ref_countable.h>
+#include <memory>
 
 class PageId;
 
 /**
  * A base interface for different page ordering strategies.
  */
-class PageOrderProvider : public ref_countable {
+class PageOrderProvider : public std::enable_shared_from_this<PageOrderProvider> {
  public:
+  virtual ~PageOrderProvider() = default;
+
   /**
    * Returns true if \p lhsPage precedes \p rhsPage.
    * \p lhsIncomplete and \p rhsIncomplete indicate whether
@@ -21,7 +22,7 @@ class PageOrderProvider : public ref_countable {
    */
   virtual bool precedes(const PageId& lhsPage, bool lhsIncomplete, const PageId& rhsPage, bool rhsIncomplete) const = 0;
 
-  virtual intrusive_ptr<const PageOrderProvider> reversed() const;
+  virtual std::shared_ptr<const PageOrderProvider> reversed() const;
 };
 
 

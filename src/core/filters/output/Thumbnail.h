@@ -4,8 +4,9 @@
 #ifndef SCANTAILOR_OUTPUT_THUMBNAIL_H_
 #define SCANTAILOR_OUTPUT_THUMBNAIL_H_
 
+#include <memory>
+
 #include "ThumbnailBase.h"
-#include "intrusive_ptr.h"
 
 class ThumbnailPixmapCache;
 class ImageTransformation;
@@ -15,7 +16,7 @@ class QSizeF;
 namespace output {
 class Thumbnail : public ThumbnailBase {
  public:
-  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  Thumbnail(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
             const QSizeF& maxSize,
             const ImageId& imageId,
             const ImageTransformation& xform);

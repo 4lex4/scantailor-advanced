@@ -4,14 +4,13 @@
 #ifndef SCANTAILOR_CORE_ABSTRACTRELINKER_H_
 #define SCANTAILOR_CORE_ABSTRACTRELINKER_H_
 
-#include "ref_countable.h"
 
 class RelinkablePath;
 class QString;
 
-class AbstractRelinker : public ref_countable {
+class AbstractRelinker {
  public:
-  ~AbstractRelinker() override = default;
+  virtual ~AbstractRelinker() = default;
 
   /**
    * Returns the path to be used instead of the given path.

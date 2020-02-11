@@ -16,7 +16,7 @@ class ImageTransformation;
 namespace select_content {
 class Thumbnail : public ThumbnailBase {
  public:
-  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  Thumbnail(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
             const QSizeF& maxSize,
             const ImageId& imageId,
             const ImageTransformation& xform,

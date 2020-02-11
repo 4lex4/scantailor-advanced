@@ -9,7 +9,6 @@
 #include <set>
 
 #include "NonCopyable.h"
-#include "ref_countable.h"
 
 class AbstractRelinker;
 class QString;
@@ -23,7 +22,7 @@ class QDomDocument;
  *
  * \note This class is thread-safe.
  */
-class FileNameDisambiguator : public ref_countable {
+class FileNameDisambiguator {
   DECLARE_NON_COPYABLE(FileNameDisambiguator)
 
  public:
@@ -44,6 +43,8 @@ class FileNameDisambiguator : public ref_countable {
    */
   FileNameDisambiguator(const QDomElement& disambiguatorEl,
                         const boost::function<QString(const QString&)>& filePathUnpacker);
+
+  virtual ~FileNameDisambiguator();
 
   /**
    * \brief Serialize disambiguation information to XML.

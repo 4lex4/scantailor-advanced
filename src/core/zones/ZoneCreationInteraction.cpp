@@ -17,7 +17,7 @@ ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context
       m_dragHandler(context.imageView(), boost::bind(&ZoneCreationInteraction::isDragHandlerPermitted, this, _1)),
       m_dragWatcher(m_dragHandler),
       m_zoomHandler(context.imageView(), boost::lambda::constant(true)),
-      m_spline(new EditableSpline),
+      m_spline(std::make_shared<EditableSpline>()),
       m_initialZoneCreationMode(context.getZoneCreationMode()),
       m_leftMouseButtonPressed(m_initialZoneCreationMode == ZoneCreationMode::LASSO) {
   const QPointF screenMousePos(m_context.imageView().mapFromGlobal(QCursor::pos()) + QPointF(0.5, 0.5));

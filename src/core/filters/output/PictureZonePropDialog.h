@@ -5,16 +5,16 @@
 #define SCANTAILOR_OUTPUT_PICTUREZONEPROPDIALOG_H_
 
 #include <QDialog>
+#include <memory>
 
 #include "PropertySet.h"
-#include "intrusive_ptr.h"
 #include "ui_PictureZonePropDialog.h"
 
 namespace output {
 class PictureZonePropDialog : public QDialog {
   Q_OBJECT
  public:
-  explicit PictureZonePropDialog(intrusive_ptr<PropertySet> props, QWidget* parent = nullptr);
+  explicit PictureZonePropDialog(std::shared_ptr<PropertySet> props, QWidget* parent = nullptr);
 
  signals:
   void updated();
@@ -24,7 +24,7 @@ class PictureZonePropDialog : public QDialog {
 
  private:
   Ui::PictureZonePropDialog ui;
-  intrusive_ptr<PropertySet> m_props;
+  std::shared_ptr<PropertySet> m_props;
 };
 }  // namespace output
 #endif

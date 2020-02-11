@@ -4,8 +4,9 @@
 #ifndef SCANTAILOR_DESKEW_THUMBNAIL_H_
 #define SCANTAILOR_DESKEW_THUMBNAIL_H_
 
+#include <memory>
+
 #include "ThumbnailBase.h"
-#include "intrusive_ptr.h"
 
 class QSizeF;
 class ThumbnailPixmapCache;
@@ -15,7 +16,7 @@ class ImageTransformation;
 namespace deskew {
 class Thumbnail : public ThumbnailBase {
  public:
-  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  Thumbnail(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
             const QSizeF& maxSize,
             const ImageId& imageId,
             const ImageTransformation& xform,

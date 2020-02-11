@@ -6,7 +6,7 @@
 #include <utility>
 
 namespace select_content {
-OrderByWidthProvider::OrderByWidthProvider(intrusive_ptr<Settings> settings) : m_settings(std::move(settings)) {}
+OrderByWidthProvider::OrderByWidthProvider(std::shared_ptr<Settings> settings) : m_settings(std::move(settings)) {}
 
 bool OrderByWidthProvider::precedes(const PageId& lhsPage,
                                     const bool lhsIncomplete,

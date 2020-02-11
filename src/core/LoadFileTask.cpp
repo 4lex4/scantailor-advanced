@@ -30,7 +30,7 @@ class LoadFileTask::ErrorResult : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return nullptr; }
+  std::shared_ptr<AbstractFilter> filter() override { return nullptr; }
 
  private:
   QString m_filePath;
@@ -40,9 +40,9 @@ class LoadFileTask::ErrorResult : public FilterResult {
 
 LoadFileTask::LoadFileTask(Type type,
                            const PageInfo& page,
-                           intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
-                           intrusive_ptr<ProjectPages> pages,
-                           intrusive_ptr<fix_orientation::Task> nextTask)
+                           std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
+                           std::shared_ptr<ProjectPages> pages,
+                           std::shared_ptr<fix_orientation::Task> nextTask)
     : BackgroundTask(type),
       m_thumbnailCache(std::move(thumbnailCache)),
       m_imageId(page.imageId()),
@@ -61,7 +61,7 @@ FilterResultPtr LoadFileTask::operator()() {
     throwIfCancelled();
 
     if (image.isNull()) {
-      return make_intrusive<ErrorResult>(m_imageId.filePath());
+      return std::make_shared<ErrorResult>(m_imageId.filePath());
     } else {
       convertToSupportedFormat(image);
       updateImageSizeIfChanged(image);
@@ -114,7 +114,7 @@ LoadFileTask::ErrorResult::ErrorResult(const QString& filePath)
 void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
   class ErrWidget : public ErrorWidget {
    public:
-    ErrWidget(intrusive_ptr<AbstractCommand<void>> relinkingDialogRequester,
+    ErrWidget(std::shared_ptr<AbstractCommand<void>> relinkingDialogRequester,
               const QString& text,
               Qt::TextFormat fmt = Qt::AutoText)
         : ErrorWidget(text, fmt), m_relinkingDialogRequester(std::move(relinkingDialogRequester)) {}
@@ -122,7 +122,7 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
    private:
     void linkActivated(const QString&) override { (*m_relinkingDialogRequester)(); }
 
-    intrusive_ptr<AbstractCommand<void>> m_relinkingDialogRequester;
+    std::shared_ptr<AbstractCommand<void>> m_relinkingDialogRequester;
   };
 
 

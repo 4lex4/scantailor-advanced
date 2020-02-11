@@ -5,8 +5,7 @@
 #define SCANTAILOR_CORE_PAGEORIENTATIONPROPAGATOR_H_
 
 #include <QSizeF>
-
-#include "intrusive_ptr.h"
+#include <memory>
 
 class CompositeCacheDrivenTask;
 class ProjectPages;
@@ -26,8 +25,8 @@ class Filter;
  */
 class PageOrientationPropagator {
  public:
-  PageOrientationPropagator(intrusive_ptr<page_split::Filter> pageSplitFilter,
-                            intrusive_ptr<CompositeCacheDrivenTask> task);
+  PageOrientationPropagator(std::shared_ptr<page_split::Filter> pageSplitFilter,
+                            std::shared_ptr<CompositeCacheDrivenTask> task);
 
   ~PageOrientationPropagator();
 
@@ -36,8 +35,8 @@ class PageOrientationPropagator {
  private:
   class Collector;
 
-  intrusive_ptr<page_split::Filter> m_pageSplitFilter;
-  intrusive_ptr<CompositeCacheDrivenTask> m_task;
+  std::shared_ptr<page_split::Filter> m_pageSplitFilter;
+  std::shared_ptr<CompositeCacheDrivenTask> m_task;
 };
 
 

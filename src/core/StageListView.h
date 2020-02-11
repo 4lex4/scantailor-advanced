@@ -6,9 +6,8 @@
 
 #include <QPixmap>
 #include <QTableView>
+#include <memory>
 #include <vector>
-
-#include "intrusive_ptr.h"
 
 class StageSequence;
 
@@ -19,7 +18,7 @@ class StageListView : public QTableView {
 
   ~StageListView() override;
 
-  void setStages(const intrusive_ptr<StageSequence>& stages);
+  void setStages(const std::shared_ptr<StageSequence>& stages);
 
   QSize sizeHint() const override { return m_sizeHint; }
 

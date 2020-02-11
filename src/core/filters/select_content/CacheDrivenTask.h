@@ -4,9 +4,9 @@
 #ifndef SCANTAILOR_SELECT_CONTENT_CACHEDRIVENTASK_H_
 #define SCANTAILOR_SELECT_CONTENT_CACHEDRIVENTASK_H_
 
+#include <memory>
+
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class QSizeF;
 class PageInfo;
@@ -20,19 +20,19 @@ class CacheDrivenTask;
 namespace select_content {
 class Settings;
 
-class CacheDrivenTask : public ref_countable {
+class CacheDrivenTask {
   DECLARE_NON_COPYABLE(CacheDrivenTask)
 
  public:
-  CacheDrivenTask(intrusive_ptr<Settings> settings, intrusive_ptr<page_layout::CacheDrivenTask> nextTask);
+  CacheDrivenTask(std::shared_ptr<Settings> settings, std::shared_ptr<page_layout::CacheDrivenTask> nextTask);
 
-  ~CacheDrivenTask() override;
+  virtual ~CacheDrivenTask();
 
   void process(const PageInfo& pageInfo, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
  private:
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<page_layout::CacheDrivenTask> m_nextTask;
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<page_layout::CacheDrivenTask> m_nextTask;
 };
 }  // namespace select_content
 #endif  // ifndef SCANTAILOR_SELECT_CONTENT_CACHEDRIVENTASK_H_

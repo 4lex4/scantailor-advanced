@@ -35,7 +35,7 @@ using namespace imageproc;
 
 class Task::UiUpdater : public FilterResult {
  public:
-  UiUpdater(intrusive_ptr<Filter> filter,
+  UiUpdater(std::shared_ptr<Filter> filter,
             std::unique_ptr<DebugImages> dbgImg,
             const QImage& image,
             const PageId& pageId,
@@ -45,10 +45,10 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
+  std::shared_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_filter;
+  std::shared_ptr<Filter> m_filter;
   std::unique_ptr<DebugImages> m_dbg;
   QImage m_image;
   QImage m_downscaledImage;
@@ -59,10 +59,10 @@ class Task::UiUpdater : public FilterResult {
 };
 
 
-Task::Task(intrusive_ptr<Filter> filter,
-           intrusive_ptr<Settings> settings,
-           intrusive_ptr<ImageSettings> imageSettings,
-           intrusive_ptr<select_content::Task> nextTask,
+Task::Task(std::shared_ptr<Filter> filter,
+           std::shared_ptr<Settings> settings,
+           std::shared_ptr<ImageSettings> imageSettings,
+           std::shared_ptr<select_content::Task> nextTask,
            const PageId& pageId,
            const bool batchProcessing,
            const bool debug)
@@ -150,8 +150,8 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
   if (m_nextTask) {
     return m_nextTask->process(status, FilterData(data, newXform));
   } else {
-    return make_intrusive<UiUpdater>(m_filter, std::move(m_dbg), data.origImage(), m_pageId, newXform, uiData,
-                                     m_batchProcessing);
+    return std::make_shared<UiUpdater>(m_filter, std::move(m_dbg), data.origImage(), m_pageId, newXform, uiData,
+                                       m_batchProcessing);
   }
 }  // Task::process
 
@@ -227,7 +227,7 @@ void Task::updateFilterData(const TaskStatus& status, FilterData& data, bool nee
 
 /*============================ Task::UiUpdater ==========================*/
 
-Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
+Task::UiUpdater::UiUpdater(std::shared_ptr<Filter> filter,
                            std::unique_ptr<DebugImages> dbgImg,
                            const QImage& image,
                            const PageId& pageId,

@@ -22,8 +22,8 @@ using namespace imageproc;
 namespace page_layout {
 class Task::UiUpdater : public FilterResult {
  public:
-  UiUpdater(intrusive_ptr<Filter> filter,
-            intrusive_ptr<Settings> settings,
+  UiUpdater(std::shared_ptr<Filter> filter,
+            std::shared_ptr<Settings> settings,
             const PageId& pageId,
             const QImage& image,
             const ImageTransformation& xform,
@@ -34,11 +34,11 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
+  std::shared_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_filter;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Filter> m_filter;
+  std::shared_ptr<Settings> m_settings;
   PageId m_pageId;
   QImage m_image;
   QImage m_downscaledImage;
@@ -50,9 +50,9 @@ class Task::UiUpdater : public FilterResult {
 };
 
 
-Task::Task(intrusive_ptr<Filter> filter,
-           intrusive_ptr<output::Task> nextTask,
-           intrusive_ptr<Settings> settings,
+Task::Task(std::shared_ptr<Filter> filter,
+           std::shared_ptr<output::Task> nextTask,
+           std::shared_ptr<Settings> settings,
            const PageId& pageId,
            bool batch,
            bool debug)
@@ -92,16 +92,16 @@ FilterResultPtr Task::process(const TaskStatus& status,
     newXform.setPostCropArea(Utils::shiftToRoundedOrigin(newXform.transform().map(pageRectPhys)));
     return m_nextTask->process(status, FilterData(data, newXform), contentRectPhys);
   } else {
-    return make_intrusive<UiUpdater>(m_filter, m_settings, m_pageId, data.origImage(), data.xform(),
-                                     ContentMask(data.grayImageBlackOnWhite(), data.xform(), status),
-                                     adaptedContentRect, aggHardSizeBefore != aggHardSizeAfter, m_batchProcessing);
+    return std::make_shared<UiUpdater>(m_filter, m_settings, m_pageId, data.origImage(), data.xform(),
+                                       ContentMask(data.grayImageBlackOnWhite(), data.xform(), status),
+                                       adaptedContentRect, aggHardSizeBefore != aggHardSizeAfter, m_batchProcessing);
   }
 }
 
 /*============================ Task::UiUpdater ==========================*/
 
-Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
-                           intrusive_ptr<Settings> settings,
+Task::UiUpdater::UiUpdater(std::shared_ptr<Filter> filter,
+                           std::shared_ptr<Settings> settings,
                            const PageId& pageId,
                            const QImage& image,
                            const ImageTransformation& xform,

@@ -5,11 +5,11 @@
 #define SCANTAILOR_APP_RELINKINGDIALOG_H_
 
 #include <QDialog>
+#include <memory>
 
 #include "AbstractRelinker.h"
 #include "RelinkablePath.h"
 #include "RelinkingModel.h"
-#include "intrusive_ptr.h"
 #include "ui_RelinkingDialog.h"
 
 class RelinkingSortingModel;
@@ -35,7 +35,7 @@ class RelinkingDialog : public QDialog {
    * This allows you to take the relinker right after construction
    * and then use it when accepted() signal is emitted.
    */
-  intrusive_ptr<AbstractRelinker> relinker() const { return m_model.relinker(); }
+  std::shared_ptr<AbstractRelinker> relinker() const { return m_model.relinker(); }
 
  private slots:
 

@@ -19,7 +19,6 @@
 #include "InteractionState.h"
 #include "PropertySet.h"
 #include "ZoneContextMenuItem.h"
-#include "intrusive_ptr.h"
 
 class ZoneInteractionContext;
 class QPainter;

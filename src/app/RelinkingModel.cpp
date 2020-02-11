@@ -90,8 +90,8 @@ class RelinkingModel::StatusUpdateThread : private QThread {
 RelinkingModel::RelinkingModel()
     : m_fileIcon(IconProvider::getInstance().getIcon("file").pixmap(16, 16)),
       m_folderIcon(IconProvider::getInstance().getIcon("folder").pixmap(16, 16)),
-      m_relinker(new Relinker),
-      m_statusUpdateThread(new StatusUpdateThread(this)),
+      m_relinker(std::make_shared<Relinker>()),
+      m_statusUpdateThread(std::make_unique<StatusUpdateThread>(this)),
       m_haveUncommittedChanges(true) {}
 
 RelinkingModel::~RelinkingModel() = default;

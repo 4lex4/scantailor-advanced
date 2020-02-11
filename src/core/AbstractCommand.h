@@ -4,13 +4,14 @@
 #ifndef SCANTAILOR_CORE_ABSTRACTCOMMAND_H_
 #define SCANTAILOR_CORE_ABSTRACTCOMMAND_H_
 
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
+#include <memory>
 
 template <typename Res, typename... ArgTypes>
-class AbstractCommand : public ref_countable {
+class AbstractCommand {
  public:
-  using Ptr = intrusive_ptr<AbstractCommand>;
+  using Ptr = std::shared_ptr<AbstractCommand>;
+
+  virtual ~AbstractCommand() = default;
 
   virtual Res operator()(ArgTypes... args) = 0;
 };

@@ -12,15 +12,15 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
+#include <memory>
 
 #include "EditableSpline.h"
 #include "PropertySet.h"
-#include "intrusive_ptr.h"
 
 class EditableZoneSet : public QObject {
   Q_OBJECT
  private:
-  using ZoneItem = std::pair<EditableSpline::Ptr, intrusive_ptr<PropertySet>>;
+  using ZoneItem = std::pair<EditableSpline::Ptr, std::shared_ptr<PropertySet>>;
 
   class ZoneItemOrderedTag;
 
@@ -28,7 +28,7 @@ class EditableZoneSet : public QObject {
       ZoneItem,
       boost::multi_index::indexed_by<
           boost::multi_index::hashed_unique<boost::multi_index::member<ZoneItem, EditableSpline::Ptr, &ZoneItem::first>,
-                                            EditableSpline::Ptr::hash>,
+                                            std::hash<std::shared_ptr<EditableSpline>>>,
           boost::multi_index::sequenced<boost::multi_index::tag<ZoneItemOrderedTag>>>>;
 
   using ZoneItemsInOrder = ZoneItems::index<ZoneItemOrderedTag>::type;
@@ -44,7 +44,7 @@ class EditableZoneSet : public QObject {
 
     const EditableSpline::Ptr& spline() const { return m_iter->first; }
 
-    const intrusive_ptr<PropertySet>& properties() const { return m_iter->second; }
+    const std::shared_ptr<PropertySet>& properties() const { return m_iter->second; }
 
    private:
     explicit Zone(ZoneItemsInOrder::const_iterator it) : m_iter(it) {}
@@ -93,9 +93,9 @@ class EditableZoneSet : public QObject {
 
   void commit();
 
-  intrusive_ptr<PropertySet> propertiesFor(const EditableSpline::Ptr& spline);
+  std::shared_ptr<PropertySet> propertiesFor(const EditableSpline::Ptr& spline);
 
-  intrusive_ptr<const PropertySet> propertiesFor(const EditableSpline::Ptr& spline) const;
+  std::shared_ptr<const PropertySet> propertiesFor(const EditableSpline::Ptr& spline) const;
 
  signals:
 

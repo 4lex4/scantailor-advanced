@@ -98,11 +98,11 @@ class MainWindow::PageSelectionProviderImpl : public PageSelectionProvider {
 
 
 MainWindow::MainWindow()
-    : m_pages(new ProjectPages),
-      m_stages(new StageSequence(m_pages, newPageSelectionAccessor())),
-      m_workerThreadPool(new WorkerThreadPool),
-      m_interactiveQueue(new ProcessingTaskQueue()),
-      m_outOfMemoryDialog(new OutOfMemoryDialog),
+    : m_pages(std::make_shared<ProjectPages>()),
+      m_stages(std::make_shared<StageSequence>(m_pages, newPageSelectionAccessor())),
+      m_workerThreadPool(std::make_unique<WorkerThreadPool>()),
+      m_interactiveQueue(std::make_unique<ProcessingTaskQueue>()),
+      m_outOfMemoryDialog(std::make_unique<OutOfMemoryDialog>()),
       m_curFilter(0),
       m_ignoreSelectionChanges(0),
       m_ignorePageOrderingChanges(0),
@@ -358,7 +358,7 @@ std::vector<PageRange> MainWindow::selectedRanges() const {
   return m_thumbSequence->selectedRanges();
 }
 
-void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
+void MainWindow::switchToNewProject(const std::shared_ptr<ProjectPages>& pages,
                                     const QString& outDir,
                                     const QString& projectFilePath,
                                     const ProjectReader* projectReader) {
@@ -375,7 +375,7 @@ void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
     m_selectedPage = projectReader->selectedPage();
   }
 
-  intrusive_ptr<FileNameDisambiguator> disambiguator;
+  std::shared_ptr<FileNameDisambiguator> disambiguator;
   if (projectReader) {
     disambiguator = projectReader->namingDisambiguator();
   } else {
@@ -387,7 +387,7 @@ void MainWindow::switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
   updateDisambiguationRecords(pages->toPageSequence(IMAGE_VIEW));
 
   // Recreate the stages and load their state.
-  m_stages = make_intrusive<StageSequence>(pages, newPageSelectionAccessor());
+  m_stages = std::make_shared<StageSequence>(pages, newPageSelectionAccessor());
   if (projectReader) {
     projectReader->readFilterSettings(m_stages->filters());
   }
@@ -595,14 +595,14 @@ bool MainWindow::compareFiles(const QString& fpath1, const QString& fpath2) {
   }
 }
 
-intrusive_ptr<const PageOrderProvider> MainWindow::currentPageOrderProvider() const {
+std::shared_ptr<const PageOrderProvider> MainWindow::currentPageOrderProvider() const {
   const int idx = sortOptions->currentIndex();
   if (idx < 0) {
     return nullptr;
   }
 
-  const intrusive_ptr<AbstractFilter> filter(m_stages->filterAt(m_curFilter));
-  intrusive_ptr<const PageOrderProvider> currentOrderProvider = filter->pageOrderOptions()[idx].provider();
+  const std::shared_ptr<AbstractFilter> filter(m_stages->filterAt(m_curFilter));
+  std::shared_ptr<const PageOrderProvider> currentOrderProvider = filter->pageOrderOptions()[idx].provider();
   return (currentOrderProvider && sortingOrderBtn->isChecked()) ? currentOrderProvider->reversed()
                                                                 : currentOrderProvider;
 }
@@ -610,7 +610,7 @@ intrusive_ptr<const PageOrderProvider> MainWindow::currentPageOrderProvider() co
 void MainWindow::updateSortOptions() {
   const ScopedIncDec<int> guard(m_ignorePageOrderingChanges);
 
-  const intrusive_ptr<AbstractFilter> filter(m_stages->filterAt(m_curFilter));
+  const std::shared_ptr<AbstractFilter> filter(m_stages->filterAt(m_curFilter));
 
   sortOptions->clear();
 
@@ -625,13 +625,13 @@ void MainWindow::updateSortOptions() {
   }
 }
 
-void MainWindow::resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& pageOrderProvider,
+void MainWindow::resetThumbSequence(const std::shared_ptr<const PageOrderProvider>& pageOrderProvider,
                                     const ThumbnailSequence::SelectionAction selectionAction) {
   if (m_thumbnailCache) {
-    const intrusive_ptr<CompositeCacheDrivenTask> task(createCompositeCacheDrivenTask(m_curFilter));
+    const std::shared_ptr<CompositeCacheDrivenTask> task(createCompositeCacheDrivenTask(m_curFilter));
 
     m_thumbSequence->setThumbnailFactory(
-        make_intrusive<ThumbnailFactory>(m_thumbnailCache, m_maxLogicalThumbSize, task));
+        std::make_shared<ThumbnailFactory>(m_thumbnailCache, m_maxLogicalThumbSize, task));
   }
 
   m_thumbSequence->reset(currentPageSequence(), selectionAction, pageOrderProvider);
@@ -761,7 +761,7 @@ void MainWindow::invalidateAllThumbnails() {
   m_thumbSequence->invalidateAllThumbnails();
 }
 
-intrusive_ptr<AbstractCommand<void>> MainWindow::relinkingDialogRequester() {
+std::shared_ptr<AbstractCommand<void>> MainWindow::relinkingDialogRequester() {
   class Requester : public AbstractCommand<void> {
    public:
     explicit Requester(MainWindow* wnd) : m_wnd(wnd) {}
@@ -775,7 +775,7 @@ intrusive_ptr<AbstractCommand<void>> MainWindow::relinkingDialogRequester() {
    private:
     QPointer<MainWindow> m_wnd;
   };
-  return make_intrusive<Requester>(this);
+  return std::make_shared<Requester>(this);
 }
 
 void MainWindow::showRelinkingDialog() {
@@ -795,7 +795,7 @@ void MainWindow::showRelinkingDialog() {
   dialog->show();
 }
 
-void MainWindow::performRelinking(const intrusive_ptr<AbstractRelinker>& relinker) {
+void MainWindow::performRelinking(const std::shared_ptr<AbstractRelinker>& relinker) {
   assert(relinker);
 
   if (!isProjectLoaded()) {
@@ -1349,7 +1349,7 @@ void MainWindow::newProject() {
 }
 
 void MainWindow::newProjectCreated(ProjectCreationContext* context) {
-  auto pages = make_intrusive<ProjectPages>(context->files(), ProjectPages::AUTO_PAGES, context->layoutDirection());
+  auto pages = std::make_shared<ProjectPages>(context->files(), ProjectPages::AUTO_PAGES, context->layoutDirection());
   switchToNewProject(pages, context->outDir());
 }
 
@@ -1688,7 +1688,7 @@ bool MainWindow::closeProjectInteractive() {
 }  // MainWindow::closeProjectInteractive
 
 void MainWindow::closeProjectWithoutSaving() {
-  auto pages = make_intrusive<ProjectPages>();
+  auto pages = std::make_shared<ProjectPages>();
   switchToNewProject(pages, QString());
 }
 
@@ -1937,12 +1937,12 @@ BackgroundTaskPtr MainWindow::createCompositeTask(const PageInfo& page,
                                                   const int lastFilterIdx,
                                                   const bool batch,
                                                   bool debug) {
-  intrusive_ptr<fix_orientation::Task> fixOrientationTask;
-  intrusive_ptr<page_split::Task> pageSplitTask;
-  intrusive_ptr<deskew::Task> deskewTask;
-  intrusive_ptr<select_content::Task> selectContentTask;
-  intrusive_ptr<page_layout::Task> pageLayoutTask;
-  intrusive_ptr<output::Task> outputTask;
+  std::shared_ptr<fix_orientation::Task> fixOrientationTask;
+  std::shared_ptr<page_split::Task> pageSplitTask;
+  std::shared_ptr<deskew::Task> deskewTask;
+  std::shared_ptr<select_content::Task> selectContentTask;
+  std::shared_ptr<page_layout::Task> pageLayoutTask;
+  std::shared_ptr<output::Task> outputTask;
 
   if (batch) {
     debug = false;
@@ -1973,17 +1973,17 @@ BackgroundTaskPtr MainWindow::createCompositeTask(const PageInfo& page,
     debug = false;
   }
   assert(fixOrientationTask);
-  return make_intrusive<LoadFileTask>(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
-                                      m_thumbnailCache, m_pages, fixOrientationTask);
+  return std::make_shared<LoadFileTask>(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
+                                        m_thumbnailCache, m_pages, fixOrientationTask);
 }  // MainWindow::createCompositeTask
 
-intrusive_ptr<CompositeCacheDrivenTask> MainWindow::createCompositeCacheDrivenTask(const int lastFilterIdx) {
-  intrusive_ptr<fix_orientation::CacheDrivenTask> fixOrientationTask;
-  intrusive_ptr<page_split::CacheDrivenTask> pageSplitTask;
-  intrusive_ptr<deskew::CacheDrivenTask> deskewTask;
-  intrusive_ptr<select_content::CacheDrivenTask> selectContentTask;
-  intrusive_ptr<page_layout::CacheDrivenTask> pageLayoutTask;
-  intrusive_ptr<output::CacheDrivenTask> outputTask;
+std::shared_ptr<CompositeCacheDrivenTask> MainWindow::createCompositeCacheDrivenTask(const int lastFilterIdx) {
+  std::shared_ptr<fix_orientation::CacheDrivenTask> fixOrientationTask;
+  std::shared_ptr<page_split::CacheDrivenTask> pageSplitTask;
+  std::shared_ptr<deskew::CacheDrivenTask> deskewTask;
+  std::shared_ptr<select_content::CacheDrivenTask> selectContentTask;
+  std::shared_ptr<page_layout::CacheDrivenTask> pageLayoutTask;
+  std::shared_ptr<output::CacheDrivenTask> outputTask;
 
   if (lastFilterIdx >= m_stages->outputFilterIdx()) {
     outputTask = m_stages->outputFilter()->createCacheDrivenTask(m_outFileNameGen);
@@ -2015,7 +2015,7 @@ void MainWindow::updateDisambiguationRecords(const PageSequence& pages) {
 }
 
 PageSelectionAccessor MainWindow::newPageSelectionAccessor() {
-  auto provider = make_intrusive<PageSelectionProviderImpl>(this);
+  auto provider = std::make_shared<PageSelectionProviderImpl>(this);
   return PageSelectionAccessor(provider);
 }
 

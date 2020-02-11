@@ -188,7 +188,9 @@ class FixDpiDialog::FilterModel : private QSortFilterProxyModel {
 
 
 FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* parent)
-    : QDialog(parent), m_pages(new TreeModel(files)), m_undefinedDpiPages(new FilterModel(*m_pages)) {
+    : QDialog(parent),
+      m_pages(std::make_unique<TreeModel>(files)),
+      m_undefinedDpiPages(std::make_unique<FilterModel>(*m_pages)) {
   setupUi(this);
 
   m_normalPalette = xDpi->palette();

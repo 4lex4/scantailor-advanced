@@ -14,7 +14,6 @@
 #include "NonCopyable.h"
 #include "PageOrderProvider.h"
 #include "PageRange.h"
-#include "intrusive_ptr.h"
 
 class QGraphicsItem;
 class QGraphicsView;
@@ -65,7 +64,7 @@ class ThumbnailSequence : public QObject {
 
   ~ThumbnailSequence() override;
 
-  void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory);
+  void setThumbnailFactory(std::shared_ptr<ThumbnailFactory> factory);
 
   void attachView(QGraphicsView* view);
 
@@ -83,10 +82,10 @@ class ThumbnailSequence : public QObject {
    */
   void reset(const PageSequence& pages,
              SelectionAction selectionAction,
-             intrusive_ptr<const PageOrderProvider> orderProvider = nullptr);
+             std::shared_ptr<const PageOrderProvider> orderProvider = nullptr);
 
   /** Returns the current page order provider, which may be null. */
-  intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
+  std::shared_ptr<const PageOrderProvider> pageOrderProvider() const;
 
   PageSequence toPageSequence() const;
 

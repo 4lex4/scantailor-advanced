@@ -9,11 +9,11 @@
 
 #include <QImage>
 #include <QStackedWidget>
+#include <memory>
 
 #include "DespeckleLevel.h"
 #include "DespeckleState.h"
 #include "Dpi.h"
-#include "intrusive_ptr.h"
 
 class DebugImages;
 class ProcessingIndicationWidget;
@@ -68,7 +68,7 @@ class DespeckleView : public QStackedWidget {
   void removeImageViewWidget();
 
   DespeckleState m_despeckleState;
-  intrusive_ptr<TaskCancelHandle> m_cancelHandle;
+  std::shared_ptr<TaskCancelHandle> m_cancelHandle;
   ProcessingIndicationWidget* m_processingIndicator;
   double m_despeckleLevel;
   bool m_debug;

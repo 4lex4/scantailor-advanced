@@ -4,14 +4,13 @@
 #ifndef SCANTAILOR_CORE_COMPOSITECACHEDRIVENTASK_H_
 #define SCANTAILOR_CORE_COMPOSITECACHEDRIVENTASK_H_
 
-#include "ref_countable.h"
 
 class PageInfo;
 class AbstractFilterDataCollector;
 
-class CompositeCacheDrivenTask : public ref_countable {
+class CompositeCacheDrivenTask {
  public:
-  ~CompositeCacheDrivenTask() override = default;
+  virtual ~CompositeCacheDrivenTask() = default;
 
   virtual void process(const PageInfo& pageInfo, AbstractFilterDataCollector* collector) = 0;
 };

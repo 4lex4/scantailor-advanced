@@ -18,7 +18,7 @@
 #include "filters/output/CacheDrivenTask.h"
 
 namespace page_layout {
-CacheDrivenTask::CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> nextTask, intrusive_ptr<Settings> settings)
+CacheDrivenTask::CacheDrivenTask(std::shared_ptr<output::CacheDrivenTask> nextTask, std::shared_ptr<Settings> settings)
     : m_nextTask(std::move(nextTask)), m_settings(std::move(settings)) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;

@@ -7,11 +7,11 @@
 #include <QButtonGroup>
 #include <QDialog>
 #include <QString>
+#include <memory>
 #include <set>
 
 #include "PageId.h"
 #include "PageSequence.h"
-#include "intrusive_ptr.h"
 #include "ui_ChangeDpiDialog.h"
 
 class PageSelectionAccessor;

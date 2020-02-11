@@ -5,6 +5,7 @@
 #define SCANTAILOR_PAGE_SPLIT_IMAGEVIEW_H_
 
 #include <QPixmap>
+#include <memory>
 
 #include "DragHandler.h"
 #include "DraggableLineSegment.h"
@@ -15,7 +16,6 @@
 #include "PageLayout.h"
 #include "UnremoveButton.h"
 #include "ZoomHandler.h"
-#include "intrusive_ptr.h"
 
 class ImageTransformation;
 class ProjectPages;
@@ -32,7 +32,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
             const QImage& downscaledImage,
             const ImageTransformation& xform,
             const PageLayout& layout,
-            intrusive_ptr<ProjectPages> pages,
+            std::shared_ptr<ProjectPages> pages,
             const ImageId& imageId,
             bool leftHalfRemoved,
             bool rightHalfRemoved);
@@ -103,7 +103,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
 
   static QLineF customInscribedCutterLine(const QLineF& line, const QRectF& rect);
 
-  intrusive_ptr<ProjectPages> m_pages;
+  std::shared_ptr<ProjectPages> m_pages;
   ImageId m_imageId;
   DraggablePoint m_handles[2][2];
   ObjectDragHandler m_handleInteractors[2][2];

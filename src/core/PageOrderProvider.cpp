@@ -3,17 +3,17 @@
 
 #include "PageOrderProvider.h"
 
-intrusive_ptr<const PageOrderProvider> PageOrderProvider::reversed() const {
+std::shared_ptr<const PageOrderProvider> PageOrderProvider::reversed() const {
   class ReversedPageOrderProvider : public PageOrderProvider {
    public:
-    explicit ReversedPageOrderProvider(const PageOrderProvider* parent) : m_parent(parent) {}
+    explicit ReversedPageOrderProvider(const PageOrderProvider* parent) : m_parent(parent->shared_from_this()) {}
 
     bool precedes(const PageId& lhsPage, bool lhsIncomplete, const PageId& rhsPage, bool rhsIncomplete) const override {
       return m_parent->precedes(rhsPage, rhsIncomplete, lhsPage, lhsIncomplete);
     }
 
    private:
-    const intrusive_ptr<const PageOrderProvider> m_parent;
+    const std::shared_ptr<const PageOrderProvider> m_parent;
   };
-  return make_intrusive<ReversedPageOrderProvider>(this);
+  return std::make_shared<ReversedPageOrderProvider>(this);
 }

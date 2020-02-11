@@ -22,7 +22,7 @@ class AreaCompare {
 
 MaxWhitespaceFinder::MaxWhitespaceFinder(const BinaryImage& img, QSize minSize)
     : m_integralImg(img.size()),
-      m_queuedRegions(new PriorityStorageImpl<AreaCompare>(AreaCompare())),
+      m_queuedRegions(std::make_unique<PriorityStorageImpl<AreaCompare>>(AreaCompare())),
       m_minSize(minSize) {
   init(img);
 }

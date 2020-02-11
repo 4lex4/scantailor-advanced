@@ -13,6 +13,6 @@ class Utils {
 
   static OrthogonalRotation getDefaultOrthogonalRotation();
 };
-}
+}  // namespace fix_orientation
 
-#endif //SCANTAILOR_FIX_ORIENTATION_UTILS_H_
+#endif  // SCANTAILOR_FIX_ORIENTATION_UTILS_H_

@@ -7,7 +7,7 @@
 
 #include "PageSequence.h"
 
-PageSelectionAccessor::PageSelectionAccessor(intrusive_ptr<const PageSelectionProvider> provider)
+PageSelectionAccessor::PageSelectionAccessor(std::shared_ptr<const PageSelectionProvider> provider)
     : m_provider(std::move(provider)) {}
 
 PageSequence PageSelectionAccessor::allPages() const {

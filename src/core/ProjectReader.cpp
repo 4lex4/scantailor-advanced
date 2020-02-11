@@ -12,7 +12,8 @@
 #include "XmlUnmarshaller.h"
 #include "version.h"
 
-ProjectReader::ProjectReader(const QDomDocument& doc) : m_doc(doc), m_disambiguator(new FileNameDisambiguator) {
+ProjectReader::ProjectReader(const QDomDocument& doc)
+    : m_doc(doc), m_disambiguator(std::make_shared<FileNameDisambiguator>()) {
   QDomElement projectEl(m_doc.documentElement());
 
   m_version = projectEl.attribute("version");
@@ -53,7 +54,7 @@ ProjectReader::ProjectReader(const QDomDocument& doc) : m_doc(doc), m_disambigua
   // Load naming disambiguator.  This needs to be done after processing pages.
   const QDomElement disambigEl(projectEl.namedItem("file-name-disambiguation").toElement());
   m_disambiguator
-      = make_intrusive<FileNameDisambiguator>(disambigEl, boost::bind(&ProjectReader::expandFilePath, this, _1));
+      = std::make_shared<FileNameDisambiguator>(disambigEl, boost::bind(&ProjectReader::expandFilePath, this, _1));
 }
 
 ProjectReader::~ProjectReader() = default;
@@ -189,7 +190,7 @@ void ProjectReader::processImages(const QDomElement& imagesEl, const Qt::LayoutD
   }
 
   if (!images.empty()) {
-    m_pages = make_intrusive<ProjectPages>(images, layoutDirection);
+    m_pages = std::make_shared<ProjectPages>(images, layoutDirection);
   }
 }  // ProjectReader::processImages
 

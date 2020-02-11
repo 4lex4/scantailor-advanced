@@ -7,12 +7,12 @@
 #include <QButtonGroup>
 #include <QDialog>
 #include <QString>
+#include <memory>
 #include <set>
 
 #include "DewarpingOptions.h"
 #include "PageId.h"
 #include "PageSequence.h"
-#include "intrusive_ptr.h"
 #include "ui_ChangeDewarpingDialog.h"
 
 class PageSelectionAccessor;

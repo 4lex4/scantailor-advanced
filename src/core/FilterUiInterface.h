@@ -4,9 +4,10 @@
 #ifndef SCANTAILOR_CORE_FILTERUIINTERFACE_H_
 #define SCANTAILOR_CORE_FILTERUIINTERFACE_H_
 
+#include <memory>
+
 #include "AbstractCommand.h"
 #include "PageId.h"
-#include "intrusive_ptr.h"
 
 class DebugImages;
 class FilterOptionsWidget;
@@ -36,7 +37,7 @@ class FilterUiInterface {
   /**
    * Returns a callable object that when called will open a relinking dialog.
    */
-  virtual intrusive_ptr<AbstractCommand<void>> relinkingDialogRequester() = 0;
+  virtual std::shared_ptr<AbstractCommand<void>> relinkingDialogRequester() = 0;
 };
 
 

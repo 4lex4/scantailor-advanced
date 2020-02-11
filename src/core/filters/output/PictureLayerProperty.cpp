@@ -16,8 +16,8 @@ void PictureLayerProperty::registerIn(PropertyFactory& factory) {
   factory.registerProperty(m_propertyName, &PictureLayerProperty::construct);
 }
 
-intrusive_ptr<Property> PictureLayerProperty::clone() const {
-  return make_intrusive<PictureLayerProperty>(*this);
+std::shared_ptr<Property> PictureLayerProperty::clone() const {
+  return std::make_shared<PictureLayerProperty>(*this);
 }
 
 QDomElement PictureLayerProperty::toXml(QDomDocument& doc, const QString& name) const {
@@ -27,8 +27,8 @@ QDomElement PictureLayerProperty::toXml(QDomDocument& doc, const QString& name) 
   return el;
 }
 
-intrusive_ptr<Property> PictureLayerProperty::construct(const QDomElement& el) {
-  return make_intrusive<PictureLayerProperty>(el);
+std::shared_ptr<Property> PictureLayerProperty::construct(const QDomElement& el) {
+  return std::make_shared<PictureLayerProperty>(el);
 }
 
 PictureLayerProperty::Layer PictureLayerProperty::layerFromString(const QString& str) {

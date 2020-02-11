@@ -27,7 +27,7 @@ void DebugImagesImpl::add(const QImage& image,
     return;
   }
 
-  m_sequence.push_back(make_intrusive<Item>(aremFile, label, imageViewFactory));
+  m_sequence.push_back(std::make_shared<Item>(aremFile, label, imageViewFactory));
 }
 
 void DebugImagesImpl::add(const imageproc::BinaryImage& image,

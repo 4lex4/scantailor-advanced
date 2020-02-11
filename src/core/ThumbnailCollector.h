@@ -16,7 +16,7 @@ class ThumbnailCollector : public AbstractFilterDataCollector {
  public:
   virtual void processThumbnail(std::unique_ptr<QGraphicsItem>) = 0;
 
-  virtual intrusive_ptr<ThumbnailPixmapCache> thumbnailCache() = 0;
+  virtual std::shared_ptr<ThumbnailPixmapCache> thumbnailCache() = 0;
 
   virtual QSizeF maxLogicalThumbSize() const = 0;
 };

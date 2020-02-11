@@ -5,35 +5,24 @@
 #define SCANTAILOR_ZONES_SPLINEVERTEX_H_
 
 #include <QPointF>
+#include <memory>
 
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
 
-class SplineVertex {
+class SplineVertex : public std::enable_shared_from_this<SplineVertex> {
  public:
   enum Loop { LOOP, NO_LOOP, LOOP_IF_BRIDGED };
 
-  using Ptr = intrusive_ptr<SplineVertex>;
+  using Ptr = std::shared_ptr<SplineVertex>;
+
+  SplineVertex();
 
   SplineVertex(SplineVertex* prev, SplineVertex* next);
 
   virtual ~SplineVertex() = default;
 
   /**
-   * We don't want reference counting for sentinel vertices,
-   * but we can't make ref() and unref() abstract here, because
-   * in case of sentinel vertices these function may actually
-   * be called from this class constructor.
-   */
-  virtual void ref() const {}
-
-  /**
-   * \see ref()
-   */
-  virtual void unref() const {}
-
-  /**
-   * \return Smart pointer to this vertex, unless it's a sentiel vertex,
+   * \return Smart pointer to this vertex, unless it's a sentinel vertex,
    *         in which case the previous non-sentinel vertex is returned.
    *         If there are no non-sentinel vertices, a null smart pointer
    *         is returned.
@@ -41,14 +30,14 @@ class SplineVertex {
   virtual SplineVertex::Ptr thisOrPrevReal(Loop loop) = 0;
 
   /**
-   * \return Smart pointer to this vertex, unless it's a sentiel vertex,
+   * \return Smart pointer to this vertex, unless it's a sentinel vertex,
    *         in which case the next non-sentinel vertex is returned.
    *         If there are no non-sentinel vertices, a null smart pointer
    *         is returned.
    */
   virtual SplineVertex::Ptr thisOrNextReal(Loop loop) = 0;
 
-  virtual const QPointF point() const = 0;
+  virtual const QPointF& point() const = 0;
 
   virtual void setPoint(const QPointF& pt) = 0;
 
@@ -66,10 +55,15 @@ class SplineVertex {
 
  protected:
   /**
-   * The reason m_prev is an ordinary pointer rather than a smart pointer
-   * is that we don't want pairs of vertices holding smart pointers to each
-   * other.  Note that we don't have a loop of smart pointers, because
-   * sentinel vertices aren't reference counted.
+   * Usually we have circular dependency of m_next pointers here
+   * so we unlink a vertex from the previous one to have
+   * that pointer loop broken to be able to destruct this spline.
+   */
+  void unlinkWithPrevious();
+
+  /**
+   * m_prev have to be an ordinary pointer or weak_ptr in order
+   * to avoid circular dependencies.
    */
   SplineVertex* m_prev;
   SplineVertex::Ptr m_next;
@@ -78,7 +72,6 @@ class SplineVertex {
 
 class SentinelSplineVertex : public SplineVertex {
   DECLARE_NON_COPYABLE(SentinelSplineVertex)
-
  public:
   SentinelSplineVertex();
 
@@ -88,7 +81,7 @@ class SentinelSplineVertex : public SplineVertex {
 
   SplineVertex::Ptr thisOrNextReal(Loop loop) override;
 
-  const QPointF point() const override;
+  const QPointF& point() const override;
 
   void setPoint(const QPointF& pt) override;
 
@@ -97,6 +90,20 @@ class SentinelSplineVertex : public SplineVertex {
   SplineVertex::Ptr firstVertex() const;
 
   SplineVertex::Ptr lastVertex() const;
+
+  /**
+   * Making this sentinel be ready for operation.
+   * This method must usually be called in a constructor
+   * of the class that have the ownership of this sentinel.
+   */
+  void init();
+
+  /**
+   * Preparing this sentinel to be destroyed.
+   * This method must usually be called in the destructor
+   * of the class that have the ownership of this sentinel.
+   */
+  void finalize();
 
   bool bridged() const { return m_bridged; }
 
@@ -109,25 +116,19 @@ class SentinelSplineVertex : public SplineVertex {
 
 class RealSplineVertex : public SplineVertex {
   DECLARE_NON_COPYABLE(RealSplineVertex)
-
  public:
   RealSplineVertex(const QPointF& pt, SplineVertex* prev, SplineVertex* next);
-
-  void ref() const override;
-
-  void unref() const override;
 
   SplineVertex::Ptr thisOrPrevReal(Loop loop) override;
 
   SplineVertex::Ptr thisOrNextReal(Loop loop) override;
 
-  const QPointF point() const override;
+  const QPointF& point() const override;
 
   void setPoint(const QPointF& pt) override;
 
  private:
   QPointF m_point;
-  mutable int m_counter;
 };
 
 

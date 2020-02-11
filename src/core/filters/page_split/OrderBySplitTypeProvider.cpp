@@ -7,7 +7,7 @@
 #include <utility>
 
 namespace page_split {
-OrderBySplitTypeProvider::OrderBySplitTypeProvider(intrusive_ptr<Settings> settings)
+OrderBySplitTypeProvider::OrderBySplitTypeProvider(std::shared_ptr<Settings> settings)
     : m_settings(std::move(settings)) {}
 
 bool OrderBySplitTypeProvider::precedes(const PageId& lhsPage,

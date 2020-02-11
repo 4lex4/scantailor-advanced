@@ -13,6 +13,7 @@
 #include <QRectF>
 #include <QSizeF>
 #include <QTransform>
+#include <memory>
 #include <unordered_map>
 
 #include "Alignment.h"
@@ -25,7 +26,6 @@
 #include "ObjectDragHandler.h"
 #include "PageId.h"
 #include "ZoomHandler.h"
-#include "intrusive_ptr.h"
 
 class Margins;
 
@@ -36,7 +36,7 @@ class Settings;
 class ImageView : public ImageViewBase, private InteractionHandler {
   Q_OBJECT
  public:
-  ImageView(const intrusive_ptr<Settings>& settings,
+  ImageView(const std::shared_ptr<Settings>& settings,
             const PageId& pageId,
             const QImage& image,
             const QImage& downscaledImage,
@@ -197,7 +197,7 @@ class ImageView : public ImageViewBase, private InteractionHandler {
   DragHandler m_dragHandler;
   ZoomHandler m_zoomHandler;
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
 
   const PageId m_pageId;
 

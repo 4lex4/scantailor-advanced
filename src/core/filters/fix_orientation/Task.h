@@ -6,11 +6,11 @@
 
 #include <FilterData.h>
 
+#include <memory>
+
 #include "FilterResult.h"
 #include "ImageId.h"
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class TaskStatus;
 class QImage;
@@ -23,18 +23,18 @@ namespace fix_orientation {
 class Filter;
 class Settings;
 
-class Task : public ref_countable {
+class Task {
   DECLARE_NON_COPYABLE(Task)
 
  public:
   Task(const PageId& pageId,
-       intrusive_ptr<Filter> filter,
-       intrusive_ptr<Settings> settings,
-       intrusive_ptr<ImageSettings> imageSettings,
-       intrusive_ptr<page_split::Task> nextTask,
+       std::shared_ptr<Filter> filter,
+       std::shared_ptr<Settings> settings,
+       std::shared_ptr<ImageSettings> imageSettings,
+       std::shared_ptr<page_split::Task> nextTask,
        bool batchProcessing);
 
-  ~Task() override;
+  virtual ~Task();
 
   FilterResultPtr process(const TaskStatus& status, FilterData data);
 
@@ -43,10 +43,10 @@ class Task : public ref_countable {
 
   void updateFilterData(FilterData& data);
 
-  intrusive_ptr<Filter> m_filter;
-  intrusive_ptr<page_split::Task> m_nextTask;  // if null, this task is the final one
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<ImageSettings> m_imageSettings;
+  std::shared_ptr<Filter> m_filter;
+  std::shared_ptr<page_split::Task> m_nextTask;  // if null, this task is the final one
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<ImageSettings> m_imageSettings;
   PageId m_pageId;
   ImageId m_imageId;
   bool m_batchProcessing;

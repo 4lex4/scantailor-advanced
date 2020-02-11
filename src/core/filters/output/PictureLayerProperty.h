@@ -4,8 +4,9 @@
 #ifndef SCANTAILOR_OUTPUT_PICTURELAYERPROPERTY_H_
 #define SCANTAILOR_OUTPUT_PICTURELAYERPROPERTY_H_
 
+#include <memory>
+
 #include "Property.h"
-#include "intrusive_ptr.h"
 
 class PropertyFactory;
 class QDomDocument;
@@ -23,7 +24,7 @@ class PictureLayerProperty : public Property {
 
   static void registerIn(PropertyFactory& factory);
 
-  intrusive_ptr<Property> clone() const override;
+  std::shared_ptr<Property> clone() const override;
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const override;
 
@@ -32,7 +33,7 @@ class PictureLayerProperty : public Property {
   void setLayer(Layer layer);
 
  private:
-  static intrusive_ptr<Property> construct(const QDomElement& el);
+  static std::shared_ptr<Property> construct(const QDomElement& el);
 
   static Layer layerFromString(const QString& str);
 

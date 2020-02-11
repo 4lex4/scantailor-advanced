@@ -18,11 +18,12 @@
 #include "Utils.h"
 
 namespace output {
-Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor) : m_settings(new Settings), m_selectedPageOrder(0) {
+Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor)
+    : m_settings(std::make_shared<Settings>()), m_selectedPageOrder(0) {
   m_optionsWidget.reset(new OptionsWidget(m_settings, pageSelectionAccessor));
 
   const PageOrderOption::ProviderPtr defaultOrder;
-  const auto orderByCompleteness = make_intrusive<OrderByCompletenessProvider>();
+  const auto orderByCompleteness = std::make_shared<OrderByCompletenessProvider>();
   m_pageOrderOptions.emplace_back(tr("Natural order"), defaultOrder);
   m_pageOrderOptions.emplace_back(tr("Order by completeness"), orderByCompleteness);
 }
@@ -130,21 +131,21 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
   }
 }  // Filter::loadSettings
 
-intrusive_ptr<Task> Filter::createTask(const PageId& pageId,
-                                       intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
-                                       const OutputFileNameGenerator& outFileNameGen,
-                                       const bool batch,
-                                       const bool debug) {
+std::shared_ptr<Task> Filter::createTask(const PageId& pageId,
+                                         std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
+                                         const OutputFileNameGenerator& outFileNameGen,
+                                         const bool batch,
+                                         const bool debug) {
   ImageViewTab lastTab(TAB_OUTPUT);
   if (m_optionsWidget.get() != nullptr) {
     lastTab = m_optionsWidget->lastTab();
   }
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_settings, std::move(thumbnailCache), pageId,
-                              outFileNameGen, lastTab, batch, debug);
+  return std::make_shared<Task>(std::static_pointer_cast<Filter>(shared_from_this()), m_settings,
+                                std::move(thumbnailCache), pageId, outFileNameGen, lastTab, batch, debug);
 }
 
-intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(const OutputFileNameGenerator& outFileNameGen) {
-  return make_intrusive<CacheDrivenTask>(m_settings, outFileNameGen);
+std::shared_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(const OutputFileNameGenerator& outFileNameGen) {
+  return std::make_shared<CacheDrivenTask>(m_settings, outFileNameGen);
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {

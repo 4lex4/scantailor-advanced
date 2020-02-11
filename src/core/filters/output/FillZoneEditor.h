@@ -9,6 +9,7 @@
 #include <QPoint>
 #include <QPointF>
 #include <boost/function.hpp>
+#include <memory>
 
 #include "ColorPickupInteraction.h"
 #include "DragHandler.h"
@@ -20,8 +21,6 @@
 #include "ZoneEditorBase.h"
 #include "ZoneInteractionContext.h"
 #include "ZoomHandler.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class InteractionState;
 class QPainter;
@@ -37,7 +36,7 @@ class FillZoneEditor : public ZoneEditorBase {
                  const boost::function<QPointF(const QPointF&)>& origToImage,
                  const boost::function<QPointF(const QPointF&)>& imageToOrig,
                  const PageId& pageId,
-                 intrusive_ptr<Settings> settings);
+                 std::shared_ptr<Settings> settings);
 
   ~FillZoneEditor() override;
 
@@ -80,7 +79,7 @@ class FillZoneEditor : public ZoneEditorBase {
   boost::function<QPointF(const QPointF&)> m_origToImage;
   boost::function<QPointF(const QPointF&)> m_imageToOrig;
   PageId m_pageId;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
 };
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_FILLZONEEDITOR_H_

@@ -20,12 +20,12 @@
 #include "Utils.h"
 
 namespace page_split {
-Filter::Filter(intrusive_ptr<ProjectPages> pageSequence, const PageSelectionAccessor& pageSelectionAccessor)
-    : m_pages(std::move(pageSequence)), m_settings(new Settings), m_selectedPageOrder(0) {
+Filter::Filter(std::shared_ptr<ProjectPages> pageSequence, const PageSelectionAccessor& pageSelectionAccessor)
+    : m_pages(std::move(pageSequence)), m_settings(std::make_shared<Settings>()), m_selectedPageOrder(0) {
   m_optionsWidget.reset(new OptionsWidget(m_settings, m_pages, pageSelectionAccessor));
 
   const PageOrderOption::ProviderPtr defaultOrder;
-  const auto orderBySplitType = make_intrusive<OrderBySplitTypeProvider>(m_settings);
+  const auto orderBySplitType = std::make_shared<OrderBySplitTypeProvider>(m_settings);
   m_pageOrderOptions.emplace_back(tr("Natural order"), defaultOrder);
   m_pageOrderOptions.emplace_back(tr("Order by split type"), orderBySplitType);
 }
@@ -139,16 +139,16 @@ void Filter::writeImageSettings(QDomDocument& doc,
   }
 }
 
-intrusive_ptr<Task> Filter::createTask(const PageInfo& pageInfo,
-                                       intrusive_ptr<deskew::Task> nextTask,
-                                       const bool batchProcessing,
-                                       const bool debug) {
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), m_settings, m_pages, std::move(nextTask), pageInfo,
-                              batchProcessing, debug);
+std::shared_ptr<Task> Filter::createTask(const PageInfo& pageInfo,
+                                         std::shared_ptr<deskew::Task> nextTask,
+                                         const bool batchProcessing,
+                                         const bool debug) {
+  return std::make_shared<Task>(std::static_pointer_cast<Filter>(shared_from_this()), m_settings, m_pages,
+                                std::move(nextTask), pageInfo, batchProcessing, debug);
 }
 
-intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> nextTask) {
-  return make_intrusive<CacheDrivenTask>(m_settings, m_pages, std::move(nextTask));
+std::shared_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(std::shared_ptr<deskew::CacheDrivenTask> nextTask) {
+  return std::make_shared<CacheDrivenTask>(m_settings, m_pages, std::move(nextTask));
 }
 
 std::vector<PageOrderOption> Filter::pageOrderOptions() const {

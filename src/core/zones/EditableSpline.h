@@ -5,17 +5,16 @@
 #define SCANTAILOR_ZONES_EDITABLESPLINE_H_
 
 #include <QPolygonF>
+#include <memory>
 
 #include "SplineSegment.h"
 #include "SplineVertex.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class SerializableSpline;
 
-class EditableSpline : public ref_countable {
+class EditableSpline {
  public:
-  using Ptr = intrusive_ptr<EditableSpline>;
+  using Ptr = std::shared_ptr<EditableSpline>;
 
   class SegmentIterator {
    public:
@@ -29,27 +28,28 @@ class EditableSpline : public ref_countable {
     SplineVertex::Ptr m_nextVertex;
   };
 
-
   EditableSpline();
 
   EditableSpline(const SerializableSpline& spline);
 
+  virtual ~EditableSpline();
+
   void appendVertex(const QPointF& pt);
 
-  SplineVertex::Ptr firstVertex() const { return m_sentinel.firstVertex(); }
+  SplineVertex::Ptr firstVertex() const { return m_sentinel->firstVertex(); }
 
-  SplineVertex::Ptr lastVertex() const { return m_sentinel.lastVertex(); }
+  SplineVertex::Ptr lastVertex() const { return m_sentinel->lastVertex(); }
 
   bool hasAtLeastSegments(int num) const;
 
-  bool bridged() const { return m_sentinel.bridged(); }
+  bool bridged() const { return m_sentinel->bridged(); }
 
-  void setBridged(bool bridged) { m_sentinel.setBridged(true); }
+  void setBridged(bool bridged) { m_sentinel->setBridged(true); }
 
   QPolygonF toPolygon() const;
 
  private:
-  SentinelSplineVertex m_sentinel;
+  std::shared_ptr<SentinelSplineVertex> m_sentinel = std::make_shared<SentinelSplineVertex>();
 };
 
 

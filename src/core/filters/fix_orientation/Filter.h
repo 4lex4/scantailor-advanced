@@ -4,12 +4,13 @@
 #ifndef SCANTAILOR_FIX_ORIENTATION_FILTER_H_
 #define SCANTAILOR_FIX_ORIENTATION_FILTER_H_
 
+#include <memory>
+
 #include "AbstractFilter.h"
 #include "FilterResult.h"
 #include "NonCopyable.h"
 #include "PageView.h"
 #include "SafeDeletingQObjectPtr.h"
-#include "intrusive_ptr.h"
 
 class ImageId;
 class PageSelectionAccessor;
@@ -55,9 +56,11 @@ class Filter : public AbstractFilter {
 
   void loadDefaultSettings(const PageInfo& pageInfo) override;
 
-  intrusive_ptr<Task> createTask(const PageId& pageId, intrusive_ptr<page_split::Task> nextTask, bool batchProcessing);
+  std::shared_ptr<Task> createTask(const PageId& pageId,
+                                   std::shared_ptr<page_split::Task> nextTask,
+                                   bool batchProcessing);
 
-  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> nextTask);
+  std::shared_ptr<CacheDrivenTask> createCacheDrivenTask(std::shared_ptr<page_split::CacheDrivenTask> nextTask);
 
   OptionsWidget* optionsWidget();
 
@@ -70,8 +73,8 @@ class Filter : public AbstractFilter {
 
   void loadImageSettings(const ProjectReader& reader, const QDomElement& imageSettingsEl);
 
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<ImageSettings> m_imageSettings;
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<ImageSettings> m_imageSettings;
   SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
 };
 }  // namespace fix_orientation

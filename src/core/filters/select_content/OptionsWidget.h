@@ -19,7 +19,6 @@
 #include "PageSelectionAccessor.h"
 #include "Params.h"
 #include "PhysSizeCalc.h"
-#include "intrusive_ptr.h"
 #include "ui_OptionsWidget.h"
 
 namespace select_content {
@@ -74,7 +73,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
   };
 
 
-  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
+  OptionsWidget(std::shared_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
@@ -125,7 +124,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   void setupUiConnections();
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
   UiData m_uiData;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;

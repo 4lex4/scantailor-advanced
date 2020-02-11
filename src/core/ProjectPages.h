@@ -20,7 +20,6 @@
 #include "PageInfo.h"
 #include "PageView.h"
 #include "VirtualFunction.h"
-#include "ref_countable.h"
 
 class ImageFileInfo;
 class ImageInfo;
@@ -30,7 +29,7 @@ class RelinkablePath;
 class AbstractRelinker;
 class QDomElement;
 
-class ProjectPages : public QObject, public ref_countable {
+class ProjectPages : public QObject {
   Q_OBJECT
   DECLARE_NON_COPYABLE(ProjectPages)
 

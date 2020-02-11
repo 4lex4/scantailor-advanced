@@ -8,7 +8,7 @@
 
 namespace output {
 
-SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
+SauvolaBinarizationOptionsWidget::SauvolaBinarizationOptionsWidget(std::shared_ptr<Settings> settings)
     : m_settings(std::move(settings)),
       m_connectionManager(std::bind(&SauvolaBinarizationOptionsWidget::setupUiConnections, this)) {
   setupUi(this);

@@ -5,7 +5,6 @@
 #define SCANTAILOR_CORE_IMAGESETTINGS_H_
 
 #include <foundation/NonCopyable.h>
-#include <foundation/ref_countable.h>
 #include <imageproc/BinaryThreshold.h>
 
 #include <QtCore/QMutex>
@@ -17,7 +16,7 @@
 
 class AbstractRelinker;
 
-class ImageSettings : public ref_countable {
+class ImageSettings {
   DECLARE_NON_COPYABLE(ImageSettings)
  public:
   class PageParams {
@@ -45,7 +44,7 @@ class ImageSettings : public ref_countable {
 
   ImageSettings() = default;
 
-  ~ImageSettings() override = default;
+  virtual ~ImageSettings() = default;
 
   void clear();
 

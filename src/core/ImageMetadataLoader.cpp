@@ -14,14 +14,14 @@
 
 ImageMetadataLoader::LoaderList ImageMetadataLoader::m_sLoaders;
 
-void ImageMetadataLoader::registerLoader(intrusive_ptr<ImageMetadataLoader> loader) {
+void ImageMetadataLoader::registerLoader(std::shared_ptr<ImageMetadataLoader> loader) {
   m_sLoaders.push_back(std::move(loader));
 }
 
 ImageMetadataLoader::StaticInit::StaticInit() {
-  registerLoader(make_intrusive<JpegMetadataLoader>());
-  registerLoader(make_intrusive<PngMetadataLoader>());
-  registerLoader(make_intrusive<TiffMetadataLoader>());
+  registerLoader(std::make_shared<JpegMetadataLoader>());
+  registerLoader(std::make_shared<PngMetadataLoader>());
+  registerLoader(std::make_shared<TiffMetadataLoader>());
 }
 
 ImageMetadataLoader::StaticInit ImageMetadataLoader::m_staticInit;

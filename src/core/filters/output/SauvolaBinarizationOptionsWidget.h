@@ -8,11 +8,11 @@
 
 #include <QtCore>
 #include <list>
+#include <memory>
 
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
 #include "Settings.h"
-#include "intrusive_ptr.h"
 #include "ui_SauvolaBinarizationOptionsWidget.h"
 
 namespace output {
@@ -20,7 +20,7 @@ class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
                                          private Ui::SauvolaBinarizationOptionsWidget {
   Q_OBJECT
  public:
-  explicit SauvolaBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
+  explicit SauvolaBinarizationOptionsWidget(std::shared_ptr<Settings> settings);
 
   ~SauvolaBinarizationOptionsWidget() override = default;
 
@@ -39,7 +39,7 @@ class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
 
   void setupUiConnections();
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer m_delayedStateChanger;

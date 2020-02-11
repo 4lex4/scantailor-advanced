@@ -4,14 +4,15 @@
 #ifndef SCANTAILOR_CORE_FILTERRESULT_H_
 #define SCANTAILOR_CORE_FILTERRESULT_H_
 
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
+#include <memory>
 
 class AbstractFilter;
 class FilterUiInterface;
 
-class FilterResult : public ref_countable {
+class FilterResult {
  public:
+  virtual ~FilterResult() = default;
+
   virtual void updateUI(FilterUiInterface* ui) = 0;
 
   /**
@@ -21,10 +22,10 @@ class FilterResult : public ref_countable {
    *       That would be LoadFileTask.
    */
 
-  virtual intrusive_ptr<AbstractFilter> filter() = 0;
+  virtual std::shared_ptr<AbstractFilter> filter() = 0;
 };
 
 
-using FilterResultPtr = intrusive_ptr<FilterResult>;
+using FilterResultPtr = std::shared_ptr<FilterResult>;
 
 #endif

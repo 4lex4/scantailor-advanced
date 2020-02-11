@@ -99,7 +99,7 @@ class OutputGenerator::Processor {
  public:
   Processor(const OutputGenerator& generator,
             const PageId& pageId,
-            const intrusive_ptr<Settings>& settings,
+            const std::shared_ptr<Settings>& settings,
             const FilterData& input,
             const TaskStatus& status,
             DebugImages* dbg);
@@ -212,7 +212,7 @@ class OutputGenerator::Processor {
   const QRect& m_contentRect;
 
   const PageId m_pageId;
-  const intrusive_ptr<Settings> m_settings;
+  const std::shared_ptr<Settings> m_settings;
 
   Dpi m_dpi;
   ColorParams m_colorParams;
@@ -259,14 +259,14 @@ std::unique_ptr<OutputImage> OutputGenerator::process(const TaskStatus& status,
                                                       BinaryImage* specklesImage,
                                                       DebugImages* dbg,
                                                       const PageId& pageId,
-                                                      const intrusive_ptr<Settings>& settings) const {
+                                                      const std::shared_ptr<Settings>& settings) const {
   return Processor(*this, pageId, settings, input, status, dbg)
       .process(pictureZones, fillZones, distortionModel, depthPerception, autoPictureMask, specklesImage);
 }
 
 OutputGenerator::Processor::Processor(const OutputGenerator& generator,
                                       const PageId& pageId,
-                                      const intrusive_ptr<Settings>& settings,
+                                      const std::shared_ptr<Settings>& settings,
                                       const FilterData& input,
                                       const TaskStatus& status,
                                       DebugImages* dbg)

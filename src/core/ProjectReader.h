@@ -7,6 +7,7 @@
 #include <QDomDocument>
 #include <QString>
 #include <Qt>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -15,7 +16,6 @@
 #include "ImageMetadata.h"
 #include "PageId.h"
 #include "SelectedPage.h"
-#include "intrusive_ptr.h"
 
 class QDomElement;
 class ProjectPages;
@@ -24,7 +24,7 @@ class AbstractFilter;
 
 class ProjectReader {
  public:
-  using FilterPtr = intrusive_ptr<AbstractFilter>;
+  using FilterPtr = std::shared_ptr<AbstractFilter>;
 
   explicit ProjectReader(const QDomDocument& doc);
 
@@ -38,11 +38,11 @@ class ProjectReader {
 
   const QString& getVersion() const { return m_version; }
 
-  const intrusive_ptr<ProjectPages>& pages() const { return m_pages; }
+  const std::shared_ptr<ProjectPages>& pages() const { return m_pages; }
 
   const SelectedPage& selectedPage() const { return m_selectedPage; }
 
-  const intrusive_ptr<FileNameDisambiguator>& namingDisambiguator() const { return m_disambiguator; }
+  const std::shared_ptr<FileNameDisambiguator>& namingDisambiguator() const { return m_disambiguator; }
 
   ImageId imageId(int numericId) const;
 
@@ -89,8 +89,8 @@ class ProjectReader {
   ImageMap m_imageMap;
   PageMap m_pageMap;
   SelectedPage m_selectedPage;
-  intrusive_ptr<ProjectPages> m_pages;
-  intrusive_ptr<FileNameDisambiguator> m_disambiguator;
+  std::shared_ptr<ProjectPages> m_pages;
+  std::shared_ptr<FileNameDisambiguator> m_disambiguator;
 };
 
 

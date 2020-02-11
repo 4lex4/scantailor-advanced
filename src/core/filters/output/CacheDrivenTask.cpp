@@ -22,7 +22,7 @@
 #include "core/ThumbnailCollector.h"
 
 namespace output {
-CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings, const OutputFileNameGenerator& outFileNameGen)
+CacheDrivenTask::CacheDrivenTask(std::shared_ptr<Settings> settings, const OutputFileNameGenerator& outFileNameGen)
     : m_settings(std::move(settings)), m_outFileNameGen(outFileNameGen) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;

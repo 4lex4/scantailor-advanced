@@ -8,18 +8,18 @@
 
 #include <QtCore>
 #include <list>
+#include <memory>
 
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
 #include "Settings.h"
-#include "intrusive_ptr.h"
 #include "ui_OtsuBinarizationOptionsWidget.h"
 
 namespace output {
 class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::OtsuBinarizationOptionsWidget {
   Q_OBJECT
  public:
-  explicit OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
+  explicit OtsuBinarizationOptionsWidget(std::shared_ptr<Settings> settings);
 
   ~OtsuBinarizationOptionsWidget() override = default;
 
@@ -46,7 +46,7 @@ class OtsuBinarizationOptionsWidget : public BinarizationOptionsWidget, private 
 
   void setupUiConnections();
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer m_delayedStateChanger;

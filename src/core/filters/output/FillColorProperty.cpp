@@ -16,8 +16,8 @@ void FillColorProperty::registerIn(PropertyFactory& factory) {
   factory.registerProperty(m_propertyName, &FillColorProperty::construct);
 }
 
-intrusive_ptr<Property> FillColorProperty::clone() const {
-  return make_intrusive<FillColorProperty>(*this);
+std::shared_ptr<Property> FillColorProperty::clone() const {
+  return std::make_shared<FillColorProperty>(*this);
 }
 
 QDomElement FillColorProperty::toXml(QDomDocument& doc, const QString& name) const {
@@ -27,8 +27,8 @@ QDomElement FillColorProperty::toXml(QDomDocument& doc, const QString& name) con
   return el;
 }
 
-intrusive_ptr<Property> FillColorProperty::construct(const QDomElement& el) {
-  return make_intrusive<FillColorProperty>(el);
+std::shared_ptr<Property> FillColorProperty::construct(const QDomElement& el) {
+  return std::make_shared<FillColorProperty>(el);
 }
 
 QRgb FillColorProperty::rgbFromString(const QString& str) {

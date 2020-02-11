@@ -12,18 +12,17 @@
 #include "NonCopyable.h"
 #include "OrthogonalRotation.h"
 #include "PageId.h"
-#include "ref_countable.h"
 
 class AbstractRelinker;
 
 namespace fix_orientation {
-class Settings : public ref_countable {
+class Settings {
   DECLARE_NON_COPYABLE(Settings)
 
  public:
   Settings();
 
-  ~Settings() override;
+  virtual ~Settings();
 
   void clear();
 

@@ -5,11 +5,11 @@
 #define SCANTAILOR_FOUNDATION_PROPERTYFACTORY_H_
 
 #include <QString>
+#include <memory>
 #include <unordered_map>
 
 #include "Hashes.h"
 #include "Property.h"
-#include "intrusive_ptr.h"
 
 class QDomElement;
 
@@ -18,11 +18,11 @@ class PropertyFactory {
  public:
   virtual ~PropertyFactory() = default;
 
-  using PropertyConstructor = intrusive_ptr<Property> (*)(const QDomElement& el);
+  using PropertyConstructor = std::shared_ptr<Property> (*)(const QDomElement& el);
 
   void registerProperty(const QString& property, PropertyConstructor constructor);
 
-  intrusive_ptr<Property> construct(const QDomElement& el) const;
+  std::shared_ptr<Property> construct(const QDomElement& el) const;
 
  private:
   using Registry = std::unordered_map<QString, PropertyConstructor, hashes::hash<QString>>;

@@ -25,13 +25,14 @@
 using namespace foundation;
 
 namespace select_content {
-Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor) : m_settings(new Settings), m_selectedPageOrder(0) {
+Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor)
+    : m_settings(std::make_shared<Settings>()), m_selectedPageOrder(0) {
   m_optionsWidget.reset(new OptionsWidget(m_settings, pageSelectionAccessor));
 
   const PageOrderOption::ProviderPtr defaultOrder;
-  const auto orderByWidth = make_intrusive<OrderByWidthProvider>(m_settings);
-  const auto orderByHeight = make_intrusive<OrderByHeightProvider>(m_settings);
-  const auto orderByDeviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());
+  const auto orderByWidth = std::make_shared<OrderByWidthProvider>(m_settings);
+  const auto orderByHeight = std::make_shared<OrderByHeightProvider>(m_settings);
+  const auto orderByDeviation = std::make_shared<OrderByDeviationProvider>(m_settings->deviationProvider());
   m_pageOrderOptions.emplace_back(tr("Natural order"), defaultOrder);
   m_pageOrderOptions.emplace_back(tr("Order by increasing width"), orderByWidth);
   m_pageOrderOptions.emplace_back(tr("Order by increasing height"), orderByHeight);
@@ -135,15 +136,16 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
   }
 }  // Filter::loadSettings
 
-intrusive_ptr<Task> Filter::createTask(const PageId& pageId,
-                                       intrusive_ptr<page_layout::Task> nextTask,
-                                       bool batch,
-                                       bool debug) {
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), std::move(nextTask), m_settings, pageId, batch, debug);
+std::shared_ptr<Task> Filter::createTask(const PageId& pageId,
+                                         std::shared_ptr<page_layout::Task> nextTask,
+                                         bool batch,
+                                         bool debug) {
+  return std::make_shared<Task>(std::static_pointer_cast<Filter>(shared_from_this()), std::move(nextTask), m_settings,
+                                pageId, batch, debug);
 }
 
-intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<page_layout::CacheDrivenTask> nextTask) {
-  return make_intrusive<CacheDrivenTask>(m_settings, std::move(nextTask));
+std::shared_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(std::shared_ptr<page_layout::CacheDrivenTask> nextTask) {
+  return std::make_shared<CacheDrivenTask>(m_settings, std::move(nextTask));
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {

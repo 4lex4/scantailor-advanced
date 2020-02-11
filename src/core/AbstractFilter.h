@@ -8,7 +8,6 @@
 
 #include "PageOrderOption.h"
 #include "PageView.h"
-#include "ref_countable.h"
 
 class FilterUiInterface;
 class PageInfo;
@@ -22,9 +21,9 @@ class QDomElement;
 /**
  * Filters represent processing stages, like "Deskew", "Margins" and "Output".
  */
-class AbstractFilter : public ref_countable {
+class AbstractFilter : public std::enable_shared_from_this<AbstractFilter> {
  public:
-  ~AbstractFilter() override = default;
+  virtual ~AbstractFilter() = default;
 
   virtual QString getName() const = 0;
 

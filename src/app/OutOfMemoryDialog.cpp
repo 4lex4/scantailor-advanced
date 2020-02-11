@@ -26,8 +26,8 @@ OutOfMemoryDialog::OutOfMemoryDialog(QWidget* parent) : QDialog(parent) {
 }
 
 void OutOfMemoryDialog::setParams(const QString& projectFile,
-                                  intrusive_ptr<StageSequence> stages,
-                                  intrusive_ptr<ProjectPages> pages,
+                                  std::shared_ptr<StageSequence> stages,
+                                  std::shared_ptr<ProjectPages> pages,
                                   const SelectedPage& selectedPage,
                                   const OutputFileNameGenerator& outFileNameGen) {
   m_projectFile = projectFile;

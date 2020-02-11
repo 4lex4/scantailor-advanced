@@ -5,10 +5,9 @@
 #define SCANTAILOR_INTERACTION_INTERACTIONHANDLER_H_
 
 #include <boost/intrusive/list.hpp>
+#include <memory>
 
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class InteractionState;
 class QPainter;
@@ -83,12 +82,11 @@ class InteractionHandler
   static bool defaultInteractionPermitter(const InteractionState& interaction);
 
  private:
-  class HandlerList : public ref_countable,
-                      public boost::intrusive::list<InteractionHandler, boost::intrusive::constant_time_size<false>> {};
+  class HandlerList : public boost::intrusive::list<InteractionHandler, boost::intrusive::constant_time_size<false>> {};
 
 
-  intrusive_ptr<HandlerList> m_preceeders;
-  intrusive_ptr<HandlerList> m_followers;
+  std::shared_ptr<HandlerList> m_preceeders;
+  std::shared_ptr<HandlerList> m_followers;
 };
 
 

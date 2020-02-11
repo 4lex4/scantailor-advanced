@@ -20,7 +20,7 @@ ImageView::ImageView(const QImage& image,
                      const QImage& downscaledImage,
                      const ImageTransformation& xform,
                      const PageLayout& layout,
-                     intrusive_ptr<ProjectPages> pages,
+                     std::shared_ptr<ProjectPages> pages,
                      const ImageId& imageId,
                      bool leftHalfRemoved,
                      bool rightHalfRemoved)

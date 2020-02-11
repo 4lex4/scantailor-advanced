@@ -4,9 +4,9 @@
 #ifndef SCANTAILOR_PAGE_SPLIT_CACHEDRIVENTASK_H_
 #define SCANTAILOR_PAGE_SPLIT_CACHEDRIVENTASK_H_
 
+#include <memory>
+
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class QSizeF;
 class PageInfo;
@@ -21,22 +21,22 @@ class CacheDrivenTask;
 namespace page_split {
 class Settings;
 
-class CacheDrivenTask : public ref_countable {
+class CacheDrivenTask {
   DECLARE_NON_COPYABLE(CacheDrivenTask)
 
  public:
-  CacheDrivenTask(intrusive_ptr<Settings> settings,
-                  intrusive_ptr<ProjectPages> projectPages,
-                  intrusive_ptr<deskew::CacheDrivenTask> nextTask);
+  CacheDrivenTask(std::shared_ptr<Settings> settings,
+                  std::shared_ptr<ProjectPages> projectPages,
+                  std::shared_ptr<deskew::CacheDrivenTask> nextTask);
 
-  ~CacheDrivenTask() override;
+  virtual ~CacheDrivenTask();
 
   void process(const PageInfo& pageInfo, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
  private:
-  intrusive_ptr<deskew::CacheDrivenTask> m_nextTask;
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<ProjectPages> m_projectPages;
+  std::shared_ptr<deskew::CacheDrivenTask> m_nextTask;
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<ProjectPages> m_projectPages;
 };
 }  // namespace page_split
 #endif  // ifndef SCANTAILOR_PAGE_SPLIT_CACHEDRIVENTASK_H_

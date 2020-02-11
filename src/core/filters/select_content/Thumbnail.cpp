@@ -7,7 +7,7 @@
 #include <utility>
 
 namespace select_content {
-Thumbnail::Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+Thumbnail::Thumbnail(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
                      const QSizeF& maxSize,
                      const ImageId& imageId,
                      const ImageTransformation& xform,

@@ -24,14 +24,14 @@
 #include "Utils.h"
 
 namespace page_layout {
-Filter::Filter(intrusive_ptr<ProjectPages> pages, const PageSelectionAccessor& pageSelectionAccessor)
-    : m_pages(std::move(pages)), m_settings(new Settings), m_selectedPageOrder(0) {
+Filter::Filter(std::shared_ptr<ProjectPages> pages, const PageSelectionAccessor& pageSelectionAccessor)
+    : m_pages(std::move(pages)), m_settings(std::make_shared<Settings>()), m_selectedPageOrder(0) {
   m_optionsWidget.reset(new OptionsWidget(m_settings, pageSelectionAccessor));
 
   const PageOrderOption::ProviderPtr defaultOrder;
-  const auto orderByWidth = make_intrusive<OrderByWidthProvider>(m_settings);
-  const auto orderByHeight = make_intrusive<OrderByHeightProvider>(m_settings);
-  const auto orderByDeviation = make_intrusive<OrderByDeviationProvider>(m_settings->deviationProvider());
+  const auto orderByWidth = std::make_shared<OrderByWidthProvider>(m_settings);
+  const auto orderByHeight = std::make_shared<OrderByHeightProvider>(m_settings);
+  const auto orderByDeviation = std::make_shared<OrderByDeviationProvider>(m_settings->deviationProvider());
   m_pageOrderOptions.emplace_back(tr("Natural order"), defaultOrder);
   m_pageOrderOptions.emplace_back(tr("Order by increasing width"), orderByWidth);
   m_pageOrderOptions.emplace_back(tr("Order by increasing height"), orderByHeight);
@@ -171,15 +171,16 @@ bool Filter::checkReadyForOutput(const ProjectPages& pages, const PageId* ignore
   return m_settings->checkEverythingDefined(snapshot, ignore);
 }
 
-intrusive_ptr<Task> Filter::createTask(const PageId& pageId,
-                                       intrusive_ptr<output::Task> nextTask,
-                                       const bool batch,
-                                       const bool debug) {
-  return make_intrusive<Task>(intrusive_ptr<Filter>(this), std::move(nextTask), m_settings, pageId, batch, debug);
+std::shared_ptr<Task> Filter::createTask(const PageId& pageId,
+                                         std::shared_ptr<output::Task> nextTask,
+                                         const bool batch,
+                                         const bool debug) {
+  return std::make_shared<Task>(std::static_pointer_cast<Filter>(shared_from_this()), std::move(nextTask), m_settings,
+                                pageId, batch, debug);
 }
 
-intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> nextTask) {
-  return make_intrusive<CacheDrivenTask>(std::move(nextTask), m_settings);
+std::shared_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(std::shared_ptr<output::CacheDrivenTask> nextTask) {
+  return std::make_shared<CacheDrivenTask>(std::move(nextTask), m_settings);
 }
 
 void Filter::loadDefaultSettings(const PageInfo& pageInfo) {

@@ -6,6 +6,7 @@
 
 #include <QCoreApplication>
 #include <QImage>
+#include <memory>
 
 #include "AbstractFilter.h"
 #include "FillZonePropFactory.h"
@@ -14,7 +15,6 @@
 #include "PageView.h"
 #include "PictureZonePropFactory.h"
 #include "SafeDeletingQObjectPtr.h"
-#include "intrusive_ptr.h"
 
 class PageSelectionAccessor;
 class ThumbnailPixmapCache;
@@ -50,13 +50,13 @@ class Filter : public AbstractFilter {
 
   void loadDefaultSettings(const PageInfo& pageInfo) override;
 
-  intrusive_ptr<Task> createTask(const PageId& pageId,
-                                 intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
-                                 const OutputFileNameGenerator& outFileNameGen,
-                                 bool batch,
-                                 bool debug);
+  std::shared_ptr<Task> createTask(const PageId& pageId,
+                                   std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
+                                   const OutputFileNameGenerator& outFileNameGen,
+                                   bool batch,
+                                   bool debug);
 
-  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(const OutputFileNameGenerator& outFileNameGen);
+  std::shared_ptr<CacheDrivenTask> createCacheDrivenTask(const OutputFileNameGenerator& outFileNameGen);
 
   OptionsWidget* optionsWidget();
 
@@ -69,7 +69,7 @@ class Filter : public AbstractFilter {
  private:
   void writePageSettings(QDomDocument& doc, QDomElement& filterEl, const PageId& pageId, int numericId) const;
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
   SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
   PictureZonePropFactory m_pictureZonePropFactory;
   FillZonePropFactory m_fillZonePropFactory;

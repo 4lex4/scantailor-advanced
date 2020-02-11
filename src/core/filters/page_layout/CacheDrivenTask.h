@@ -5,10 +5,9 @@
 #define SCANTAILOR_PAGE_LAYOUT_CACHEDRIVENTASK_H_
 
 #include <QPolygonF>
+#include <memory>
 
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class QRectF;
 class PageInfo;
@@ -22,13 +21,13 @@ class CacheDrivenTask;
 namespace page_layout {
 class Settings;
 
-class CacheDrivenTask : public ref_countable {
+class CacheDrivenTask {
   DECLARE_NON_COPYABLE(CacheDrivenTask)
 
  public:
-  CacheDrivenTask(intrusive_ptr<output::CacheDrivenTask> nextTask, intrusive_ptr<Settings> settings);
+  CacheDrivenTask(std::shared_ptr<output::CacheDrivenTask> nextTask, std::shared_ptr<Settings> settings);
 
-  ~CacheDrivenTask() override;
+  virtual ~CacheDrivenTask();
 
   void process(const PageInfo& pageInfo,
                AbstractFilterDataCollector* collector,
@@ -37,8 +36,8 @@ class CacheDrivenTask : public ref_countable {
                const QRectF& contentRect);
 
  private:
-  intrusive_ptr<output::CacheDrivenTask> m_nextTask;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<output::CacheDrivenTask> m_nextTask;
+  std::shared_ptr<Settings> m_settings;
 };
 }  // namespace page_layout
 #endif  // ifndef SCANTAILOR_PAGE_LAYOUT_CACHEDRIVENTASK_H_

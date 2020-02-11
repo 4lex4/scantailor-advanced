@@ -6,11 +6,11 @@
 
 #include <QRectF>
 #include <QTransform>
+#include <memory>
 
 #include "ImageTransformation.h"
 #include "Params.h"
 #include "ThumbnailBase.h"
-#include "intrusive_ptr.h"
 
 class ThumbnailPixmapCache;
 class ImageId;
@@ -18,7 +18,7 @@ class ImageId;
 namespace page_layout {
 class Thumbnail : public ThumbnailBase {
  public:
-  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  Thumbnail(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
             const QSizeF& maxSize,
             const ImageId& imageId,
             const Params& params,

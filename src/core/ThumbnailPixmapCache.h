@@ -10,7 +10,6 @@
 #include "AbstractCommand.h"
 #include "NonCopyable.h"
 #include "ThumbnailLoadResult.h"
-#include "ref_countable.h"
 
 class ImageId;
 class QImage;
@@ -18,7 +17,7 @@ class QPixmap;
 class QString;
 class QSize;
 
-class ThumbnailPixmapCache : public ref_countable {
+class ThumbnailPixmapCache {
   DECLARE_NON_COPYABLE(ThumbnailPixmapCache)
 
  public:
@@ -49,7 +48,7 @@ class ThumbnailPixmapCache : public ref_countable {
   /**
    * \brief Destructor.  To be called from the GUI thread only.
    */
-  ~ThumbnailPixmapCache() override;
+  virtual ~ThumbnailPixmapCache();
 
   void setThumbDir(const QString& thumbDir);
 

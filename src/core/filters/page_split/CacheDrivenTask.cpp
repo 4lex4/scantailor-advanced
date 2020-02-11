@@ -16,9 +16,9 @@
 #include "filters/deskew/CacheDrivenTask.h"
 
 namespace page_split {
-CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
-                                 intrusive_ptr<ProjectPages> projectPages,
-                                 intrusive_ptr<deskew::CacheDrivenTask> nextTask)
+CacheDrivenTask::CacheDrivenTask(std::shared_ptr<Settings> settings,
+                                 std::shared_ptr<ProjectPages> projectPages,
+                                 std::shared_ptr<deskew::CacheDrivenTask> nextTask)
     : m_nextTask(std::move(nextTask)), m_settings(std::move(settings)), m_projectPages(std::move(projectPages)) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;

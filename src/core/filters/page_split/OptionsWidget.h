@@ -7,6 +7,7 @@
 #include <core/ConnectionManager.h>
 
 #include <list>
+#include <memory>
 #include <set>
 
 #include "AutoManualMode.h"
@@ -17,7 +18,6 @@
 #include "PageId.h"
 #include "PageLayout.h"
 #include "PageSelectionAccessor.h"
-#include "intrusive_ptr.h"
 #include "ui_OptionsWidget.h"
 
 class ProjectPages;
@@ -59,8 +59,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   };
 
 
-  OptionsWidget(intrusive_ptr<Settings> settings,
-                intrusive_ptr<ProjectPages> pageSequence,
+  OptionsWidget(std::shared_ptr<Settings> settings,
+                std::shared_ptr<ProjectPages> pageSequence,
                 const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
@@ -94,8 +94,8 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void setupIcons();
 
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<ProjectPages> m_pages;
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<ProjectPages> m_pages;
   PageSelectionAccessor m_pageSelectionAccessor;
   PageId m_pageId;
   UiData m_uiData;

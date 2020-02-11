@@ -18,7 +18,6 @@
 #include "Margins.h"
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
-#include "intrusive_ptr.h"
 #include "ui_OptionsWidget.h"
 
 class QToolButton;
@@ -30,7 +29,7 @@ class Settings;
 class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private Ui::OptionsWidget {
   Q_OBJECT
  public:
-  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
+  OptionsWidget(std::shared_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
@@ -113,7 +112,7 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   void setupIcons();
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
   PageSelectionAccessor m_pageSelectionAccessor;
   QIcon m_chainIcon;
   QIcon m_brokenChainIcon;

@@ -4,12 +4,13 @@
 #ifndef SCANTAILOR_CORE_LOADFILETASK_H_
 #define SCANTAILOR_CORE_LOADFILETASK_H_
 
+#include <memory>
+
 #include "BackgroundTask.h"
 #include "FilterResult.h"
 #include "ImageId.h"
 #include "ImageMetadata.h"
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
 
 class ThumbnailPixmapCache;
 class PageInfo;
@@ -26,9 +27,9 @@ class LoadFileTask : public BackgroundTask {
  public:
   LoadFileTask(Type type,
                const PageInfo& page,
-               intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
-               intrusive_ptr<ProjectPages> pages,
-               intrusive_ptr<fix_orientation::Task> nextTask);
+               std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
+               std::shared_ptr<ProjectPages> pages,
+               std::shared_ptr<fix_orientation::Task> nextTask);
 
   ~LoadFileTask() override;
 
@@ -43,11 +44,11 @@ class LoadFileTask : public BackgroundTask {
 
   void convertToSupportedFormat(QImage& image) const;
 
-  intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
+  std::shared_ptr<ThumbnailPixmapCache> m_thumbnailCache;
   ImageId m_imageId;
   ImageMetadata m_imageMetadata;
-  const intrusive_ptr<ProjectPages> m_pages;
-  const intrusive_ptr<fix_orientation::Task> m_nextTask;
+  const std::shared_ptr<ProjectPages> m_pages;
+  const std::shared_ptr<fix_orientation::Task> m_nextTask;
 };
 
 

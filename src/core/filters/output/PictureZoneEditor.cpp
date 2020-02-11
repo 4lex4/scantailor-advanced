@@ -28,7 +28,7 @@ static const QRgb maskColor = 0xff587ff4;
 
 using namespace imageproc;
 
-class PictureZoneEditor::MaskTransformTask : public AbstractCommand<intrusive_ptr<AbstractCommand<void>>>,
+class PictureZoneEditor::MaskTransformTask : public AbstractCommand<std::shared_ptr<AbstractCommand<void>>>,
                                              public QObject {
   DECLARE_NON_COPYABLE(MaskTransformTask)
 
@@ -42,7 +42,7 @@ class PictureZoneEditor::MaskTransformTask : public AbstractCommand<intrusive_pt
 
   bool isCancelled() const { return m_result->isCancelled(); }
 
-  intrusive_ptr<AbstractCommand<void>> operator()() override;
+  std::shared_ptr<AbstractCommand<void>> operator()() override;
 
  private:
   class Result : public AbstractCommand<void> {
@@ -65,7 +65,7 @@ class PictureZoneEditor::MaskTransformTask : public AbstractCommand<intrusive_pt
   };
 
 
-  intrusive_ptr<Result> m_result;
+  std::shared_ptr<Result> m_result;
   BinaryImage m_origMask;
   QTransform m_xform;
   QSize m_targetSize;
@@ -78,7 +78,7 @@ PictureZoneEditor::PictureZoneEditor(const QImage& image,
                                      const QTransform& imageToVirt,
                                      const QPolygonF& virtDisplayArea,
                                      const PageId& pageId,
-                                     intrusive_ptr<Settings> settings)
+                                     std::shared_ptr<Settings> settings)
     : ZoneEditorBase(image, downscaledImage, ImagePresentation(imageToVirt, virtDisplayArea), OutputMargins()),
       m_dragHandler(*this),
       m_zoomHandler(*this),
@@ -113,7 +113,7 @@ PictureZoneEditor::PictureZoneEditor(const QImage& image,
   m_pictureMaskRebuildTimer.setInterval(150);
 
   for (const Zone& zone : m_settings->pictureZonesForPage(pageId)) {
-    auto spline = make_intrusive<EditableSpline>(zone.spline());
+    auto spline = std::make_shared<EditableSpline>(zone.spline());
     zones().addZone(spline, zone.properties());
   }
 }
@@ -186,7 +186,7 @@ void PictureZoneEditor::initiateBuildingScreenPictureMask() {
   }
 
   const QTransform xform(virtualToWidget());
-  const auto task = make_intrusive<MaskTransformTask>(this, m_origPictureMask, xform, viewport()->size());
+  const auto task = std::make_shared<MaskTransformTask>(this, m_origPictureMask, xform, viewport()->size());
 
   backgroundExecutor().enqueueTask(task);
 
@@ -283,9 +283,9 @@ PictureZoneEditor::MaskTransformTask::MaskTransformTask(PictureZoneEditor* zoneE
                                                         const BinaryImage& mask,
                                                         const QTransform& xform,
                                                         const QSize& targetSize)
-    : m_result(new Result(zoneEditor)), m_origMask(mask), m_xform(xform), m_targetSize(targetSize) {}
+    : m_result(std::make_shared<Result>(zoneEditor)), m_origMask(mask), m_xform(xform), m_targetSize(targetSize) {}
 
-intrusive_ptr<AbstractCommand<void>> PictureZoneEditor::MaskTransformTask::operator()() {
+std::shared_ptr<AbstractCommand<void>> PictureZoneEditor::MaskTransformTask::operator()() {
   if (isCancelled()) {
     return nullptr;
   }

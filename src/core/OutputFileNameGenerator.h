@@ -6,9 +6,9 @@
 
 #include <QString>
 #include <Qt>
+#include <memory>
 
 #include "FileNameDisambiguator.h"
-#include "intrusive_ptr.h"
 
 class PageId;
 class AbstractRelinker;
@@ -18,7 +18,7 @@ class OutputFileNameGenerator {
  public:
   OutputFileNameGenerator();
 
-  OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
+  OutputFileNameGenerator(std::shared_ptr<FileNameDisambiguator> disambiguator,
                           const QString& outDir,
                           Qt::LayoutDirection layoutDirection);
 
@@ -37,7 +37,7 @@ class OutputFileNameGenerator {
   QString filePathFor(const PageId& page) const;
 
  private:
-  intrusive_ptr<FileNameDisambiguator> m_disambiguator;
+  std::shared_ptr<FileNameDisambiguator> m_disambiguator;
   QString m_outDir;
   Qt::LayoutDirection m_layoutDirection;
 };

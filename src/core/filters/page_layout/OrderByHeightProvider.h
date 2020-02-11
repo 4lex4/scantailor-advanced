@@ -4,19 +4,20 @@
 #ifndef SCANTAILOR_PAGE_LAYOUT_ORDERBYHEIGHTPROVIDER_H_
 #define SCANTAILOR_PAGE_LAYOUT_ORDERBYHEIGHTPROVIDER_H_
 
+#include <memory>
+
 #include "PageOrderProvider.h"
 #include "Settings.h"
-#include "intrusive_ptr.h"
 
 namespace page_layout {
 class OrderByHeightProvider : public PageOrderProvider {
  public:
-  explicit OrderByHeightProvider(intrusive_ptr<Settings> settings);
+  explicit OrderByHeightProvider(std::shared_ptr<Settings> settings);
 
   bool precedes(const PageId& lhsPage, bool lhsIncomplete, const PageId& rhsPage, bool rhsIncomplete) const override;
 
  private:
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
 };
 }  // namespace page_layout
 #endif

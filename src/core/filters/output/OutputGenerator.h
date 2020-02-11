@@ -9,7 +9,6 @@
 
 #include "ImageTransformation.h"
 #include "OutputImage.h"
-#include "intrusive_ptr.h"
 
 class TaskStatus;
 class DebugImages;
@@ -72,7 +71,7 @@ class OutputGenerator {
                                        imageproc::BinaryImage* specklesImage,
                                        DebugImages* dbg,
                                        const PageId& pageId,
-                                       const intrusive_ptr<Settings>& settings) const;
+                                       const std::shared_ptr<Settings>& settings) const;
 
   QSize outputImageSize() const;
 

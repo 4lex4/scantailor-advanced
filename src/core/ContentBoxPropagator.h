@@ -5,8 +5,7 @@
 #define SCANTAILOR_CORE_CONTENTBOXPROPAGATOR_H_
 
 #include <QSizeF>
-
-#include "intrusive_ptr.h"
+#include <memory>
 
 class CompositeCacheDrivenTask;
 class ProjectPages;
@@ -26,8 +25,8 @@ class Filter;
  */
 class ContentBoxPropagator {
  public:
-  ContentBoxPropagator(intrusive_ptr<page_layout::Filter> pageLayoutFilter,
-                       intrusive_ptr<CompositeCacheDrivenTask> task);
+  ContentBoxPropagator(std::shared_ptr<page_layout::Filter> pageLayoutFilter,
+                       std::shared_ptr<CompositeCacheDrivenTask> task);
 
   ~ContentBoxPropagator();
 
@@ -36,8 +35,8 @@ class ContentBoxPropagator {
  private:
   class Collector;
 
-  intrusive_ptr<page_layout::Filter> m_pageLayoutFilter;
-  intrusive_ptr<CompositeCacheDrivenTask> m_task;
+  std::shared_ptr<page_layout::Filter> m_pageLayoutFilter;
+  std::shared_ptr<CompositeCacheDrivenTask> m_task;
 };
 
 

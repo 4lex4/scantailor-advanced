@@ -8,7 +8,7 @@
 #include "Params.h"
 
 namespace page_layout {
-OrderByHeightProvider::OrderByHeightProvider(intrusive_ptr<Settings> settings) : m_settings(std::move(settings)) {}
+OrderByHeightProvider::OrderByHeightProvider(std::shared_ptr<Settings> settings) : m_settings(std::move(settings)) {}
 
 bool OrderByHeightProvider::precedes(const PageId& lhsPage,
                                      const bool lhsIncomplete,

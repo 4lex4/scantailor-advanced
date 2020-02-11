@@ -12,9 +12,9 @@
 #include "RelinkablePath.h"
 
 OutputFileNameGenerator::OutputFileNameGenerator()
-    : m_disambiguator(new FileNameDisambiguator), m_outDir(), m_layoutDirection(Qt::LeftToRight) {}
+    : m_disambiguator(std::make_shared<FileNameDisambiguator>()), m_outDir(), m_layoutDirection(Qt::LeftToRight) {}
 
-OutputFileNameGenerator::OutputFileNameGenerator(intrusive_ptr<FileNameDisambiguator> disambiguator,
+OutputFileNameGenerator::OutputFileNameGenerator(std::shared_ptr<FileNameDisambiguator> disambiguator,
                                                  const QString& outDir,
                                                  Qt::LayoutDirection layoutDirection)
     : m_disambiguator(std::move(disambiguator)), m_outDir(outDir), m_layoutDirection(layoutDirection) {

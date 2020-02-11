@@ -240,7 +240,10 @@ ThumbnailPixmapCache::ThumbnailPixmapCache(const QString& thumbDir,
                                            const QSize& maxThumbSize,
                                            const int maxCachedPixmaps,
                                            const int expirationThreshold)
-    : m_impl(new Impl(RelinkablePath::normalize(thumbDir), maxThumbSize, maxCachedPixmaps, expirationThreshold)) {}
+    : m_impl(std::make_unique<Impl>(RelinkablePath::normalize(thumbDir),
+                                    maxThumbSize,
+                                    maxCachedPixmaps,
+                                    expirationThreshold)) {}
 
 ThumbnailPixmapCache::~ThumbnailPixmapCache() = default;
 

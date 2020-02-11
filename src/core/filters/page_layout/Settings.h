@@ -10,7 +10,6 @@
 
 #include "Margins.h"
 #include "NonCopyable.h"
-#include "ref_countable.h"
 
 class PageId;
 class Margins;
@@ -24,7 +23,7 @@ class Params;
 class Alignment;
 class Guide;
 
-class Settings : public ref_countable {
+class Settings {
   DECLARE_NON_COPYABLE(Settings)
 
  public:
@@ -32,7 +31,7 @@ class Settings : public ref_countable {
 
   Settings();
 
-  ~Settings() override;
+  virtual ~Settings();
 
   /**
    * \brief Removes all stored data.

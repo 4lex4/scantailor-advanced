@@ -28,7 +28,7 @@ class DespeckleView::TaskCancelException : public std::exception {
 };
 
 
-class DespeckleView::TaskCancelHandle : public TaskStatus, public ref_countable {
+class DespeckleView::TaskCancelHandle : public TaskStatus {
  public:
   void cancel() override;
 
@@ -45,7 +45,7 @@ class DespeckleView::DespeckleTask : public AbstractCommand<BackgroundExecutor::
  public:
   DespeckleTask(DespeckleView* owner,
                 const DespeckleState& despeckleState,
-                intrusive_ptr<TaskCancelHandle> cancelHandle,
+                std::shared_ptr<TaskCancelHandle> cancelHandle,
                 double level,
                 bool debug);
 
@@ -54,7 +54,7 @@ class DespeckleView::DespeckleTask : public AbstractCommand<BackgroundExecutor::
  private:
   QPointer<DespeckleView> m_owner;
   DespeckleState m_despeckleState;
-  intrusive_ptr<TaskCancelHandle> m_cancelHandle;
+  std::shared_ptr<TaskCancelHandle> m_cancelHandle;
   std::unique_ptr<DebugImages> m_dbg;
   double m_despeckleLevel;
 };
@@ -63,7 +63,7 @@ class DespeckleView::DespeckleTask : public AbstractCommand<BackgroundExecutor::
 class DespeckleView::DespeckleResult : public AbstractCommand<void> {
  public:
   DespeckleResult(QPointer<DespeckleView> owner,
-                  intrusive_ptr<TaskCancelHandle> cancelHandle,
+                  std::shared_ptr<TaskCancelHandle> cancelHandle,
                   const DespeckleState& despeckleState,
                   const DespeckleVisualization& visualization,
                   std::unique_ptr<DebugImages> debugImages);
@@ -73,7 +73,7 @@ class DespeckleView::DespeckleResult : public AbstractCommand<void> {
 
  private:
   QPointer<DespeckleView> m_owner;
-  intrusive_ptr<TaskCancelHandle> m_cancelHandle;
+  std::shared_ptr<TaskCancelHandle> m_cancelHandle;
   std::unique_ptr<DebugImages> m_dbg;
   DespeckleState m_despeckleState;
   DespeckleVisualization m_visualization;
@@ -149,7 +149,7 @@ void DespeckleView::initiateDespeckling(const AnimationAction animAction) {
   // Note that we are getting rid of m_initialSpeckles,
   // as we wouldn't need it any more.
 
-  const auto task = make_intrusive<DespeckleTask>(this, m_despeckleState, m_cancelHandle, m_despeckleLevel, m_debug);
+  const auto task = std::make_shared<DespeckleTask>(this, m_despeckleState, m_cancelHandle, m_despeckleLevel, m_debug);
   ImageViewBase::backgroundExecutor().enqueueTask(task);
 }
 
@@ -201,7 +201,7 @@ void DespeckleView::removeImageViewWidget() {
 
 DespeckleView::DespeckleTask::DespeckleTask(DespeckleView* owner,
                                             const DespeckleState& despeckleState,
-                                            intrusive_ptr<TaskCancelHandle> cancelHandle,
+                                            std::shared_ptr<TaskCancelHandle> cancelHandle,
                                             const double level,
                                             const bool debug)
     : m_owner(owner),
@@ -224,7 +224,8 @@ BackgroundExecutor::TaskResultPtr DespeckleView::DespeckleTask::operator()() {
     DespeckleVisualization visualization(m_despeckleState.visualize());
 
     m_cancelHandle->throwIfCancelled();
-    return make_intrusive<DespeckleResult>(m_owner, m_cancelHandle, m_despeckleState, visualization, std::move(m_dbg));
+    return std::make_shared<DespeckleResult>(m_owner, m_cancelHandle, m_despeckleState, visualization,
+                                             std::move(m_dbg));
   } catch (const TaskCancelException&) {
     return nullptr;
   }
@@ -233,7 +234,7 @@ BackgroundExecutor::TaskResultPtr DespeckleView::DespeckleTask::operator()() {
 /*======================== DespeckleResult ===========================*/
 
 DespeckleView::DespeckleResult::DespeckleResult(QPointer<DespeckleView> owner,
-                                                intrusive_ptr<TaskCancelHandle> cancelHandle,
+                                                std::shared_ptr<TaskCancelHandle> cancelHandle,
                                                 const DespeckleState& despeckleState,
                                                 const DespeckleVisualization& visualization,
                                                 std::unique_ptr<DebugImages> debugImages)

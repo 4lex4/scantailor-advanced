@@ -7,6 +7,7 @@
 #include <core/ConnectionManager.h>
 
 #include <list>
+#include <memory>
 #include <set>
 
 #include "AutoManualMode.h"
@@ -14,7 +15,6 @@
 #include "FilterOptionsWidget.h"
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
-#include "intrusive_ptr.h"
 #include "ui_OptionsWidget.h"
 
 namespace deskew {
@@ -49,7 +49,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   };
 
 
-  OptionsWidget(intrusive_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
+  OptionsWidget(std::shared_ptr<Settings> settings, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~OptionsWidget() override;
 
@@ -95,7 +95,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   static const double MAX_ANGLE;
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
   PageId m_pageId;
   UiData m_uiData;
   int m_ignoreAutoManualToggle;

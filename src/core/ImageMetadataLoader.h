@@ -4,17 +4,16 @@
 #ifndef SCANTAILOR_CORE_IMAGEMETADATALOADER_H_
 #define SCANTAILOR_CORE_IMAGEMETADATALOADER_H_
 
+#include <memory>
 #include <vector>
 
 #include "VirtualFunction.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class QString;
 class QIODevice;
 class ImageMetadata;
 
-class ImageMetadataLoader : public ref_countable {
+class ImageMetadataLoader {
  public:
   enum Status {
     LOADED,                /**< Loaded successfully */
@@ -29,7 +28,7 @@ class ImageMetadataLoader : public ref_countable {
    * This function may not be called before main() or after additional
    * threads have been created.
    */
-  static void registerLoader(intrusive_ptr<ImageMetadataLoader> loader);
+  static void registerLoader(std::shared_ptr<ImageMetadataLoader> loader);
 
   template <typename OutFunc>
   static Status load(QIODevice& ioDevice, OutFunc out);
@@ -38,7 +37,7 @@ class ImageMetadataLoader : public ref_countable {
   static Status load(const QString& filePath, OutFunc out);
 
  protected:
-  ~ImageMetadataLoader() override = default;
+  virtual ~ImageMetadataLoader() = default;
 
   /**
    * \brief Loads metadata from a particular image format.
@@ -60,7 +59,7 @@ class ImageMetadataLoader : public ref_countable {
 
   static Status loadImpl(const QString& filePath, const VirtualFunction<void, const ImageMetadata&>& out);
 
-  using LoaderList = std::vector<intrusive_ptr<ImageMetadataLoader>>;
+  using LoaderList = std::vector<std::shared_ptr<ImageMetadataLoader>>;
 
   static LoaderList m_sLoaders;
 

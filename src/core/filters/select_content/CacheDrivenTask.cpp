@@ -18,7 +18,8 @@
 #include "filters/page_layout/CacheDrivenTask.h"
 
 namespace select_content {
-CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings, intrusive_ptr<page_layout::CacheDrivenTask> nextTask)
+CacheDrivenTask::CacheDrivenTask(std::shared_ptr<Settings> settings,
+                                 std::shared_ptr<page_layout::CacheDrivenTask> nextTask)
     : m_settings(std::move(settings)), m_nextTask(std::move(nextTask)) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;

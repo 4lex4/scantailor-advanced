@@ -13,7 +13,6 @@
 #include "NonCopyable.h"
 #include "OutputFileNameGenerator.h"
 #include "PageId.h"
-#include "ref_countable.h"
 
 class DebugImages;
 class TaskStatus;
@@ -33,20 +32,20 @@ namespace output {
 class Filter;
 class Settings;
 
-class Task : public ref_countable {
+class Task {
   DECLARE_NON_COPYABLE(Task)
 
  public:
-  Task(intrusive_ptr<Filter> filter,
-       intrusive_ptr<Settings> settings,
-       intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  Task(std::shared_ptr<Filter> filter,
+       std::shared_ptr<Settings> settings,
+       std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
        const PageId& pageId,
        const OutputFileNameGenerator& outFileNameGen,
        ImageViewTab lastTab,
        bool batch,
        bool debug);
 
-  ~Task() override;
+  virtual ~Task();
 
   FilterResultPtr process(const TaskStatus& status, const FilterData& data, const QPolygonF& contentRectPhys);
 
@@ -55,9 +54,9 @@ class Task : public ref_countable {
 
   void deleteMutuallyExclusiveOutputFiles();
 
-  intrusive_ptr<Filter> m_filter;
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
+  std::shared_ptr<Filter> m_filter;
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<ThumbnailPixmapCache> m_thumbnailCache;
   std::unique_ptr<DebugImages> m_dbg;
   PageId m_pageId;
   OutputFileNameGenerator m_outFileNameGen;

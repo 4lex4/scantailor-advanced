@@ -64,7 +64,7 @@ ZoneContextMenuInteraction::ZoneContextMenuInteraction(ZoneInteractionContext& c
                                                        const MenuCustomizer& menuCustomizer,
                                                        std::vector<Zone>& selectableZones)
     : m_context(context),
-      m_menu(new QMenu(&context.imageView())),
+      m_menu(std::make_unique<QMenu>(&context.imageView())),
       m_highlightedZoneIdx(-1),
       m_menuItemTriggered(false) {
 #ifdef Q_OS_MAC

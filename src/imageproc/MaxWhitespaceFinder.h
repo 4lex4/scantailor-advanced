@@ -294,7 +294,7 @@ void PriorityStorageImpl<QualityCompare>::popHeap(const std::deque<Region>::iter
 template <typename QualityCompare>
 MaxWhitespaceFinder::MaxWhitespaceFinder(const QualityCompare comp, const BinaryImage& img, const QSize minSize)
     : m_integralImg(img.size()),
-      m_queuedRegions(new max_whitespace_finder::PriorityStorageImpl<QualityCompare>(comp)),
+      m_queuedRegions(std::make_unique<max_whitespace_finder::PriorityStorageImpl<QualityCompare>>(comp)),
       m_minSize(minSize) {
   init(img);
 }

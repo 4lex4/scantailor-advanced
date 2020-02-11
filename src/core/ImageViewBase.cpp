@@ -29,7 +29,7 @@
 using namespace core;
 using namespace imageproc;
 
-class ImageViewBase::HqTransformTask : public AbstractCommand<intrusive_ptr<AbstractCommand<void>>>, public QObject {
+class ImageViewBase::HqTransformTask : public AbstractCommand<std::shared_ptr<AbstractCommand<void>>>, public QObject {
   DECLARE_NON_COPYABLE(HqTransformTask)
 
  public:
@@ -39,7 +39,7 @@ class ImageViewBase::HqTransformTask : public AbstractCommand<intrusive_ptr<Abst
 
   bool isCancelled() const { return m_result->isCancelled(); }
 
-  intrusive_ptr<AbstractCommand<void>> operator()() override;
+  std::shared_ptr<AbstractCommand<void>> operator()() override;
 
  private:
   class Result : public AbstractCommand<void> {
@@ -62,7 +62,7 @@ class ImageViewBase::HqTransformTask : public AbstractCommand<intrusive_ptr<Abst
   };
 
 
-  intrusive_ptr<Result> m_result;
+  std::shared_ptr<Result> m_result;
   QImage m_image;
   QTransform m_xform;
   QSize m_targetSize;
@@ -931,7 +931,7 @@ void ImageViewBase::initiateBuildingHqVersion() {
   }
 
   const QTransform xform(m_imageToVirtual * m_virtualToWidget);
-  const auto task = make_intrusive<HqTransformTask>(this, m_image, xform, viewport()->size());
+  const auto task = std::make_shared<HqTransformTask>(this, m_image, xform, viewport()->size());
 
   backgroundExecutor().enqueueTask(task);
 
@@ -1003,9 +1003,9 @@ ImageViewBase::HqTransformTask::HqTransformTask(ImageViewBase* imageView,
                                                 const QImage& image,
                                                 const QTransform& xform,
                                                 const QSize& targetSize)
-    : m_result(new Result(imageView)), m_image(image), m_xform(xform), m_targetSize(targetSize) {}
+    : m_result(std::make_shared<Result>(imageView)), m_image(image), m_xform(xform), m_targetSize(targetSize) {}
 
-intrusive_ptr<AbstractCommand<void>> ImageViewBase::HqTransformTask::operator()() {
+std::shared_ptr<AbstractCommand<void>> ImageViewBase::HqTransformTask::operator()() {
   if (isCancelled()) {
     return nullptr;
   }

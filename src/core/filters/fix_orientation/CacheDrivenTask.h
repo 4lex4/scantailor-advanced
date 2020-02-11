@@ -4,9 +4,10 @@
 #ifndef SCANTAILOR_FIX_ORIENTATION_CACHEDRIVENTASK_H_
 #define SCANTAILOR_FIX_ORIENTATION_CACHEDRIVENTASK_H_
 
+#include <memory>
+
 #include "CompositeCacheDrivenTask.h"
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
 
 class PageInfo;
 class AbstractFilterDataCollector;
@@ -22,15 +23,15 @@ class CacheDrivenTask : public CompositeCacheDrivenTask {
   DECLARE_NON_COPYABLE(CacheDrivenTask)
 
  public:
-  CacheDrivenTask(intrusive_ptr<Settings> settings, intrusive_ptr<page_split::CacheDrivenTask> nextTask);
+  CacheDrivenTask(std::shared_ptr<Settings> settings, std::shared_ptr<page_split::CacheDrivenTask> nextTask);
 
-  ~CacheDrivenTask() override;
+  virtual ~CacheDrivenTask();
 
   void process(const PageInfo& pageInfo, AbstractFilterDataCollector* collector) override;
 
  private:
-  intrusive_ptr<page_split::CacheDrivenTask> m_nextTask;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<page_split::CacheDrivenTask> m_nextTask;
+  std::shared_ptr<Settings> m_settings;
 };
 }  // namespace fix_orientation
 #endif  // ifndef SCANTAILOR_FIX_ORIENTATION_CACHEDRIVENTASK_H_

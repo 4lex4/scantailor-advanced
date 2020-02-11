@@ -14,7 +14,7 @@ using namespace core;
 
 namespace output {
 
-OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
+OtsuBinarizationOptionsWidget::OtsuBinarizationOptionsWidget(std::shared_ptr<Settings> settings)
     : m_settings(std::move(settings)),
       m_connectionManager(std::bind(&OtsuBinarizationOptionsWidget::setupUiConnections, this)) {
   setupUi(this);

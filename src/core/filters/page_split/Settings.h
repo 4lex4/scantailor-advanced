@@ -15,12 +15,11 @@
 #include "PageId.h"
 #include "PageLayout.h"
 #include "Params.h"
-#include "ref_countable.h"
 
 class AbstractRelinker;
 
 namespace page_split {
-class Settings : public ref_countable {
+class Settings {
   DECLARE_NON_COPYABLE(Settings)
 
  private:
@@ -110,7 +109,7 @@ class Settings : public ref_countable {
 
   Settings();
 
-  ~Settings() override;
+  virtual ~Settings();
 
   /**
    * \brief Reset all settings to their initial state.

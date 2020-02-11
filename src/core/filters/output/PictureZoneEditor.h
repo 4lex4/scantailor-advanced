@@ -11,6 +11,7 @@
 #include <QPoint>
 #include <QTimer>
 #include <QTransform>
+#include <memory>
 
 #include "DragHandler.h"
 #include "EditableSpline.h"
@@ -21,8 +22,6 @@
 #include "ZoneEditorBase.h"
 #include "ZoneInteractionContext.h"
 #include "ZoomHandler.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class ImageTransformation;
 class InteractionState;
@@ -42,7 +41,7 @@ class PictureZoneEditor : public ZoneEditorBase {
                     const QTransform& imageToVirt,
                     const QPolygonF& virtDisplayArea,
                     const PageId& pageId,
-                    intrusive_ptr<Settings> settings);
+                    std::shared_ptr<Settings> settings);
 
   ~PictureZoneEditor() override;
 
@@ -87,10 +86,10 @@ class PictureZoneEditor : public ZoneEditorBase {
   QTimer m_pictureMaskRebuildTimer;
   QTimer m_pictureMaskAnimateTimer;
   int m_pictureMaskAnimationPhase;  // degrees
-  intrusive_ptr<MaskTransformTask> m_maskTransformTask;
+  std::shared_ptr<MaskTransformTask> m_maskTransformTask;
 
   PageId m_pageId;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
 };
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_PICTUREZONEEDITOR_H_

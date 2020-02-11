@@ -20,8 +20,8 @@ void ZoneCategoryProperty::registerIn(PropertyFactory& factory) {
   factory.registerProperty(m_propertyName, &ZoneCategoryProperty::construct);
 }
 
-intrusive_ptr<Property> ZoneCategoryProperty::clone() const {
-  return make_intrusive<ZoneCategoryProperty>(*this);
+std::shared_ptr<Property> ZoneCategoryProperty::clone() const {
+  return std::make_shared<ZoneCategoryProperty>(*this);
 }
 
 QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, const QString& name) const {
@@ -31,8 +31,8 @@ QDomElement ZoneCategoryProperty::toXml(QDomDocument& doc, const QString& name) 
   return el;
 }
 
-intrusive_ptr<Property> ZoneCategoryProperty::construct(const QDomElement& el) {
-  return make_intrusive<ZoneCategoryProperty>(el);
+std::shared_ptr<Property> ZoneCategoryProperty::construct(const QDomElement& el) {
+  return std::make_shared<ZoneCategoryProperty>(el);
 }
 
 ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategoryFromString(const QString& str) {

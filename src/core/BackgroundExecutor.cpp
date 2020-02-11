@@ -43,7 +43,7 @@ class BackgroundExecutor::Impl : public QThread {
 
 /*============================ BackgroundExecutor ==========================*/
 
-BackgroundExecutor::BackgroundExecutor() : m_impl(new Impl(*this)) {}
+BackgroundExecutor::BackgroundExecutor() : m_impl(std::make_unique<Impl>(*this)) {}
 
 BackgroundExecutor::~BackgroundExecutor() = default;
 

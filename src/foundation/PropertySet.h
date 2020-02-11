@@ -4,20 +4,19 @@
 #ifndef SCANTAILOR_FOUNDATION_PROPERTYSET_H_
 #define SCANTAILOR_FOUNDATION_PROPERTYSET_H_
 
+#include <memory>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
 
 #include "Property.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class PropertyFactory;
 class QDomDocument;
 class QDomElement;
 class QString;
 
-class PropertySet : public ref_countable {
+class PropertySet {
  public:
   PropertySet() = default;
 
@@ -27,6 +26,8 @@ class PropertySet : public ref_countable {
   PropertySet(const PropertySet& other);
 
   PropertySet(const QDomElement& el, const PropertyFactory& factory);
+
+  virtual ~PropertySet() = default;
 
   /**
    * \brief Makes a deep copy of another property set.
@@ -45,20 +46,20 @@ class PropertySet : public ref_countable {
    * type is found, or returns a null smart pointer otherwise.
    */
   template <typename T, typename = is_property<T>>
-  intrusive_ptr<T> locate();
+  std::shared_ptr<T> locate();
 
   template <typename T, typename = is_property<T>>
-  intrusive_ptr<const T> locate() const;
+  std::shared_ptr<const T> locate() const;
 
   /**
    * Returns a property stored in this set, if one having a suitable
    * type is found, or returns a default constructed object otherwise.
    */
   template <typename T, typename = is_property<T>>
-  intrusive_ptr<T> locateOrDefault();
+  std::shared_ptr<T> locateOrDefault();
 
   template <typename T, typename = is_property<T>>
-  intrusive_ptr<const T> locateOrDefault() const;
+  std::shared_ptr<const T> locateOrDefault() const;
 
   /**
    * Returns a property stored in this set, if one having a suitable
@@ -66,48 +67,48 @@ class PropertySet : public ref_countable {
    * to the set and then returned.
    */
   template <typename T, typename = is_property<T>>
-  intrusive_ptr<T> locateOrCreate();
+  std::shared_ptr<T> locateOrCreate();
 
  private:
-  using PropertyMap = std::unordered_map<std::type_index, intrusive_ptr<Property>>;
+  using PropertyMap = std::unordered_map<std::type_index, std::shared_ptr<Property>>;
 
   PropertyMap m_props;
 };
 
 template <typename T, typename>
-intrusive_ptr<T> PropertySet::locate() {
+std::shared_ptr<T> PropertySet::locate() {
   auto it(m_props.find(typeid(T)));
   if (it != m_props.end()) {
-    return static_pointer_cast<T>(it->second);
+    return std::static_pointer_cast<T>(it->second);
   } else {
     return nullptr;
   }
 }
 
 template <typename T, typename>
-intrusive_ptr<const T> PropertySet::locate() const {
+std::shared_ptr<const T> PropertySet::locate() const {
   return const_cast<PropertySet*>(this)->locate<T>();
 }
 
 template <typename T, typename>
-intrusive_ptr<T> PropertySet::locateOrDefault() {
-  intrusive_ptr<T> prop = locate<T>();
+std::shared_ptr<T> PropertySet::locateOrDefault() {
+  std::shared_ptr<T> prop = locate<T>();
   if (!prop) {
-    return make_intrusive<T>();
+    return std::make_shared<T>();
   }
   return prop;
 }
 
 template <typename T, typename>
-intrusive_ptr<const T> PropertySet::locateOrDefault() const {
+std::shared_ptr<const T> PropertySet::locateOrDefault() const {
   return const_cast<PropertySet*>(this)->locateOrDefault<T>();
 }
 
 template <typename T, typename>
-intrusive_ptr<T> PropertySet::locateOrCreate() {
-  intrusive_ptr<T> prop = locate<T>();
+std::shared_ptr<T> PropertySet::locateOrCreate() {
+  std::shared_ptr<T> prop = locate<T>();
   if (!prop) {
-    prop = make_intrusive<T>();
+    prop = std::make_shared<T>();
     m_props[typeid(T)] = prop;
   }
   return prop;

@@ -5,14 +5,14 @@
 #define SCANTAILOR_CORE_PAGEORDEROPTION_H_
 
 #include <QString>
+#include <memory>
 
 #include "PageOrderProvider.h"
-#include "intrusive_ptr.h"
 
 class PageOrderOption {
   // Member-wise copying is OK.
  public:
-  using ProviderPtr = intrusive_ptr<const PageOrderProvider>;
+  using ProviderPtr = std::shared_ptr<const PageOrderProvider>;
 
   PageOrderOption(const QString& name, ProviderPtr provider) : m_name(name), m_provider(std::move(provider)) {}
 

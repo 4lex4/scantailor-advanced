@@ -5,14 +5,14 @@
 
 #include "ProjectPages.h"
 
-StageSequence::StageSequence(const intrusive_ptr<ProjectPages>& pages,
+StageSequence::StageSequence(const std::shared_ptr<ProjectPages>& pages,
                              const PageSelectionAccessor& pageSelectionAccessor)
-    : m_fixOrientationFilter(new fix_orientation::Filter(pageSelectionAccessor)),
-      m_pageSplitFilter(new page_split::Filter(pages, pageSelectionAccessor)),
-      m_deskewFilter(new deskew::Filter(pageSelectionAccessor)),
-      m_selectContentFilter(new select_content::Filter(pageSelectionAccessor)),
-      m_pageLayoutFilter(new page_layout::Filter(pages, pageSelectionAccessor)),
-      m_outputFilter(new output::Filter(pageSelectionAccessor)) {
+    : m_fixOrientationFilter(std::make_shared<fix_orientation::Filter>(pageSelectionAccessor)),
+      m_pageSplitFilter(std::make_shared<page_split::Filter>(pages, pageSelectionAccessor)),
+      m_deskewFilter(std::make_shared<deskew::Filter>(pageSelectionAccessor)),
+      m_selectContentFilter(std::make_shared<select_content::Filter>(pageSelectionAccessor)),
+      m_pageLayoutFilter(std::make_shared<page_layout::Filter>(pages, pageSelectionAccessor)),
+      m_outputFilter(std::make_shared<output::Filter>(pageSelectionAccessor)) {
   m_fixOrientationFilterIdx = static_cast<int>(m_filters.size());
   m_filters.emplace_back(m_fixOrientationFilter);
 

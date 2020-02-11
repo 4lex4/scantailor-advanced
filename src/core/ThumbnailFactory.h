@@ -9,31 +9,29 @@
 
 #include "NonCopyable.h"
 #include "ThumbnailPixmapCache.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class PageInfo;
 class CompositeCacheDrivenTask;
 class QGraphicsItem;
 
-class ThumbnailFactory : public ref_countable {
+class ThumbnailFactory {
   DECLARE_NON_COPYABLE(ThumbnailFactory)
 
  public:
-  ThumbnailFactory(intrusive_ptr<ThumbnailPixmapCache> pixmapCache,
+  ThumbnailFactory(std::shared_ptr<ThumbnailPixmapCache> pixmapCache,
                    const QSizeF& maxSize,
-                   intrusive_ptr<CompositeCacheDrivenTask> task);
+                   std::shared_ptr<CompositeCacheDrivenTask> task);
 
-  ~ThumbnailFactory() override;
+  virtual ~ThumbnailFactory();
 
   std::unique_ptr<QGraphicsItem> get(const PageInfo& pageInfo);
 
  private:
   class Collector;
 
-  intrusive_ptr<ThumbnailPixmapCache> m_pixmapCache;
+  std::shared_ptr<ThumbnailPixmapCache> m_pixmapCache;
   QSizeF m_maxSize;
-  intrusive_ptr<CompositeCacheDrivenTask> m_task;
+  std::shared_ptr<CompositeCacheDrivenTask> m_task;
 };
 
 

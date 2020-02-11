@@ -16,13 +16,13 @@
 #include <QTransform>
 #include <QWidget>
 #include <Qt>
+#include <memory>
 
 #include "ImagePixmapUnion.h"
 #include "ImageViewInfoProvider.h"
 #include "InteractionHandler.h"
 #include "InteractionState.h"
 #include "Margins.h"
-#include "intrusive_ptr.h"
 
 class QPainter;
 class BackgroundExecutor;
@@ -355,7 +355,7 @@ class ImageViewBase : public QAbstractScrollArea {
   /**
    * The pending (if any) high quality transformation task.
    */
-  intrusive_ptr<HqTransformTask> m_hqTransformTask;
+  std::shared_ptr<HqTransformTask> m_hqTransformTask;
 
   /**
    * Transformation from m_pixmap coordinates to m_image coordinates.

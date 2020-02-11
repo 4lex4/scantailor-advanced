@@ -5,10 +5,10 @@
 #define SCANTAILOR_PAGE_SPLIT_THUMBNAIL_H_
 
 #include <QPixmap>
+#include <memory>
 
 #include "PageLayout.h"
 #include "ThumbnailBase.h"
-#include "intrusive_ptr.h"
 
 class QPointF;
 class QSizeF;
@@ -20,7 +20,7 @@ class ImageTransformation;
 namespace page_split {
 class Thumbnail : public ThumbnailBase {
  public:
-  Thumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  Thumbnail(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
             const QSizeF& maxSize,
             const ImageId& imageId,
             const ImageTransformation& xform,

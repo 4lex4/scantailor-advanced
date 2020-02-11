@@ -47,8 +47,8 @@ namespace output {
 class Task::UiUpdater : public FilterResult {
   Q_DECLARE_TR_FUNCTIONS(output::Task::UiUpdater)
  public:
-  UiUpdater(intrusive_ptr<Filter> filter,
-            intrusive_ptr<Settings> settings,
+  UiUpdater(std::shared_ptr<Filter> filter,
+            std::shared_ptr<Settings> settings,
             std::unique_ptr<DebugImages> dbgImg,
             const Params& params,
             const ImageTransformation& xform,
@@ -64,11 +64,11 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
+  std::shared_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_filter;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Filter> m_filter;
+  std::shared_ptr<Settings> m_settings;
   std::unique_ptr<DebugImages> m_dbg;
   Params m_params;
   ImageTransformation m_xform;
@@ -86,9 +86,9 @@ class Task::UiUpdater : public FilterResult {
 };
 
 
-Task::Task(intrusive_ptr<Filter> filter,
-           intrusive_ptr<Settings> settings,
-           intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+Task::Task(std::shared_ptr<Filter> filter,
+           std::shared_ptr<Settings> settings,
+           std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
            const PageId& pageId,
            const OutputFileNameGenerator& outFileNameGen,
            const ImageViewTab lastTab,
@@ -434,9 +434,9 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data, 
     // Otherwise it will get constructed on demand.
     despeckleVisualization = despeckleState.visualize();
   }
-  return make_intrusive<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, newXform,
-                                   generator.outputContentRect(), m_pageId, data.origImage(), outImg, automaskImg,
-                                   despeckleState, despeckleVisualization, m_batchProcessing, m_debug);
+  return std::make_shared<UiUpdater>(m_filter, m_settings, std::move(m_dbg), params, newXform,
+                                     generator.outputContentRect(), m_pageId, data.origImage(), outImg, automaskImg,
+                                     despeckleState, despeckleVisualization, m_batchProcessing, m_debug);
 }  // Task::process
 
 /**
@@ -457,8 +457,8 @@ void Task::deleteMutuallyExclusiveOutputFiles() {
 
 /*============================ Task::UiUpdater ==========================*/
 
-Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
-                           intrusive_ptr<Settings> settings,
+Task::UiUpdater::UiUpdater(std::shared_ptr<Filter> filter,
+                           std::shared_ptr<Settings> settings,
                            std::unique_ptr<DebugImages> dbgImg,
                            const Params& params,
                            const ImageTransformation& xform,

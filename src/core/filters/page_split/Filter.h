@@ -5,6 +5,7 @@
 #define SCANTAILOR_PAGE_SPLIT_FILTER_H_
 
 #include <QCoreApplication>
+#include <memory>
 #include <set>
 
 #include "AbstractFilter.h"
@@ -13,7 +14,6 @@
 #include "PageOrderOption.h"
 #include "PageView.h"
 #include "SafeDeletingQObjectPtr.h"
-#include "intrusive_ptr.h"
 
 class ImageId;
 class PageInfo;
@@ -39,7 +39,7 @@ class Filter : public AbstractFilter {
 
   Q_DECLARE_TR_FUNCTIONS(page_split::Filter)
  public:
-  Filter(intrusive_ptr<ProjectPages> pageSequence, const PageSelectionAccessor& pageSelectionAccessor);
+  Filter(std::shared_ptr<ProjectPages> pageSequence, const PageSelectionAccessor& pageSelectionAccessor);
 
   ~Filter() override;
 
@@ -57,12 +57,12 @@ class Filter : public AbstractFilter {
 
   void loadDefaultSettings(const PageInfo& pageInfo) override;
 
-  intrusive_ptr<Task> createTask(const PageInfo& pageInfo,
-                                 intrusive_ptr<deskew::Task> nextTask,
-                                 bool batchProcessing,
-                                 bool debug);
+  std::shared_ptr<Task> createTask(const PageInfo& pageInfo,
+                                   std::shared_ptr<deskew::Task> nextTask,
+                                   bool batchProcessing,
+                                   bool debug);
 
-  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<deskew::CacheDrivenTask> nextTask);
+  std::shared_ptr<CacheDrivenTask> createCacheDrivenTask(std::shared_ptr<deskew::CacheDrivenTask> nextTask);
 
   OptionsWidget* optionsWidget();
 
@@ -77,8 +77,8 @@ class Filter : public AbstractFilter {
  private:
   void writeImageSettings(QDomDocument& doc, QDomElement& filterEl, const ImageId& imageId, int numericId) const;
 
-  intrusive_ptr<ProjectPages> m_pages;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<ProjectPages> m_pages;
+  std::shared_ptr<Settings> m_settings;
   SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
   std::vector<PageOrderOption> m_pageOrderOptions;
   int m_selectedPageOrder;

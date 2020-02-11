@@ -47,10 +47,10 @@ QString Utils::outputDirToThumbDir(const QString& outputDir) {
   return outputDir + QLatin1String("/cache/thumbs");
 }
 
-intrusive_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& outputDir) {
+std::shared_ptr<ThumbnailPixmapCache> Utils::createThumbnailCache(const QString& outputDir) {
   const QSize maxPixmapSize = ApplicationSettings::getInstance().getThumbnailQuality();
   const QString thumbsCachePath(outputDirToThumbDir(outputDir));
-  return make_intrusive<ThumbnailPixmapCache>(thumbsCachePath, maxPixmapSize, 40, 5);
+  return std::make_shared<ThumbnailPixmapCache>(thumbsCachePath, maxPixmapSize, 40, 5);
 }
 
 QString Utils::qssConvertPxToEm(const QString& stylesheet, const double base, const int precision) {

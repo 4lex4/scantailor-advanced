@@ -4,15 +4,17 @@
 #ifndef SCANTAILOR_FOUNDATION_PROPERTY_H_
 #define SCANTAILOR_FOUNDATION_PROPERTY_H_
 
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
+#include <memory>
 
 class QDomDocument;
 class QDomElement;
+class QString;
 
-class Property : public ref_countable {
+class Property {
  public:
-  virtual intrusive_ptr<Property> clone() const = 0;
+  virtual ~Property() = default;
+
+  virtual std::shared_ptr<Property> clone() const = 0;
 
   virtual QDomElement toXml(QDomDocument& doc, const QString& name) const = 0;
 };

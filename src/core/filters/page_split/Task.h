@@ -9,8 +9,6 @@
 #include "FilterResult.h"
 #include "NonCopyable.h"
 #include "PageInfo.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class TaskStatus;
 class FilterData;
@@ -28,29 +26,29 @@ class Settings;
 
 class PageLayout;
 
-class Task : public ref_countable {
+class Task {
   DECLARE_NON_COPYABLE(Task)
 
  public:
-  Task(intrusive_ptr<Filter> filter,
-       intrusive_ptr<Settings> settings,
-       intrusive_ptr<ProjectPages> pages,
-       intrusive_ptr<deskew::Task> nextTask,
+  Task(std::shared_ptr<Filter> filter,
+       std::shared_ptr<Settings> settings,
+       std::shared_ptr<ProjectPages> pages,
+       std::shared_ptr<deskew::Task> nextTask,
        const PageInfo& pageInfo,
        bool batchProcessing,
        bool debug);
 
-  ~Task() override;
+  virtual ~Task();
 
   FilterResultPtr process(const TaskStatus& status, const FilterData& data);
 
  private:
   class UiUpdater;
 
-  intrusive_ptr<Filter> m_filter;
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<ProjectPages> m_pages;
-  intrusive_ptr<deskew::Task> m_nextTask;
+  std::shared_ptr<Filter> m_filter;
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<ProjectPages> m_pages;
+  std::shared_ptr<deskew::Task> m_nextTask;
   std::unique_ptr<DebugImages> m_dbg;
   PageInfo m_pageInfo;
   bool m_batchProcessing;

@@ -73,14 +73,16 @@ class FileNameDisambiguator::Impl {
 
 /*====================== FileNameDisambiguator =========================*/
 
-FileNameDisambiguator::FileNameDisambiguator() : m_impl(new Impl) {}
+FileNameDisambiguator::FileNameDisambiguator() : m_impl(std::make_unique<Impl>()) {}
 
 FileNameDisambiguator::FileNameDisambiguator(const QDomElement& disambiguatorEl)
-    : m_impl(new Impl(disambiguatorEl, boost::lambda::_1)) {}
+    : m_impl(std::make_unique<Impl>(disambiguatorEl, boost::lambda::_1)) {}
 
 FileNameDisambiguator::FileNameDisambiguator(const QDomElement& disambiguatorEl,
                                              const boost::function<QString(const QString&)>& filePathUnpacker)
-    : m_impl(new Impl(disambiguatorEl, filePathUnpacker)) {}
+    : m_impl(std::make_unique<Impl>(disambiguatorEl, filePathUnpacker)) {}
+
+FileNameDisambiguator::~FileNameDisambiguator() = default;
 
 QDomElement FileNameDisambiguator::toXml(QDomDocument& doc, const QString& name) const {
   return m_impl->toXml(doc, name, boost::lambda::_1);

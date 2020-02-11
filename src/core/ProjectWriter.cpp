@@ -27,7 +27,7 @@
 #include <cassert>
 #include <cstddef>
 
-ProjectWriter::ProjectWriter(const intrusive_ptr<ProjectPages>& pageSequence,
+ProjectWriter::ProjectWriter(const std::shared_ptr<ProjectPages>& pageSequence,
                              const SelectedPage& selectedPage,
                              const OutputFileNameGenerator& outFileNameGen)
     : m_pageSequence(pageSequence->toPageSequence(PAGE_VIEW)),

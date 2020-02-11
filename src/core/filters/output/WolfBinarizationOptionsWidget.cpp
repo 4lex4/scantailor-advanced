@@ -7,7 +7,7 @@
 
 namespace output {
 
-WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings)
+WolfBinarizationOptionsWidget::WolfBinarizationOptionsWidget(std::shared_ptr<Settings> settings)
     : m_settings(std::move(settings)),
       m_connectionManager(std::bind(&WolfBinarizationOptionsWidget::setupUiConnections, this)) {
   setupUi(this);

@@ -8,18 +8,18 @@
 
 #include <QtCore>
 #include <list>
+#include <memory>
 
 #include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
 #include "Settings.h"
-#include "intrusive_ptr.h"
 #include "ui_WolfBinarizationOptionsWidget.h"
 
 namespace output {
 class WolfBinarizationOptionsWidget : public BinarizationOptionsWidget, private Ui::WolfBinarizationOptionsWidget {
   Q_OBJECT
  public:
-  explicit WolfBinarizationOptionsWidget(intrusive_ptr<Settings> settings);
+  explicit WolfBinarizationOptionsWidget(std::shared_ptr<Settings> settings);
 
   ~WolfBinarizationOptionsWidget() override = default;
 
@@ -42,7 +42,7 @@ class WolfBinarizationOptionsWidget : public BinarizationOptionsWidget, private 
 
   void setupUiConnections();
 
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<Settings> m_settings;
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer m_delayedStateChanger;

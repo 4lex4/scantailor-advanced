@@ -26,8 +26,8 @@ using imageproc::BinaryThreshold;
 
 class Task::UiUpdater : public FilterResult {
  public:
-  UiUpdater(intrusive_ptr<Filter> filter,
-            intrusive_ptr<ProjectPages> pages,
+  UiUpdater(std::shared_ptr<Filter> filter,
+            std::shared_ptr<ProjectPages> pages,
             std::unique_ptr<DebugImages> dbgImg,
             const QImage& image,
             const PageInfo& pageInfo,
@@ -37,11 +37,11 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
+  std::shared_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_filter;
-  intrusive_ptr<ProjectPages> m_pages;
+  std::shared_ptr<Filter> m_filter;
+  std::shared_ptr<ProjectPages> m_pages;
   std::unique_ptr<DebugImages> m_dbg;
   QImage m_image;
   QImage m_downscaledImage;
@@ -65,10 +65,10 @@ static ProjectPages::LayoutType toPageLayoutType(const PageLayout& layout) {
   return ProjectPages::ONE_PAGE_LAYOUT;
 }
 
-Task::Task(intrusive_ptr<Filter> filter,
-           intrusive_ptr<Settings> settings,
-           intrusive_ptr<ProjectPages> pages,
-           intrusive_ptr<deskew::Task> nextTask,
+Task::Task(std::shared_ptr<Filter> filter,
+           std::shared_ptr<Settings> settings,
+           std::shared_ptr<ProjectPages> pages,
+           std::shared_ptr<deskew::Task> nextTask,
            const PageInfo& pageInfo,
            const bool batchProcessing,
            const bool debug)
@@ -170,14 +170,14 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
     newXform.setPreCropArea(layout.pageOutline(m_pageInfo.id().subPage()).toPolygon());
     return m_nextTask->process(status, FilterData(data, newXform));
   }
-  return make_intrusive<UiUpdater>(m_filter, m_pages, std::move(m_dbg), data.origImage(), m_pageInfo, data.xform(),
-                                   uiData, m_batchProcessing);
+  return std::make_shared<UiUpdater>(m_filter, m_pages, std::move(m_dbg), data.origImage(), m_pageInfo, data.xform(),
+                                     uiData, m_batchProcessing);
 }  // Task::process
 
 /*============================ Task::UiUpdater =========================*/
 
-Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
-                           intrusive_ptr<ProjectPages> pages,
+Task::UiUpdater::UiUpdater(std::shared_ptr<Filter> filter,
+                           std::shared_ptr<ProjectPages> pages,
                            std::unique_ptr<DebugImages> dbgImg,
                            const QImage& image,
                            const PageInfo& pageInfo,

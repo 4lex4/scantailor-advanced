@@ -4,6 +4,7 @@
 #ifndef SCANTAILOR_CORE_STAGESEQUENCE_H_
 #define SCANTAILOR_CORE_STAGESEQUENCE_H_
 
+#include <memory>
 #include <vector>
 
 #include "AbstractFilter.h"
@@ -14,21 +15,21 @@
 #include "filters/page_layout/Filter.h"
 #include "filters/page_split/Filter.h"
 #include "filters/select_content/Filter.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class PageId;
 class ProjectPages;
 class PageSelectionAccessor;
 class AbstractRelinker;
 
-class StageSequence : public ref_countable {
+class StageSequence {
   DECLARE_NON_COPYABLE(StageSequence)
 
  public:
-  using FilterPtr = intrusive_ptr<AbstractFilter>;
+  using FilterPtr = std::shared_ptr<AbstractFilter>;
 
-  StageSequence(const intrusive_ptr<ProjectPages>& pages, const PageSelectionAccessor& pageSelectionAccessor);
+  StageSequence(const std::shared_ptr<ProjectPages>& pages, const PageSelectionAccessor& pageSelectionAccessor);
+
+  virtual ~StageSequence() = default;
 
   void performRelinking(const AbstractRelinker& relinker);
 
@@ -40,17 +41,17 @@ class StageSequence : public ref_countable {
 
   int findFilter(const FilterPtr& filter) const;
 
-  const intrusive_ptr<fix_orientation::Filter>& fixOrientationFilter() const { return m_fixOrientationFilter; }
+  const std::shared_ptr<fix_orientation::Filter>& fixOrientationFilter() const { return m_fixOrientationFilter; }
 
-  const intrusive_ptr<page_split::Filter>& pageSplitFilter() const { return m_pageSplitFilter; }
+  const std::shared_ptr<page_split::Filter>& pageSplitFilter() const { return m_pageSplitFilter; }
 
-  const intrusive_ptr<deskew::Filter>& deskewFilter() const { return m_deskewFilter; }
+  const std::shared_ptr<deskew::Filter>& deskewFilter() const { return m_deskewFilter; }
 
-  const intrusive_ptr<select_content::Filter>& selectContentFilter() const { return m_selectContentFilter; }
+  const std::shared_ptr<select_content::Filter>& selectContentFilter() const { return m_selectContentFilter; }
 
-  const intrusive_ptr<page_layout::Filter>& pageLayoutFilter() const { return m_pageLayoutFilter; }
+  const std::shared_ptr<page_layout::Filter>& pageLayoutFilter() const { return m_pageLayoutFilter; }
 
-  const intrusive_ptr<output::Filter>& outputFilter() const { return m_outputFilter; }
+  const std::shared_ptr<output::Filter>& outputFilter() const { return m_outputFilter; }
 
   int fixOrientationFilterIdx() const { return m_fixOrientationFilterIdx; }
 
@@ -65,12 +66,12 @@ class StageSequence : public ref_countable {
   int outputFilterIdx() const { return m_outputFilterIdx; }
 
  private:
-  intrusive_ptr<fix_orientation::Filter> m_fixOrientationFilter;
-  intrusive_ptr<page_split::Filter> m_pageSplitFilter;
-  intrusive_ptr<deskew::Filter> m_deskewFilter;
-  intrusive_ptr<select_content::Filter> m_selectContentFilter;
-  intrusive_ptr<page_layout::Filter> m_pageLayoutFilter;
-  intrusive_ptr<output::Filter> m_outputFilter;
+  std::shared_ptr<fix_orientation::Filter> m_fixOrientationFilter;
+  std::shared_ptr<page_split::Filter> m_pageSplitFilter;
+  std::shared_ptr<deskew::Filter> m_deskewFilter;
+  std::shared_ptr<select_content::Filter> m_selectContentFilter;
+  std::shared_ptr<page_layout::Filter> m_pageLayoutFilter;
+  std::shared_ptr<output::Filter> m_outputFilter;
   std::vector<FilterPtr> m_filters;
   int m_fixOrientationFilterIdx;
   int m_pageSplitFilterIdx;

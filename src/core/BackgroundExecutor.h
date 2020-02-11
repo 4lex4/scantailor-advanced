@@ -9,14 +9,13 @@
 #include "AbstractCommand.h"
 #include "NonCopyable.h"
 #include "PayloadEvent.h"
-#include "intrusive_ptr.h"
 
 class BackgroundExecutor {
   DECLARE_NON_COPYABLE(BackgroundExecutor)
 
  public:
-  using TaskResultPtr = intrusive_ptr<AbstractCommand<void>>;
-  using TaskPtr = intrusive_ptr<AbstractCommand<TaskResultPtr>>;
+  using TaskResultPtr = std::shared_ptr<AbstractCommand<void>>;
+  using TaskPtr = std::shared_ptr<AbstractCommand<TaskResultPtr>>;
 
   BackgroundExecutor();
 

@@ -23,7 +23,7 @@
 using namespace imageproc;
 
 namespace page_layout {
-ImageView::ImageView(const intrusive_ptr<Settings>& settings,
+ImageView::ImageView(const std::shared_ptr<Settings>& settings,
                      const PageId& pageId,
                      const QImage& image,
                      const QImage& downscaledImage,

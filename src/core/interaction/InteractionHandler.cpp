@@ -7,7 +7,6 @@
 #include <QPainter>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/construct.hpp>
-#include <boost/lambda/lambda.hpp>
 
 #include "InteractionState.h"
 
@@ -53,7 +52,8 @@ ScopedClearAcceptance::~ScopedClearAcceptance() {
 }
 }  // anonymous namespace
 
-InteractionHandler::InteractionHandler() : m_preceeders(new HandlerList), m_followers(new HandlerList) {}
+InteractionHandler::InteractionHandler()
+    : m_preceeders(std::make_shared<HandlerList>()), m_followers(std::make_shared<HandlerList>()) {}
 
 InteractionHandler::~InteractionHandler() {
   using namespace boost::lambda;
@@ -63,8 +63,8 @@ InteractionHandler::~InteractionHandler() {
 
 void InteractionHandler::paint(QPainter& painter, const InteractionState& interaction) {
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, paint(painter, interaction));
   painter.save();
@@ -75,8 +75,8 @@ void InteractionHandler::paint(QPainter& painter, const InteractionState& intera
 
 void InteractionHandler::proximityUpdate(const QPointF& screenMousePos, InteractionState& interaction) {
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, proximityUpdate(screenMousePos, interaction));
   onProximityUpdate(screenMousePos, interaction);
@@ -88,8 +88,8 @@ void InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& inter
   RETURN_IF_ACCEPTED(event);
 
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, keyPressEvent(event, interaction));
   RETURN_IF_ACCEPTED(event);
@@ -101,8 +101,8 @@ void InteractionHandler::keyPressEvent(QKeyEvent* event, InteractionState& inter
 void InteractionHandler::keyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
   RETURN_IF_ACCEPTED(event);
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, keyReleaseEvent(event, interaction));
   RETURN_IF_ACCEPTED(event);
@@ -115,8 +115,8 @@ void InteractionHandler::mousePressEvent(QMouseEvent* event, InteractionState& i
   RETURN_IF_ACCEPTED(event);
 
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, mousePressEvent(event, interaction));
   RETURN_IF_ACCEPTED(event);
@@ -128,8 +128,8 @@ void InteractionHandler::mousePressEvent(QMouseEvent* event, InteractionState& i
 void InteractionHandler::mouseReleaseEvent(QMouseEvent* event, InteractionState& interaction) {
   RETURN_IF_ACCEPTED(event);
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, mouseReleaseEvent(event, interaction));
   RETURN_IF_ACCEPTED(event);
@@ -141,8 +141,8 @@ void InteractionHandler::mouseReleaseEvent(QMouseEvent* event, InteractionState&
 void InteractionHandler::mouseDoubleClickEvent(QMouseEvent* event, InteractionState& interaction) {
   RETURN_IF_ACCEPTED(event);
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, mouseDoubleClickEvent(event, interaction));
   RETURN_IF_ACCEPTED(event);
@@ -155,8 +155,8 @@ void InteractionHandler::mouseMoveEvent(QMouseEvent* event, InteractionState& in
   RETURN_IF_ACCEPTED(event);
 
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, mouseMoveEvent(event, interaction));
   RETURN_IF_ACCEPTED(event);
@@ -169,8 +169,8 @@ void InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& intera
   RETURN_IF_ACCEPTED(event);
 
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, wheelEvent(event, interaction));
   RETURN_IF_ACCEPTED(event);
@@ -182,8 +182,8 @@ void InteractionHandler::wheelEvent(QWheelEvent* event, InteractionState& intera
 void InteractionHandler::contextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
   RETURN_IF_ACCEPTED(event);
   // Keep them alive in case this object gets destroyed.
-  intrusive_ptr<HandlerList> preceeders(m_preceeders);
-  intrusive_ptr<HandlerList> followers(m_followers);
+  std::shared_ptr<HandlerList> preceeders(m_preceeders);
+  std::shared_ptr<HandlerList> followers(m_followers);
 
   DISPATCH(preceeders, contextMenuEvent(event, interaction));
   RETURN_IF_ACCEPTED(event);

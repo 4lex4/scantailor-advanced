@@ -16,8 +16,8 @@
 #include "filters/select_content/CacheDrivenTask.h"
 
 namespace deskew {
-CacheDrivenTask::CacheDrivenTask(intrusive_ptr<Settings> settings,
-                                 intrusive_ptr<select_content::CacheDrivenTask> nextTask)
+CacheDrivenTask::CacheDrivenTask(std::shared_ptr<Settings> settings,
+                                 std::shared_ptr<select_content::CacheDrivenTask> nextTask)
     : m_nextTask(std::move(nextTask)), m_settings(std::move(settings)) {}
 
 CacheDrivenTask::~CacheDrivenTask() = default;

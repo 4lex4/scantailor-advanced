@@ -6,12 +6,12 @@
 
 #include <QDialog>
 #include <QString>
+#include <memory>
 
 #include "OutputFileNameGenerator.h"
 #include "ProjectPages.h"
 #include "SelectedPage.h"
 #include "StageSequence.h"
-#include "intrusive_ptr.h"
 #include "ui_OutOfMemoryDialog.h"
 
 class OutOfMemoryDialog : public QDialog {
@@ -21,8 +21,8 @@ class OutOfMemoryDialog : public QDialog {
 
   void setParams(const QString& projectFile,
                  // may be empty
-                 intrusive_ptr<StageSequence> stages,
-                 intrusive_ptr<ProjectPages> pages,
+                 std::shared_ptr<StageSequence> stages,
+                 std::shared_ptr<ProjectPages> pages,
                  const SelectedPage& selectedPage,
                  const OutputFileNameGenerator& outFileNameGen);
 
@@ -39,8 +39,8 @@ class OutOfMemoryDialog : public QDialog {
 
   Ui::OutOfMemoryDialog ui;
   QString m_projectFile;
-  intrusive_ptr<StageSequence> m_stages;
-  intrusive_ptr<ProjectPages> m_pages;
+  std::shared_ptr<StageSequence> m_stages;
+  std::shared_ptr<ProjectPages> m_pages;
   SelectedPage m_selectedPage;
   OutputFileNameGenerator m_outFileNameGen;
 };

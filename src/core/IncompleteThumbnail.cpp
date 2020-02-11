@@ -9,7 +9,7 @@
 
 QPainterPath IncompleteThumbnail::m_sCachedPath;
 
-IncompleteThumbnail::IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+IncompleteThumbnail::IncompleteThumbnail(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
                                          const QSizeF& maxSize,
                                          const ImageId& imageId,
                                          const ImageTransformation& imageXform)

@@ -83,15 +83,15 @@ class ThumbnailSequence::Impl {
 
   ~Impl();
 
-  void setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory);
+  void setThumbnailFactory(std::shared_ptr<ThumbnailFactory> factory);
 
   void attachView(QGraphicsView* view);
 
   void reset(const PageSequence& pages,
              SelectionAction selectionAction,
-             intrusive_ptr<const PageOrderProvider> provider);
+             std::shared_ptr<const PageOrderProvider> provider);
 
-  intrusive_ptr<const PageOrderProvider> pageOrderProvider() const;
+  std::shared_ptr<const PageOrderProvider> pageOrderProvider() const;
 
   PageSequence toPageSequence() const;
 
@@ -228,8 +228,8 @@ class ThumbnailSequence::Impl {
   SelectedThenUnselected& m_selectedThenUnselected;
 
   const Item* m_selectionLeader;
-  intrusive_ptr<ThumbnailFactory> m_factory;
-  intrusive_ptr<const PageOrderProvider> m_orderProvider;
+  std::shared_ptr<ThumbnailFactory> m_factory;
+  std::shared_ptr<const PageOrderProvider> m_orderProvider;
   GraphicsScene m_graphicsScene;
   QRectF m_sceneRect;
   bool m_selectionMode;
@@ -310,11 +310,11 @@ class ThumbnailSequence::CompositeItem : public QGraphicsItemGroup {
 /*============================= ThumbnailSequence ===========================*/
 
 ThumbnailSequence::ThumbnailSequence(const QSizeF& maxLogicalThumbSize, const ViewMode viewMode)
-    : m_impl(new Impl(*this, maxLogicalThumbSize, viewMode)) {}
+    : m_impl(std::make_unique<Impl>(*this, maxLogicalThumbSize, viewMode)) {}
 
 ThumbnailSequence::~ThumbnailSequence() {}
 
-void ThumbnailSequence::setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory) {
+void ThumbnailSequence::setThumbnailFactory(std::shared_ptr<ThumbnailFactory> factory) {
   m_impl->setThumbnailFactory(std::move(factory));
 }
 
@@ -324,11 +324,11 @@ void ThumbnailSequence::attachView(QGraphicsView* const view) {
 
 void ThumbnailSequence::reset(const PageSequence& pages,
                               const SelectionAction selectionAction,
-                              intrusive_ptr<const PageOrderProvider> orderProvider) {
+                              std::shared_ptr<const PageOrderProvider> orderProvider) {
   m_impl->reset(pages, selectionAction, std::move(orderProvider));
 }
 
-intrusive_ptr<const PageOrderProvider> ThumbnailSequence::pageOrderProvider() const {
+std::shared_ptr<const PageOrderProvider> ThumbnailSequence::pageOrderProvider() const {
   return m_impl->pageOrderProvider();
 }
 
@@ -449,7 +449,7 @@ ThumbnailSequence::Impl::Impl(ThumbnailSequence& owner, const QSizeF& maxLogical
 
 ThumbnailSequence::Impl::~Impl() {}
 
-void ThumbnailSequence::Impl::setThumbnailFactory(intrusive_ptr<ThumbnailFactory> factory) {
+void ThumbnailSequence::Impl::setThumbnailFactory(std::shared_ptr<ThumbnailFactory> factory) {
   m_factory = std::move(factory);
 }
 
@@ -459,7 +459,7 @@ void ThumbnailSequence::Impl::attachView(QGraphicsView* const view) {
 
 void ThumbnailSequence::Impl::reset(const PageSequence& pages,
                                     const SelectionAction selectionAction,
-                                    intrusive_ptr<const PageOrderProvider> orderProvider) {
+                                    std::shared_ptr<const PageOrderProvider> orderProvider) {
   m_orderProvider = std::move(orderProvider);
 
   std::set<PageId> selected;
@@ -525,7 +525,7 @@ void ThumbnailSequence::Impl::reset(const PageSequence& pages,
   }
 }  // ThumbnailSequence::Impl::reset
 
-intrusive_ptr<const PageOrderProvider> ThumbnailSequence::Impl::pageOrderProvider() const {
+std::shared_ptr<const PageOrderProvider> ThumbnailSequence::Impl::pageOrderProvider() const {
   return m_orderProvider;
 }
 

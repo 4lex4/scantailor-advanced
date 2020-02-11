@@ -158,10 +158,10 @@ void ProjectFilesDialog::FileList::assign(It begin, It end) {
 
 ProjectFilesDialog::ProjectFilesDialog(QWidget* parent)
     : QDialog(parent),
-      m_offProjectFiles(new FileList),
-      m_offProjectFilesSorted(new SortedFileList(*m_offProjectFiles)),
-      m_inProjectFiles(new FileList),
-      m_inProjectFilesSorted(new SortedFileList(*m_inProjectFiles)),
+      m_offProjectFiles(std::make_unique<FileList>()),
+      m_offProjectFilesSorted(std::make_unique<SortedFileList>(*m_offProjectFiles)),
+      m_inProjectFiles(std::make_unique<FileList>()),
+      m_inProjectFilesSorted(std::make_unique<SortedFileList>(*m_inProjectFiles)),
       m_loadTimerId(0),
       m_metadataLoadFailed(false),
       m_autoOutDir(true) {

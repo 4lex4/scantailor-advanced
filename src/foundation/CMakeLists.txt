@@ -1,6 +1,6 @@
 set(sources
     Constants.h Constants.cpp
-    NonCopyable.h intrusive_ptr.h ref_countable.h
+    NonCopyable.h
     AlignedArray.h
     FastQueue.h
     SafeDeletingQObjectPtr.h

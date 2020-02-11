@@ -21,7 +21,7 @@ using imageproc::BinaryThreshold;
 
 class Task::UiUpdater : public FilterResult {
  public:
-  UiUpdater(intrusive_ptr<Filter> filter,
+  UiUpdater(std::shared_ptr<Filter> filter,
             const QImage& image,
             const ImageId& imageId,
             const ImageTransformation& xform,
@@ -29,10 +29,10 @@ class Task::UiUpdater : public FilterResult {
 
   void updateUI(FilterUiInterface* ui) override;
 
-  intrusive_ptr<AbstractFilter> filter() override { return m_filter; }
+  std::shared_ptr<AbstractFilter> filter() override { return m_filter; }
 
  private:
-  intrusive_ptr<Filter> m_filter;
+  std::shared_ptr<Filter> m_filter;
   QImage m_image;
   QImage m_downscaledImage;
   ImageId m_imageId;
@@ -42,10 +42,10 @@ class Task::UiUpdater : public FilterResult {
 
 
 Task::Task(const PageId& pageId,
-           intrusive_ptr<Filter> filter,
-           intrusive_ptr<Settings> settings,
-           intrusive_ptr<ImageSettings> imageSettings,
-           intrusive_ptr<page_split::Task> nextTask,
+           std::shared_ptr<Filter> filter,
+           std::shared_ptr<Settings> settings,
+           std::shared_ptr<ImageSettings> imageSettings,
+           std::shared_ptr<page_split::Task> nextTask,
            const bool batchProcessing)
     : m_filter(std::move(filter)),
       m_nextTask(std::move(nextTask)),
@@ -69,7 +69,7 @@ FilterResultPtr Task::process(const TaskStatus& status, FilterData data) {
   if (m_nextTask) {
     return m_nextTask->process(status, FilterData(data, xform));
   } else {
-    return make_intrusive<UiUpdater>(m_filter, data.origImage(), m_imageId, xform, m_batchProcessing);
+    return std::make_shared<UiUpdater>(m_filter, data.origImage(), m_imageId, xform, m_batchProcessing);
   }
 }
 
@@ -86,7 +86,7 @@ void Task::updateFilterData(FilterData& data) {
 
 /*============================ Task::UiUpdater ========================*/
 
-Task::UiUpdater::UiUpdater(intrusive_ptr<Filter> filter,
+Task::UiUpdater::UiUpdater(std::shared_ptr<Filter> filter,
                            const QImage& image,
                            const ImageId& imageId,
                            const ImageTransformation& xform,

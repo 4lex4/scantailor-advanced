@@ -30,13 +30,13 @@ class ThumbnailBase::LoadCompletionHandler : public AbstractCommand<void, const 
 };
 
 
-ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+ThumbnailBase::ThumbnailBase(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
                              const QSizeF& maxSize,
                              const ImageId& imageId,
                              const ImageTransformation& imageXform)
     : ThumbnailBase(std::move(thumbnailCache), maxSize, imageId, imageXform, imageXform.resultingRect()) {}
 
-ThumbnailBase::ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+ThumbnailBase::ThumbnailBase(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
                              const QSizeF& maxSize,
                              const ImageId& imageId,
                              const ImageTransformation& imageXform,

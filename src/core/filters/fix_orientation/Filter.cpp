@@ -22,7 +22,7 @@
 
 namespace fix_orientation {
 Filter::Filter(const PageSelectionAccessor& pageSelectionAccessor)
-    : m_settings(new Settings), m_imageSettings(new ImageSettings) {
+    : m_settings(std::make_shared<Settings>()), m_imageSettings(std::make_shared<ImageSettings>()) {
   m_optionsWidget.reset(new OptionsWidget(m_settings, pageSelectionAccessor));
 }
 
@@ -93,15 +93,15 @@ void Filter::loadSettings(const ProjectReader& reader, const QDomElement& filter
   loadImageSettings(reader, filterEl.namedItem("image-settings").toElement());
 }  // Filter::loadSettings
 
-intrusive_ptr<Task> Filter::createTask(const PageId& pageId,
-                                       intrusive_ptr<page_split::Task> nextTask,
-                                       const bool batchProcessing) {
-  return make_intrusive<Task>(pageId, intrusive_ptr<Filter>(this), m_settings, m_imageSettings, std::move(nextTask),
-                              batchProcessing);
+std::shared_ptr<Task> Filter::createTask(const PageId& pageId,
+                                         std::shared_ptr<page_split::Task> nextTask,
+                                         const bool batchProcessing) {
+  return std::make_shared<Task>(pageId, std::static_pointer_cast<Filter>(shared_from_this()), m_settings,
+                                m_imageSettings, std::move(nextTask), batchProcessing);
 }
 
-intrusive_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(intrusive_ptr<page_split::CacheDrivenTask> nextTask) {
-  return make_intrusive<CacheDrivenTask>(m_settings, std::move(nextTask));
+std::shared_ptr<CacheDrivenTask> Filter::createCacheDrivenTask(std::shared_ptr<page_split::CacheDrivenTask> nextTask) {
+  return std::make_shared<CacheDrivenTask>(m_settings, std::move(nextTask));
 }
 
 void Filter::writeParams(QDomDocument& doc, QDomElement& filterEl, const ImageId& imageId, int numericId) const {

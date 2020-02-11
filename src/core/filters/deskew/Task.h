@@ -11,7 +11,6 @@
 #include "FilterResult.h"
 #include "NonCopyable.h"
 #include "PageId.h"
-#include "ref_countable.h"
 
 class TaskStatus;
 class QImage;
@@ -31,19 +30,19 @@ namespace deskew {
 class Filter;
 class Settings;
 
-class Task : public ref_countable {
+class Task {
   DECLARE_NON_COPYABLE(Task)
 
  public:
-  Task(intrusive_ptr<Filter> filter,
-       intrusive_ptr<Settings> settings,
-       intrusive_ptr<ImageSettings> imageSettings,
-       intrusive_ptr<select_content::Task> nextTask,
+  Task(std::shared_ptr<Filter> filter,
+       std::shared_ptr<Settings> settings,
+       std::shared_ptr<ImageSettings> imageSettings,
+       std::shared_ptr<select_content::Task> nextTask,
        const PageId& pageId,
        bool batchProcessing,
        bool debug);
 
-  ~Task() override;
+  virtual ~Task();
 
   FilterResultPtr process(const TaskStatus& status, FilterData data);
 
@@ -58,10 +57,10 @@ class Task : public ref_countable {
 
   void updateFilterData(const TaskStatus& status, FilterData& data, bool needUpdate);
 
-  intrusive_ptr<Filter> m_filter;
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<ImageSettings> m_imageSettings;
-  intrusive_ptr<select_content::Task> m_nextTask;
+  std::shared_ptr<Filter> m_filter;
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<ImageSettings> m_imageSettings;
+  std::shared_ptr<select_content::Task> m_nextTask;
   std::unique_ptr<DebugImages> m_dbg;
   PageId m_pageId;
   bool m_batchProcessing;

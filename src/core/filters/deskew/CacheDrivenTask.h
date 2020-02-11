@@ -4,9 +4,9 @@
 #ifndef SCANTAILOR_DESKEW_CACHEDRIVENTASK_H_
 #define SCANTAILOR_DESKEW_CACHEDRIVENTASK_H_
 
+#include <memory>
+
 #include "NonCopyable.h"
-#include "intrusive_ptr.h"
-#include "ref_countable.h"
 
 class QSizeF;
 class PageInfo;
@@ -20,19 +20,19 @@ class CacheDrivenTask;
 namespace deskew {
 class Settings;
 
-class CacheDrivenTask : public ref_countable {
+class CacheDrivenTask {
   DECLARE_NON_COPYABLE(CacheDrivenTask)
 
  public:
-  CacheDrivenTask(intrusive_ptr<Settings> settings, intrusive_ptr<select_content::CacheDrivenTask> nextTask);
+  CacheDrivenTask(std::shared_ptr<Settings> settings, std::shared_ptr<select_content::CacheDrivenTask> nextTask);
 
-  ~CacheDrivenTask() override;
+  virtual ~CacheDrivenTask();
 
   void process(const PageInfo& pageInfo, AbstractFilterDataCollector* collector, const ImageTransformation& xform);
 
  private:
-  intrusive_ptr<select_content::CacheDrivenTask> m_nextTask;
-  intrusive_ptr<Settings> m_settings;
+  std::shared_ptr<select_content::CacheDrivenTask> m_nextTask;
+  std::shared_ptr<Settings> m_settings;
 };
 }  // namespace deskew
 #endif  // ifndef SCANTAILOR_DESKEW_CACHEDRIVENTASK_H_

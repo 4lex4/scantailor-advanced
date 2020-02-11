@@ -36,7 +36,7 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
                                const boost::function<QPointF(const QPointF&)>& origToImage,
                                const boost::function<QPointF(const QPointF&)>& imageToOrig,
                                const PageId& pageId,
-                               intrusive_ptr<Settings> settings)
+                               std::shared_ptr<Settings> settings)
     : ZoneEditorBase(image, downscaledVersion, ImagePresentation(QTransform(), QRectF(image.rect())), OutputMargins()),
       m_dragHandler(*this),
       m_zoomHandler(*this),
@@ -65,7 +65,7 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
   rootInteractionHandler().makeLastFollower(m_zoomHandler);
 
   for (const Zone& zone : m_settings->fillZonesForPage(pageId)) {
-    auto spline = make_intrusive<EditableSpline>(zone.spline().transformed(m_origToImage));
+    auto spline = std::make_shared<EditableSpline>(zone.spline().transformed(m_origToImage));
     zones().addZone(spline, zone.properties());
   }
 }

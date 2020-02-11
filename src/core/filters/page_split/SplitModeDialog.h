@@ -6,13 +6,13 @@
 
 #include <QButtonGroup>
 #include <QDialog>
+#include <memory>
 #include <set>
 
 #include "LayoutType.h"
 #include "PageId.h"
 #include "PageLayout.h"
 #include "PageSequence.h"
-#include "intrusive_ptr.h"
 #include "ui_SplitModeDialog.h"
 
 class ProjectPages;

@@ -12,6 +12,7 @@
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index_container.hpp>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -21,7 +22,6 @@
 #include "PageSequence.h"
 #include "SelectedPage.h"
 #include "VirtualFunction.h"
-#include "intrusive_ptr.h"
 
 class AbstractFilter;
 class ProjectPages;
@@ -33,9 +33,9 @@ class ProjectWriter {
   DECLARE_NON_COPYABLE(ProjectWriter)
 
  public:
-  using FilterPtr = intrusive_ptr<AbstractFilter>;
+  using FilterPtr = std::shared_ptr<AbstractFilter>;
 
-  ProjectWriter(const intrusive_ptr<ProjectPages>& pageSequence,
+  ProjectWriter(const std::shared_ptr<ProjectPages>& pageSequence,
                 const SelectedPage& selectedPage,
                 const OutputFileNameGenerator& outFileNameGen);
 

@@ -28,7 +28,6 @@
 #include "SelectedPage.h"
 #include "StatusBarPanel.h"
 #include "ThumbnailSequence.h"
-#include "intrusive_ptr.h"
 #include "ui_MainWindow.h"
 
 class AbstractFilter;
@@ -192,7 +191,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   enum SavePromptResult { SAVE, DONT_SAVE, CANCEL };
 
-  using FilterPtr = intrusive_ptr<AbstractFilter>;
+  using FilterPtr = std::shared_ptr<AbstractFilter>;
 
   static void removeWidgetsFromLayout(QLayout* layout);
 
@@ -203,9 +202,9 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
                       DebugImages* debugImages = nullptr,
                       bool overlay = false) override;
 
-  intrusive_ptr<AbstractCommand<void>> relinkingDialogRequester() override;
+  std::shared_ptr<AbstractCommand<void>> relinkingDialogRequester() override;
 
-  void switchToNewProject(const intrusive_ptr<ProjectPages>& pages,
+  void switchToNewProject(const std::shared_ptr<ProjectPages>& pages,
                           const QString& outDir,
                           const QString& projectFilePath = QString(),
                           const ProjectReader* projectReader = nullptr);
@@ -220,11 +219,11 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   static bool compareFiles(const QString& fpath1, const QString& fpath2);
 
-  intrusive_ptr<const PageOrderProvider> currentPageOrderProvider() const;
+  std::shared_ptr<const PageOrderProvider> currentPageOrderProvider() const;
 
   void updateSortOptions();
 
-  void resetThumbSequence(const intrusive_ptr<const PageOrderProvider>& pageOrderProvider,
+  void resetThumbSequence(const std::shared_ptr<const PageOrderProvider>& pageOrderProvider,
                           ThumbnailSequence::SelectionAction selectionAction = ThumbnailSequence::RESET_SELECTION);
 
   void removeFilterOptionsWidget();
@@ -275,13 +274,13 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   BackgroundTaskPtr createCompositeTask(const PageInfo& page, int lastFilterIdx, bool batch, bool debug);
 
-  intrusive_ptr<CompositeCacheDrivenTask> createCompositeCacheDrivenTask(int lastFilterIdx);
+  std::shared_ptr<CompositeCacheDrivenTask> createCompositeCacheDrivenTask(int lastFilterIdx);
 
   void createBatchProcessingWidget();
 
   void updateDisambiguationRecords(const PageSequence& pages);
 
-  void performRelinking(const intrusive_ptr<AbstractRelinker>& relinker);
+  void performRelinking(const std::shared_ptr<AbstractRelinker>& relinker);
 
   PageSelectionAccessor newPageSelectionAccessor();
 
@@ -300,11 +299,11 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   void setupIcons();
 
   QSizeF m_maxLogicalThumbSize;
-  intrusive_ptr<ProjectPages> m_pages;
-  intrusive_ptr<StageSequence> m_stages;
+  std::shared_ptr<ProjectPages> m_pages;
+  std::shared_ptr<StageSequence> m_stages;
   QString m_projectFile;
   OutputFileNameGenerator m_outFileNameGen;
-  intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
+  std::shared_ptr<ThumbnailPixmapCache> m_thumbnailCache;
   std::unique_ptr<ThumbnailSequence> m_thumbSequence;
   std::unique_ptr<WorkerThreadPool> m_workerThreadPool;
   std::unique_ptr<ProcessingTaskQueue> m_batchQueue;

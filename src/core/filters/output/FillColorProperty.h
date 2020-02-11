@@ -6,9 +6,9 @@
 
 #include <QColor>
 #include <Qt>
+#include <memory>
 
 #include "Property.h"
-#include "intrusive_ptr.h"
 
 class PropertyFactory;
 class QDomDocument;
@@ -24,7 +24,7 @@ class FillColorProperty : public Property {
 
   static void registerIn(PropertyFactory& factory);
 
-  intrusive_ptr<Property> clone() const override;
+  std::shared_ptr<Property> clone() const override;
 
   QDomElement toXml(QDomDocument& doc, const QString& name) const override;
 
@@ -33,7 +33,7 @@ class FillColorProperty : public Property {
   void setColor(const QColor& color);
 
  private:
-  static intrusive_ptr<Property> construct(const QDomElement& el);
+  static std::shared_ptr<Property> construct(const QDomElement& el);
 
   static QRgb rgbFromString(const QString& str);
 

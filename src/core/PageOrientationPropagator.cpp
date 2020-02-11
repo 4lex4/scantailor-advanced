@@ -23,8 +23,8 @@ class PageOrientationPropagator::Collector : public PageOrientationCollector {
 };
 
 
-PageOrientationPropagator::PageOrientationPropagator(intrusive_ptr<page_split::Filter> pageSplitFilter,
-                                                     intrusive_ptr<CompositeCacheDrivenTask> task)
+PageOrientationPropagator::PageOrientationPropagator(std::shared_ptr<page_split::Filter> pageSplitFilter,
+                                                     std::shared_ptr<CompositeCacheDrivenTask> task)
     : m_pageSplitFilter(std::move(pageSplitFilter)), m_task(std::move(task)) {}
 
 PageOrientationPropagator::~PageOrientationPropagator() = default;

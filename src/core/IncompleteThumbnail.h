@@ -5,9 +5,9 @@
 #define SCANTAILOR_CORE_INCOMPLETETHUMBNAIL_H_
 
 #include <QPainterPath>
+#include <memory>
 
 #include "ThumbnailBase.h"
-#include "intrusive_ptr.h"
 
 class ThumbnailPixmapCache;
 class QSizeF;
@@ -27,7 +27,7 @@ class QRectF;
  */
 class IncompleteThumbnail : public ThumbnailBase {
  public:
-  IncompleteThumbnail(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  IncompleteThumbnail(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
                       const QSizeF& maxSize,
                       const ImageId& imageId,
                       const ImageTransformation& imageXform);

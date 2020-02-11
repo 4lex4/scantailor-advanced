@@ -5,6 +5,7 @@
 #define SCANTAILOR_DESKEW_FILTER_H_
 
 #include <QCoreApplication>
+#include <memory>
 
 #include "AbstractFilter.h"
 #include "FilterResult.h"
@@ -12,7 +13,6 @@
 #include "PageView.h"
 #include "SafeDeletingQObjectPtr.h"
 #include "Settings.h"
-#include "intrusive_ptr.h"
 
 class QString;
 class PageSelectionAccessor;
@@ -52,12 +52,12 @@ class Filter : public AbstractFilter {
 
   void loadDefaultSettings(const PageInfo& pageInfo) override;
 
-  intrusive_ptr<Task> createTask(const PageId& pageId,
-                                 intrusive_ptr<select_content::Task> nextTask,
-                                 bool batchProcessing,
-                                 bool debug);
+  std::shared_ptr<Task> createTask(const PageId& pageId,
+                                   std::shared_ptr<select_content::Task> nextTask,
+                                   bool batchProcessing,
+                                   bool debug);
 
-  intrusive_ptr<CacheDrivenTask> createCacheDrivenTask(intrusive_ptr<select_content::CacheDrivenTask> nextTask);
+  std::shared_ptr<CacheDrivenTask> createCacheDrivenTask(std::shared_ptr<select_content::CacheDrivenTask> nextTask);
 
   OptionsWidget* optionsWidget();
 
@@ -76,8 +76,8 @@ class Filter : public AbstractFilter {
 
   void loadImageSettings(const ProjectReader& reader, const QDomElement& imageSettingsEl);
 
-  intrusive_ptr<Settings> m_settings;
-  intrusive_ptr<ImageSettings> m_imageSettings;
+  std::shared_ptr<Settings> m_settings;
+  std::shared_ptr<ImageSettings> m_imageSettings;
   SafeDeletingQObjectPtr<OptionsWidget> m_optionsWidget;
   std::vector<PageOrderOption> m_pageOrderOptions;
   int m_selectedPageOrder;

@@ -8,12 +8,12 @@
 #include <QRectF>
 #include <QSizeF>
 #include <QTransform>
+#include <memory>
 
 #include "ImageId.h"
 #include "ImageTransformation.h"
 #include "NonCopyable.h"
 #include "ThumbnailPixmapCache.h"
-#include "intrusive_ptr.h"
 
 class ThumbnailLoadResult;
 
@@ -21,12 +21,12 @@ class ThumbnailBase : public QGraphicsItem {
   DECLARE_NON_COPYABLE(ThumbnailBase)
 
  public:
-  ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  ThumbnailBase(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
                 const QSizeF& maxSize,
                 const ImageId& imageId,
                 const ImageTransformation& imageXform);
 
-  ThumbnailBase(intrusive_ptr<ThumbnailPixmapCache> thumbnailCache,
+  ThumbnailBase(std::shared_ptr<ThumbnailPixmapCache> thumbnailCache,
                 const QSizeF& maxSize,
                 const ImageId& imageId,
                 const ImageTransformation& imageXform,
@@ -85,7 +85,7 @@ class ThumbnailBase : public QGraphicsItem {
 
   void handleLoadResult(const ThumbnailLoadResult& result);
 
-  intrusive_ptr<ThumbnailPixmapCache> m_thumbnailCache;
+  std::shared_ptr<ThumbnailPixmapCache> m_thumbnailCache;
   QSizeF m_maxSize;
   ImageId m_imageId;
   ImageTransformation m_imageXform;

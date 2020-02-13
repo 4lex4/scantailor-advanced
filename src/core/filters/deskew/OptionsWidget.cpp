@@ -94,9 +94,7 @@ void OptionsWidget::postUpdateUI(const UiData& uiData) {
 }
 
 void OptionsWidget::spinBoxValueChanged(const double value) {
-  if (m_ignoreSpinBoxChanges) {
-    return;
-  }
+  auto block = m_connectionManager.getScopedBlock();
 
   const double degrees = spinBoxToDegrees(value);
   m_uiData.setEffectiveDeskewAngle(degrees);

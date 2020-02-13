@@ -98,8 +98,6 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   std::shared_ptr<Settings> m_settings;
   PageId m_pageId;
   UiData m_uiData;
-  int m_ignoreAutoManualToggle;
-  int m_ignoreSpinBoxChanges;
 
   PageSelectionAccessor m_pageSelectionAccessor;
 

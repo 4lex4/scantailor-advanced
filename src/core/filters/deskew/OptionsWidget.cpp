@@ -180,28 +180,4 @@ void OptionsWidget::setupUiConnections() {
 OptionsWidget::UiData::UiData() : m_effDeskewAngle(0.0), m_mode(MODE_AUTO) {}
 
 OptionsWidget::UiData::~UiData() = default;
-
-void OptionsWidget::UiData::setEffectiveDeskewAngle(const double degrees) {
-  m_effDeskewAngle = degrees;
-}
-
-double OptionsWidget::UiData::effectiveDeskewAngle() const {
-  return m_effDeskewAngle;
-}
-
-void OptionsWidget::UiData::setDependencies(const Dependencies& deps) {
-  m_deps = deps;
-}
-
-const Dependencies& OptionsWidget::UiData::dependencies() const {
-  return m_deps;
-}
-
-void OptionsWidget::UiData::setMode(const AutoManualMode mode) {
-  m_mode = mode;
-}
-
-AutoManualMode OptionsWidget::UiData::mode() const {
-  return m_mode;
-}
 }  // namespace deskew

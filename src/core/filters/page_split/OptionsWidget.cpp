@@ -296,36 +296,4 @@ void OptionsWidget::setupIcons() {
 OptionsWidget::UiData::UiData() : m_splitLineMode(MODE_AUTO), m_layoutTypeAutoDetected(false) {}
 
 OptionsWidget::UiData::~UiData() = default;
-
-void OptionsWidget::UiData::setPageLayout(const PageLayout& layout) {
-  m_pageLayout = layout;
-}
-
-const PageLayout& OptionsWidget::UiData::pageLayout() const {
-  return m_pageLayout;
-}
-
-void OptionsWidget::UiData::setDependencies(const Dependencies& deps) {
-  m_deps = deps;
-}
-
-const Dependencies& OptionsWidget::UiData::dependencies() const {
-  return m_deps;
-}
-
-void OptionsWidget::UiData::setSplitLineMode(const AutoManualMode mode) {
-  m_splitLineMode = mode;
-}
-
-AutoManualMode OptionsWidget::UiData::splitLineMode() const {
-  return m_splitLineMode;
-}
-
-bool OptionsWidget::UiData::layoutTypeAutoDetected() const {
-  return m_layoutTypeAutoDetected;
-}
-
-void OptionsWidget::UiData::setLayoutTypeAutoDetected(const bool val) {
-  m_layoutTypeAutoDetected = val;
-}
 }  // namespace page_split

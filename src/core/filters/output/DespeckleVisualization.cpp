@@ -78,12 +78,4 @@ void DespeckleVisualization::colorizeSpeckles(QImage& image, const imageproc::Bi
 bool DespeckleVisualization::isNull() const {
   return m_image.isNull();
 }
-
-const QImage& DespeckleVisualization::image() const {
-  return m_image;
-}
-
-const QImage& DespeckleVisualization::downscaledImage() const {
-  return m_downscaledImage;
-}
 }  // namespace output

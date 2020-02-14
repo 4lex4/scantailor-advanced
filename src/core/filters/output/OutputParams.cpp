@@ -56,44 +56,4 @@ QDomElement OutputParams::toXml(QDomDocument& doc, const QString& name) const {
   el.appendChild(m_fillZones.toXml(doc, "fill-zones"));
   return el;
 }
-
-const OutputImageParams& OutputParams::outputImageParams() const {
-  return m_outputImageParams;
-}
-
-const OutputFileParams& OutputParams::outputFileParams() const {
-  return m_outputFileParams;
-}
-
-const OutputFileParams& OutputParams::foregroundFileParams() const {
-  return m_foregroundFileParams;
-}
-
-const OutputFileParams& OutputParams::backgroundFileParams() const {
-  return m_backgroundFileParams;
-}
-
-const OutputFileParams& OutputParams::originalBackgroundFileParams() const {
-  return m_originalBackgroundFileParams;
-}
-
-const OutputFileParams& OutputParams::automaskFileParams() const {
-  return m_automaskFileParams;
-}
-
-const OutputFileParams& OutputParams::specklesFileParams() const {
-  return m_specklesFileParams;
-}
-
-const ZoneSet& OutputParams::pictureZones() const {
-  return m_pictureZones;
-}
-
-const ZoneSet& OutputParams::fillZones() const {
-  return m_fillZones;
-}
-
-const OutputFileParams& OutputParams::sourceFileParams() const {
-  return m_sourceFileParams;
-}
 }  // namespace output

@@ -39,9 +39,17 @@ class DespeckleVisualization {
  private:
   static void colorizeSpeckles(QImage& image, const imageproc::BinaryImage& speckles, const Dpi& dpi);
 
-
   QImage m_image;
   QImage m_downscaledImage;
 };
+
+
+inline const QImage& DespeckleVisualization::image() const {
+  return m_image;
+}
+
+inline const QImage& DespeckleVisualization::downscaledImage() const {
+  return m_downscaledImage;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_DESPECKLEVISUALIZATION_H_

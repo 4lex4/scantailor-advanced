@@ -55,5 +55,38 @@ class Alignment {
   Horizontal m_horizontal;
   bool m_isNull;
 };
+
+
+inline Alignment::Vertical Alignment::vertical() const {
+  return m_vertical;
+}
+
+inline void Alignment::setVertical(Alignment::Vertical vertical) {
+  m_vertical = vertical;
+}
+
+inline Alignment::Horizontal Alignment::horizontal() const {
+  return m_horizontal;
+}
+
+inline void Alignment::setHorizontal(Alignment::Horizontal horizontal) {
+  m_horizontal = horizontal;
+}
+
+inline bool Alignment::isNull() const {
+  return m_isNull;
+}
+
+inline void Alignment::setNull(bool isNull) {
+  m_isNull = isNull;
+}
+
+inline bool Alignment::isAutoVertical() const {
+  return (m_vertical == VAUTO) || (m_vertical == VORIGINAL);
+}
+
+inline bool Alignment::isAutoHorizontal() const {
+  return (m_horizontal == HAUTO) || (m_horizontal == HORIGINAL);
+}
 }  // namespace page_layout
 #endif  // ifndef SCANTAILOR_PAGE_LAYOUT_ALIGNMENT_H_

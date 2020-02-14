@@ -36,14 +36,6 @@ bool ColorCommonOptions::operator!=(const ColorCommonOptions& other) const {
   return !(*this == other);
 }
 
-FillingColor ColorCommonOptions::getFillingColor() const {
-  return m_fillingColor;
-}
-
-void ColorCommonOptions::setFillingColor(FillingColor fillingColor) {
-  ColorCommonOptions::m_fillingColor = fillingColor;
-}
-
 FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
   if (str == "white") {
     return FILL_WHITE;
@@ -63,38 +55,6 @@ QString ColorCommonOptions::formatFillingColor(FillingColor type) {
       break;
   }
   return str;
-}
-
-void ColorCommonOptions::setFillMargins(bool val) {
-  m_fillMargins = val;
-}
-
-bool ColorCommonOptions::fillMargins() const {
-  return m_fillMargins;
-}
-
-bool ColorCommonOptions::normalizeIllumination() const {
-  return m_normalizeIllumination;
-}
-
-void ColorCommonOptions::setNormalizeIllumination(bool val) {
-  m_normalizeIllumination = val;
-}
-
-const ColorCommonOptions::PosterizationOptions& ColorCommonOptions::getPosterizationOptions() const {
-  return m_posterizationOptions;
-}
-
-void ColorCommonOptions::setPosterizationOptions(const ColorCommonOptions::PosterizationOptions& posterizationOptions) {
-  ColorCommonOptions::m_posterizationOptions = posterizationOptions;
-}
-
-bool ColorCommonOptions::fillOffcut() const {
-  return m_fillOffcut;
-}
-
-void ColorCommonOptions::setFillOffcut(bool fillOffcut) {
-  m_fillOffcut = fillOffcut;
 }
 
 /*=============================== ColorCommonOptions::PosterizationOptions ==================================*/
@@ -125,37 +85,5 @@ bool ColorCommonOptions::PosterizationOptions::operator==(const ColorCommonOptio
 
 bool ColorCommonOptions::PosterizationOptions::operator!=(const ColorCommonOptions::PosterizationOptions& other) const {
   return !(*this == other);
-}
-
-bool ColorCommonOptions::PosterizationOptions::isEnabled() const {
-  return m_isEnabled;
-}
-
-void ColorCommonOptions::PosterizationOptions::setEnabled(bool enabled) {
-  PosterizationOptions::m_isEnabled = enabled;
-}
-
-int ColorCommonOptions::PosterizationOptions::getLevel() const {
-  return m_level;
-}
-
-void ColorCommonOptions::PosterizationOptions::setLevel(int level) {
-  PosterizationOptions::m_level = level;
-}
-
-bool ColorCommonOptions::PosterizationOptions::isNormalizationEnabled() const {
-  return m_isNormalizationEnabled;
-}
-
-void ColorCommonOptions::PosterizationOptions::setNormalizationEnabled(bool normalizationEnabled) {
-  PosterizationOptions::m_isNormalizationEnabled = normalizationEnabled;
-}
-
-bool ColorCommonOptions::PosterizationOptions::isForceBlackAndWhite() const {
-  return m_forceBlackAndWhite;
-}
-
-void ColorCommonOptions::PosterizationOptions::setForceBlackAndWhite(bool forceBlackAndWhite) {
-  PosterizationOptions::m_forceBlackAndWhite = forceBlackAndWhite;
 }
 }  // namespace output

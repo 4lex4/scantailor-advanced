@@ -75,5 +75,62 @@ class Params {
   AutoManualMode m_pageDetectionMode;
   bool m_fineTuneCorners;
 };
+
+
+inline const QRectF& Params::contentRect() const {
+  return m_contentRect;
+}
+
+inline const QRectF& Params::pageRect() const {
+  return m_pageRect;
+}
+
+inline const QSizeF& Params::contentSizeMM() const {
+  return m_contentSizeMM;
+}
+
+inline const Dependencies& Params::dependencies() const {
+  return m_deps;
+}
+
+inline AutoManualMode Params::contentDetectionMode() const {
+  return m_contentDetectionMode;
+}
+
+inline AutoManualMode Params::pageDetectionMode() const {
+  return m_pageDetectionMode;
+}
+
+inline bool Params::isFineTuningEnabled() const {
+  return m_fineTuneCorners;
+}
+
+inline void Params::setContentDetectionMode(const AutoManualMode mode) {
+  m_contentDetectionMode = mode;
+}
+
+inline void Params::setPageDetectionMode(const AutoManualMode mode) {
+  m_pageDetectionMode = mode;
+}
+
+inline void Params::setContentRect(const QRectF& rect) {
+  m_contentRect = rect;
+}
+
+inline void Params::setPageRect(const QRectF& rect) {
+  m_pageRect = rect;
+}
+
+inline void Params::setContentSizeMM(const QSizeF& size) {
+  m_contentSizeMM = size;
+}
+
+inline void Params::setDependencies(const Dependencies& deps) {
+  m_deps = deps;
+}
+
+inline void Params::setFineTuneCornersEnabled(bool fineTuneCorners) {
+  m_fineTuneCorners = fineTuneCorners;
+}
 }  // namespace select_content
 #endif  // ifndef SCANTAILOR_SELECT_CONTENT_PARAMS_H_

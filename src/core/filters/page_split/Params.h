@@ -44,5 +44,30 @@ class Params {
   Dependencies m_deps;
   AutoManualMode m_splitLineMode;
 };
+
+
+inline const PageLayout& Params::pageLayout() const {
+  return m_layout;
+}
+
+inline void Params::setPageLayout(const PageLayout& layout) {
+  m_layout = layout;
+}
+
+inline const Dependencies& Params::dependencies() const {
+  return m_deps;
+}
+
+inline void Params::setDependencies(const Dependencies& deps) {
+  m_deps = deps;
+}
+
+inline AutoManualMode Params::splitLineMode() const {
+  return m_splitLineMode;
+}
+
+inline void Params::setSplitLineMode(AutoManualMode mode) {
+  m_splitLineMode = mode;
+}
 }  // namespace page_split
 #endif  // ifndef SCANTAILOR_PAGE_SPLIT_PARAMS_H_

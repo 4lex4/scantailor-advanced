@@ -39,10 +39,6 @@ PropertySet& PropertySet::operator=(const PropertySet& other) {
   return *this;
 }
 
-void PropertySet::swap(PropertySet& other) {
-  m_props.swap(other.m_props);
-}
-
 QDomElement PropertySet::toXml(QDomDocument& doc, const QString& name) const {
   const QString propertyStr("property");
   QDomElement propsEl(doc.createElement(name));

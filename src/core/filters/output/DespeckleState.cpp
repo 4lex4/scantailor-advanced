@@ -110,8 +110,4 @@ BinaryImage DespeckleState::extractBW(const QImage& mixed) {
   }
   return result;
 }
-
-double DespeckleState::level() const {
-  return m_despeckleLevel;
-}
 }  // namespace output

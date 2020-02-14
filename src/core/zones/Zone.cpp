@@ -34,15 +34,3 @@ bool Zone::isValid() const {
       return true;
   }
 }
-
-const SerializableSpline& Zone::spline() const {
-  return m_spline;
-}
-
-PropertySet& Zone::properties() {
-  return m_props;
-}
-
-const PropertySet& Zone::properties() const {
-  return m_props;
-}

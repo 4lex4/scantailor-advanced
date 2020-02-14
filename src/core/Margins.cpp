@@ -30,35 +30,3 @@ QDomElement Margins::toXml(QDomDocument& doc, const QString& name) const {
   el.setAttribute("bottom", Utils::doubleToString(m_bottom));
   return el;
 }
-
-double Margins::top() const {
-  return m_top;
-}
-
-void Margins::setTop(double val) {
-  m_top = val;
-}
-
-double Margins::bottom() const {
-  return m_bottom;
-}
-
-void Margins::setBottom(double val) {
-  m_bottom = val;
-}
-
-double Margins::left() const {
-  return m_left;
-}
-
-void Margins::setLeft(double val) {
-  m_left = val;
-}
-
-double Margins::right() const {
-  return m_right;
-}
-
-void Margins::setRight(double val) {
-  m_right = val;
-}

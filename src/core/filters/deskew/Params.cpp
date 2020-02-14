@@ -27,15 +27,4 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   el.appendChild(m_deps.toXml(doc, "dependencies"));
   return el;
 }
-
-double Params::deskewAngle() const {
-  return m_deskewAngleDeg;
-}
-const Dependencies& Params::dependencies() const {
-  return m_deps;
-}
-
-AutoManualMode Params::mode() const {
-  return m_mode;
-}
 }  // namespace deskew

@@ -16,10 +16,6 @@ UnitsProvider& UnitsProvider::getInstance() {
   return instance;
 }
 
-Units UnitsProvider::getUnits() const {
-  return m_units;
-}
-
 void UnitsProvider::setUnits(Units units) {
   UnitsProvider::m_units = units;
   unitsChanged();

@@ -81,5 +81,78 @@ class Params {
   double m_despeckleLevel;
   bool m_blackOnWhite;
 };
+
+
+inline const Dpi& Params::outputDpi() const {
+  return m_dpi;
+}
+
+inline void Params::setOutputDpi(const Dpi& dpi) {
+  m_dpi = dpi;
+}
+
+inline const ColorParams& Params::colorParams() const {
+  return m_colorParams;
+}
+
+inline const PictureShapeOptions& Params::pictureShapeOptions() const {
+  return m_pictureShapeOptions;
+}
+
+inline void Params::setPictureShapeOptions(const PictureShapeOptions& opt) {
+  m_pictureShapeOptions = opt;
+}
+
+inline void Params::setColorParams(const ColorParams& params) {
+  m_colorParams = params;
+}
+
+inline const SplittingOptions& Params::splittingOptions() const {
+  return m_splittingOptions;
+}
+
+inline void Params::setSplittingOptions(const SplittingOptions& opt) {
+  m_splittingOptions = opt;
+}
+
+inline const DewarpingOptions& Params::dewarpingOptions() const {
+  return m_dewarpingOptions;
+}
+
+inline void Params::setDewarpingOptions(const DewarpingOptions& opt) {
+  m_dewarpingOptions = opt;
+}
+
+inline const dewarping::DistortionModel& Params::distortionModel() const {
+  return m_distortionModel;
+}
+
+inline void Params::setDistortionModel(const dewarping::DistortionModel& model) {
+  m_distortionModel = model;
+}
+
+inline const DepthPerception& Params::depthPerception() const {
+  return m_depthPerception;
+}
+
+inline void Params::setDepthPerception(DepthPerception depthPerception) {
+  m_depthPerception = depthPerception;
+}
+
+inline double Params::despeckleLevel() const {
+  return m_despeckleLevel;
+}
+
+inline void Params::setDespeckleLevel(double level) {
+  m_despeckleLevel = level;
+}
+
+inline bool Params::isBlackOnWhite() const {
+  return m_blackOnWhite;
+}
+
+inline void Params::setBlackOnWhite(bool isBlackOnWhite) {
+  Params::m_blackOnWhite = isBlackOnWhite;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_PARAMS_H_

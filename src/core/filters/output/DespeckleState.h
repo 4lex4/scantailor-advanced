@@ -68,5 +68,10 @@ class DespeckleState {
    */
   double m_despeckleLevel;
 };
+
+
+inline double DespeckleState::level() const {
+  return m_despeckleLevel;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_DESPECKLESTATE_H_

@@ -21,7 +21,7 @@ class UnitsProvider {
  public:
   static UnitsProvider& getInstance();
 
-  Units getUnits() const;
+  Units getUnits() const { return m_units; }
 
   void setUnits(Units units);
 

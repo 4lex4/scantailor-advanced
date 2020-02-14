@@ -45,4 +45,21 @@ class FilterData {
 };
 
 
+inline const ImageTransformation& FilterData::xform() const {
+  return m_xform;
+}
+
+inline const QImage& FilterData::origImage() const {
+  return m_origImage;
+}
+
+inline const imageproc::GrayImage& FilterData::grayImage() const {
+  return m_grayImage;
+}
+
+inline void FilterData::updateImageParams(const ImageSettings::PageParams& imageParams) {
+  m_imageParams = imageParams;
+}
+
+
 #endif  // ifndef SCANTAILOR_CORE_FILTERDATA_H_

@@ -34,30 +34,6 @@ bool DewarpingOptions::operator!=(const DewarpingOptions& other) const {
   return !(*this == other);
 }
 
-void DewarpingOptions::setDewarpingMode(DewarpingMode mode) {
-  DewarpingOptions::m_mode = mode;
-}
-
-void DewarpingOptions::setPostDeskew(bool postDeskew) {
-  DewarpingOptions::m_needPostDeskew = postDeskew;
-}
-
-bool DewarpingOptions::needPostDeskew() const {
-  return m_needPostDeskew;
-}
-
-double DewarpingOptions::getPostDeskewAngle() const {
-  return m_postDeskewAngle;
-}
-
-void DewarpingOptions::setPostDeskewAngle(double postDeskewAngle) {
-  m_postDeskewAngle = postDeskewAngle;
-}
-
-DewarpingMode DewarpingOptions::dewarpingMode() const {
-  return m_mode;
-}
-
 DewarpingMode DewarpingOptions::parseDewarpingMode(const QString& str) {
   if (str == "auto") {
     return AUTO;

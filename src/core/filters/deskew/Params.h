@@ -38,5 +38,19 @@ class Params {
   Dependencies m_deps;
   AutoManualMode m_mode;
 };
+
+
+inline double Params::deskewAngle() const {
+  return m_deskewAngleDeg;
+}
+
+inline const Dependencies& Params::dependencies() const {
+  return m_deps;
+}
+
+inline AutoManualMode Params::mode() const {
+  return m_mode;
+}
 }  // namespace deskew
+
 #endif  // ifndef SCANTAILOR_DESKEW_PARAMS_H_

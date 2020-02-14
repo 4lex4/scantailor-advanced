@@ -42,4 +42,36 @@ class Margins {
 };
 
 
+inline double Margins::top() const {
+  return m_top;
+}
+
+inline void Margins::setTop(double val) {
+  m_top = val;
+}
+
+inline double Margins::bottom() const {
+  return m_bottom;
+}
+
+inline void Margins::setBottom(double val) {
+  m_bottom = val;
+}
+
+inline double Margins::left() const {
+  return m_left;
+}
+
+inline void Margins::setLeft(double val) {
+  m_left = val;
+}
+
+inline double Margins::right() const {
+  return m_right;
+}
+
+inline void Margins::setRight(double val) {
+  m_right = val;
+}
+
 #endif  // ifndef SCANTAILOR_CORE_MARGINS_H_

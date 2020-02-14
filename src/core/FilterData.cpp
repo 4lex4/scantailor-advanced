@@ -24,24 +24,8 @@ imageproc::BinaryThreshold FilterData::bwThreshold() const {
   return m_imageParams.getBwThreshold();
 }
 
-const ImageTransformation& FilterData::xform() const {
-  return m_xform;
-}
-
-const QImage& FilterData::origImage() const {
-  return m_origImage;
-}
-
-const imageproc::GrayImage& FilterData::grayImage() const {
-  return m_grayImage;
-}
-
 bool FilterData::isBlackOnWhite() const {
   return m_imageParams.isBlackOnWhite();
-}
-
-void FilterData::updateImageParams(const ImageSettings::PageParams& imageParams) {
-  m_imageParams = imageParams;
 }
 
 imageproc::BinaryThreshold FilterData::bwThresholdBlackOnWhite() const {

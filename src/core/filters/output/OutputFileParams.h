@@ -36,5 +36,14 @@ class OutputFileParams {
   qint64 m_size;
   time_t m_modifiedTime;
 };
+
+
+inline bool OutputFileParams::matches(const OutputFileParams& other) const {
+  return isValid() && other.isValid() && m_size == other.m_size /*&& m_modifiedTime == other.m_modifiedTime*/;
+}
+
+inline bool OutputFileParams::isValid() const {
+  return m_size >= 0;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_OUTPUTFILEPARAMS_H_

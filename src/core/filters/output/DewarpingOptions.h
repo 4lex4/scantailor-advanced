@@ -43,5 +43,30 @@ class DewarpingOptions {
   bool m_needPostDeskew;
   double m_postDeskewAngle;
 };
+
+
+inline void DewarpingOptions::setDewarpingMode(DewarpingMode mode) {
+  DewarpingOptions::m_mode = mode;
+}
+
+inline void DewarpingOptions::setPostDeskew(bool postDeskew) {
+  DewarpingOptions::m_needPostDeskew = postDeskew;
+}
+
+inline bool DewarpingOptions::needPostDeskew() const {
+  return m_needPostDeskew;
+}
+
+inline double DewarpingOptions::getPostDeskewAngle() const {
+  return m_postDeskewAngle;
+}
+
+inline void DewarpingOptions::setPostDeskewAngle(double postDeskewAngle) {
+  m_postDeskewAngle = postDeskewAngle;
+}
+
+inline DewarpingMode DewarpingOptions::dewarpingMode() const {
+  return m_mode;
+}
 }  // namespace output
 #endif

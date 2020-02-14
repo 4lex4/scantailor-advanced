@@ -46,28 +46,4 @@ QString ColorParams::formatColorMode(const ColorMode mode) {
   }
   return QString::fromLatin1(str);
 }
-
-ColorMode ColorParams::colorMode() const {
-  return m_colorMode;
-}
-
-void ColorParams::setColorMode(ColorMode mode) {
-  m_colorMode = mode;
-}
-
-const ColorCommonOptions& ColorParams::colorCommonOptions() const {
-  return m_colorCommonOptions;
-}
-
-void ColorParams::setColorCommonOptions(const ColorCommonOptions& opt) {
-  m_colorCommonOptions = opt;
-}
-
-const BlackWhiteOptions& ColorParams::blackWhiteOptions() const {
-  return m_bwOptions;
-}
-
-void ColorParams::setBlackWhiteOptions(const BlackWhiteOptions& opt) {
-  m_bwOptions = opt;
-}
 }  // namespace output

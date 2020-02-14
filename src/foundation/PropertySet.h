@@ -114,6 +114,10 @@ std::shared_ptr<T> PropertySet::locateOrCreate() {
   return prop;
 }
 
+inline void PropertySet::swap(PropertySet& other) {
+  m_props.swap(other.m_props);
+}
+
 inline void swap(PropertySet& o1, PropertySet& o2) {
   o1.swap(o2);
 }

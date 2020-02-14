@@ -33,6 +33,23 @@ class OutputProcessingParams {
   bool m_autoZonesFound;
   bool m_blackOnWhiteSetManually;
 };
+
+
+inline bool output::OutputProcessingParams::isAutoZonesFound() const {
+  return m_autoZonesFound;
+}
+
+inline void output::OutputProcessingParams::setAutoZonesFound(bool autoZonesFound) {
+  OutputProcessingParams::m_autoZonesFound = autoZonesFound;
+}
+
+inline bool OutputProcessingParams::isBlackOnWhiteSetManually() const {
+  return m_blackOnWhiteSetManually;
+}
+
+inline void OutputProcessingParams::setBlackOnWhiteSetManually(bool blackOnWhiteSetManually) {
+  OutputProcessingParams::m_blackOnWhiteSetManually = blackOnWhiteSetManually;
+}
 }  // namespace output
 
 

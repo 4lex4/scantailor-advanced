@@ -177,5 +177,18 @@ class PageLayout {
 
   Type m_type;
 };
+
+
+inline int PageLayout::numSubPages() const {
+  return m_type == TWO_PAGES ? 2 : 1;
+}
+
+inline PageLayout::Type PageLayout::type() const {
+  return m_type;
+}
+
+inline const QPolygonF& PageLayout::uncutOutline() const {
+  return m_uncutOutline;
+}
 }  // namespace page_split
 #endif  // ifndef SCANTAILOR_PAGE_SPLIT_PAGELAYOUT_H_

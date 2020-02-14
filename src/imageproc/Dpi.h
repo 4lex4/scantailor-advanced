@@ -45,4 +45,16 @@ class Dpi {
 };
 
 
+inline int Dpi::horizontal() const {
+  return m_xDpi;
+}
+
+inline int Dpi::vertical() const {
+  return m_yDpi;
+}
+
+inline bool Dpi::isNull() const {
+  return m_xDpi <= 1 || m_yDpi <= 1;
+}
+
 #endif  // ifndef SCANTAILOR_IMAGEPROC_DPI_H_

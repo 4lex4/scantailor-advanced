@@ -36,4 +36,16 @@ class Zone {
 };
 
 
+inline const SerializableSpline& Zone::spline() const {
+  return m_spline;
+}
+
+inline PropertySet& Zone::properties() {
+  return m_props;
+}
+
+inline const PropertySet& Zone::properties() const {
+  return m_props;
+}
+
 #endif  // ifndef SCANTAILOR_ZONES_ZONE_H_

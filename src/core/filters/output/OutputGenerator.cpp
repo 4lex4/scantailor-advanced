@@ -91,10 +91,6 @@ QSize OutputGenerator::outputImageSize() const {
   return m_outRect.size();
 }
 
-QRect OutputGenerator::outputContentRect() const {
-  return m_contentRect;
-}
-
 class OutputGenerator::Processor {
  public:
   Processor(const OutputGenerator& generator,

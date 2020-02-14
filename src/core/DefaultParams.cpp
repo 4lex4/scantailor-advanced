@@ -12,54 +12,6 @@ using namespace foundation;
 using namespace page_split;
 using namespace output;
 
-const DefaultParams::FixOrientationParams& DefaultParams::getFixOrientationParams() const {
-  return m_fixOrientationParams;
-}
-
-void DefaultParams::setFixOrientationParams(const DefaultParams::FixOrientationParams& fixOrientationParams) {
-  DefaultParams::m_fixOrientationParams = fixOrientationParams;
-}
-
-const DefaultParams::DeskewParams& DefaultParams::getDeskewParams() const {
-  return m_deskewParams;
-}
-
-void DefaultParams::setDeskewParams(const DefaultParams::DeskewParams& deskewParams) {
-  DefaultParams::m_deskewParams = deskewParams;
-}
-
-const DefaultParams::PageSplitParams& DefaultParams::getPageSplitParams() const {
-  return m_pageSplitParams;
-}
-
-void DefaultParams::setPageSplitParams(const DefaultParams::PageSplitParams& pageSplitParams) {
-  DefaultParams::m_pageSplitParams = pageSplitParams;
-}
-
-const DefaultParams::SelectContentParams& DefaultParams::getSelectContentParams() const {
-  return m_selectContentParams;
-}
-
-void DefaultParams::setSelectContentParams(const DefaultParams::SelectContentParams& selectContentParams) {
-  DefaultParams::m_selectContentParams = selectContentParams;
-}
-
-const DefaultParams::PageLayoutParams& DefaultParams::getPageLayoutParams() const {
-  return m_pageLayoutParams;
-}
-
-void DefaultParams::setPageLayoutParams(const DefaultParams::PageLayoutParams& pageLayoutParams) {
-  DefaultParams::m_pageLayoutParams = pageLayoutParams;
-}
-
-const DefaultParams::OutputParams& DefaultParams::getOutputParams() const {
-  return m_outputParams;
-}
-
-void DefaultParams::setOutputParams(const DefaultParams::OutputParams& outputParams) {
-  DefaultParams::m_outputParams = outputParams;
-}
-
 DefaultParams::DefaultParams(const DefaultParams::FixOrientationParams& fixOrientationParams,
                              const DefaultParams::DeskewParams& deskewParams,
                              const DefaultParams::PageSplitParams& pageSplitParams,
@@ -97,22 +49,6 @@ QDomElement DefaultParams::toXml(QDomDocument& doc, const QString& name) const {
 
 DefaultParams::DefaultParams() : m_units(MILLIMETRES) {}
 
-Units DefaultParams::getUnits() const {
-  return m_units;
-}
-
-void DefaultParams::setUnits(Units units) {
-  DefaultParams::m_units = units;
-}
-
-const OrthogonalRotation& DefaultParams::FixOrientationParams::getImageRotation() const {
-  return m_imageRotation;
-}
-
-void DefaultParams::FixOrientationParams::setImageRotation(const OrthogonalRotation& imageRotation) {
-  FixOrientationParams::m_imageRotation = imageRotation;
-}
-
 DefaultParams::FixOrientationParams::FixOrientationParams(const OrthogonalRotation& imageRotation)
     : m_imageRotation(imageRotation) {}
 
@@ -128,22 +64,6 @@ QDomElement DefaultParams::FixOrientationParams::toXml(QDomDocument& doc, const 
 DefaultParams::DeskewParams::DeskewParams(double deskewAngleDeg, AutoManualMode mode)
     : m_deskewAngleDeg(deskewAngleDeg), m_mode(mode) {}
 
-double DefaultParams::DeskewParams::getDeskewAngleDeg() const {
-  return m_deskewAngleDeg;
-}
-
-void DefaultParams::DeskewParams::setDeskewAngleDeg(double deskewAngleDeg) {
-  DeskewParams::m_deskewAngleDeg = deskewAngleDeg;
-}
-
-AutoManualMode DefaultParams::DeskewParams::getMode() const {
-  return m_mode;
-}
-
-void DefaultParams::DeskewParams::setMode(AutoManualMode mode) {
-  DeskewParams::m_mode = mode;
-}
-
 DefaultParams::DeskewParams::DeskewParams() : m_deskewAngleDeg(0.0), m_mode(MODE_AUTO) {}
 
 DefaultParams::DeskewParams::DeskewParams(const QDomElement& el)
@@ -158,14 +78,6 @@ QDomElement DefaultParams::DeskewParams::toXml(QDomDocument& doc, const QString&
 }
 
 DefaultParams::PageSplitParams::PageSplitParams(page_split::LayoutType layoutType) : m_layoutType(layoutType) {}
-
-LayoutType DefaultParams::PageSplitParams::getLayoutType() const {
-  return m_layoutType;
-}
-
-void DefaultParams::PageSplitParams::setLayoutType(LayoutType layoutType) {
-  PageSplitParams::m_layoutType = layoutType;
-}
 
 DefaultParams::PageSplitParams::PageSplitParams() : m_layoutType(AUTO_LAYOUT_TYPE) {}
 
@@ -193,30 +105,6 @@ DefaultParams::SelectContentParams::SelectContentParams()
       m_pageDetectMode(MODE_DISABLED),
       m_fineTuneCorners(false) {}
 
-const QSizeF& DefaultParams::SelectContentParams::getPageRectSize() const {
-  return m_pageRectSize;
-}
-
-void DefaultParams::SelectContentParams::setPageRectSize(const QSizeF& pageRectSize) {
-  SelectContentParams::m_pageRectSize = pageRectSize;
-}
-
-bool DefaultParams::SelectContentParams::isContentDetectEnabled() const {
-  return m_contentDetectEnabled;
-}
-
-void DefaultParams::SelectContentParams::setContentDetectEnabled(bool contentDetectEnabled) {
-  SelectContentParams::m_contentDetectEnabled = contentDetectEnabled;
-}
-
-bool DefaultParams::SelectContentParams::isFineTuneCorners() const {
-  return m_fineTuneCorners;
-}
-
-void DefaultParams::SelectContentParams::setFineTuneCorners(bool fineTuneCorners) {
-  SelectContentParams::m_fineTuneCorners = fineTuneCorners;
-}
-
 DefaultParams::SelectContentParams::SelectContentParams(const QDomElement& el)
     : m_pageRectSize(XmlUnmarshaller::sizeF(el.namedItem("pageRectSize").toElement())),
       m_contentDetectEnabled(el.attribute("contentDetectEnabled") == "1"),
@@ -232,44 +120,12 @@ QDomElement DefaultParams::SelectContentParams::toXml(QDomDocument& doc, const Q
   return el;
 }
 
-AutoManualMode DefaultParams::SelectContentParams::getPageDetectMode() const {
-  return m_pageDetectMode;
-}
-
-void DefaultParams::SelectContentParams::setPageDetectMode(AutoManualMode pageDetectMode) {
-  SelectContentParams::m_pageDetectMode = pageDetectMode;
-}
-
 DefaultParams::PageLayoutParams::PageLayoutParams(const Margins& hardMargins,
                                                   const page_layout::Alignment& alignment,
                                                   bool autoMargins)
     : m_hardMargins(hardMargins), m_alignment(alignment), m_autoMargins(autoMargins) {}
 
 DefaultParams::PageLayoutParams::PageLayoutParams() : m_hardMargins(10, 5, 10, 5), m_autoMargins(false) {}
-
-const Margins& DefaultParams::PageLayoutParams::getHardMargins() const {
-  return m_hardMargins;
-}
-
-void DefaultParams::PageLayoutParams::setHardMargins(const Margins& hardMargins) {
-  PageLayoutParams::m_hardMargins = hardMargins;
-}
-
-const page_layout::Alignment& DefaultParams::PageLayoutParams::getAlignment() const {
-  return m_alignment;
-}
-
-void DefaultParams::PageLayoutParams::setAlignment(const page_layout::Alignment& alignment) {
-  PageLayoutParams::m_alignment = alignment;
-}
-
-bool DefaultParams::PageLayoutParams::isAutoMargins() const {
-  return m_autoMargins;
-}
-
-void DefaultParams::PageLayoutParams::setAutoMargins(bool autoMargins) {
-  PageLayoutParams::m_autoMargins = autoMargins;
-}
 
 DefaultParams::PageLayoutParams::PageLayoutParams(const QDomElement& el)
     : m_hardMargins(el.namedItem("hardMargins").toElement()),
@@ -300,62 +156,6 @@ DefaultParams::OutputParams::OutputParams(const Dpi& dpi,
       m_despeckleLevel(despeckleLevel) {}
 
 DefaultParams::OutputParams::OutputParams() : m_dpi(600, 600), m_despeckleLevel(1.0) {}
-
-const Dpi& DefaultParams::OutputParams::getDpi() const {
-  return m_dpi;
-}
-
-void DefaultParams::OutputParams::setDpi(const Dpi& dpi) {
-  OutputParams::m_dpi = dpi;
-}
-
-const ColorParams& DefaultParams::OutputParams::getColorParams() const {
-  return m_colorParams;
-}
-
-void DefaultParams::OutputParams::setColorParams(const ColorParams& colorParams) {
-  OutputParams::m_colorParams = colorParams;
-}
-
-const SplittingOptions& DefaultParams::OutputParams::getSplittingOptions() const {
-  return m_splittingOptions;
-}
-
-void DefaultParams::OutputParams::setSplittingOptions(const SplittingOptions& splittingOptions) {
-  OutputParams::m_splittingOptions = splittingOptions;
-}
-
-const PictureShapeOptions& DefaultParams::OutputParams::getPictureShapeOptions() const {
-  return m_pictureShapeOptions;
-}
-
-void DefaultParams::OutputParams::setPictureShapeOptions(const PictureShapeOptions& pictureShapeOptions) {
-  OutputParams::m_pictureShapeOptions = pictureShapeOptions;
-}
-
-const DepthPerception& DefaultParams::OutputParams::getDepthPerception() const {
-  return m_depthPerception;
-}
-
-void DefaultParams::OutputParams::setDepthPerception(const DepthPerception& depthPerception) {
-  OutputParams::m_depthPerception = depthPerception;
-}
-
-const DewarpingOptions& DefaultParams::OutputParams::getDewarpingOptions() const {
-  return m_dewarpingOptions;
-}
-
-void DefaultParams::OutputParams::setDewarpingOptions(const DewarpingOptions& dewarpingOptions) {
-  OutputParams::m_dewarpingOptions = dewarpingOptions;
-}
-
-double DefaultParams::OutputParams::getDespeckleLevel() const {
-  return m_despeckleLevel;
-}
-
-void DefaultParams::OutputParams::setDespeckleLevel(double despeckleLevel) {
-  OutputParams::m_despeckleLevel = despeckleLevel;
-}
 
 DefaultParams::OutputParams::OutputParams(const QDomElement& el)
     : m_dpi(el.namedItem("dpi").toElement()),

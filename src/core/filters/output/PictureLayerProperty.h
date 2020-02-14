@@ -43,5 +43,14 @@ class PictureLayerProperty : public Property {
   static const char m_propertyName[];
   Layer m_layer;
 };
+
+
+inline PictureLayerProperty::Layer PictureLayerProperty::layer() const {
+  return m_layer;
+}
+
+inline void PictureLayerProperty::setLayer(PictureLayerProperty::Layer layer) {
+  m_layer = layer;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_PICTURELAYERPROPERTY_H_

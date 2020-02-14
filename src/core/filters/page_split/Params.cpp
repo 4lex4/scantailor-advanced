@@ -23,28 +23,4 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   el.appendChild(m_deps.toXml(doc, "dependencies"));
   return el;
 }
-
-const PageLayout& Params::pageLayout() const {
-  return m_layout;
-}
-
-void Params::setPageLayout(const PageLayout& layout) {
-  m_layout = layout;
-}
-
-const Dependencies& Params::dependencies() const {
-  return m_deps;
-}
-
-void Params::setDependencies(const Dependencies& deps) {
-  m_deps = deps;
-}
-
-AutoManualMode Params::splitLineMode() const {
-  return m_splitLineMode;
-}
-
-void Params::setSplitLineMode(AutoManualMode mode) {
-  m_splitLineMode = mode;
-}
 }  // namespace page_split

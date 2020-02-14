@@ -24,14 +24,30 @@ class DepthPerception {
 
   double value() const;
 
-  static double minValue();
+  static constexpr double minValue();
 
-  static double defaultValue();
+  static constexpr double defaultValue();
 
-  static double maxValue();
+  static constexpr double maxValue();
 
  private:
   double m_value;
 };
+
+inline double DepthPerception::value() const {
+  return m_value;
+}
+
+constexpr double DepthPerception::minValue() {
+  return 1.0;
+}
+
+constexpr double DepthPerception::defaultValue() {
+  return 2.0;
+}
+
+constexpr double DepthPerception::maxValue() {
+  return 3.0;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_DEPTHPERCEPTION_H_

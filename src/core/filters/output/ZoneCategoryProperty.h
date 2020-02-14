@@ -43,6 +43,15 @@ class ZoneCategoryProperty : public Property {
   static const char m_propertyName[];
   ZoneCategory m_zoneCategory;
 };
+
+
+inline ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategory() const {
+  return m_zoneCategory;
+}
+
+inline void ZoneCategoryProperty::setZoneCategory(ZoneCategoryProperty::ZoneCategory zoneCategory) {
+  m_zoneCategory = zoneCategory;
+}
 }  // namespace output
 
 #endif  // ifndef SCANTAILOR_OUTPUT_ZONECATEGORYPROPERTY_H_

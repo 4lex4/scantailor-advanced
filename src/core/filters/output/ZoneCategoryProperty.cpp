@@ -59,12 +59,4 @@ QString ZoneCategoryProperty::zoneCategoryToString(ZoneCategory zoneCategory) {
   }
   return str;
 }
-
-ZoneCategoryProperty::ZoneCategory ZoneCategoryProperty::zoneCategory() const {
-  return m_zoneCategory;
-}
-
-void ZoneCategoryProperty::setZoneCategory(ZoneCategoryProperty::ZoneCategory zoneCategory) {
-  m_zoneCategory = zoneCategory;
-}
 }  // namespace output

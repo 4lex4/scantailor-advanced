@@ -103,5 +103,31 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   ConnectionManager m_connectionManager;
 };
+
+
+inline void OptionsWidget::UiData::setEffectiveDeskewAngle(const double degrees) {
+  m_effDeskewAngle = degrees;
+}
+
+inline double OptionsWidget::UiData::effectiveDeskewAngle() const {
+  return m_effDeskewAngle;
+}
+
+inline void OptionsWidget::UiData::setDependencies(const Dependencies& deps) {
+  m_deps = deps;
+}
+
+inline const Dependencies& OptionsWidget::UiData::dependencies() const {
+  return m_deps;
+}
+
+inline void OptionsWidget::UiData::setMode(const AutoManualMode mode) {
+  m_mode = mode;
+}
+
+inline AutoManualMode OptionsWidget::UiData::mode() const {
+  return m_mode;
+}
 }  // namespace deskew
+
 #endif  // ifndef SCANTAILOR_DESKEW_OPTIONSWIDGET_H_

@@ -20,9 +20,9 @@ class UnitsConverter {
 
   QTransform transform(Units fromUnits, Units toUnits) const;
 
-  const Dpi& getDpi() const;
+  const Dpi& getDpi() const { return m_dpi; }
 
-  void setDpi(const Dpi& dpi);
+  void setDpi(const Dpi& dpi) { m_dpi = dpi; }
 
  private:
   Dpi m_dpi;

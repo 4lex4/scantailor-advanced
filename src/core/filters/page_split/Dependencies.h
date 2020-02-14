@@ -45,5 +45,14 @@ class Dependencies {
   OrthogonalRotation m_rotation;
   LayoutType m_layoutType;
 };
+
+
+inline const OrthogonalRotation& Dependencies::orientation() const {
+  return m_rotation;
+}
+
+inline void Dependencies::setLayoutType(LayoutType type) {
+  m_layoutType = type;
+}
 }  // namespace page_split
 #endif  // ifndef SCANTAILOR_PAGE_SPLIT_DEPENDENCIES_H_

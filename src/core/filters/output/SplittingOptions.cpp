@@ -21,30 +21,6 @@ QDomElement SplittingOptions::toXml(QDomDocument& doc, const QString& name) cons
   return el;
 }
 
-bool SplittingOptions::isSplitOutput() const {
-  return m_isSplitOutput;
-}
-
-void SplittingOptions::setSplitOutput(bool splitOutput) {
-  SplittingOptions::m_isSplitOutput = splitOutput;
-}
-
-SplittingMode SplittingOptions::getSplittingMode() const {
-  return m_splittingMode;
-}
-
-void SplittingOptions::setSplittingMode(SplittingMode foregroundType) {
-  SplittingOptions::m_splittingMode = foregroundType;
-}
-
-bool SplittingOptions::isOriginalBackgroundEnabled() const {
-  return m_isOriginalBackgroundEnabled;
-}
-
-void SplittingOptions::setOriginalBackgroundEnabled(bool enable) {
-  SplittingOptions::m_isOriginalBackgroundEnabled = enable;
-}
-
 SplittingMode SplittingOptions::parseSplittingMode(const QString& str) {
   if (str == "color") {
     return COLOR_FOREGROUND;

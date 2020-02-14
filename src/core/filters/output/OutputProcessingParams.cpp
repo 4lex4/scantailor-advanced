@@ -29,20 +29,4 @@ bool OutputProcessingParams::operator==(const OutputProcessingParams& other) con
 bool OutputProcessingParams::operator!=(const OutputProcessingParams& other) const {
   return !(*this == other);
 }
-
-bool output::OutputProcessingParams::isAutoZonesFound() const {
-  return m_autoZonesFound;
-}
-
-void output::OutputProcessingParams::setAutoZonesFound(bool autoZonesFound) {
-  OutputProcessingParams::m_autoZonesFound = autoZonesFound;
-}
-
-bool OutputProcessingParams::isBlackOnWhiteSetManually() const {
-  return m_blackOnWhiteSetManually;
-}
-
-void OutputProcessingParams::setBlackOnWhiteSetManually(bool blackOnWhiteSetManually) {
-  OutputProcessingParams::m_blackOnWhiteSetManually = blackOnWhiteSetManually;
-}
 }  // namespace output

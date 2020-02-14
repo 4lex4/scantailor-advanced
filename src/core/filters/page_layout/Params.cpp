@@ -40,28 +40,4 @@ QDomElement Params::toXml(QDomDocument& doc, const QString& name) const {
   el.setAttribute("autoMargins", m_autoMargins ? "1" : "0");
   return el;
 }
-
-const Margins& Params::hardMarginsMM() const {
-  return m_hardMarginsMM;
-}
-
-const QRectF& Params::contentRect() const {
-  return m_contentRect;
-}
-
-const QRectF& Params::pageRect() const {
-  return m_pageRect;
-}
-
-const QSizeF& Params::contentSizeMM() const {
-  return m_contentSizeMM;
-}
-
-const Alignment& Params::alignment() const {
-  return m_alignment;
-}
-
-bool Params::isAutoMarginsEnabled() const {
-  return m_autoMargins;
-}
 }  // namespace page_layout

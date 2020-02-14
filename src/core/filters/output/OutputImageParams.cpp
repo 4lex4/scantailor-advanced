@@ -165,42 +165,6 @@ bool OutputImageParams::colorParamsMatch(const ColorParams& cp1,
   return true;
 }
 
-void OutputImageParams::setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams) {
-  OutputImageParams::m_outputProcessingParams = outputProcessingParams;
-}
-
-const PictureShapeOptions& OutputImageParams::getPictureShapeOptions() const {
-  return m_pictureShapeOptions;
-}
-
-const QPolygonF& OutputImageParams::getCropArea() const {
-  return m_cropArea;
-}
-
-const DewarpingOptions& OutputImageParams::dewarpingMode() const {
-  return m_dewarpingOptions;
-}
-
-const dewarping::DistortionModel& OutputImageParams::distortionModel() const {
-  return m_distortionModel;
-}
-
-void OutputImageParams::setDistortionModel(const dewarping::DistortionModel& model) {
-  m_distortionModel = model;
-}
-
-const DepthPerception& OutputImageParams::depthPerception() const {
-  return m_depthPerception;
-}
-
-double OutputImageParams::despeckleLevel() const {
-  return m_despeckleLevel;
-}
-
-void OutputImageParams::setBlackOnWhite(bool blackOnWhite) {
-  m_blackOnWhite = blackOnWhite;
-}
-
 /*=============================== PartialXform =============================*/
 
 OutputImageParams::PartialXform::PartialXform() : m_11(), m_12(), m_21(), m_22() {}

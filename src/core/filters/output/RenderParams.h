@@ -59,5 +59,58 @@ class RenderParams {
 
   int m_mask;
 };
+
+
+inline bool RenderParams::fillMargins() const {
+  return (m_mask & FILL_MARGINS) != 0;
+}
+
+inline bool RenderParams::normalizeIllumination() const {
+  return (m_mask & NORMALIZE_ILLUMINATION) != 0;
+}
+
+inline bool RenderParams::normalizeIlluminationColor() const {
+  return (m_mask & NORMALIZE_ILLUMINATION_COLOR) != 0;
+}
+
+inline bool RenderParams::needBinarization() const {
+  return (m_mask & NEED_BINARIZATION) != 0;
+}
+
+inline bool RenderParams::mixedOutput() const {
+  return (m_mask & MIXED_OUTPUT) != 0;
+}
+
+inline bool RenderParams::binaryOutput() const {
+  return (m_mask & (NEED_BINARIZATION | MIXED_OUTPUT)) == NEED_BINARIZATION;
+}
+
+inline bool RenderParams::needSavitzkyGolaySmoothing() const {
+  return (m_mask & SAVITZKY_GOLAY_SMOOTHING) != 0;
+}
+
+inline bool RenderParams::needMorphologicalSmoothing() const {
+  return (m_mask & MORPHOLOGICAL_SMOOTHING) != 0;
+}
+
+inline bool RenderParams::splitOutput() const {
+  return (m_mask & SPLIT_OUTPUT) != 0;
+}
+
+inline bool RenderParams::originalBackground() const {
+  return (m_mask & ORIGINAL_BACKGROUND) != 0;
+}
+
+inline bool RenderParams::needColorSegmentation() const {
+  return (m_mask & COLOR_SEGMENTATION) != 0;
+}
+
+inline bool RenderParams::posterize() const {
+  return (m_mask & POSTERIZE) != 0;
+}
+
+inline bool RenderParams::fillOffcut() const {
+  return (m_mask & FILL_OFFCUT) != 0;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_RENDERPARAMS_H_

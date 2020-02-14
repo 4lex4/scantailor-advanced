@@ -132,5 +132,61 @@ class OptionsWidget : public FilterOptionsWidget, public UnitsListener, private 
 
   ConnectionManager m_connectionManager;
 };
+
+
+inline void OptionsWidget::UiData::setSizeCalc(const PhysSizeCalc& calc) {
+  m_sizeCalc = calc;
+}
+
+inline void OptionsWidget::UiData::setContentRect(const QRectF& contentRect) {
+  m_contentRect = contentRect;
+}
+
+inline const QRectF& OptionsWidget::UiData::contentRect() const {
+  return m_contentRect;
+}
+
+inline void OptionsWidget::UiData::setPageRect(const QRectF& pageRect) {
+  m_pageRect = pageRect;
+}
+
+inline const QRectF& OptionsWidget::UiData::pageRect() const {
+  return m_pageRect;
+}
+
+inline QSizeF OptionsWidget::UiData::contentSizeMM() const {
+  return m_sizeCalc.sizeMM(m_contentRect);
+}
+
+inline void OptionsWidget::UiData::setDependencies(const Dependencies& deps) {
+  m_deps = deps;
+}
+
+inline const Dependencies& OptionsWidget::UiData::dependencies() const {
+  return m_deps;
+}
+
+inline void OptionsWidget::UiData::setContentDetectionMode(AutoManualMode mode) {
+  m_contentDetectionMode = mode;
+}
+
+inline AutoManualMode OptionsWidget::UiData::contentDetectionMode() const {
+  return m_contentDetectionMode;
+}
+
+inline void OptionsWidget::UiData::setPageDetectionMode(AutoManualMode mode) {
+  m_pageDetectionMode = mode;
+}
+
+inline AutoManualMode OptionsWidget::UiData::pageDetectionMode() const {
+  return m_pageDetectionMode;
+}
+inline void OptionsWidget::UiData::setFineTuneCornersEnabled(bool fineTune) {
+  m_fineTuneCornersEnabled = fineTune;
+}
+
+inline bool OptionsWidget::UiData::isFineTuningCornersEnabled() const {
+  return m_fineTuneCornersEnabled;
+}
 }  // namespace select_content
 #endif  // ifndef SCANTAILOR_SELECT_CONTENT_OPTIONSWIDGET_H_

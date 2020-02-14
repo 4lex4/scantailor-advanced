@@ -39,10 +39,34 @@ class ColorParams {
 
   static QString formatColorMode(ColorMode mode);
 
-
   ColorMode m_colorMode;
   ColorCommonOptions m_colorCommonOptions;
   BlackWhiteOptions m_bwOptions;
 };
+
+
+inline ColorMode ColorParams::colorMode() const {
+  return m_colorMode;
+}
+
+inline void ColorParams::setColorMode(ColorMode mode) {
+  m_colorMode = mode;
+}
+
+inline const ColorCommonOptions& ColorParams::colorCommonOptions() const {
+  return m_colorCommonOptions;
+}
+
+inline void ColorParams::setColorCommonOptions(const ColorCommonOptions& opt) {
+  m_colorCommonOptions = opt;
+}
+
+inline const BlackWhiteOptions& ColorParams::blackWhiteOptions() const {
+  return m_bwOptions;
+}
+
+inline void ColorParams::setBlackWhiteOptions(const BlackWhiteOptions& opt) {
+  m_bwOptions = opt;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_COLORPARAMS_H_

@@ -78,7 +78,7 @@ class OutputGenerator {
   /**
    * \brief Returns the content rectangle in output image coordinates.
    */
-  QRect outputContentRect() const;
+  QRect outputContentRect() const { return m_contentRect; }
 
  private:
   class Processor;

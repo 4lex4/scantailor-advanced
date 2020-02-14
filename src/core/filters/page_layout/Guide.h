@@ -38,6 +38,19 @@ class Guide {
   Qt::Orientation m_orientation;
   double m_position;
 };
+
+
+inline Qt::Orientation Guide::getOrientation() const {
+  return m_orientation;
+}
+
+inline double Guide::getPosition() const {
+  return m_position;
+}
+
+inline void Guide::setPosition(double position) {
+  Guide::m_position = position;
+}
 }  // namespace page_layout
 
 #endif  // ifndef SCANTAILOR_PAGE_LAYOUT_GUIDE_H_

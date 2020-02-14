@@ -62,5 +62,46 @@ class OutputParams {
   ZoneSet m_pictureZones;
   ZoneSet m_fillZones;
 };
+
+
+inline const OutputImageParams& OutputParams::outputImageParams() const {
+  return m_outputImageParams;
+}
+
+inline const OutputFileParams& OutputParams::outputFileParams() const {
+  return m_outputFileParams;
+}
+
+inline const OutputFileParams& OutputParams::foregroundFileParams() const {
+  return m_foregroundFileParams;
+}
+
+inline const OutputFileParams& OutputParams::backgroundFileParams() const {
+  return m_backgroundFileParams;
+}
+
+inline const OutputFileParams& OutputParams::originalBackgroundFileParams() const {
+  return m_originalBackgroundFileParams;
+}
+
+inline const OutputFileParams& OutputParams::automaskFileParams() const {
+  return m_automaskFileParams;
+}
+
+inline const OutputFileParams& OutputParams::specklesFileParams() const {
+  return m_specklesFileParams;
+}
+
+inline const ZoneSet& OutputParams::pictureZones() const {
+  return m_pictureZones;
+}
+
+inline const ZoneSet& OutputParams::fillZones() const {
+  return m_fillZones;
+}
+
+inline const OutputFileParams& OutputParams::sourceFileParams() const {
+  return m_sourceFileParams;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_OUTPUTPARAMS_H_

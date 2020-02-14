@@ -56,29 +56,4 @@ QString PictureShapeOptions::formatPictureShape(PictureShape type) {
   }
   return str;
 }
-
-PictureShape PictureShapeOptions::getPictureShape() const {
-  return m_pictureShape;
-}
-
-void PictureShapeOptions::setPictureShape(PictureShape pictureShape) {
-  PictureShapeOptions::m_pictureShape = pictureShape;
-}
-
-int PictureShapeOptions::getSensitivity() const {
-  return m_sensitivity;
-}
-
-void PictureShapeOptions::setSensitivity(int sensitivity) {
-  PictureShapeOptions::m_sensitivity = sensitivity;
-}
-
-bool PictureShapeOptions::isHigherSearchSensitivity() const {
-  return m_higherSearchSensitivity;
-}
-
-void PictureShapeOptions::setHigherSearchSensitivity(bool higherSearchSensitivity) {
-  PictureShapeOptions::m_higherSearchSensitivity = higherSearchSensitivity;
-}
-
 }  // namespace output

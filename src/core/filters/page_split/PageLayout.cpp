@@ -92,10 +92,6 @@ int PageLayout::numCutters() const {
   return 0;
 }
 
-int PageLayout::numSubPages() const {
-  return m_type == TWO_PAGES ? 2 : 1;
-}
-
 QLineF PageLayout::inscribedCutterLine(int idx) const {
   assert(idx >= 0 && idx < numCutters());
 
@@ -363,13 +359,5 @@ void PageLayout::maybeAddIntersectionPoint(QPolygonF& poly, const QLineF& line1,
 
 bool PageLayout::isNull() const {
   return m_uncutOutline.isEmpty();
-}
-
-PageLayout::Type PageLayout::type() const {
-  return m_type;
-}
-
-const QPolygonF& PageLayout::uncutOutline() const {
-  return m_uncutOutline;
 }
 }  // namespace page_split

@@ -45,6 +45,31 @@ class PictureShapeOptions {
   int m_sensitivity;
   bool m_higherSearchSensitivity;
 };
+
+
+inline PictureShape PictureShapeOptions::getPictureShape() const {
+  return m_pictureShape;
+}
+
+inline void PictureShapeOptions::setPictureShape(PictureShape pictureShape) {
+  PictureShapeOptions::m_pictureShape = pictureShape;
+}
+
+inline int PictureShapeOptions::getSensitivity() const {
+  return m_sensitivity;
+}
+
+inline void PictureShapeOptions::setSensitivity(int sensitivity) {
+  PictureShapeOptions::m_sensitivity = sensitivity;
+}
+
+inline bool PictureShapeOptions::isHigherSearchSensitivity() const {
+  return m_higherSearchSensitivity;
+}
+
+inline void PictureShapeOptions::setHigherSearchSensitivity(bool higherSearchSensitivity) {
+  PictureShapeOptions::m_higherSearchSensitivity = higherSearchSensitivity;
+}
 }  // namespace output
 
 #endif  // SCANTAILOR_OUTPUT_PICTURESHAPEOPTIONS_H_

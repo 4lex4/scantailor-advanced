@@ -92,5 +92,79 @@ class ColorCommonOptions {
   FillingColor m_fillingColor;
   PosterizationOptions m_posterizationOptions;
 };
+
+
+inline FillingColor ColorCommonOptions::getFillingColor() const {
+  return m_fillingColor;
+}
+
+inline void ColorCommonOptions::setFillingColor(FillingColor fillingColor) {
+  ColorCommonOptions::m_fillingColor = fillingColor;
+}
+
+inline void ColorCommonOptions::setFillMargins(bool val) {
+  m_fillMargins = val;
+}
+
+inline bool ColorCommonOptions::fillMargins() const {
+  return m_fillMargins;
+}
+
+inline bool ColorCommonOptions::normalizeIllumination() const {
+  return m_normalizeIllumination;
+}
+
+inline void ColorCommonOptions::setNormalizeIllumination(bool val) {
+  m_normalizeIllumination = val;
+}
+
+inline const ColorCommonOptions::PosterizationOptions& ColorCommonOptions::getPosterizationOptions() const {
+  return m_posterizationOptions;
+}
+
+inline void ColorCommonOptions::setPosterizationOptions(
+    const ColorCommonOptions::PosterizationOptions& posterizationOptions) {
+  ColorCommonOptions::m_posterizationOptions = posterizationOptions;
+}
+
+inline bool ColorCommonOptions::fillOffcut() const {
+  return m_fillOffcut;
+}
+
+inline void ColorCommonOptions::setFillOffcut(bool fillOffcut) {
+  m_fillOffcut = fillOffcut;
+}
+
+inline bool ColorCommonOptions::PosterizationOptions::isEnabled() const {
+  return m_isEnabled;
+}
+
+inline void ColorCommonOptions::PosterizationOptions::setEnabled(bool enabled) {
+  PosterizationOptions::m_isEnabled = enabled;
+}
+
+inline int ColorCommonOptions::PosterizationOptions::getLevel() const {
+  return m_level;
+}
+
+inline void ColorCommonOptions::PosterizationOptions::setLevel(int level) {
+  PosterizationOptions::m_level = level;
+}
+
+inline bool ColorCommonOptions::PosterizationOptions::isNormalizationEnabled() const {
+  return m_isNormalizationEnabled;
+}
+
+inline void ColorCommonOptions::PosterizationOptions::setNormalizationEnabled(bool normalizationEnabled) {
+  PosterizationOptions::m_isNormalizationEnabled = normalizationEnabled;
+}
+
+inline bool ColorCommonOptions::PosterizationOptions::isForceBlackAndWhite() const {
+  return m_forceBlackAndWhite;
+}
+
+inline void ColorCommonOptions::PosterizationOptions::setForceBlackAndWhite(bool forceBlackAndWhite) {
+  PosterizationOptions::m_forceBlackAndWhite = forceBlackAndWhite;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_COLORCOMMONOPTIONS_H_

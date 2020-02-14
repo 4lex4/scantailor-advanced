@@ -14,18 +14,6 @@ Guide::Guide(const Qt::Orientation orientation, const double position)
 Guide::Guide(const QLineF& line)
     : m_orientation(lineOrientation(line)), m_position((m_orientation == Qt::Horizontal) ? line.y1() : line.x1()) {}
 
-Qt::Orientation Guide::getOrientation() const {
-  return m_orientation;
-}
-
-double Guide::getPosition() const {
-  return m_position;
-}
-
-void Guide::setPosition(double position) {
-  Guide::m_position = position;
-}
-
 Qt::Orientation Guide::lineOrientation(const QLineF& line) {
   const double angleCos = std::abs((line.p2().x() - line.p1().x()) / line.length());
   return (angleCos > (1.0 / std::sqrt(2))) ? Qt::Horizontal : Qt::Vertical;

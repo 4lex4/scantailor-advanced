@@ -102,5 +102,38 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   ConnectionManager m_connectionManager;
 };
+
+
+inline void OptionsWidget::UiData::setPageLayout(const PageLayout& layout) {
+  m_pageLayout = layout;
+}
+
+inline const PageLayout& OptionsWidget::UiData::pageLayout() const {
+  return m_pageLayout;
+}
+
+inline void OptionsWidget::UiData::setDependencies(const Dependencies& deps) {
+  m_deps = deps;
+}
+
+inline const Dependencies& OptionsWidget::UiData::dependencies() const {
+  return m_deps;
+}
+
+inline void OptionsWidget::UiData::setSplitLineMode(const AutoManualMode mode) {
+  m_splitLineMode = mode;
+}
+
+inline AutoManualMode OptionsWidget::UiData::splitLineMode() const {
+  return m_splitLineMode;
+}
+
+inline bool OptionsWidget::UiData::layoutTypeAutoDetected() const {
+  return m_layoutTypeAutoDetected;
+}
+
+inline void OptionsWidget::UiData::setLayoutTypeAutoDetected(const bool val) {
+  m_layoutTypeAutoDetected = val;
+}
 }  // namespace page_split
 #endif  // ifndef SCANTAILOR_PAGE_SPLIT_OPTIONSWIDGET_H_

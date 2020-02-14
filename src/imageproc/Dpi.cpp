@@ -44,15 +44,3 @@ QDomElement Dpi::toXml(QDomDocument& doc, const QString& name) const {
   el.setAttribute("vertical", m_yDpi);
   return el;
 }
-
-int Dpi::horizontal() const {
-  return m_xDpi;
-}
-
-int Dpi::vertical() const {
-  return m_yDpi;
-}
-
-bool Dpi::isNull() const {
-  return m_xDpi <= 1 || m_yDpi <= 1;
-}

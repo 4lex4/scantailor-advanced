@@ -94,36 +94,4 @@ bool Alignment::operator==(const Alignment& other) const {
 bool Alignment::operator!=(const Alignment& other) const {
   return !(*this == other);
 }
-
-Alignment::Vertical Alignment::vertical() const {
-  return m_vertical;
-}
-
-void Alignment::setVertical(Alignment::Vertical vertical) {
-  m_vertical = vertical;
-}
-
-Alignment::Horizontal Alignment::horizontal() const {
-  return m_horizontal;
-}
-
-void Alignment::setHorizontal(Alignment::Horizontal horizontal) {
-  m_horizontal = horizontal;
-}
-
-bool Alignment::isNull() const {
-  return m_isNull;
-}
-
-void Alignment::setNull(bool isNull) {
-  m_isNull = isNull;
-}
-
-bool Alignment::isAutoVertical() const {
-  return (m_vertical == VAUTO) || (m_vertical == VORIGINAL);
-}
-
-bool Alignment::isAutoHorizontal() const {
-  return (m_horizontal == HAUTO) || (m_horizontal == HORIGINAL);
-}
 }  // namespace page_layout

@@ -61,12 +61,4 @@ QDomElement Dependencies::toXml(QDomDocument& doc, const QString& tagName) const
 bool Dependencies::isNull() const {
   return m_imageSize.isNull();
 }
-
-const OrthogonalRotation& Dependencies::orientation() const {
-  return m_rotation;
-}
-
-void Dependencies::setLayoutType(LayoutType type) {
-  m_layoutType = type;
-}
 }  // namespace page_split

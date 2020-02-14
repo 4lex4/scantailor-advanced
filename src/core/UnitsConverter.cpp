@@ -95,11 +95,3 @@ QTransform UnitsConverter::transform(Units fromUnits, Units toUnits) const {
   convert(xScaleFactor, yScaleFactor, fromUnits, toUnits);
   return QTransform().scale(xScaleFactor, yScaleFactor);
 }
-
-const Dpi& UnitsConverter::getDpi() const {
-  return m_dpi;
-}
-
-void UnitsConverter::setDpi(const Dpi& dpi) {
-  UnitsConverter::m_dpi = dpi;
-}

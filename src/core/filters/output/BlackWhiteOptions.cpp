@@ -67,70 +67,6 @@ bool BlackWhiteOptions::operator!=(const BlackWhiteOptions& other) const {
   return !(*this == other);
 }
 
-bool BlackWhiteOptions::isSavitzkyGolaySmoothingEnabled() const {
-  return m_savitzkyGolaySmoothingEnabled;
-}
-
-void BlackWhiteOptions::setSavitzkyGolaySmoothingEnabled(bool savitzkyGolaySmoothingEnabled) {
-  BlackWhiteOptions::m_savitzkyGolaySmoothingEnabled = savitzkyGolaySmoothingEnabled;
-}
-
-bool BlackWhiteOptions::isMorphologicalSmoothingEnabled() const {
-  return m_morphologicalSmoothingEnabled;
-}
-
-void BlackWhiteOptions::setMorphologicalSmoothingEnabled(bool morphologicalSmoothingEnabled) {
-  BlackWhiteOptions::m_morphologicalSmoothingEnabled = morphologicalSmoothingEnabled;
-}
-
-int BlackWhiteOptions::getWindowSize() const {
-  return m_windowSize;
-}
-
-void BlackWhiteOptions::setWindowSize(int windowSize) {
-  BlackWhiteOptions::m_windowSize = windowSize;
-}
-
-double BlackWhiteOptions::getSauvolaCoef() const {
-  return m_sauvolaCoef;
-}
-
-void BlackWhiteOptions::setSauvolaCoef(double sauvolaCoef) {
-  BlackWhiteOptions::m_sauvolaCoef = sauvolaCoef;
-}
-
-int BlackWhiteOptions::getWolfLowerBound() const {
-  return m_wolfLowerBound;
-}
-
-void BlackWhiteOptions::setWolfLowerBound(int wolfLowerBound) {
-  BlackWhiteOptions::m_wolfLowerBound = wolfLowerBound;
-}
-
-int BlackWhiteOptions::getWolfUpperBound() const {
-  return m_wolfUpperBound;
-}
-
-void BlackWhiteOptions::setWolfUpperBound(int wolfUpperBound) {
-  BlackWhiteOptions::m_wolfUpperBound = wolfUpperBound;
-}
-
-double BlackWhiteOptions::getWolfCoef() const {
-  return m_wolfCoef;
-}
-
-void BlackWhiteOptions::setWolfCoef(double wolfCoef) {
-  BlackWhiteOptions::m_wolfCoef = wolfCoef;
-}
-
-BinarizationMethod BlackWhiteOptions::getBinarizationMethod() const {
-  return m_binarizationMethod;
-}
-
-void BlackWhiteOptions::setBinarizationMethod(BinarizationMethod binarizationMethod) {
-  BlackWhiteOptions::m_binarizationMethod = binarizationMethod;
-}
-
 BinarizationMethod BlackWhiteOptions::parseBinarizationMethod(const QString& str) {
   if (str == "wolf") {
     return WOLF;
@@ -155,31 +91,6 @@ QString BlackWhiteOptions::formatBinarizationMethod(BinarizationMethod type) {
       break;
   }
   return str;
-}
-
-int BlackWhiteOptions::thresholdAdjustment() const {
-  return m_thresholdAdjustment;
-}
-
-void BlackWhiteOptions::setThresholdAdjustment(int val) {
-  m_thresholdAdjustment = val;
-}
-
-bool BlackWhiteOptions::normalizeIllumination() const {
-  return m_normalizeIllumination;
-}
-
-void BlackWhiteOptions::setNormalizeIllumination(bool val) {
-  m_normalizeIllumination = val;
-}
-
-const BlackWhiteOptions::ColorSegmenterOptions& BlackWhiteOptions::getColorSegmenterOptions() const {
-  return m_colorSegmenterOptions;
-}
-
-void BlackWhiteOptions::setColorSegmenterOptions(
-    const BlackWhiteOptions::ColorSegmenterOptions& colorSegmenterOptions) {
-  BlackWhiteOptions::m_colorSegmenterOptions = colorSegmenterOptions;
 }
 
 /*=============================== BlackWhiteOptions::ColorSegmenterOptions ==================================*/
@@ -218,45 +129,4 @@ bool BlackWhiteOptions::ColorSegmenterOptions::operator==(const BlackWhiteOption
 bool BlackWhiteOptions::ColorSegmenterOptions::operator!=(const BlackWhiteOptions::ColorSegmenterOptions& other) const {
   return !(*this == other);
 }
-
-bool BlackWhiteOptions::ColorSegmenterOptions::isEnabled() const {
-  return m_isEnabled;
-}
-
-void BlackWhiteOptions::ColorSegmenterOptions::setEnabled(bool enabled) {
-  ColorSegmenterOptions::m_isEnabled = enabled;
-}
-
-int BlackWhiteOptions::ColorSegmenterOptions::getNoiseReduction() const {
-  return m_noiseReduction;
-}
-
-void BlackWhiteOptions::ColorSegmenterOptions::setNoiseReduction(int noiseReduction) {
-  ColorSegmenterOptions::m_noiseReduction = noiseReduction;
-}
-
-int BlackWhiteOptions::ColorSegmenterOptions::getRedThresholdAdjustment() const {
-  return m_redThresholdAdjustment;
-}
-
-void BlackWhiteOptions::ColorSegmenterOptions::setRedThresholdAdjustment(int redThresholdAdjustment) {
-  ColorSegmenterOptions::m_redThresholdAdjustment = redThresholdAdjustment;
-}
-
-int BlackWhiteOptions::ColorSegmenterOptions::getGreenThresholdAdjustment() const {
-  return m_greenThresholdAdjustment;
-}
-
-void BlackWhiteOptions::ColorSegmenterOptions::setGreenThresholdAdjustment(int greenThresholdAdjustment) {
-  ColorSegmenterOptions::m_greenThresholdAdjustment = greenThresholdAdjustment;
-}
-
-int BlackWhiteOptions::ColorSegmenterOptions::getBlueThresholdAdjustment() const {
-  return m_blueThresholdAdjustment;
-}
-
-void BlackWhiteOptions::ColorSegmenterOptions::setBlueThresholdAdjustment(int blueThresholdAdjustment) {
-  ColorSegmenterOptions::m_blueThresholdAdjustment = blueThresholdAdjustment;
-}
-
 }  // namespace output

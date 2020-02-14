@@ -42,6 +42,31 @@ class SplittingOptions {
   SplittingMode m_splittingMode;
   bool m_isOriginalBackgroundEnabled;
 };
+
+
+inline bool SplittingOptions::isSplitOutput() const {
+  return m_isSplitOutput;
+}
+
+inline void SplittingOptions::setSplitOutput(bool splitOutput) {
+  SplittingOptions::m_isSplitOutput = splitOutput;
+}
+
+inline SplittingMode SplittingOptions::getSplittingMode() const {
+  return m_splittingMode;
+}
+
+inline void SplittingOptions::setSplittingMode(SplittingMode foregroundType) {
+  SplittingOptions::m_splittingMode = foregroundType;
+}
+
+inline bool SplittingOptions::isOriginalBackgroundEnabled() const {
+  return m_isOriginalBackgroundEnabled;
+}
+
+inline void SplittingOptions::setOriginalBackgroundEnabled(bool enable) {
+  SplittingOptions::m_isOriginalBackgroundEnabled = enable;
+}
 }  // namespace output
 
 

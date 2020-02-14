@@ -62,4 +62,20 @@ class ImageSettings {
 };
 
 
+inline const imageproc::BinaryThreshold& ImageSettings::PageParams::getBwThreshold() const {
+  return m_bwThreshold;
+}
+
+inline void ImageSettings::PageParams::setBwThreshold(const imageproc::BinaryThreshold& bwThreshold) {
+  PageParams::m_bwThreshold = bwThreshold;
+}
+
+inline bool ImageSettings::PageParams::isBlackOnWhite() const {
+  return m_blackOnWhite;
+}
+
+inline void ImageSettings::PageParams::setBlackOnWhite(bool blackOnWhite) {
+  PageParams::m_blackOnWhite = blackOnWhite;
+}
+
 #endif  // SCANTAILOR_CORE_IMAGESETTINGS_H_

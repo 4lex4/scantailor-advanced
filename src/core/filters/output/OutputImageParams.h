@@ -146,5 +146,42 @@ class OutputImageParams {
   /** Whether the page has dark content on light background */
   bool m_blackOnWhite;
 };
+
+
+inline void OutputImageParams::setOutputProcessingParams(const OutputProcessingParams& outputProcessingParams) {
+  OutputImageParams::m_outputProcessingParams = outputProcessingParams;
+}
+
+inline const PictureShapeOptions& OutputImageParams::getPictureShapeOptions() const {
+  return m_pictureShapeOptions;
+}
+
+inline const QPolygonF& OutputImageParams::getCropArea() const {
+  return m_cropArea;
+}
+
+inline const DewarpingOptions& OutputImageParams::dewarpingMode() const {
+  return m_dewarpingOptions;
+}
+
+inline const dewarping::DistortionModel& OutputImageParams::distortionModel() const {
+  return m_distortionModel;
+}
+
+inline void OutputImageParams::setDistortionModel(const dewarping::DistortionModel& model) {
+  m_distortionModel = model;
+}
+
+inline const DepthPerception& OutputImageParams::depthPerception() const {
+  return m_depthPerception;
+}
+
+inline double OutputImageParams::despeckleLevel() const {
+  return m_despeckleLevel;
+}
+
+inline void OutputImageParams::setBlackOnWhite(bool blackOnWhite) {
+  m_blackOnWhite = blackOnWhite;
+}
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_OUTPUTIMAGEPARAMS_H_

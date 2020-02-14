@@ -59,19 +59,3 @@ QDomElement ImageSettings::PageParams::toXml(QDomDocument& doc, const QString& n
   el.setAttribute("blackOnWhite", m_blackOnWhite ? "1" : "0");
   return el;
 }
-
-const BinaryThreshold& ImageSettings::PageParams::getBwThreshold() const {
-  return m_bwThreshold;
-}
-
-void ImageSettings::PageParams::setBwThreshold(const BinaryThreshold& bwThreshold) {
-  PageParams::m_bwThreshold = bwThreshold;
-}
-
-bool ImageSettings::PageParams::isBlackOnWhite() const {
-  return m_blackOnWhite;
-}
-
-void ImageSettings::PageParams::setBlackOnWhite(bool blackOnWhite) {
-  PageParams::m_blackOnWhite = blackOnWhite;
-}

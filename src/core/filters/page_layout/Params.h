@@ -49,5 +49,30 @@ class Params {
   Alignment m_alignment;
   bool m_autoMargins;
 };
+
+
+inline const Margins& Params::hardMarginsMM() const {
+  return m_hardMarginsMM;
+}
+
+inline const QRectF& Params::contentRect() const {
+  return m_contentRect;
+}
+
+inline const QRectF& Params::pageRect() const {
+  return m_pageRect;
+}
+
+inline const QSizeF& Params::contentSizeMM() const {
+  return m_contentSizeMM;
+}
+
+inline const Alignment& Params::alignment() const {
+  return m_alignment;
+}
+
+inline bool Params::isAutoMarginsEnabled() const {
+  return m_autoMargins;
+}
 }  // namespace page_layout
 #endif  // ifndef SCANTAILOR_PAGE_LAYOUT_PARAMS_H_

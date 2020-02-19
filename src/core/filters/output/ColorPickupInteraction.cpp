@@ -5,6 +5,7 @@
 
 #include <QKeyEvent>
 #include <QPainter>
+#include <QtWidgets/QShortcut>
 
 #include "ImageViewBase.h"
 #include "ScopedIncDec.h"
@@ -14,7 +15,13 @@ namespace output {
 ColorPickupInteraction::ColorPickupInteraction(EditableZoneSet& zones, ZoneInteractionContext& context)
     : m_zones(zones), m_context(context), m_dontDrawCircle(0) {
   m_interaction.setInteractionStatusTip(tr("Click on an area to pick up its color, or ESC to cancel."));
+
+  m_cancelShortcut = std::make_unique<QShortcut>(Qt::Key_Escape, &m_context.imageView());
+  QObject::connect(m_cancelShortcut.get(), &QShortcut::activated, &m_context.imageView(),
+                   std::bind(&ColorPickupInteraction::switchToDefaultInteraction, this));
 }
+
+ColorPickupInteraction::~ColorPickupInteraction() = default;
 
 void ColorPickupInteraction::startInteraction(const EditableZoneSet::Zone& zone, InteractionState& interaction) {
   using FCP = FillColorProperty;
@@ -51,13 +58,6 @@ void ColorPickupInteraction::onMousePressEvent(QMouseEvent* event, InteractionSt
 
 void ColorPickupInteraction::onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) {
   m_context.imageView().update();
-}
-
-void ColorPickupInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
-  if (event->key() == Qt::Key_Escape) {
-    event->accept();
-    switchToDefaultInteraction();
-  }
 }
 
 void ColorPickupInteraction::takeColor() {

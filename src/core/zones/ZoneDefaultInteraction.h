@@ -16,6 +16,7 @@
 #include "SplineSegment.h"
 #include "SplineVertex.h"
 
+class QShortcut;
 class ZoneInteractionContext;
 
 class ZoneDefaultInteraction : public InteractionHandler {
@@ -43,6 +44,10 @@ class ZoneDefaultInteraction : public InteractionHandler {
   void onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) override;
 
  private:
+  void removeZoneUnderMouse();
+
+  void removeVertexUnderMouse();
+
   ZoneInteractionContext& m_context;
   BasicSplineVisualizer m_visualizer;
   InteractionState::Captor m_vertexProximity;
@@ -76,6 +81,9 @@ class ZoneDefaultInteraction : public InteractionHandler {
   EditableSpline::Ptr m_nearestSegmentSpline;
   QPointF m_screenPointOnSegment;
   EditableSpline::Ptr m_splineUnderMouse;
+
+  std::unique_ptr<QShortcut> m_removeZoneShortcut;
+  std::unique_ptr<QShortcut> m_removeVertexShortcut;
 };
 
 

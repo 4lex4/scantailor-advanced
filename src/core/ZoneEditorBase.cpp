@@ -5,6 +5,7 @@
 
 #include <QKeyEvent>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QShortcut>
 #include <QtWidgets/QStatusBar>
 
 #include "Utils.h"
@@ -36,31 +37,28 @@ ZoneEditorBase::ZoneEditorBase(const QImage& image,
                                const Margins& margins)
     : ImageViewBase(image, downscaledVersion, presentation, margins),
       m_context(*this, m_zones),
-      m_zoneModeProvider(std::make_unique<ZoneModeProvider>(*this)) {}
+      m_zoneModeProvider(std::make_unique<ZoneModeProvider>(*this)) {
+  m_shortcutPolygonal = new QShortcut(Qt::Key_Z, this);
+  m_shortcutPolygonal->setAutoRepeat(false);
+  m_shortcutLasso = new QShortcut(Qt::Key_X, this);
+  m_shortcutLasso->setAutoRepeat(false);
+  m_shortcutRectangular = new QShortcut(Qt::Key_C, this);
+  m_shortcutRectangular->setAutoRepeat(false);
+  connect(m_shortcutPolygonal, &QShortcut::activated, [this]() {
+    m_context.setZoneCreationMode(ZoneCreationMode::POLYGONAL);
+    m_zoneModeProvider->updateZoneMode();
+  });
+  connect(m_shortcutLasso, &QShortcut::activated, [this]() {
+    m_context.setZoneCreationMode(ZoneCreationMode::LASSO);
+    m_zoneModeProvider->updateZoneMode();
+  });
+  connect(m_shortcutRectangular, &QShortcut::activated, [this]() {
+    m_context.setZoneCreationMode(ZoneCreationMode::RECTANGULAR);
+    m_zoneModeProvider->updateZoneMode();
+  });
+}
 
 ZoneEditorBase::~ZoneEditorBase() = default;
-
-void ZoneEditorBase::onKeyPressEvent(QKeyEvent* event, InteractionState&) {
-  switch (event->key()) {
-    case Qt::Key_Z:
-      m_context.setZoneCreationMode(ZoneCreationMode::POLYGONAL);
-      event->accept();
-      m_zoneModeProvider->updateZoneMode();
-      break;
-    case Qt::Key_X:
-      m_context.setZoneCreationMode(ZoneCreationMode::LASSO);
-      event->accept();
-      m_zoneModeProvider->updateZoneMode();
-      break;
-    case Qt::Key_C:
-      m_context.setZoneCreationMode(ZoneCreationMode::RECTANGULAR);
-      event->accept();
-      m_zoneModeProvider->updateZoneMode();
-      break;
-    default:
-      break;
-  }
-}
 
 void ZoneEditorBase::showEvent(QShowEvent* event) {
   ImageViewBase::showEvent(event);

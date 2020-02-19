@@ -1034,6 +1034,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true"/>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSaveProject">
    <property name="text">
@@ -1042,6 +1045,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true">Ctrl+S</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSaveProjectAs">
    <property name="text">
@@ -1049,6 +1055,9 @@ QToolButton:pressed {
    </property>
    <property name="shortcut">
     <string notr="true"/>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionNextPage">
@@ -1080,6 +1089,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true">Ctrl+N</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionOpenProject">
    <property name="text">
@@ -1087,6 +1099,9 @@ QToolButton:pressed {
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+O</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionPrevPageQ">
@@ -1118,6 +1133,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true">Ctrl+W</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionQuit">
    <property name="text">
@@ -1125,6 +1143,9 @@ QToolButton:pressed {
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+Q</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSettings">
@@ -1134,6 +1155,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true"/>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionFirstPage">
    <property name="text">
@@ -1141,6 +1165,9 @@ QToolButton:pressed {
    </property>
    <property name="shortcut">
     <string notr="true">Home</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionLastPage">
@@ -1150,6 +1177,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true">End</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
@@ -1157,6 +1187,9 @@ QToolButton:pressed {
    </property>
    <property name="shortcut">
     <string notr="true"/>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionFixDpi">
@@ -1166,6 +1199,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true"/>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionRelinking">
    <property name="text">
@@ -1174,6 +1210,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true"/>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSwitchFilter1">
    <property name="text">
@@ -1181,6 +1220,9 @@ QToolButton:pressed {
    </property>
    <property name="shortcut">
     <string notr="true">O</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSwitchFilter2">
@@ -1193,6 +1235,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true">E</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSwitchFilter3">
    <property name="text">
@@ -1203,6 +1248,9 @@ QToolButton:pressed {
    </property>
    <property name="shortcut">
     <string notr="true">N</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionSwitchFilter4">
@@ -1215,6 +1263,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true">V</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSwitchFilter5">
    <property name="text">
@@ -1226,6 +1277,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true">K</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionSwitchFilter6">
    <property name="text">
@@ -1236,6 +1290,9 @@ QToolButton:pressed {
    </property>
    <property name="shortcut">
     <string notr="true">P</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
   <action name="actionPixels">
@@ -1304,6 +1361,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true"/>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionPrevSelectedPageQ">
    <property name="text">
@@ -1368,6 +1428,9 @@ QToolButton:pressed {
    <property name="shortcut">
     <string notr="true">Ctrl+G</string>
    </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
   </action>
   <action name="actionMagnifyThumbnails">
    <property name="text">
@@ -1393,7 +1456,10 @@ QToolButton:pressed {
     <string>Reload current page</string>
    </property>
    <property name="shortcut">
-    <string>F5</string>
+    <string notr="true">F5</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
    </property>
   </action>
  </widget>

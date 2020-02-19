@@ -5,6 +5,7 @@
 
 #include <QMouseEvent>
 #include <QPainter>
+#include <QtWidgets/QShortcut>
 
 #include "ImageViewBase.h"
 #include "SerializableSpline.h"
@@ -28,6 +29,13 @@ ZoneDefaultInteraction::ZoneDefaultInteraction(ZoneInteractionContext& context)
   m_context.imageView().interactionState().setDefaultStatusTip(
       tr("Click to start creating a new zone. Ctrl+Alt+Click to copy the latest created zone. Use Z, X and C keys to "
          "switch zone creation mode."));
+
+  m_removeZoneShortcut = std::make_unique<QShortcut>(Qt::Key_Delete, &m_context.imageView());
+  m_removeVertexShortcut = std::make_unique<QShortcut>(Qt::Key_D, &m_context.imageView());
+  QObject::connect(m_removeZoneShortcut.get(), &QShortcut::activated, &m_context.imageView(),
+                   std::bind(&ZoneDefaultInteraction::removeZoneUnderMouse, this));
+  QObject::connect(m_removeVertexShortcut.get(), &QShortcut::activated, &m_context.imageView(),
+                   std::bind(&ZoneDefaultInteraction::removeVertexUnderMouse, this));
 }
 
 void ZoneDefaultInteraction::onPaint(QPainter& painter, const InteractionState& interaction) {
@@ -249,23 +257,6 @@ void ZoneDefaultInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState&
 
 void ZoneDefaultInteraction::onKeyReleaseEvent(QKeyEvent* event, InteractionState& interaction) {
   m_activeKeyboardModifiers = event->modifiers();
-
-  if (event->key() == Qt::Key_Delete) {
-    if (m_splineUnderMouse) {
-      m_context.zones().removeZone(m_splineUnderMouse);
-      m_context.zones().commit();
-      m_context.imageView().update();
-    }
-  }
-  if (event->key() == Qt::Key_D) {
-    const QTransform toScreen(m_context.imageView().imageToWidget());
-    if ((m_nearestVertex && m_nearestVertexSpline) && m_nearestVertexSpline->hasAtLeastSegments(4)
-        && interaction.proximityLeader(m_vertexProximity)) {
-      m_nearestVertex->remove();
-      m_context.zones().commit();
-      m_context.imageView().update();
-    }
-  }
 }
 
 void ZoneDefaultInteraction::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
@@ -278,4 +269,21 @@ void ZoneDefaultInteraction::onContextMenuEvent(QContextMenuEvent* event, Intera
 
   makePeerPreceeder(*cmInteraction);
   delete this;
+}
+
+void ZoneDefaultInteraction::removeZoneUnderMouse() {
+  if (m_splineUnderMouse) {
+    m_context.zones().removeZone(m_splineUnderMouse);
+    m_context.zones().commit();
+    m_context.imageView().update();
+  }
+}
+
+void ZoneDefaultInteraction::removeVertexUnderMouse() {
+  if ((m_nearestVertex && m_nearestVertexSpline) && m_nearestVertexSpline->hasAtLeastSegments(4)
+      && m_context.imageView().interactionState().proximityLeader(m_vertexProximity)) {
+    m_nearestVertex->remove();
+    m_context.zones().commit();
+    m_context.imageView().update();
+  }
 }

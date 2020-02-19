@@ -16,6 +16,9 @@
 #include "VecNT.h"
 #include "XSpline.h"
 
+class ImageViewBase;
+class QShortcut;
+
 class InteractiveXSpline : public InteractionHandler {
   Q_DECLARE_TR_FUNCTIONS(InteractiveXSpline)
  public:
@@ -23,7 +26,7 @@ class InteractiveXSpline : public InteractionHandler {
   using ModifiedCallback = boost::function<void()>;
   using DragFinishedCallback = boost::function<void()>;
 
-  InteractiveXSpline();
+  explicit InteractiveXSpline(ImageViewBase& imageView);
 
   void setSpline(const XSpline& spline);
 
@@ -48,14 +51,14 @@ class InteractiveXSpline : public InteractionHandler {
    */
   bool curveIsProximityLeader(const InteractionState& state, QPointF* pt = nullptr, double* t = nullptr) const;
 
+  void removeControlPointUnderMouse();
+
  protected:
   void onProximityUpdate(const QPointF& screenMousePos, InteractionState& interaction) override;
 
   void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
 
   void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
-
-  void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
  private:
   struct NoOp;
@@ -76,6 +79,7 @@ class InteractiveXSpline : public InteractionHandler {
 
   static Vec4d rotationAndScale(const QPointF& from, const QPointF& to);
 
+  ImageViewBase& m_imageView;
   ModifiedCallback m_modifiedCallback;
   DragFinishedCallback m_dragFinishedCallback;
   Transform m_fromStorage;

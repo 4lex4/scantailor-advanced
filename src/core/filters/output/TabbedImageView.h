@@ -13,6 +13,7 @@
 #include "ImageViewTab.h"
 
 class ImageViewBase;
+class QShortcut;
 
 namespace output {
 class TabbedImageView : public QTabWidget {
@@ -35,9 +36,6 @@ class TabbedImageView : public QTabWidget {
 
   void tabChanged(ImageViewTab tab);
 
- protected:
-  void keyReleaseEvent(QKeyEvent* event) override;
-
  private slots:
 
   void tabChangedSlot(int idx);
@@ -52,6 +50,8 @@ class TabbedImageView : public QTabWidget {
   std::unordered_map<QWidget*, ImageViewTab> m_registry;
   std::unique_ptr<TabImageRectMap> m_tabImageRectMap;
   int m_prevImageViewTabIndex;
+
+  QShortcut* m_tabShortcuts[5];
 };
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_TABBEDIMAGEVIEW_H_

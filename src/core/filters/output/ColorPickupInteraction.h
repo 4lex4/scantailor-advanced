@@ -15,12 +15,15 @@
 #include "InteractionState.h"
 
 class ZoneInteractionContext;
+class QShortcut;
 
 namespace output {
 class ColorPickupInteraction : public InteractionHandler {
   Q_DECLARE_TR_FUNCTIONS(ColorPickupInteraction)
  public:
   ColorPickupInteraction(EditableZoneSet& zones, ZoneInteractionContext& context);
+
+  ~ColorPickupInteraction() override;
 
   void startInteraction(const EditableZoneSet::Zone& zone, InteractionState& interaction);
 
@@ -32,8 +35,6 @@ class ColorPickupInteraction : public InteractionHandler {
   void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
   void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
-
-  void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
  private:
   void takeColor();
@@ -51,6 +52,7 @@ class ColorPickupInteraction : public InteractionHandler {
   InteractionState::Captor m_interaction;
   std::shared_ptr<FillColorProperty> m_fillColorProp;
   int m_dontDrawCircle;
+  std::unique_ptr<QShortcut> m_cancelShortcut;
 
   static const uint32_t m_sBitMixingLUT[3][256];
   static const uint32_t m_sBitUnmixingLUT[3][256];

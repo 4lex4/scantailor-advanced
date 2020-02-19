@@ -22,6 +22,8 @@
 #include "Settings.h"
 #include "ZoomHandler.h"
 
+class QShortcut;
+
 namespace output {
 class DewarpingView : public ImageViewBase, protected InteractionHandler {
   Q_OBJECT
@@ -78,6 +80,7 @@ class DewarpingView : public ImageViewBase, protected InteractionHandler {
   InteractiveXSpline m_bottomSpline;
   DragHandler m_dragHandler;
   ZoomHandler m_zoomHandler;
+  QShortcut* m_removeControlPointShortcut;
 };
 }  // namespace output
 #endif  // ifndef SCANTAILOR_OUTPUT_DEWARPINGVIEW_H_

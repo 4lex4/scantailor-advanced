@@ -4,7 +4,7 @@
 #include <ImageViewBase.h>
 #include <filters/output/TabbedImageView.h>
 
-#include <QKeyEvent>
+#include <QtWidgets/QShortcut>
 
 #include "../../Utils.h"
 #include "DespeckleView.h"
@@ -15,6 +15,12 @@ namespace output {
 TabbedImageView::TabbedImageView(QWidget* parent) : QTabWidget(parent), m_prevImageViewTabIndex(0) {
   connect(this, SIGNAL(currentChanged(int)), SLOT(tabChangedSlot(int)));
   setStatusTip(tr("Use Ctrl+1..5 to switch the tabs."));
+
+  for (int i = 0; i < 5; ++i) {
+    m_tabShortcuts[i] = new QShortcut(static_cast<Qt::Key>(Qt::CTRL + (Qt::Key_1 + i)), this);
+    m_tabShortcuts[i]->setAutoRepeat(false);
+    connect(m_tabShortcuts[i], &QShortcut::activated, std::bind(&QTabWidget::setCurrentIndex, this, i));
+  }
 }
 
 void TabbedImageView::addTab(QWidget* widget, const QString& label, ImageViewTab tab) {
@@ -119,37 +125,5 @@ void TabbedImageView::setFocus(QScrollBar& horBar, QScrollBar& verBar, const QRe
 
   horBar.setValue(horValue);
   verBar.setValue(verValue);
-}
-
-void TabbedImageView::keyReleaseEvent(QKeyEvent* event) {
-  event->setAccepted(false);
-  if (event->modifiers() != Qt::ControlModifier) {
-    return;
-  }
-
-  switch (event->key()) {
-    case Qt::Key_1:
-      setCurrentIndex(0);
-      event->accept();
-      break;
-    case Qt::Key_2:
-      setCurrentIndex(1);
-      event->accept();
-      break;
-    case Qt::Key_3:
-      setCurrentIndex(2);
-      event->accept();
-      break;
-    case Qt::Key_4:
-      setCurrentIndex(3);
-      event->accept();
-      break;
-    case Qt::Key_5:
-      setCurrentIndex(4);
-      event->accept();
-      break;
-    default:
-      break;
-  }
 }
 }  // namespace output

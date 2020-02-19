@@ -12,6 +12,7 @@
 #include "InteractionState.h"
 
 class ImageViewBase;
+class QShortcut;
 
 class ZoomHandler : public InteractionHandler {
   Q_DECLARE_TR_FUNCTIONS(ZoomHandler)
@@ -23,20 +24,27 @@ class ZoomHandler : public InteractionHandler {
   ZoomHandler(ImageViewBase& imageView,
               const boost::function<bool(const InteractionState&)>& explicitInteractionPermitter);
 
+  ~ZoomHandler() override;
+
   Focus focus() const { return m_focus; }
 
   void setFocus(Focus focus) { m_focus = focus; }
 
  protected:
+  void onMouseMoveEvent(QMouseEvent* event, InteractionState& interaction) override;
+
   void onWheelEvent(QWheelEvent* event, InteractionState& interaction) override;
 
-  void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
-
  private:
+  void zoom(double factor);
+
   ImageViewBase& m_imageView;
   boost::function<bool(const InteractionState&)> m_interactionPermitter;
   InteractionState::Captor m_interaction;
   Focus m_focus;
+  QPointF m_virtualMousePos;
+  std::unique_ptr<QShortcut> m_magnifyShortcut;
+  std::unique_ptr<QShortcut> m_diminishShortcut;
 };
 
 

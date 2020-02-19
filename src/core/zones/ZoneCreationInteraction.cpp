@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QtWidgets/QShortcut>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 
@@ -36,6 +37,10 @@ ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context
   m_spline->appendVertex(m_nextVertexImagePos);
 
   updateStatusTip();
+
+  m_cancelShortcut = std::make_unique<QShortcut>(Qt::Key_Escape, &m_context.imageView());
+  QObject::connect(m_cancelShortcut.get(), &QShortcut::activated, &m_context.imageView(),
+                   std::bind(&ZoneCreationInteraction::cancel, this));
 }
 
 void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState& interaction) {
@@ -141,13 +146,10 @@ void ZoneCreationInteraction::onPaint(QPainter& painter, const InteractionState&
   m_visualizer.drawVertex(painter, toScreen.map(m_nextVertexImagePos), m_visualizer.highlightBrightColor());
 }  // ZoneCreationInteraction::onPaint
 
-void ZoneCreationInteraction::onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) {
-  if (event->key() == Qt::Key_Escape) {
-    makePeerPreceeder(*m_context.createDefaultInteraction());
-    m_context.imageView().update();
-    delete this;
-    event->accept();
-  }
+void ZoneCreationInteraction::cancel() {
+  makePeerPreceeder(*m_context.createDefaultInteraction());
+  m_context.imageView().update();
+  delete this;
 }
 
 void ZoneCreationInteraction::onMousePressEvent(QMouseEvent* event, InteractionState& interaction) {

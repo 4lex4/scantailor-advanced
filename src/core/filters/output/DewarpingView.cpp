@@ -3,13 +3,12 @@
 
 #include "DewarpingView.h"
 
-#include <Constants.h>
 #include <CylindricalSurfaceDewarper.h>
 
 #include <QDebug>
 #include <QPainter>
+#include <QtWidgets/QShortcut>
 #include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 
 #include "ImagePresentation.h"
 #include "ToLineProjector.h"
@@ -34,6 +33,8 @@ DewarpingView::DewarpingView(const QImage& image,
       m_dewarpingOptions(dewarpingOptions),
       m_distortionModel(distortionModel),
       m_depthPerception(depthPerception),
+      m_topSpline(*this),
+      m_bottomSpline(*this),
       m_dragHandler(*this),
       m_zoomHandler(*this) {
   setMouseTracking(true);
@@ -89,6 +90,12 @@ DewarpingView::DewarpingView(const QImage& image,
   rootInteractionHandler().makeLastFollower(*this);
   rootInteractionHandler().makeLastFollower(m_dragHandler);
   rootInteractionHandler().makeLastFollower(m_zoomHandler);
+
+  m_removeControlPointShortcut = new QShortcut(Qt::Key_D, this);
+  QObject::connect(m_removeControlPointShortcut, &QShortcut::activated, [this]() {
+    m_topSpline.removeControlPointUnderMouse();
+    m_bottomSpline.removeControlPointUnderMouse();
+  });
 }
 
 DewarpingView::~DewarpingView() = default;

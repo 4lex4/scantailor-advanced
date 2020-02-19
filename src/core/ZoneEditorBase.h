@@ -9,6 +9,8 @@
 
 #include "ImageViewBase.h"
 
+class QShortcut;
+
 class ZoneEditorBase : public ImageViewBase, protected InteractionHandler {
  public:
   ZoneEditorBase(const QImage& image,
@@ -27,8 +29,6 @@ class ZoneEditorBase : public ImageViewBase, protected InteractionHandler {
   const ZoneInteractionContext& context() const { return m_context; }
 
  protected:
-  void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
-
   void showEvent(QShowEvent* event) override;
 
   void hideEvent(QHideEvent* event) override;
@@ -39,6 +39,9 @@ class ZoneEditorBase : public ImageViewBase, protected InteractionHandler {
   EditableZoneSet m_zones;
   ZoneInteractionContext m_context;
   std::unique_ptr<ZoneModeProvider> m_zoneModeProvider;
+  QShortcut* m_shortcutPolygonal;
+  QShortcut* m_shortcutLasso;
+  QShortcut* m_shortcutRectangular;
 };
 
 

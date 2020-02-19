@@ -18,6 +18,7 @@
 #include "ZoomHandler.h"
 
 class ZoneInteractionContext;
+class QShortcut;
 
 class ZoneCreationInteraction : public InteractionHandler {
   Q_DECLARE_TR_FUNCTIONS(ZoneCreationInteraction)
@@ -28,8 +29,6 @@ class ZoneCreationInteraction : public InteractionHandler {
   ZoneInteractionContext& context() { return m_context; }
 
   void onPaint(QPainter& painter, const InteractionState& interaction) override;
-
-  void onKeyPressEvent(QKeyEvent* event, InteractionState& interaction) override;
 
   void onMousePressEvent(QMouseEvent* event, InteractionState& interaction) override;
 
@@ -43,6 +42,8 @@ class ZoneCreationInteraction : public InteractionHandler {
   bool isDragHandlerPermitted(const InteractionState& interaction) const;
 
   ZoneCreationMode currentZoneCreationMode() const;
+
+  void cancel();
 
   ZoneInteractionContext& m_context;
 
@@ -76,6 +77,7 @@ class ZoneCreationInteraction : public InteractionHandler {
   ZoneCreationMode m_initialZoneCreationMode;
   bool m_leftMouseButtonPressed;
   Qt::KeyboardModifiers m_mouseButtonModifiers;
+  std::unique_ptr<QShortcut> m_cancelShortcut;
 };
 
 

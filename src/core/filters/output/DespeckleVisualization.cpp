@@ -43,7 +43,7 @@ void DespeckleVisualization::colorizeSpeckles(QImage& image, const imageproc::Bi
 
   const float radius = static_cast<float>(45.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600);
   const float sqRadius = radius * radius;
-  
+
   for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
       const uint32_t sqDist = sedmLine[x];

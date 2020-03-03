@@ -41,7 +41,7 @@ void DespeckleVisualization::colorizeSpeckles(QImage& image, const imageproc::Bi
   const uint32_t* sedmLine = sedm.data();
   const int sedmStride = sedm.stride();
 
-  const float radius = static_cast<float>(30.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600);
+  const float radius = static_cast<float>(45.0 * std::max(dpi.horizontal(), dpi.vertical()) / 600);
   const float sqRadius = radius * radius;
 
   for (int y = 0; y < h; ++y) {
@@ -56,7 +56,7 @@ void DespeckleVisualization::colorizeSpeckles(QImage& image, const imageproc::Bi
         continue;
       }
 
-      const float alphaUpperBound = 0.6f;
+      const float alphaUpperBound = 0.7f;
       const float scale = alphaUpperBound / sqRadius;
       const float alpha = alphaUpperBound - scale * sqDist;
       if (alpha > 0) {

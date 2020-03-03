@@ -27,6 +27,29 @@ DespeckleVisualization::DespeckleVisualization(const QImage& output,
   if (!speckles.isNull()) {
     colorizeSpeckles(m_image, speckles, dpi);
   }
+  else {
+    const int w = m_image.width();
+    const int h = m_image.height();
+    auto* imageLine = (uint32_t*) m_image.bits();
+    const int imageStride = m_image.bytesPerLine() / 4;
+    const float overlayAlpha = 0.4;
+    
+    if (overlayAlpha > 0) {
+      const float imageAlpha = 1.0f - overlayAlpha;
+      const float overlayR = 255;
+      const float overlayG = 0;
+      const float overlayB = 0;
+      for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+          const float r = overlayR * overlayAlpha + qRed(imageLine[x]) * imageAlpha;
+          const float g = overlayG * overlayAlpha + qGreen(imageLine[x]) * imageAlpha;
+          const float b = overlayB * overlayAlpha + qBlue(imageLine[x]) * imageAlpha;
+          imageLine[x] = qRgb(int(r), int(g), int(b));
+        }
+        imageLine += imageStride;
+      }
+    }
+  }
 
   m_downscaledImage = ImageViewBase::createDownscaledImage(m_image);
 }

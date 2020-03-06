@@ -39,6 +39,7 @@ ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context
   updateStatusTip();
 
   m_cancelShortcut = std::make_unique<QShortcut>(Qt::Key_Escape, &m_context.imageView());
+  m_cancelShortcut->setAutoRepeat(false);
   QObject::connect(m_cancelShortcut.get(), &QShortcut::activated, &m_context.imageView(),
                    std::bind(&ZoneCreationInteraction::cancel, this));
 }

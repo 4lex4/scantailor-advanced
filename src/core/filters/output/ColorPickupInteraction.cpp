@@ -17,6 +17,8 @@ ColorPickupInteraction::ColorPickupInteraction(EditableZoneSet& zones, ZoneInter
   m_interaction.setInteractionStatusTip(tr("Click on an area to pick up its color, or ESC to cancel."));
 
   m_cancelShortcut = std::make_unique<QShortcut>(Qt::Key_Escape, &m_context.imageView());
+  m_cancelShortcut->setAutoRepeat(false);
+  m_cancelShortcut->setEnabled(false);
   QObject::connect(m_cancelShortcut.get(), &QShortcut::activated, &m_context.imageView(),
                    std::bind(&ColorPickupInteraction::switchToDefaultInteraction, this));
 }
@@ -27,6 +29,7 @@ void ColorPickupInteraction::startInteraction(const EditableZoneSet::Zone& zone,
   using FCP = FillColorProperty;
   m_fillColorProp = zone.properties()->locateOrCreate<FCP>();
   interaction.capture(m_interaction);
+  m_cancelShortcut->setEnabled(true);
 }
 
 bool ColorPickupInteraction::isActive(const InteractionState& interaction) const {
@@ -123,6 +126,7 @@ QRect ColorPickupInteraction::targetBoundingRect() const {
 void ColorPickupInteraction::switchToDefaultInteraction() {
   m_fillColorProp.reset();
   m_interaction.release();
+  m_cancelShortcut->setEnabled(false);
   makePeerPreceeder(*m_context.createDefaultInteraction());
   unlink();
   m_context.imageView().update();

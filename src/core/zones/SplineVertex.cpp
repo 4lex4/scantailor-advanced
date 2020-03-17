@@ -4,6 +4,7 @@
 #include "SplineVertex.h"
 
 #include <cassert>
+#include <stdexcept>
 
 
 /*============================= SplineVertex ============================*/

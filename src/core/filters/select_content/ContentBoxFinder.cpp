@@ -22,6 +22,7 @@
 
 #include <QDebug>
 #include <QPainter>
+#include <QPainterPath>
 #include <cmath>
 #include <queue>
 

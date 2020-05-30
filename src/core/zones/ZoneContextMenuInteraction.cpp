@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPainter>
+#include <QPainterPath>
 #include <boost/bind.hpp>
 
 #include "ImageViewBase.h"

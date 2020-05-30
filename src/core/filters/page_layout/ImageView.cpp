@@ -11,6 +11,7 @@
 
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <boost/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 

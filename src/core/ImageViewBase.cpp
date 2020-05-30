@@ -10,6 +10,8 @@
 #include <QGLWidget>
 #include <QMouseEvent>
 #include <QPaintEngine>
+#include <QPainter>
+#include <QPainterPath>
 #include <QPointer>
 #include <QScrollBar>
 #include <QtWidgets/QMainWindow>

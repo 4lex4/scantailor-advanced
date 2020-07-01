@@ -326,7 +326,7 @@ if (WIN32)
   # Install the DLLs of the dependencies.
   set(dep_libs
       JPEG::JPEG PNG::PNG ZLIB::ZLIB TIFF::TIFF
-      Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml 
+      Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml
       Qt5::Network Qt5::OpenGL Qt5::Svg)
 
   foreach (_target ${dep_libs})
@@ -356,12 +356,12 @@ if (WIN32)
         set_if_undefined(debug_loc "${release_loc}")
 
         copy_to_build_dir("${release_loc}" SUBDIR ${SubDir} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-        install(PROGRAMS "${release_loc}" 
-            CONFIGURATIONS Release MinSizeRel RelWithDebInfo 
+        install(PROGRAMS "${release_loc}"
+            CONFIGURATIONS Release MinSizeRel RelWithDebInfo
             DESTINATION "${CMAKE_INSTALL_BINDIR}/${SubDir}")
         copy_to_build_dir("${debug_loc}" SUBDIR ${SubDir} CONFIGURATIONS Debug)
-        install(PROGRAMS "${debug_loc}" 
-            CONFIGURATIONS Debug 
+        install(PROGRAMS "${debug_loc}"
+            CONFIGURATIONS Debug
             DESTINATION "${CMAKE_INSTALL_BINDIR}/${SubDir}")
       endif()
     endif()
@@ -373,7 +373,7 @@ if (WIN32)
   install_qt_plugin("accessible"  Qt5::QAccessiblePlugin)
   install_qt_plugin("iconengines" Qt5::QSvgIconPlugin)
   install_qt_plugin("imageformats" Qt5::QSvgPlugin)
-  
+
   # Install MinGW runtime components.
   if (MINGW)
     get_filename_component(_mingw_path ${CMAKE_CXX_COMPILER} PATH)
@@ -431,6 +431,9 @@ if (WIN32)
       "CreateShortCut \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\" \\\"$INSTDIR\\\\scantailor.exe\\\"")
   set(CPACK_NSIS_DELETE_ICONS_EXTRA
       "Delete \\\"$DESKTOP\\\\${CMAKE_PROJECT_NAME}.lnk\\\"")
+endif()
+if (UNIX)
+  set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 endif()
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${APPLICATION_NAME}-${VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES

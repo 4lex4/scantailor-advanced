@@ -6,6 +6,7 @@
 #include <PolygonUtils.h>
 
 #include <QPainter>
+#include <QPainterPath>
 #include <utility>
 
 #include "Utils.h"

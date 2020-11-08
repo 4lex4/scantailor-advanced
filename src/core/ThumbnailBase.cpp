@@ -7,6 +7,7 @@
 
 #include <QApplication>
 #include <QPainter>
+#include <QPainterPath>
 #include <QPixmapCache>
 #include <QStyleOptionGraphicsItem>
 #include <cmath>

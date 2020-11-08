@@ -5,6 +5,7 @@
 
 #include <QDebug>
 #include <QPainter>
+#include <QPainterPath>
 #include <utility>
 
 QPainterPath IncompleteThumbnail::m_sCachedPath;

@@ -11,6 +11,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
+#include <QPainterPath>
 #include <QStyleOptionGraphicsItem>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QMessageBox>

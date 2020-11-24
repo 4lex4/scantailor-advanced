@@ -16,7 +16,7 @@
     <message>
         <location filename="../app/AboutDialog.ui" line="110"/>
         <source>Authors</source>
-        <translation>Autoren</translation>
+        <translation>Urheber</translation>
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="141"/>
@@ -76,7 +76,7 @@
     <message>
         <location filename="../app/AboutDialog.ui" line="27"/>
         <source>About</source>
-        <translation type="unfinished">Informationen</translation>
+        <translation>Informationen</translation>
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="151"/>
@@ -1778,7 +1778,7 @@ Sie sollten von dem Projekt entfernt werden.</translation>
     <message>
         <location filename="../app/SettingsDialog.cpp" line="25"/>
         <source>Your hardware / driver don&apos;t provide the necessary features</source>
-        <translation type="unfinished"></translation>
+        <translation>Hardware / Treiber unterstützen diese Funktion nicht</translation>
     </message>
     <message>
         <location filename="../app/SettingsDialog.cpp" line="38"/>

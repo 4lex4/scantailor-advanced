@@ -11,7 +11,7 @@
         Partly inspired by an older translation (for Scan Tailor Experimental) which was created by Stefan Birkner and Markus Stamm
         License: CC-BY-SA-4.0  https://creativecommons.org/licenses/by-sa/4.0/
         </extracomment>
-        <translation>ScanTailor Advanced ist ein interaktives Werkzeug zum Nachbearbeiten gescannter Dokumente, das auf die Korrektur der Bildgeometrie spezialisiert ist. Es richtet Scans aus, trennt sie in einzelne Seiten, korrigiert Drehung und Wölbung, schneidet auf den Inhalt zu, erstellt Ränder und einiges mehr. Unverarbeitete Dokumente werden lesbarer und ansehnlicher gemacht. ScanTailor liefert Ergebnisse, die zum Einbinden in fertige PDF- oder DJVU-Dateien und zum Druck geeignet sind. Texterkennung und der Scanvorgang selbst sind nicht Teil des Funktionsumfangs von diesem Programms.</translation>
+        <translation>ScanTailor Advanced ist ein interaktives Werkzeug zum Nachbearbeiten gescannter Dokumente, das auf die Korrektur der Bildgeometrie spezialisiert ist. Es richtet Scans aus, trennt sie in einzelne Seiten, korrigiert Drehung und Wölbung, schneidet auf den Inhalt zu, erstellt Ränder und einiges mehr. Unverarbeitete Dokumente werden lesbarer und ansehnlicher gemacht. ScanTailor liefert Ergebnisse, die zum Einbinden in fertige PDF- oder DJVU-Dateien und zum Druck geeignet sind. Texterkennung und der Scanvorgang selbst sind nicht Teil des Funktionsumfangs von diesem Programm.</translation>
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="110"/>

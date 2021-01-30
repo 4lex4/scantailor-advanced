@@ -6,12 +6,7 @@
     <message>
         <location filename="../app/AboutDialog.ui" line="33"/>
         <source>Scan Tailor is an interactive post-processing tool for scanned pages. It performs operations such as page splitting, skew correction, adding/removing margins, and others. You give it raw scans, and you get pages ready to be printed or assembled into a PDF or DJVU file.  Scanning and optical character recognition is out of scope of this project.</source>
-        <extracomment>
-        Author: 2020  Manuel Geisser et al.  geisserml@gmail.com
-        Partly inspired by an older translation (for Scan Tailor Experimental) which was created by Stefan Birkner and Markus Stamm
-        License: CC-BY-SA-4.0  https://creativecommons.org/licenses/by-sa/4.0/
-        </extracomment>
-        <translation>ScanTailor Advanced ist ein interaktives Werkzeug zum Nachbearbeiten gescannter Dokumente, das auf die Korrektur der Bildgeometrie spezialisiert ist. Es richtet Scans aus, trennt sie in einzelne Seiten, korrigiert Drehung und Wölbung, schneidet auf den Inhalt zu, erstellt Ränder und einiges mehr. Unverarbeitete Dokumente werden lesbarer und ansehnlicher gemacht. ScanTailor liefert Ergebnisse, die zum Einbinden in fertige PDF- oder DJVU-Dateien und zum Druck geeignet sind. Texterkennung und der Scanvorgang selbst sind nicht Teil des Funktionsumfangs von diesem Programm.</translation>
+        <translation>ScanTailor Advanced ist ein interaktives Werkzeug zum Nachbearbeiten gescannter Dokumente, das auf die Korrektur der Bildgeometrie spezialisiert ist. Es richtet Scans aus, trennt sie in einzelne Seiten, korrigiert Drehung und Wölbung, schneidet auf den Inhalt zu, erstellt Ränder und einiges mehr. Unverarbeitete Dokumente werden lesbarer und ansehnlicher gemacht. ScanTailor liefert Ergebnisse, die zum Einbinden in fertige PDF- oder DJVU-Dateien und zum Druck geeignet sind. Texterkennung und der Scanvorgang selbst sind nicht Teil von diesem Projekt.</translation>
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="110"/>
@@ -41,7 +36,7 @@
     <message>
         <location filename="../app/AboutDialog.ui" line="197"/>
         <source>Andrey Bergman - System load adjustment.</source>
-        <translation>Andrey Bergman - Anpassung des Leistungsbedarfs</translation>
+        <translation>Andrey Bergman - Anpassbarkeit des Leistungsbedarfs</translation>
     </message>
     <message>
         <location filename="../app/AboutDialog.ui" line="211"/>
@@ -989,7 +984,7 @@
     <message>
         <location filename="../app/MainWindow.ui" line="1087"/>
         <source>New Project ...</source>
-        <translation>Neues Projekt</translation>
+        <translation>Projekt erstellen ...</translation>
     </message>
     <message>
         <location filename="../app/MainWindow.ui" line="1098"/>
@@ -1271,7 +1266,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <message>
         <location filename="../app/NewOpenProjectPanel.ui" line="67"/>
         <source>New Project ...</source>
-        <translation>Neues Projekt ...</translation>
+        <translation>Projekt erstellen ...</translation>
     </message>
     <message>
         <location filename="../app/NewOpenProjectPanel.ui" line="98"/>

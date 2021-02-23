@@ -330,12 +330,12 @@
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="1971"/>
         <source>Normalize illumination before binarization.</source>
-        <translation>Belichtung normalisieren (Schwarz&amp;&amp;Weiß-Modus).</translation>
+        <translation>Belichtung normalisieren (Schwarz/Weiß-Modus).</translation>
     </message>
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="1974"/>
         <source>Equalize illumination (B&amp;&amp;W)</source>
-        <translation>Belichtung ausgleichen (S&amp;&amp;W)</translation>
+        <translation>Belichtung ausgleichen (S/W)</translation>
     </message>
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="1981"/>
@@ -450,7 +450,7 @@
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="2532"/>
         <source>Force b&amp;&amp;w</source>
-        <translation>S&amp;&amp;W erzwingen</translation>
+        <translation>S/W erzwingen</translation>
     </message>
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="2595"/>
@@ -562,7 +562,7 @@
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="3363"/>
         <source>B&amp;&amp;W foreground</source>
-        <translation>S&amp;&amp;W-Vordergrund</translation>
+        <translation>S/W-Vordergrund</translation>
     </message>
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="3391"/>
@@ -1069,22 +1069,22 @@
     <message>
         <location filename="../app/MainWindow.ui" line="1303"/>
         <source>Pixels</source>
-        <translation>Pixel</translation>
+        <translation>&amp;Pixel</translation>
     </message>
     <message>
         <location filename="../app/MainWindow.ui" line="1320"/>
         <source>Millimetres</source>
-        <translation>Millimeter</translation>
+        <translation>&amp;Millimeter</translation>
     </message>
     <message>
         <location filename="../app/MainWindow.ui" line="1334"/>
         <source>Inches</source>
-        <translation>Inches</translation>
+        <translation>&amp;Inches</translation>
     </message>
     <message>
         <location filename="../app/MainWindow.ui" line="1348"/>
         <source>Centimetres</source>
-        <translation>Zentimeter</translation>
+        <translation>&amp;Zentimeter</translation>
     </message>
     <message>
         <location filename="../app/MainWindow.ui" line="1359"/>
@@ -1904,7 +1904,7 @@ Sie sollten von dem Projekt entfernt werden.</translation>
     <message>
         <location filename="../app/StatusBarPanel.ui" line="146"/>
         <source>Position of the selected page in current order.</source>
-        <translation>Position der ausgewählten Seite in der derzeitigen Reihenfolge.</translation>
+        <translation>Position der ausgewählten Seite in der aktuellen Reihenfolge.</translation>
     </message>
     <message>
         <location filename="../app/StatusBarPanel.ui" line="181"/>
@@ -1914,7 +1914,7 @@ Sie sollten von dem Projekt entfernt werden.</translation>
     <message>
         <location filename="../app/StatusBarPanel.ui" line="184"/>
         <source>Page name and type.</source>
-        <translation>Name und Dateityp der Seite.</translation>
+        <translation>Name und ggf. Art der Seite (Links/Rechts).</translation>
     </message>
     <message>
         <location filename="../app/StatusBarPanel.cpp" line="40"/>
@@ -2614,12 +2614,12 @@ Sie sollten von dem Projekt entfernt werden.</translation>
     <message>
         <location filename="../core/filters/output/OptionsWidget.ui" line="237"/>
         <source>Normalize illumination before binarization.</source>
-        <translation>Belichtung normalisieren (Schwarz&amp;&amp;Weiß-Modus).</translation>
+        <translation>Belichtung normalisieren (Schwarz/Weiß-Modus).</translation>
     </message>
     <message>
         <location filename="../core/filters/output/OptionsWidget.ui" line="240"/>
         <source>Equalize illumination (B&amp;&amp;W)</source>
-        <translation>Belichtung ausgleichen (S&amp;&amp;W)</translation>
+        <translation>Belichtung ausgleichen (S/W)</translation>
     </message>
     <message>
         <location filename="../core/filters/output/OptionsWidget.ui" line="247"/>
@@ -2744,7 +2744,7 @@ Sie sollten von dem Projekt entfernt werden.</translation>
     <message>
         <location filename="../core/filters/output/OptionsWidget.ui" line="862"/>
         <source>Force b&amp;&amp;w</source>
-        <translation>S&amp;&amp;W erzwingen</translation>
+        <translation>S/W erzwingen</translation>
     </message>
     <message>
         <location filename="../core/filters/output/OptionsWidget.ui" line="905"/>
@@ -2783,7 +2783,7 @@ Sie sollten von dem Projekt entfernt werden.</translation>
     <message>
         <location filename="../core/filters/output/OptionsWidget.ui" line="1127"/>
         <source>B&amp;&amp;W foreground</source>
-        <translation>S&amp;&amp;W-Vordergrund</translation>
+        <translation>S/W-Vordergrund</translation>
     </message>
     <message>
         <location filename="../core/filters/output/OptionsWidget.ui" line="1152"/>

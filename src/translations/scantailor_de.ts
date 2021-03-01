@@ -994,7 +994,7 @@
     <message>
         <location filename="../app/MainWindow.ui" line="1131"/>
         <source>Close Project</source>
-        <translation>Projekt &amp;schließen</translation>
+        <translation>Projekt schließe&amp;n</translation>
     </message>
     <message>
         <location filename="../app/MainWindow.ui" line="1142"/>

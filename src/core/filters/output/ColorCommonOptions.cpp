@@ -37,10 +37,13 @@ bool ColorCommonOptions::operator!=(const ColorCommonOptions& other) const {
 }
 
 FillingColor ColorCommonOptions::parseFillingColor(const QString& str) {
-  if (str == "white") {
-    return FILL_WHITE;
-  } else {
-    return FILL_BACKGROUND;
+  switch(str) {
+	case "white":
+      return FILL_WHITE;
+    case "black":
+      return FILL_BLACK;
+    default:
+      return FILL_BACKGROUND;
   }
 }
 
@@ -49,6 +52,9 @@ QString ColorCommonOptions::formatFillingColor(FillingColor type) {
   switch (type) {
     case FILL_WHITE:
       str = "white";
+      break;
+    case FILL_BLACK:
+      str = "black";
       break;
     case FILL_BACKGROUND:
       str = "background";

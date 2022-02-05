@@ -43,6 +43,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
 
   fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
   fillingColorBox->addItem(tr("White"), FILL_WHITE);
+  fillingColorBox->addItem(tr("Black"), FILL_BLACK);
 
   thresholdMethodBox->addItem(tr("Otsu"), OTSU);
   thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);

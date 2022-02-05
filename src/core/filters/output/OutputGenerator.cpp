@@ -1427,10 +1427,19 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
   }
 
   if (m_renderParams.needBinarization() && !m_renderParams.originalBackground()) {
-    m_outsideBackgroundColor = Qt::white;
+    switch(m_colorParams.colorCommonOptions().getFillingColor()) {
+      case FILL_BLACK:
+        m_outsideBackgroundColor = Qt::black;
+        break;
+      default:
+        m_outsideBackgroundColor = Qt::white;
+    }
   } else if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_WHITE) {
     m_outsideBackgroundColor = m_blackOnWhite ? Qt::white : Qt::black;
+  } else if (m_colorParams.colorCommonOptions().getFillingColor() == FILL_BLACK) {
+    m_outsideBackgroundColor = m_blackOnWhite ? Qt::black : Qt::white;
   }
+
   fillMarginsInPlace(maybeNormalized, m_contentAreaInWorkingCs, m_outsideBackgroundColor);
   dst.fill(m_outsideBackgroundColor);
 

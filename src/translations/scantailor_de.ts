@@ -1581,12 +1581,12 @@ Sie sollten sie aus dem Projekt entfernen.</translation>
     <message>
         <location filename="../app/SettingsDialog.ui" line="53"/>
         <source>Auto-save the existing project</source>
-        <translation>Automatisches Speichern des bestehenden Projekts</translation>
+        <translation>Automatisches Speichern des offenen Projekts</translation>
     </message>
     <message>
         <location filename="../app/SettingsDialog.ui" line="283"/>
         <source>Processing</source>
-        <translation>Verarbeite</translation>
+        <translation>Verarbeitung</translation>
     </message>
     <message>
         <location filename="../app/SettingsDialog.ui" line="318"/>
@@ -1713,7 +1713,7 @@ Sie sollten sie aus dem Projekt entfernen.</translation>
     <message>
         <location filename="../app/SettingsDialog.ui" line="120"/>
         <source>Thumbnails</source>
-        <translation>Vorschaubilder</translation>
+        <translation>Miniaturansichten</translation>
     </message>
     <message>
         <location filename="../app/SettingsDialog.ui" line="130"/>
@@ -1723,7 +1723,7 @@ Sie sollten sie aus dem Projekt entfernen.</translation>
     <message>
         <location filename="../app/SettingsDialog.ui" line="137"/>
         <source>The pixel size of the thumbnail image. The default value is 200.</source>
-        <translation>Die Pixelgröße des Vorschaubildes. Der Standardwert ist 200.</translation>
+        <translation>Die Pixelgröße der Miniaturansicht. Der Standardwert ist 200.</translation>
     </message>
     <message>
         <location filename="../app/SettingsDialog.ui" line="173"/>
@@ -1733,7 +1733,7 @@ Sie sollten sie aus dem Projekt entfernen.</translation>
     <message>
         <location filename="../app/SettingsDialog.ui" line="180"/>
         <source>The thumbnail size in the view. The default value is 250.</source>
-        <translation>Die Größe der Vorschaubilder in der Ansicht. Der Standardwert ist 250.</translation>
+        <translation>Größe der Miniaturansichten. Der Standardwert ist 250.</translation>
     </message>
     <message>
         <location filename="../app/SettingsDialog.ui" line="289"/>
@@ -1768,7 +1768,7 @@ Sie sollten sie aus dem Projekt entfernen.</translation>
     <message>
         <location filename="../app/SettingsDialog.ui" line="213"/>
         <source>Single column thumbnail display</source>
-        <translation>Einspaltige Ansicht der Vorschaubilder</translation>
+        <translation>Einspaltige Darstellung der Miniaturansichten</translation>
     </message>
     <message>
         <location filename="../app/SettingsDialog.ui" line="339"/>

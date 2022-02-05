@@ -56,6 +56,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
   dpiSelector->addItem("300", "300");
   dpiSelector->addItem("400", "400");
   dpiSelector->addItem("600", "600");
+  dpiSelector->addItem("1200", "1200");
   m_customDpiItemIdx = dpiSelector->count();
   m_customDpiValue = "200";
   dpiSelector->addItem(tr("Custom"), m_customDpiValue);

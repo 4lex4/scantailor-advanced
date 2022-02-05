@@ -6,6 +6,7 @@ brings new ones and fixes.
 
 
 #### <u>Contents</u>:
+* [About this fork](#about-this-fork)
 * [Description](#description)
 * [Features](#features)
   * [**ScanTailor Enhanced**](#scantailor-enhanced)
@@ -45,6 +46,21 @@ brings new ones and fixes.
     * [Black on white detection](#black-on-white-detection)
     * [Guides](#guides)
 * [Building](#building)
+
+About this fork
+------------
+
+Unfortunately, the [repository](https://github.com/4lex4/scantailor-advanced/releases) of @4lex4 seems to be no longer active.
+
+For this reason I have created this fork. It contains:
+- German translation
+- Polish translation (PR in the original repository, credit goes to @ukolaj-s)
+- French translation (PR in the original repository, credit goes to @maltaisn)
+- Korean translation (PR in the original repository, credit goes to @brendan-t)
+- Beside 'background' and white you can now choose black as filling color
+- 1200 DPI output option
+
+PRs are highly welcome ;-)
 
 Description
 ------------

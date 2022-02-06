@@ -5,7 +5,7 @@
     <name>AboutDialog</name>
     <message>
         <source>ScanTailor Advanced</source>
-		<translatorcomment>프로그램 제목이므로 번역 안함.</translatorcomment>
+        <translatorcomment>프로그램 제목이므로 번역 안함.</translatorcomment>
         <translation>ScanTailor Advanced</translation>
     </message>
     <message>
@@ -42,7 +42,7 @@
     </message>
     <message>
         <source>Petr Kovář - Command line interface, ver. Enhanced</source>
-        <translation>Petr Kovář - 커맨드 라인 인터페이스(Enhanced 버전 제작)</translation>
+        <translation type="vanished">Petr Kovář - 커맨드 라인 인터페이스(Enhanced 버전 제작)</translation>
     </message>
     <message>
         <source>Vadim Kuznetsov - ver. Plus</source>
@@ -71,6 +71,10 @@
     <message>
         <source>4lex4</source>
         <translation>4lex4</translation>
+    </message>
+    <message>
+        <source>Petr Kovář - ver. Enhanced</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -230,15 +234,15 @@
     </message>
     <message>
         <source>Auto aligning</source>
-        <translation>자동 위치 조정</translation>
+        <translation type="vanished">자동 위치 조정</translation>
     </message>
     <message>
         <source>Enable horizontal</source>
-        <translation>수평 위치 조정</translation>
+        <translation type="vanished">수평 위치 조정</translation>
     </message>
     <message>
         <source>Enable vertical</source>
-        <translation>수직 위치 조정</translation>
+        <translation type="vanished">수직 위치 조정</translation>
     </message>
     <message>
         <source>Match size with other pages</source>
@@ -558,79 +562,91 @@
     </message>
     <message>
         <source>Mode:</source>
-        <translation>모드:</translation>
+        <translation type="vanished">모드:</translation>
     </message>
     <message>
         <source>The profile file is not compatible with the current application version. Remove?</source>
         <translation>이 프로필은 현재 프로그램에 호환되지 않습니다. 삭제 하시겠습니까?</translation>
+    </message>
+    <message>
+        <source>Horizontal mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vertical mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Black</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>DeskewApplyDialog</name>
     <message>
         <source>Apply to</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation>이 페이지만 (이미 적용되어 있음)</translation>
+        <translation type="vanished">이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation>모든 페이지</translation>
+        <translation type="vanished">모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
+        <translation type="vanished">이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation>모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation>선택된 페이지</translation>
+        <translation type="vanished">선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation type="vanished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation>선택된 모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation>현재 페이지도 포함됩니다.</translation>
+        <translation type="vanished">현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
     <name>DeskewOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>Deskew</source>
-        <translation>기울기 보정</translation>
+        <translation type="vanished">기울기 보정</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation>자동</translation>
+        <translation type="vanished">자동</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation>수동</translation>
+        <translation type="vanished">수동</translation>
     </message>
     <message>
         <source>Apply To ...</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
 </context>
 <context>
@@ -721,7 +737,11 @@
     </message>
     <message>
         <source>Drag this point or delete it by pressing Del or D.</source>
-        <translation>이 점을 드래그하거나 Del 또는 D를 눌러 삭제하세요.</translation>
+        <translation type="vanished">이 점을 드래그하거나 Del 또는 D를 눌러 삭제하세요.</translation>
+    </message>
+    <message>
+        <source>Drag this point or delete it by pressing D key.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -784,7 +804,7 @@
     </message>
     <message>
         <source>Follow page</source>
-        <translation>다음 페이지</translation>
+        <translation type="vanished">다음 페이지</translation>
     </message>
     <message>
         <source>Filters</source>
@@ -998,7 +1018,59 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <source>Filter selected pages only.</source>
-        <translation>선택된 페이지만 필터링하기</translation>
+        <translation type="vanished">선택된 페이지만 필터링하기</translation>
+    </message>
+    <message>
+        <source>Navigate through selected pages only.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magnify thumbnails.  (Ctrl++)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diminish thumbnails.  (Ctrl+-)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Go To Page...  (Ctrl+G)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable multi page selection mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Single/multi column display.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sorting order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Highlight deviation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Go To Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magnify thumbnails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Diminish thumbnails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reload current page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter the page number:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1024,91 +1096,91 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <name>OrientationApplyDialog</name>
     <message>
         <source>Fix Orientation</source>
-        <translation>방향 수정</translation>
+        <translation type="vanished">방향 수정</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation>이 페이지만 (이미 적용되어 있음)</translation>
+        <translation type="vanished">이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation>모든 페이지</translation>
+        <translation type="vanished">모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
+        <translation type="vanished">이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation>모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation>선택된 페이지</translation>
+        <translation type="vanished">선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation type="vanished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation>선택된 모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation>현재 페이지도 포함됩니다.</translation>
+        <translation type="vanished">현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
     <name>OrientationOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>Rotate</source>
-        <translation>회전</translation>
+        <translation type="vanished">회전</translation>
     </message>
     <message>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation>초기화</translation>
+        <translation type="vanished">초기화</translation>
     </message>
     <message>
         <source>Apply to ...</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
 </context>
 <context>
     <name>OtsuBinarizationOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>0</source>
-        <translation>0</translation>
+        <translation type="vanished">0</translation>
     </message>
     <message>
         <source>Thinner</source>
-        <translation>가늘게</translation>
+        <translation type="vanished">가늘게</translation>
     </message>
     <message>
         <source>Thicker</source>
-        <translation>두껍게</translation>
+        <translation type="vanished">두껍게</translation>
     </message>
 </context>
 <context>
@@ -1131,7 +1203,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <source>Sometimes your source images may have wrong DPI embedded into them. Scan Tailor tries to detect those, but it&apos;s not always easy to tell. You may need to check &quot;Fix DPI even if they look normal&quot; when creating a project and look into &quot;All pages&quot; tab in the &quot;Fix DPI&quot; dialog, which is also accessible from the Tools menu.</source>
-        <translation>때때로 원본 이미지가 잘못된 DPI가 포함되어 있을수도 있습니다. Scan Tailor가 이를 감지할려 하지만, 쉬운 일이 아닙니다. 프로젝트를 새로 시작할 때 DPI가 정상적인 것 처럼 보여도 "도구 -> DPI 수정"을 이용해 확인해봐야 합니다.</translation>
+        <translation>때때로 원본 이미지가 잘못된 DPI가 포함되어 있을수도 있습니다. Scan Tailor가 이를 감지할려 하지만, 쉬운 일이 아닙니다. 프로젝트를 새로 시작할 때 DPI가 정상적인 것 처럼 보여도 &quot;도구 -&gt; DPI 수정&quot;을 이용해 확인해봐야 합니다.</translation>
     </message>
     <message>
         <source>Is your output DPI set too high? Usually you don&apos;t need it higher than 600.</source>
@@ -1203,455 +1275,447 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     <name>OutputApplyColorsDialog</name>
     <message>
         <source>Apply Mode</source>
-        <translation>적용 모드</translation>
+        <translation type="vanished">적용 모드</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation>이 페이지만 (이미 적용되어 있음)</translation>
+        <translation type="vanished">이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation>모든 페이지</translation>
+        <translation type="vanished">모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
+        <translation type="vanished">이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation>선택된 페이지</translation>
+        <translation type="vanished">선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation type="vanished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
 </context>
 <context>
     <name>OutputChangeDewarpingDialog</name>
     <message>
         <source>Apply Dewarping Mode</source>
-        <translation>왜곡 보정 모드 적용</translation>
+        <translation type="vanished">왜곡 보정 모드 적용</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation>모드</translation>
+        <translation type="vanished">모드</translation>
     </message>
     <message>
         <source>Off</source>
-        <translation>끄기</translation>
+        <translation type="vanished">끄기</translation>
     </message>
     <message>
         <source>Auto (experimental)</source>
-        <translation>자동 (실험적)</translation>
+        <translation type="vanished">자동 (실험적)</translation>
     </message>
     <message>
         <source>Marginal (experimental)</source>
-        <translation>테두리 (실험적)</translation>
+        <translation type="vanished">테두리 (실험적)</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation>수동</translation>
+        <translation type="vanished">수동</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>옵션</translation>
+        <translation type="vanished">옵션</translation>
     </message>
     <message>
         <source>Post deskew</source>
-        <translation>사전 기울기 보정</translation>
+        <translation type="vanished">사전 기울기 보정</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>This page only</source>
-        <translation>이 페이지만</translation>
+        <translation type="vanished">이 페이지만</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation>모든 페이지</translation>
+        <translation type="vanished">모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
+        <translation type="vanished">이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation>선택된 페이지</translation>
+        <translation type="vanished">선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation type="vanished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
 </context>
 <context>
     <name>OutputChangeDpiDialog</name>
     <message>
         <source>Apply Output Resolution</source>
-        <translation>출력 해상도 적용</translation>
+        <translation type="vanished">출력 해상도 적용</translation>
     </message>
     <message>
         <source>DPI</source>
-        <translation>DPI</translation>
+        <translation type="vanished">DPI</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>This page only</source>
-        <translation>이 페이지만</translation>
+        <translation type="vanished">이 페이지만</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation>모든 페이지</translation>
+        <translation type="vanished">모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
+        <translation type="vanished">이 페이지와 다음 페이지</translation>
     </message>
-     <message>
+    <message>
         <source>Selected pages</source>
-        <translation>선택된 페이지</translation>
+        <translation type="vanished">선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation type="vanished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
 </context>
 <context>
     <name>OutputOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>Output Resolution (DPI)</source>
-        <translation>출력 해상도 (DPI)</translation>
+        <translation type="vanished">출력 해상도 (DPI)</translation>
     </message>
     <message>
         <source>0</source>
-        <translation>0</translation>
+        <translation type="vanished">0</translation>
     </message>
     <message>
         <source>Change ...</source>
-        <translation>변경</translation>
+        <translation type="vanished">변경</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation>모드</translation>
+        <translation type="vanished">모드</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>옵션</translation>
+        <translation type="vanished">옵션</translation>
     </message>
     <message>
         <source>Normalize illumination before binarization.</source>
-        <translation>이진화 이전에 조명을 통일시키세요.</translation>
+        <translation type="vanished">이진화 이전에 조명을 통일시키세요.</translation>
     </message>
     <message>
         <source>Equalize illumination (B&amp;&amp;W)</source>
-        <translation>조명 통일 (흑백)</translation>
+        <translation type="vanished">조명 통일 (흑백)</translation>
     </message>
     <message>
         <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
-        <translation>믹스 모드의 사진 영역과 컬러 모드에서 조명을 통일시킵니다.</translation>
+        <translation type="vanished">믹스 모드의 사진 영역과 컬러 모드에서 조명을 통일시킵니다.</translation>
     </message>
     <message>
         <source>Equalize illumination (Color)</source>
-        <translation>조명 통일 (컬러)</translation>
+        <translation type="vanished">조명 통일 (컬러)</translation>
     </message>
     <message>
         <source>Savitzky-Golay smoothing</source>
-        <translation>Savitzky-Golay 스무딩</translation>
+        <translation type="vanished">Savitzky-Golay 스무딩</translation>
     </message>
     <message>
         <source>Morphological smoothing</source>
-        <translation>Morphological(형태학적) 스무딩</translation>
+        <translation type="vanished">Morphological(형태학적) 스무딩</translation>
     </message>
     <message>
         <source>Filling</source>
-        <translation>채우기</translation>
+        <translation type="vanished">채우기</translation>
     </message>
     <message>
         <source>Color: </source>
-        <translation>색상: </translation>
+        <translation type="vanished">색상: </translation>
     </message>
     <message>
         <source>Threshold</source>
-        <translation>임계값</translation>
+        <translation type="vanished">임계값</translation>
     </message>
     <message>
         <source>qk:</source>
-        <translation>방법</translation>
+        <translation type="vanished">방법</translation>
     </message>
     <message>
         <source>Color operations</source>
-        <translation>색상 조정</translation>
+        <translation type="vanished">색상 조정</translation>
     </message>
     <message>
         <source>Split the image into color segments and colorize b&amp;w mask.</source>
-        <translation>이미지를 색상 조각으로 분할하고 흑백 마스크로 칠합니다.</translation>
+        <translation type="vanished">이미지를 색상 조각으로 분할하고 흑백 마스크로 칠합니다.</translation>
     </message>
     <message>
         <source>Color segmentation</source>
-        <translation>색상 분할</translation>
+        <translation type="vanished">색상 분할</translation>
     </message>
     <message>
         <source>R</source>
-        <translation>R</translation>
+        <translation type="vanished">R</translation>
     </message>
     <message>
         <source>Red component adjustment. A negative value means the segmenter will be more sensitive to red and vice versa for a positive one.</source>
-        <translation>빨간색 요소 조정. 음수의 경우 빨간색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
-    </message>
-    <message>
-        <source>G</source>
-        <translation></translation>
+        <translation type="vanished">빨간색 요소 조정. 음수의 경우 빨간색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
     </message>
     <message>
         <source>Green component adjustment. A negative value means the segmenter will be more sensitive to green and vice versa for a positive one.</source>
-        <translation>초록색 요소 조정. 음수의 경우 초록색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
-    </message>
-    <message>
-        <source>B</source>
-        <translation></translation>
+        <translation type="vanished">초록색 요소 조정. 음수의 경우 초록색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
     </message>
     <message>
         <source>Blue component adjustment. A negative value means the segmenter will be more sensitive to blue and vice versa for a positive one.</source>
-        <translation>파란색 요소 조정. 음수의 경우 파란색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
+        <translation type="vanished">파란색 요소 조정. 음수의 경우 파란색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
     </message>
     <message>
         <source>Reduce noise:</source>
-        <translation>노이즈 줄이기:</translation>
+        <translation type="vanished">노이즈 줄이기:</translation>
     </message>
     <message>
         <source>Reduce the number of colors of the output image by grouping similar colors.</source>
-        <translation>유사한 색상을 그룹화해 출력 이미지의 색상 종류를 줄여줍니다.</translation>
+        <translation type="vanished">유사한 색상을 그룹화해 출력 이미지의 색상 종류를 줄여줍니다.</translation>
     </message>
     <message>
         <source>Posterize</source>
-        <translation>Posterize(명암 단위 제한)</translation>
+        <translation type="vanished">Posterize(명암 단위 제한)</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation>레벨:</translation>
+        <translation type="vanished">레벨:</translation>
     </message>
     <message>
         <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
-        <translation>값이 낮을수록 출력 이미지의 색상 수가 적어집니다. 2~6은 인덱스 이미지를 보장합니다.</translation>
+        <translation type="vanished">값이 낮을수록 출력 이미지의 색상 수가 적어집니다. 2~6은 인덱스 이미지를 보장합니다.</translation>
     </message>
     <message>
         <source>Normalize</source>
-        <translation>일반화</translation>
+        <translation type="vanished">일반화</translation>
     </message>
     <message>
         <source>Make dark and light gray gradients black and white respectively.</source>
-        <translation>어두은 회색, 밝은 회색 그라디언트를 각각 흑백으로 만듭니다.</translation>
+        <translation type="vanished">어두은 회색, 밝은 회색 그라디언트를 각각 흑백으로 만듭니다.</translation>
     </message>
     <message>
         <source>Force b&amp;&amp;w</source>
-        <translation>강제 흑백화</translation>
+        <translation type="vanished">강제 흑백화</translation>
     </message>
     <message>
         <source>Picture Shape</source>
-        <translation>사진 모양</translation>
+        <translation type="vanished">사진 모양</translation>
     </message>
     <message>
         <source>Sensitivity (%):</source>
-        <translation>민감도 (%):</translation>
+        <translation type="vanished">민감도 (%):</translation>
     </message>
     <message>
         <source>Higher search sensivity</source>
-        <translation>더 높은 검색 민감도</translation>
+        <translation type="vanished">더 높은 검색 민감도</translation>
     </message>
     <message>
         <source>Apply To ...</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>Splitting</source>
-        <translation>분할</translation>
+        <translation type="vanished">분할</translation>
     </message>
     <message>
         <source>Split output</source>
-        <translation>분할 결과</translation>
+        <translation type="vanished">분할 결과</translation>
     </message>
     <message>
         <source>B&amp;&amp;W foreground</source>
-        <translation>흑백 전경</translation>
+        <translation type="vanished">흑백 전경</translation>
     </message>
     <message>
         <source>Save the original background of the foreground layer.</source>
-        <translation>전경 부분을 원본 배경으로 저장합니다.</translation>
+        <translation type="vanished">전경 부분을 원본 배경으로 저장합니다.</translation>
     </message>
     <message>
         <source>Original background</source>
-        <translation>원본 배경</translation>
+        <translation type="vanished">원본 배경</translation>
     </message>
     <message>
         <source>Color foreground</source>
-        <translation>색상 전경</translation>
+        <translation type="vanished">색상 전경</translation>
     </message>
     <message>
         <source>Despeckling</source>
-        <translation>얼룩 제거</translation>
+        <translation type="vanished">얼룩 제거</translation>
     </message>
     <message>
         <source>Dewarping</source>
-        <translation>왜곡 보정</translation>
+        <translation type="vanished">왜곡 보정</translation>
     </message>
     <message>
         <source>Fill offcut</source>
-        <translation>오프컷 채우기</translation>
+        <translation type="vanished">오프컷 채우기</translation>
     </message>
     <message>
         <source>Fill margins</source>
-        <translation>테두리 채우기</translation>
+        <translation type="vanished">테두리 채우기</translation>
     </message>
     <message>
         <source>Despeckle</source>
-        <translation>얼룩 제거</translation>
+        <translation type="vanished">얼룩 제거</translation>
     </message>
     <message>
         <source>Processing</source>
-        <translation>작업</translation>
+        <translation type="vanished">작업</translation>
     </message>
     <message>
         <source>This option should be enabled when the page has dark content on light background and disabled if vice versa in order to correct processing algorithms.</source>
-        <translation>이 옵션은 밝은 배경에서 검은 내용이 있을 때 활성화 해야 하고, 반대의 경우에는 비활성화 해야 합니다.</translation>
+        <translation type="vanished">이 옵션은 밝은 배경에서 검은 내용이 있을 때 활성화 해야 하고, 반대의 경우에는 비활성화 해야 합니다.</translation>
     </message>
     <message>
         <source>Black on white mode</source>
-        <translation>흰 종이 검은 글씨 모드</translation>
+        <translation type="vanished">흰 종이 검은 글씨 모드</translation>
     </message>
 </context>
 <context>
     <name>PageLayoutApplyDialog</name>
     <message>
         <source>Apply to</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation>이 페이지만 (이미 적용되어 있음)</translation>
+        <translation type="vanished">이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation>모든 페이지</translation>
+        <translation type="vanished">모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
+        <translation type="vanished">이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation>모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation>선택된 페이지</translation>
+        <translation type="vanished">선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation type="vanished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation>선택된 모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation>현재 페이지도 포함됩니다.</translation>
+        <translation type="vanished">현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
     <name>PageLayoutOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>Margins</source>
-        <translation>테두리</translation>
+        <translation type="vanished">테두리</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation>위</translation>
+        <translation type="vanished">위</translation>
     </message>
     <message>
         <source>...</source>
-        <translation>...</translation>
+        <translation type="vanished">...</translation>
     </message>
     <message>
         <source>Bottom</source>
-        <translation>아래</translation>
+        <translation type="vanished">아래</translation>
     </message>
     <message>
         <source>Left</source>
-        <translation>왼쪽</translation>
+        <translation type="vanished">왼쪽</translation>
     </message>
     <message>
         <source>Right</source>
-        <translation>오른쪽</translation>
+        <translation type="vanished">오른쪽</translation>
     </message>
     <message>
         <source>Apply To ...</source>
-        <translation>테두리</translation>
+        <translation type="vanished">테두리</translation>
     </message>
     <message>
         <source>Alignment</source>
-        <translation>위치 조정</translation>
+        <translation type="vanished">위치 조정</translation>
     </message>
     <message>
         <source>Auto</source>
         <comment>auto</comment>
-        <translation>자동</translation>
+        <translation type="vanished">자동</translation>
     </message>
     <message>
         <source>Manual</source>
         <comment>manual</comment>
-        <translation>수동</translation>
+        <translation type="vanished">수동</translation>
     </message>
     <message>
         <source>Original</source>
         <comment>original</comment>
-        <translation>원래대로</translation>
+        <translation type="vanished">원래대로</translation>
     </message>
     <message>
         <source>Auto Margins</source>
-        <translation>자동 테두리</translation>
+        <translation type="vanished">자동 테두리</translation>
     </message>
-   <message>
+    <message>
         <source>Auto aligning</source>
-        <translation>자동 위치 조정</translation>
+        <translation type="vanished">자동 위치 조정</translation>
     </message>
     <message>
         <source>Enable horizontal</source>
-        <translation>수평 위치 조정</translation>
+        <translation type="vanished">수평 위치 조정</translation>
     </message>
     <message>
         <source>Enable vertical</source>
-        <translation>수직 위치 조정</translation>
+        <translation type="vanished">수직 위치 조정</translation>
     </message>
     <message>
         <source>Match size with other pages</source>
-        <translation>다른 페이지와 크기 같게 하기</translation>
+        <translation type="vanished">다른 페이지와 크기 같게 하기</translation>
     </message>
     <message>
         <source>Guides Help</source>
-        <translation>가이드 도움말</translation>
+        <translation type="vanished">가이드 도움말</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1664,7 +1728,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to restrict moving along the horizontal axis only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for the vertical one. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for usual dragging.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Double-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to select vertical guides only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -1677,124 +1741,112 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mode:</source>
-        <translation>모드:</translation>
+        <translation type="vanished">모드:</translation>
     </message>
 </context>
 <context>
     <name>PageSplitModeDialog</name>
     <message>
         <source>Split Pages</source>
-        <translation>페이지 분할</translation>
+        <translation type="vanished">페이지 분할</translation>
     </message>
     <message>
         <source>Mode</source>
-        <translation>모드</translation>
+        <translation type="vanished">모드</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation>자동</translation>
+        <translation type="vanished">자동</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation>수동</translation>
+        <translation type="vanished">수동</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>옵션</translation>
+        <translation type="vanished">옵션</translation>
     </message>
     <message>
         <source>Apply cut</source>
-        <translation>잘라내기 적용</translation>
+        <translation type="vanished">잘라내기 적용</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>This page only</source>
-        <translation>이 페이지만</translation>
+        <translation type="vanished">이 페이지만</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation>모든 페이지</translation>
+        <translation type="vanished">모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
-    </message>
-    <message>
-        <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
+        <translation type="vanished">이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
-        <translation>모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation>선택된 페이지</translation>
+        <translation type="vanished">선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation type="vanished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation>선택된 모든 짝수(홀수) 페이지</translation>
-   </message>
+        <translation type="vanished">선택된 모든 짝수(홀수) 페이지</translation>
+    </message>
     <message>
         <source>The current page will be included.</source>
-        <translation>현재 페이지도 포함됩니다.</translation>
+        <translation type="vanished">현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
     <name>PageSplitOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>Page Layout</source>
-        <translation>페이지 레이아웃</translation>
-    </message>
-    <message>
-        <source>?</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Change ...</source>
-        <translation></translation>
+        <translation type="vanished">페이지 레이아웃</translation>
     </message>
     <message>
         <source>Split Line</source>
-        <translation>줄 나누기</translation>
+        <translation type="vanished">줄 나누기</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation>자동</translation>
+        <translation type="vanished">자동</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation>수동</translation>
+        <translation type="vanished">수동</translation>
     </message>
 </context>
 <context>
     <name>PictureZonePropDialog</name>
     <message>
         <source>Zone Properties</source>
-        <translation>영역 속성</translation>
+        <translation type="vanished">영역 속성</translation>
     </message>
     <message>
         <source>Subtract from all layers</source>
-        <translation>모든 레이어에서 빼기</translation>
+        <translation type="vanished">모든 레이어에서 빼기</translation>
     </message>
     <message>
         <source>Add to auto layer</source>
-        <translation>자동 레이어에 더하기</translation>
+        <translation type="vanished">자동 레이어에 더하기</translation>
     </message>
     <message>
         <source>Subtract from auto layer</source>
-        <translation>자동 레이어에 빼기</translation>
+        <translation type="vanished">자동 레이어에 빼기</translation>
     </message>
 </context>
 <context>
@@ -1929,6 +1981,18 @@ You should remove them from the project.</source>
         <source>in</source>
         <translation>in</translation>
     </message>
+    <message>
+        <source>Canceling multi page selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 pages selection are going to be canceled. Continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t show this message again.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RelinkingDialog</name>
@@ -1976,135 +2040,135 @@ You should remove them from the project.</source>
     <name>SauvolaBinarizationOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>Coef:</source>
-        <translation>계수</translation>
+        <translation type="vanished">계수</translation>
     </message>
     <message>
         <source>The dimensions of a pixel neighborhood to consider.</source>
-        <translation>고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
+        <translation type="vanished">고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
     </message>
     <message>
         <source>Window size:</source>
-        <translation>창 크기:</translation>
+        <translation type="vanished">창 크기:</translation>
     </message>
     <message>
         <source>Default value is 0.34.</source>
-        <translation>기본값은 0.34입니다.</translation>
+        <translation type="vanished">기본값은 0.34입니다.</translation>
     </message>
 </context>
 <context>
     <name>SelectContentApplyDialog</name>
     <message>
         <source>Select Content</source>
-        <translation>컨텐츠 선택</translation>
+        <translation type="vanished">컨텐츠 선택</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>옵션</translation>
+        <translation type="vanished">옵션</translation>
     </message>
     <message>
         <source>Apply content box</source>
-        <translation>컨텐츠 박스 적용</translation>
+        <translation type="vanished">컨텐츠 박스 적용</translation>
     </message>
     <message>
         <source>Apply page box</source>
-        <translation>페이지 박스 적용</translation>
+        <translation type="vanished">페이지 박스 적용</translation>
     </message>
     <message>
         <source>Apply to</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
     <message>
         <source>This page only (already applied)</source>
-        <translation>이 페이지만 (이미 적용되어 있음)</translation>
+        <translation type="vanished">이 페이지만 (이미 적용되어 있음)</translation>
     </message>
     <message>
         <source>All pages</source>
-        <translation>모든 페이지</translation>
+        <translation type="vanished">모든 페이지</translation>
     </message>
     <message>
         <source>This page and the following ones</source>
-        <translation>이 페이지와 다음 페이지</translation>
+        <translation type="vanished">이 페이지와 다음 페이지</translation>
     </message>
     <message>
         <source>This page and the following every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation>이 페이지와 모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">이 페이지와 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Every other page</source>
         <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
-        <translation>모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>Selected pages</source>
-        <translation>선택된 페이지</translation>
+        <translation type="vanished">선택된 페이지</translation>
     </message>
     <message>
         <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
-        <translation>Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+        <translation type="vanished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
     <message>
         <source>Every other selected page</source>
-        <translation>선택된 모든 짝수(홀수) 페이지</translation>
+        <translation type="vanished">선택된 모든 짝수(홀수) 페이지</translation>
     </message>
     <message>
         <source>The current page will be included.</source>
-        <translation>현재 페이지도 포함됩니다.</translation>
+        <translation type="vanished">현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
     <name>SelectContentOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>Page Box</source>
-        <translation>페이지 박스</translation>
+        <translation type="vanished">페이지 박스</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>옵션</translation>
+        <translation type="vanished">옵션</translation>
     </message>
     <message>
         <source>Shift with corners while they are in black. </source>
-        <translation>검은색 테두리를 옮기기</translation>
+        <translation type="vanished">검은색 테두리를 옮기기</translation>
     </message>
     <message>
         <source>Fine Tune Page Corners</source>
-        <translation>페이지 테두리 깔끔하게 자르기</translation>
+        <translation type="vanished">페이지 테두리 깔끔하게 자르기</translation>
     </message>
     <message>
         <source>Disable</source>
-        <translation>비활성화</translation>
+        <translation type="vanished">비활성화</translation>
     </message>
     <message>
         <source>Auto</source>
-        <translation>자동</translation>
+        <translation type="vanished">자동</translation>
     </message>
     <message>
         <source>Content Box</source>
-        <translation>컨텐츠 박스</translation>
+        <translation type="vanished">컨텐츠 박스</translation>
     </message>
     <message>
         <source>Manual</source>
-        <translation>수동</translation>
+        <translation type="vanished">수동</translation>
     </message>
     <message>
         <source>Width</source>
-        <translation>폭</translation>
+        <translation type="vanished">폭</translation>
     </message>
     <message>
         <source>Height</source>
-        <translation>높이</translation>
+        <translation type="vanished">높이</translation>
     </message>
     <message>
         <source>Apply to ...</source>
-        <translation>적용하기</translation>
+        <translation type="vanished">적용하기</translation>
     </message>
 </context>
 <context>
@@ -2147,7 +2211,7 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Deksew:</source>
-        <translation>기울기 보정:</translation>
+        <translation type="vanished">기울기 보정:</translation>
     </message>
     <message>
         <source>Select content:</source>
@@ -2273,6 +2337,18 @@ You should remove them from the project.</source>
         <source>Native</source>
         <translation>네이티브</translation>
     </message>
+    <message>
+        <source>Single column thumbnail display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show question on canceling multi page selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deskew:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StageListView</name>
@@ -2297,11 +2373,11 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Physical size.</source>
-        <translation>실제 크기.</translation>
+        <translation type="vanished">실제 크기.</translation>
     </message>
     <message>
         <source>Physical size of image.</source>
-        <translation>이미지의 실제 크기.</translation>
+        <translation type="vanished">이미지의 실제 크기.</translation>
     </message>
     <message>
         <source>Page number.</source>
@@ -2331,6 +2407,22 @@ You should remove them from the project.</source>
         <source> [R]</source>
         <translation> [R]</translation>
     </message>
+    <message>
+        <source>Zone creation mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The type of a new zone created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image size.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image size in current units.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SystemLoadWidget</name>
@@ -2358,39 +2450,39 @@ You should remove them from the project.</source>
     <name>WolfBinarizationOptionsWidget</name>
     <message>
         <source>Form</source>
-        <translation>폼</translation>
+        <translation type="vanished">폼</translation>
     </message>
     <message>
         <source>The dimensions of a pixel neighborhood to consider.</source>
-        <translation>고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
+        <translation type="vanished">고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
     </message>
     <message>
         <source>Window size:</source>
-        <translation>창 크기:</translation>
+        <translation type="vanished">창 크기:</translation>
     </message>
     <message>
         <source>The minimum possible gray level that can be made white.</source>
-        <translation>흰색으로 만들 수 있는 회색 레벨의 최소값입니다.</translation>
+        <translation type="vanished">흰색으로 만들 수 있는 회색 레벨의 최소값입니다.</translation>
     </message>
     <message>
         <source>Upper Bound: </source>
-        <translation>상한:</translation>
+        <translation type="vanished">상한:</translation>
     </message>
     <message>
         <source>Lower bound: </source>
-        <translation>하한:</translation>
+        <translation type="vanished">하한:</translation>
     </message>
     <message>
         <source>The maximum possible gray level that can be made black.</source>
-        <translation>흰색으로 만들 수 있는 회색 레벨의 최대값입니다.</translation>
+        <translation type="vanished">흰색으로 만들 수 있는 회색 레벨의 최대값입니다.</translation>
     </message>
     <message>
         <source>Coeff:</source>
-        <translation>계수</translation>
+        <translation type="vanished">계수</translation>
     </message>
     <message>
         <source>Default value is 0.3.</source>
-        <translation>기본값은 0.3입니다.</translation>
+        <translation type="vanished">기본값은 0.3입니다.</translation>
     </message>
 </context>
 <context>
@@ -2420,14 +2512,18 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Hold Ctrl to create a rectangular zone or Shift+Alt+LMB to use lasso mode.  ESC to cancel.</source>
-        <translation>Ctrl을 눌러 사각형 영역을 만들거나 Shift+Alt+마우스 왼쪽 버튼을 눌러 올가미 모드를 이용하세요. ESC를 누르면 취소합니다.</translation>
+        <translation type="vanished">Ctrl을 눌러 사각형 영역을 만들거나 Shift+Alt+마우스 왼쪽 버튼을 눌러 올가미 모드를 이용하세요. ESC를 누르면 취소합니다.</translation>
+    </message>
+    <message>
+        <source>Use Z and X keys to switch zone creation mode.  ESC to cancel.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ZoneDefaultInteraction</name>
     <message>
         <source>Drag the vertex. Hold Ctrl to make the vertex angle right.</source>
-        <translation>꼭짓점을 드래그합니다. Ctrl을 누르고 있으면 꼭짓점을 오른쪽으로 만듭니다.</translation>
+        <translation type="vanished">꼭짓점을 드래그합니다. Ctrl을 누르고 있으면 꼭짓점을 오른쪽으로 만듭니다.</translation>
     </message>
     <message>
         <source>Click to create a new vertex here.</source>
@@ -2439,7 +2535,23 @@ You should remove them from the project.</source>
     </message>
     <message>
         <source>Click to start creating a new zone. Use Ctrl+Alt+Click to copy the latest created zone.</source>
-        <translation>새 영역을 만들려면 클릭하세요. Ctrl+Alt+클릭으로 가장 최근에 생성된 영역 복사가 가능합니다.</translation>
+        <translation type="vanished">새 영역을 만들려면 클릭하세요. Ctrl+Alt+클릭으로 가장 최근에 생성된 영역 복사가 가능합니다.</translation>
+    </message>
+    <message>
+        <source>Drag the vertex. Hold Ctrl to make the vertex angle right. Press D to delete the vertex.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hold left mouse button to drag the zone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hold left mouse button to copy and drag the zone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Click to start creating a new zone. Ctrl+Alt+Click to copy the latest created zone. Use Z, X and C keys to switch zone creation mode.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2458,6 +2570,51 @@ You should remove them from the project.</source>
     <message>
         <source>Move the vertex to one of its neighbors to merge them.</source>
         <translation>정점을 주변 정점 중 하나로 이동해 병합합니다.</translation>
+    </message>
+</context>
+<context>
+    <name>deskew::ApplyDialog</name>
+    <message>
+        <source>Apply to</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+    <message>
+        <source>This page only (already applied)</source>
+        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation type="unfinished">모든 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following ones</source>
+        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following every other page</source>
+        <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
+        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Every other page</source>
+        <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
+        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Selected pages</source>
+        <translation type="unfinished">선택된 페이지</translation>
+    </message>
+    <message>
+        <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
+        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+    </message>
+    <message>
+        <source>Every other selected page</source>
+        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>The current page will be included.</source>
+        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
@@ -2492,12 +2649,194 @@ You should remove them from the project.</source>
         <source>Apply Deskew</source>
         <translation>기울기 보정 적용하기</translation>
     </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Deskew</source>
+        <translation type="unfinished">기울기 보정</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation type="unfinished">자동</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation type="unfinished">수동</translation>
+    </message>
+    <message>
+        <source>Apply To ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>fix_orientation::ApplyDialog</name>
+    <message>
+        <source>Fix Orientation</source>
+        <translation type="unfinished">방향 수정</translation>
+    </message>
+    <message>
+        <source>Apply to</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+    <message>
+        <source>This page only (already applied)</source>
+        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation type="unfinished">모든 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following ones</source>
+        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following every other page</source>
+        <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
+        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Every other page</source>
+        <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
+        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Selected pages</source>
+        <translation type="unfinished">선택된 페이지</translation>
+    </message>
+    <message>
+        <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
+        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+    </message>
+    <message>
+        <source>Every other selected page</source>
+        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>The current page will be included.</source>
+        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
+    </message>
 </context>
 <context>
     <name>fix_orientation::Filter</name>
     <message>
         <source>Fix Orientation</source>
         <translation>방향 수정</translation>
+    </message>
+</context>
+<context>
+    <name>fix_orientation::OptionsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Rotate</source>
+        <translation type="unfinished">회전</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <source>Reset</source>
+        <translation type="unfinished">초기화</translation>
+    </message>
+    <message>
+        <source>Apply to ...</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+</context>
+<context>
+    <name>output::ApplyColorsDialog</name>
+    <message>
+        <source>Apply Mode</source>
+        <translation type="unfinished">적용 모드</translation>
+    </message>
+    <message>
+        <source>Apply to</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+    <message>
+        <source>This page only (already applied)</source>
+        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation type="unfinished">모든 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following ones</source>
+        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+    </message>
+    <message>
+        <source>Selected pages</source>
+        <translation type="unfinished">선택된 페이지</translation>
+    </message>
+    <message>
+        <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
+        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+    </message>
+</context>
+<context>
+    <name>output::ChangeDewarpingDialog</name>
+    <message>
+        <source>Apply Dewarping Mode</source>
+        <translation type="unfinished">왜곡 보정 모드 적용</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation type="unfinished">모드</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished">끄기</translation>
+    </message>
+    <message>
+        <source>Auto (experimental)</source>
+        <translation type="unfinished">자동 (실험적)</translation>
+    </message>
+    <message>
+        <source>Marginal (experimental)</source>
+        <translation type="unfinished">테두리 (실험적)</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation type="unfinished">수동</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">옵션</translation>
+    </message>
+    <message>
+        <source>Post deskew</source>
+        <translation type="unfinished">사전 기울기 보정</translation>
+    </message>
+    <message>
+        <source>Apply to</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+    <message>
+        <source>This page only</source>
+        <translation type="unfinished">이 페이지만</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation type="unfinished">모든 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following ones</source>
+        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+    </message>
+    <message>
+        <source>Selected pages</source>
+        <translation type="unfinished">선택된 페이지</translation>
+    </message>
+    <message>
+        <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
+        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
 </context>
 <context>
@@ -2521,6 +2860,38 @@ You should remove them from the project.</source>
     <message>
         <source>DPI is too high!</source>
         <translation>DPI가 너무 높습니다.</translation>
+    </message>
+    <message>
+        <source>Apply Output Resolution</source>
+        <translation type="unfinished">출력 해상도 적용</translation>
+    </message>
+    <message>
+        <source>DPI</source>
+        <translation type="unfinished">DPI</translation>
+    </message>
+    <message>
+        <source>Apply to</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+    <message>
+        <source>This page only</source>
+        <translation type="unfinished">이 페이지만</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation type="unfinished">모든 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following ones</source>
+        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+    </message>
+    <message>
+        <source>Selected pages</source>
+        <translation type="unfinished">선택된 페이지</translation>
+    </message>
+    <message>
+        <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
+        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
     </message>
 </context>
 <context>
@@ -2623,6 +2994,283 @@ You should remove them from the project.</source>
         <source>Apply Processing Settings</source>
         <translation>적용 작업 설정</translation>
     </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Output Resolution (DPI)</source>
+        <translation type="unfinished">출력 해상도 (DPI)</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation type="unfinished">0</translation>
+    </message>
+    <message>
+        <source>Change ...</source>
+        <translation type="unfinished">변경</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation type="unfinished">모드</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">옵션</translation>
+    </message>
+    <message>
+        <source>Fill offcut</source>
+        <translation type="unfinished">오프컷 채우기</translation>
+    </message>
+    <message>
+        <source>Fill margins</source>
+        <translation type="unfinished">테두리 채우기</translation>
+    </message>
+    <message>
+        <source>Normalize illumination before binarization.</source>
+        <translation type="unfinished">이진화 이전에 조명을 통일시키세요.</translation>
+    </message>
+    <message>
+        <source>Equalize illumination (B&amp;&amp;W)</source>
+        <translation type="unfinished">조명 통일 (흑백)</translation>
+    </message>
+    <message>
+        <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
+        <translation type="unfinished">믹스 모드의 사진 영역과 컬러 모드에서 조명을 통일시킵니다.</translation>
+    </message>
+    <message>
+        <source>Equalize illumination (Color)</source>
+        <translation type="unfinished">조명 통일 (컬러)</translation>
+    </message>
+    <message>
+        <source>Savitzky-Golay smoothing</source>
+        <translation type="unfinished">Savitzky-Golay 스무딩</translation>
+    </message>
+    <message>
+        <source>Morphological smoothing</source>
+        <translation type="unfinished">Morphological(형태학적) 스무딩</translation>
+    </message>
+    <message>
+        <source>Filling</source>
+        <translation type="unfinished">채우기</translation>
+    </message>
+    <message>
+        <source>Color: </source>
+        <translation type="unfinished">색상: </translation>
+    </message>
+    <message>
+        <source>Threshold</source>
+        <translation type="unfinished">임계값</translation>
+    </message>
+    <message>
+        <source>Method:</source>
+        <translation type="unfinished">방법</translation>
+    </message>
+    <message>
+        <source>Color operations</source>
+        <translation type="unfinished">색상 조정</translation>
+    </message>
+    <message>
+        <source>Split the image into color segments and colorize b&amp;w mask.</source>
+        <translation type="unfinished">이미지를 색상 조각으로 분할하고 흑백 마스크로 칠합니다.</translation>
+    </message>
+    <message>
+        <source>Color segmentation</source>
+        <translation type="unfinished">색상 분할</translation>
+    </message>
+    <message>
+        <source>R</source>
+        <translation type="unfinished">R</translation>
+    </message>
+    <message>
+        <source>Red component adjustment. A negative value means the segmenter will be more sensitive to red and vice versa for a positive one.</source>
+        <translation type="unfinished">빨간색 요소 조정. 음수의 경우 빨간색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
+    </message>
+    <message>
+        <source>G</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green component adjustment. A negative value means the segmenter will be more sensitive to green and vice versa for a positive one.</source>
+        <translation type="unfinished">초록색 요소 조정. 음수의 경우 초록색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
+    </message>
+    <message>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue component adjustment. A negative value means the segmenter will be more sensitive to blue and vice versa for a positive one.</source>
+        <translation type="unfinished">파란색 요소 조정. 음수의 경우 파란색에 더 민감하고 양수의 경우 덜 민감해집니다.</translation>
+    </message>
+    <message>
+        <source>Reduce noise:</source>
+        <translation type="unfinished">노이즈 줄이기:</translation>
+    </message>
+    <message>
+        <source>Reduce the number of colors of the output image by grouping similar colors.</source>
+        <translation type="unfinished">유사한 색상을 그룹화해 출력 이미지의 색상 종류를 줄여줍니다.</translation>
+    </message>
+    <message>
+        <source>Posterize</source>
+        <translation type="unfinished">Posterize(명암 단위 제한)</translation>
+    </message>
+    <message>
+        <source>Level:</source>
+        <translation type="unfinished">레벨:</translation>
+    </message>
+    <message>
+        <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
+        <translation type="unfinished">값이 낮을수록 출력 이미지의 색상 수가 적어집니다. 2~6은 인덱스 이미지를 보장합니다.</translation>
+    </message>
+    <message>
+        <source>Normalize</source>
+        <translation type="unfinished">일반화</translation>
+    </message>
+    <message>
+        <source>Make dark and light gray gradients black and white respectively.</source>
+        <translation type="unfinished">어두은 회색, 밝은 회색 그라디언트를 각각 흑백으로 만듭니다.</translation>
+    </message>
+    <message>
+        <source>Force b&amp;&amp;w</source>
+        <translation type="unfinished">강제 흑백화</translation>
+    </message>
+    <message>
+        <source>Picture Shape</source>
+        <translation type="unfinished">사진 모양</translation>
+    </message>
+    <message>
+        <source>Sensitivity (%):</source>
+        <translation type="unfinished">민감도 (%):</translation>
+    </message>
+    <message>
+        <source>Higher search sensitivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply To ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Splitting</source>
+        <translation type="unfinished">분할</translation>
+    </message>
+    <message>
+        <source>Split output</source>
+        <translation type="unfinished">분할 결과</translation>
+    </message>
+    <message>
+        <source>B&amp;&amp;W foreground</source>
+        <translation type="unfinished">흑백 전경</translation>
+    </message>
+    <message>
+        <source>Save the original background of the foreground layer.</source>
+        <translation type="unfinished">전경 부분을 원본 배경으로 저장합니다.</translation>
+    </message>
+    <message>
+        <source>Original background</source>
+        <translation type="unfinished">원본 배경</translation>
+    </message>
+    <message>
+        <source>Color foreground</source>
+        <translation type="unfinished">색상 전경</translation>
+    </message>
+    <message>
+        <source>Despeckling</source>
+        <translation type="unfinished">얼룩 제거</translation>
+    </message>
+    <message>
+        <source>Despeckle</source>
+        <translation type="unfinished">얼룩 제거</translation>
+    </message>
+    <message>
+        <source>Processing</source>
+        <translation type="unfinished">작업</translation>
+    </message>
+    <message>
+        <source>This option should be enabled when the page has dark content on light background and disabled if vice versa in order to correct processing algorithms.</source>
+        <translation type="unfinished">이 옵션은 밝은 배경에서 검은 내용이 있을 때 활성화 해야 하고, 반대의 경우에는 비활성화 해야 합니다.</translation>
+    </message>
+    <message>
+        <source>Black on white mode</source>
+        <translation type="unfinished">흰 종이 검은 글씨 모드</translation>
+    </message>
+    <message>
+        <source>Depth perception</source>
+        <translation type="unfinished">깊이 인식</translation>
+    </message>
+    <message>
+        <source>Dewarping</source>
+        <translation type="unfinished">왜곡 보정</translation>
+    </message>
+    <message>
+        <source>Black</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>deskew</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>output::OtsuBinarizationOptionsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation type="unfinished">0</translation>
+    </message>
+    <message>
+        <source>Thinner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thicker</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>output::PictureZonePropDialog</name>
+    <message>
+        <source>Zone Properties</source>
+        <translation type="unfinished">영역 속성</translation>
+    </message>
+    <message>
+        <source>Subtract from all layers</source>
+        <translation type="unfinished">모든 레이어에서 빼기</translation>
+    </message>
+    <message>
+        <source>Add to auto layer</source>
+        <translation type="unfinished">자동 레이어에 더하기</translation>
+    </message>
+    <message>
+        <source>Subtract from auto layer</source>
+        <translation type="unfinished">자동 레이어에 빼기</translation>
+    </message>
+</context>
+<context>
+    <name>output::SauvolaBinarizationOptionsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Coef:</source>
+        <translation type="unfinished">계수</translation>
+    </message>
+    <message>
+        <source>The dimensions of a pixel neighborhood to consider.</source>
+        <translation type="unfinished">고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
+    </message>
+    <message>
+        <source>Default value is 0.34.</source>
+        <translation type="unfinished">기본값은 0.34입니다.</translation>
+    </message>
+    <message>
+        <source>Window size:</source>
+        <translation type="unfinished">창 크기:</translation>
+    </message>
 </context>
 <context>
     <name>output::TabbedImageView</name>
@@ -2660,6 +3308,90 @@ You should remove them from the project.</source>
     <message>
         <source>Despeckling</source>
         <translation>얼룩 제거</translation>
+    </message>
+</context>
+<context>
+    <name>output::WolfBinarizationOptionsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>The dimensions of a pixel neighborhood to consider.</source>
+        <translation type="unfinished">고려해야할 주변 픽셀수의 범위를 설정합니다.</translation>
+    </message>
+    <message>
+        <source>Window size:</source>
+        <translation type="unfinished">창 크기:</translation>
+    </message>
+    <message>
+        <source>The minimum possible gray level that can be made white.</source>
+        <translation type="unfinished">흰색으로 만들 수 있는 회색 레벨의 최소값입니다.</translation>
+    </message>
+    <message>
+        <source>Upper Bound: </source>
+        <translation type="unfinished">상한:</translation>
+    </message>
+    <message>
+        <source>Lower bound: </source>
+        <translation type="unfinished">하한:</translation>
+    </message>
+    <message>
+        <source>The maximum possible gray level that can be made black.</source>
+        <translation type="unfinished">흰색으로 만들 수 있는 회색 레벨의 최대값입니다.</translation>
+    </message>
+    <message>
+        <source>Coeff:</source>
+        <translation type="unfinished">계수</translation>
+    </message>
+    <message>
+        <source>Default value is 0.3.</source>
+        <translation type="unfinished">기본값은 0.3입니다.</translation>
+    </message>
+</context>
+<context>
+    <name>page_layout::ApplyDialog</name>
+    <message>
+        <source>Apply to</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+    <message>
+        <source>This page only (already applied)</source>
+        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation type="unfinished">모든 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following ones</source>
+        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following every other page</source>
+        <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
+        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Every other page</source>
+        <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
+        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Selected pages</source>
+        <translation type="unfinished">선택된 페이지</translation>
+    </message>
+    <message>
+        <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
+        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+    </message>
+    <message>
+        <source>Every other selected page</source>
+        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>The current page will be included.</source>
+        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
@@ -2734,6 +3466,90 @@ You should remove them from the project.</source>
         <source>Apply Alignment</source>
         <translation>위치 조정 적용</translation>
     </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Margins</source>
+        <translation type="unfinished">테두리</translation>
+    </message>
+    <message>
+        <source>Auto Margins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <source>Top</source>
+        <translation type="unfinished">위</translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation type="unfinished">오른쪽</translation>
+    </message>
+    <message>
+        <source>Left</source>
+        <translation type="unfinished">왼쪽</translation>
+    </message>
+    <message>
+        <source>Bottom</source>
+        <translation type="unfinished">아래</translation>
+    </message>
+    <message>
+        <source>Apply To ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alignment</source>
+        <translation type="unfinished">위치 조정</translation>
+    </message>
+    <message>
+        <source>Match size with other pages</source>
+        <translation type="unfinished">다른 페이지와 크기 같게 하기</translation>
+    </message>
+    <message>
+        <source>Horizontal mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vertical mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <comment>auto</comment>
+        <translation type="unfinished">자동</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <comment>manual</comment>
+        <translation type="unfinished">수동</translation>
+    </message>
+    <message>
+        <source>Original</source>
+        <comment>original</comment>
+        <translation type="unfinished">원래대로</translation>
+    </message>
+    <message>
+        <source>Guides Help</source>
+        <translation type="unfinished">가이드 도움말</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to create/remove guides from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on a guide to delete that guide from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Ctrl+Alt+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; - drag the guide under the cursor.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to restrict moving along the horizontal axis only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for the vertical one. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for usual dragging.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Double-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to select vertical guides only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>page_split::Filter</name>
@@ -2767,12 +3583,168 @@ You should remove them from the project.</source>
         <source>Auto detected</source>
         <translation>자동 인식</translation>
     </message>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Page Layout</source>
+        <translation type="unfinished">페이지 레이아웃</translation>
+    </message>
+    <message>
+        <source>?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change ...</source>
+        <translation type="unfinished">변경</translation>
+    </message>
+    <message>
+        <source>Split Line</source>
+        <translation type="unfinished">줄 나누기</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation type="unfinished">자동</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation type="unfinished">수동</translation>
+    </message>
+</context>
+<context>
+    <name>page_split::SplitModeDialog</name>
+    <message>
+        <source>Split Pages</source>
+        <translation type="unfinished">페이지 분할</translation>
+    </message>
+    <message>
+        <source>Mode</source>
+        <translation type="unfinished">모드</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation type="unfinished">자동</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation type="unfinished">수동</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">옵션</translation>
+    </message>
+    <message>
+        <source>Apply cut</source>
+        <translation type="unfinished">잘라내기 적용</translation>
+    </message>
+    <message>
+        <source>Apply to</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+    <message>
+        <source>This page only</source>
+        <translation type="unfinished">이 페이지만</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation type="unfinished">모든 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following ones</source>
+        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following every other page</source>
+        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Every other page</source>
+        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Selected pages</source>
+        <translation type="unfinished">선택된 페이지</translation>
+    </message>
+    <message>
+        <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
+        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+    </message>
+    <message>
+        <source>Every other selected page</source>
+        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>The current page will be included.</source>
+        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
+    </message>
 </context>
 <context>
     <name>page_split::UnremoveButton</name>
     <message>
         <source>Restore removed page.</source>
         <translation>삭제한 페이지 복구하기</translation>
+    </message>
+</context>
+<context>
+    <name>select_content::ApplyDialog</name>
+    <message>
+        <source>Select Content</source>
+        <translation type="unfinished">컨텐츠 선택</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">옵션</translation>
+    </message>
+    <message>
+        <source>Apply page box</source>
+        <translation type="unfinished">페이지 박스 적용</translation>
+    </message>
+    <message>
+        <source>Apply content box</source>
+        <translation type="unfinished">컨텐츠 박스 적용</translation>
+    </message>
+    <message>
+        <source>Apply to</source>
+        <translation type="unfinished">적용하기</translation>
+    </message>
+    <message>
+        <source>This page only (already applied)</source>
+        <translation type="unfinished">이 페이지만 (이미 적용되어 있음)</translation>
+    </message>
+    <message>
+        <source>All pages</source>
+        <translation type="unfinished">모든 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following ones</source>
+        <translation type="unfinished">이 페이지와 다음 페이지</translation>
+    </message>
+    <message>
+        <source>This page and the following every other page</source>
+        <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
+        <translation type="unfinished">이 페이지와 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Every other page</source>
+        <extracomment>All odd or even pages, depending on the current page being odd or even.</extracomment>
+        <translation type="unfinished">모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>Selected pages</source>
+        <translation type="unfinished">선택된 페이지</translation>
+    </message>
+    <message>
+        <source>Use Ctrl+Click / Shift+Click to select multiple pages.</source>
+        <translation type="unfinished">Ctrl+Click / Shift+Click 으로 여러 페이지를 선택 가능합니다</translation>
+    </message>
+    <message>
+        <source>Every other selected page</source>
+        <translation type="unfinished">선택된 모든 짝수(홀수) 페이지</translation>
+    </message>
+    <message>
+        <source>The current page will be included.</source>
+        <translation type="unfinished">현재 페이지도 포함됩니다.</translation>
     </message>
 </context>
 <context>
@@ -2831,6 +3803,57 @@ You should remove them from the project.</source>
     <message>
         <source>Remove Content Box</source>
         <translation>컨텐츠 박스 제거하기</translation>
+    </message>
+</context>
+<context>
+    <name>select_content::OptionsWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">폼</translation>
+    </message>
+    <message>
+        <source>Page Box</source>
+        <translation type="unfinished">페이지 박스</translation>
+    </message>
+    <message>
+        <source>Disable</source>
+        <translation type="unfinished">비활성화</translation>
+    </message>
+    <message>
+        <source>Auto</source>
+        <translation type="unfinished">자동</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation type="unfinished">수동</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation type="unfinished">옵션</translation>
+    </message>
+    <message>
+        <source>Shift with corners while they are in black. </source>
+        <translation type="unfinished">검은색 테두리를 옮기기</translation>
+    </message>
+    <message>
+        <source>Fine Tune Page Corners</source>
+        <translation type="unfinished">페이지 테두리 깔끔하게 자르기</translation>
+    </message>
+    <message>
+        <source>Width</source>
+        <translation type="unfinished">폭</translation>
+    </message>
+    <message>
+        <source>Height</source>
+        <translation type="unfinished">높이</translation>
+    </message>
+    <message>
+        <source>Content Box</source>
+        <translation type="unfinished">컨텐츠 박스</translation>
+    </message>
+    <message>
+        <source>Apply to ...</source>
+        <translation type="unfinished">적용하기</translation>
     </message>
 </context>
 </TS>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr" sourcelanguage="en_US">
+<TS version="2.1" language="fr_FR" sourcelanguage="en_US">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -192,7 +192,7 @@
         <location filename="../app/DefaultParamsDialog.ui" line="991"/>
         <location filename="../app/DefaultParamsDialog.ui" line="1045"/>
         <location filename="../app/DefaultParamsDialog.cpp" line="37"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="63"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="65"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
@@ -200,7 +200,7 @@
         <location filename="../app/DefaultParamsDialog.ui" line="712"/>
         <location filename="../app/DefaultParamsDialog.ui" line="1004"/>
         <location filename="../app/DefaultParamsDialog.cpp" line="38"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="64"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="66"/>
         <source>Manual</source>
         <translation>Manuel</translation>
     </message>
@@ -626,84 +626,89 @@
         <translation>Blanc</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="47"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="46"/>
+        <source>Black</source>
+        <translation>Noir</translation>
+    </message>
+    <message>
+        <location filename="../app/DefaultParamsDialog.cpp" line="48"/>
         <source>Otsu</source>
         <translation>Otsu</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="48"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="49"/>
         <source>Sauvola</source>
         <translation>Sauvola</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="49"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="50"/>
         <source>Wolf</source>
         <translation>Wolf</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="51"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="62"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="52"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="64"/>
         <source>Off</source>
         <translation>Désactivé</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="52"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="53"/>
         <source>Free</source>
         <translation>Libre</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="53"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="54"/>
         <source>Rectangular</source>
         <translation>Rectangulaire</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="60"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="80"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="942"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="62"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="82"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="944"/>
         <source>Custom</source>
         <translation>Personnalisé</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="65"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="67"/>
         <source>Marginal</source>
         <translation>Marginal</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="71"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="73"/>
         <source>Default</source>
         <translation>Par défaut</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="72"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="74"/>
         <source>Source</source>
         <translation>Source</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="905"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="911"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="931"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="948"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="963"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="907"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="913"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="933"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="950"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="965"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="911"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="913"/>
         <source>Error loading the profile.</source>
         <translation>Erreur lors du chargement du profil.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="932"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="934"/>
         <source>The name conflicts with a default profile name. Please enter a different name.</source>
         <translation>Le nom rentre en conflit avec un profil par défaut. Veuillez entrer un autre nom.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="948"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="950"/>
         <source>Error saving the profile.</source>
         <translation>Erreur lors de l&apos;enregistrement du profil.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="963"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="965"/>
         <source>Error deleting the profile.</source>
         <translation>Erreur lors de la suppression du profil.</translation>
     </message>
@@ -723,7 +728,7 @@
         <translation>Détacher</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="905"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="907"/>
         <source>The profile file is not compatible with the current application version. Remove?</source>
         <translation>Le fichier de profil n&apos;est pas compatible avec la version courante de l&apos;application. Supprimer?</translation>
     </message>
@@ -782,33 +787,33 @@
         <translation>Appliquer</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="205"/>
+        <location filename="../app/FixDpiDialog.cpp" line="206"/>
         <source>Need Fixing</source>
         <translation>Correction nécessaire</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="206"/>
-        <location filename="../app/FixDpiDialog.cpp" line="592"/>
+        <location filename="../app/FixDpiDialog.cpp" line="207"/>
+        <location filename="../app/FixDpiDialog.cpp" line="593"/>
         <source>All Pages</source>
         <translation>Toutes les pages</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="391"/>
+        <location filename="../app/FixDpiDialog.cpp" line="392"/>
         <source>DPI is too large and most likely wrong.</source>
         <translation>Cette valeur de DPI est trop grande et probablement incorrecte.</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="395"/>
+        <location filename="../app/FixDpiDialog.cpp" line="396"/>
         <source>DPI is too small. Even if it&apos;s correct, you are not going to get acceptable results with it.</source>
         <translation>Cette valeur de DPI est trop petite. Même si elle est correcte, le résultat final ne sera bon.</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="399"/>
+        <location filename="../app/FixDpiDialog.cpp" line="400"/>
         <source>DPI is too small for this pixel size. Such combination would probably lead to out of memory errors.</source>
         <translation>Cette valeur de DPI est trop petite. Une telle combinaison risque probablement d&apos;engendrer un manque de mémoire.</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="618"/>
+        <location filename="../app/FixDpiDialog.cpp" line="619"/>
         <source>%1 (page %2)</source>
         <translation>%1 (page %2)</translation>
     </message>
@@ -2515,58 +2520,63 @@ Vous devriez les retirer du projet.</translation>
         <translation>Blanc</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="63"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="48"/>
+        <source>Black</source>
+        <translation>Noir</translation>
+    </message>
+    <message>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="64"/>
         <source>Free</source>
         <translation>Libre</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="64"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="65"/>
         <source>Rectangular</source>
         <translation>Rectangulaire</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="279"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="280"/>
         <source>Apply Splitting Settings</source>
         <translation>Appliquer les paramètres de séparation</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="361"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="362"/>
         <source>Apply Despeckling Level</source>
         <translation>Appliquer le niveau de détachage</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="437"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="438"/>
         <source>Apply Depth Perception</source>
         <translation>Appliquer la perception de la profondeur</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="62"/>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="663"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="63"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="664"/>
         <source>Off</source>
         <translation>Désactivé</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="666"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="667"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="669"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="670"/>
         <source>Manual</source>
         <translation>Manuel</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="672"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="673"/>
         <source>Marginal</source>
         <translation>Marginal</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="682"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="683"/>
         <source>deskew disabled</source>
         <translation>aucun redressement</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="955"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="956"/>
         <source>Apply Processing Settings</source>
         <translation>Appliquer les paramètres de traitement</translation>
     </message>
@@ -2836,7 +2846,7 @@ Vous devriez les retirer du projet.</translation>
         <translation>Dégauchissement</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="680"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="681"/>
         <source>deskew</source>
         <translation>redressement</translation>
     </message>

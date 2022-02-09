@@ -7,7 +7,8 @@
 #include <Transform.h>
 
 #include <QApplication>
-#include <QGLWidget>
+// #include <QGLWidget>
+#include <QOpenGLWidget>
 #include <QMouseEvent>
 #include <QPaintEngine>
 #include <QPainter>
@@ -149,17 +150,17 @@ ImageViewBase::ImageViewBase(const QImage& image,
 
   if (ApplicationSettings::getInstance().isOpenGlEnabled()) {
     if (OpenGLSupport::supported()) {
-      QGLFormat format;
-      format.setSampleBuffers(true);
-      format.setStencil(true);
-      format.setAlpha(true);
-      format.setRgba(true);
-      format.setDepth(false);
-
+      //QGLFormat format;
+      //format.setSampleBuffers(true);
+      //format.setStencil(true);
+      //format.setAlpha(true);
+      //format.setRgba(true);
+      //format.setDepth(false);
+      
       // Most of hardware refuses to work for us with direct rendering enabled.
-      format.setDirectRendering(false);
-
-      setViewport(new QGLWidget(format));
+      //format.setDirectRendering(false);
+        
+      setViewport(new QOpenGLWidget());
     }
   }
 

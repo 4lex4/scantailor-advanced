@@ -12,7 +12,7 @@ QLineF PageLayoutAdapter::adaptCutter(const QLineF& cutterLine, const QRectF& ne
 
   QLineF upperBorder(newRect.topLeft(), newRect.topRight());
   QPointF upperIntersection;
-  if (upperBorder.intersect(cutterLine, &upperIntersection) == QLineF::NoIntersection) {
+  if (upperBorder.intersects(cutterLine, &upperIntersection) == QLineF::NoIntersection) {
     return cutterLine;
   }
   // if intersection is outside the rect
@@ -24,7 +24,7 @@ QLineF PageLayoutAdapter::adaptCutter(const QLineF& cutterLine, const QRectF& ne
 
   QLineF lowerBorder(newRect.bottomLeft(), newRect.bottomRight());
   QPointF lowerIntersection;
-  if (lowerBorder.intersect(cutterLine, &lowerIntersection) == QLineF::NoIntersection) {
+  if (lowerBorder.intersects(cutterLine, &lowerIntersection) == QLineF::NoIntersection) {
     return cutterLine;
   }
   // if intersection is outside the rect
@@ -55,7 +55,7 @@ QVector<QLineF> PageLayoutAdapter::adaptCutters(const QVector<QLineF>& cuttersLi
     QLineF cutterLeft = adaptedCutters.at(i - 1);
     QLineF cutterRight = adaptedCutters.at(i);
 
-    if (cutterLeft.intersect(cutterRight, &intersection) == QLineF::NoIntersection) {
+    if (cutterLeft.intersects(cutterRight, &intersection) == QLineF::NoIntersection) {
       continue;
     }
 
@@ -93,7 +93,7 @@ void PageLayoutAdapter::correctPageLayoutType(PageLayout* layout) {
 
     // if cutter lines match or intersect inside outline (not valid)
     QPointF intersection;
-    QLineF::IntersectType intersectType = cutterLine1.intersect(cutterLine2, &intersection);
+    QLineF::IntersectType intersectType = cutterLine1.intersects(cutterLine2, &intersection);
     if (((intersectType != QLineF::NoIntersection)
          && (((intersection.y() > outline.top()) && (intersection.y() < outline.bottom()))))
         || ((intersectType == QLineF::NoIntersection) && (cutterLine1.pointAt(0) == cutterLine2.pointAt(0)))) {

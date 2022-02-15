@@ -31,5 +31,5 @@ set(sources
     Utils.cpp Utils.h)
 
 add_library(foundation STATIC ${sources})
-target_link_libraries(foundation PUBLIC Qt5::Core Qt5::Xml Qt5::Gui)
+target_link_libraries(foundation PUBLIC Qt6::Core Qt6::Xml Qt6::Gui)
 target_include_directories(foundation PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")

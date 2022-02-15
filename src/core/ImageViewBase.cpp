@@ -7,7 +7,7 @@
 #include <Transform.h>
 
 #include <QApplication>
-#include <QGLWidget>
+#include <QtOpenGLWidgets/QOpenGLWidget>
 #include <QMouseEvent>
 #include <QPaintEngine>
 #include <QPainter>
@@ -149,17 +149,7 @@ ImageViewBase::ImageViewBase(const QImage& image,
 
   if (ApplicationSettings::getInstance().isOpenGlEnabled()) {
     if (OpenGLSupport::supported()) {
-      QGLFormat format;
-      format.setSampleBuffers(true);
-      format.setStencil(true);
-      format.setAlpha(true);
-      format.setRgba(true);
-      format.setDepth(false);
-
-      // Most of hardware refuses to work for us with direct rendering enabled.
-      format.setDirectRendering(false);
-
-      setViewport(new QGLWidget(format));
+      setViewport(new QOpenGLWidget());
     }
   }
 
@@ -511,7 +501,7 @@ void ImageViewBase::mouseMoveEvent(QMouseEvent* event) {
   event->setAccepted(true);
   updateStatusTipAndCursor();
   maybeQueueRedraw();
-  updateCursorPos(event->localPos());
+  updateCursorPos(event->position());
 }
 
 void ImageViewBase::wheelEvent(QWheelEvent* event) {
@@ -550,7 +540,7 @@ void ImageViewBase::resizeEvent(QResizeEvent* event) {
   }
 }
 
-void ImageViewBase::enterEvent(QEvent* event) {
+void ImageViewBase::enterEvent(QEnterEvent* event) {
   viewport()->setFocus();
   QAbstractScrollArea::enterEvent(event);
 }

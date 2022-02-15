@@ -139,8 +139,8 @@ bool TiffWriter::writeImage(QIODevice& device, const QImage& image) {
     return false;
   }
 
-  TIFFSetField(tif.handle(), TIFFTAG_IMAGEWIDTH, uint32(image.width()));
-  TIFFSetField(tif.handle(), TIFFTAG_IMAGELENGTH, uint32(image.height()));
+  TIFFSetField(tif.handle(), TIFFTAG_IMAGEWIDTH, uint32_t(image.width()));
+  TIFFSetField(tif.handle(), TIFFTAG_IMAGELENGTH, uint32_t(image.height()));
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLEFORMAT, SAMPLEFORMAT_UINT);
   TIFFSetField(tif.handle(), TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
   setDpm(tif, Dpm(image));
@@ -169,9 +169,9 @@ void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
     return;
   }
 
-  auto xres = static_cast<float>(0.01 * dpm.horizontal());  // cm
-  auto yres = static_cast<float>(0.01 * dpm.vertical());    // cm
-  uint16 unit = RESUNIT_CENTIMETER;
+  auto xres = 0.01 * dpm.horizontal();  // cm
+  auto yres = 0.01 * dpm.vertical();    // cm
+  uint16_t unit = RESUNIT_CENTIMETER;
 
   // If we have a round (or almost round) DPI, then
   // write it as DPI rather than dots per cm.
@@ -180,8 +180,8 @@ void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
   const double roundedXdpi = std::floor(xdpi + 0.5);
   const double roundedYdpi = std::floor(ydpi + 0.5);
   if ((std::fabs(xdpi - roundedXdpi) < 0.02) && (std::fabs(ydpi - roundedYdpi) < 0.02)) {
-    xres = (float) roundedXdpi;
-    yres = (float) roundedYdpi;
+    xres = roundedXdpi;
+    yres = roundedYdpi;
     unit = RESUNIT_INCH;
   }
 
@@ -191,10 +191,10 @@ void TiffWriter::setDpm(const TiffHandle& tif, const Dpm& dpm) {
 }
 
 bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage& image) {
-  TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(1));
+  TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(1));
 
-  uint16 bitsPerSample = 8;
-  uint16 photometric = PHOTOMETRIC_PALETTE;
+  uint16_t bitsPerSample = 8;
+  uint16_t photometric = PHOTOMETRIC_PALETTE;
   if (image.isGrayscale()) {
     photometric = PHOTOMETRIC_MINISBLACK;
   }
@@ -223,9 +223,9 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
 
   if (image.format() == QImage::Format_Indexed8) {
     TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
-                 uint16(ApplicationSettings::getInstance().getTiffColorCompression()));
+                 uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
   } else {
-    TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16(ApplicationSettings::getInstance().getTiffBwCompression()));
+    TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16_t(ApplicationSettings::getInstance().getTiffBwCompression()));
   }
 
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, bitsPerSample);
@@ -237,9 +237,9 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
     if (colorTable.size() > numColors) {
       colorTable.resize(numColors);
     }
-    std::vector<uint16> pr(numColors, 0);
-    std::vector<uint16> pg(numColors, 0);
-    std::vector<uint16> pb(numColors, 0);
+    std::vector<uint16_t> pr(numColors, 0);
+    std::vector<uint16_t> pg(numColors, 0);
+    std::vector<uint16_t> pb(numColors, 0);
     for (int i = 0; i < colorTable.size(); ++i) {
       const QRgb rgb = colorTable[i];
       pr[i] = static_cast<unsigned short>((0xFFFF * qRed(rgb) + 128) / 255);
@@ -263,9 +263,9 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
 bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_RGB32);
 
-  TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(3));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16(ApplicationSettings::getInstance().getTiffColorCompression()));
-  TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16(8));
+  TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(3));
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 
   const int width = image.width();
@@ -296,9 +296,9 @@ bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
 bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_ARGB32);
 
-  TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16(4));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16(ApplicationSettings::getInstance().getTiffColorCompression()));
-  TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16(8));
+  TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(4));
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 
   const int width = image.width();

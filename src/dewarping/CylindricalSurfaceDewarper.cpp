@@ -195,7 +195,6 @@ HomographicTransform<2, double> CylindricalSurfaceDewarper::fourPoint2DHomograph
   VecNT<8, double> B;
   double* pa = A.data();
   double* pb = B.data();
-  int i = 0;
 
   using Pair = std::pair<QPointF, QPointF>;
   for (const Pair& pair : pairs) {
@@ -343,7 +342,7 @@ void CylindricalSurfaceDewarper::CoupledPolylinesIterator::next1(QPointF& imgPt1
   const Vec2d plnPtx(plnPt1[0], plnPt1[1] + 1);
   const Vec2d imgPtx(m_pln2img(plnPtx));
 
-  if (QLineF(imgPt1, imgPtx).intersect(QLineF(m_nextImgPt2, m_prevImgPt2), &imgPt2) == QLineF::NoIntersection) {
+  if (QLineF(imgPt1, imgPtx).intersects(QLineF(m_nextImgPt2, m_prevImgPt2), &imgPt2) == QLineF::NoIntersection) {
     imgPt2 = m_nextImgPt2;
   }
 
@@ -361,7 +360,7 @@ void CylindricalSurfaceDewarper::CoupledPolylinesIterator::next2(QPointF& imgPt1
   const Vec2d plnPtx(plnPt2[0], plnPt2[1] + 1);
   const Vec2d imgPtx(m_pln2img(plnPtx));
 
-  if (QLineF(imgPt2, imgPtx).intersect(QLineF(m_nextImgPt1, m_prevImgPt1), &imgPt1) == QLineF::NoIntersection) {
+  if (QLineF(imgPt2, imgPtx).intersects(QLineF(m_nextImgPt1, m_prevImgPt1), &imgPt1) == QLineF::NoIntersection) {
     imgPt1 = m_nextImgPt1;
   }
 

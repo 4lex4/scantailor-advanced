@@ -12,7 +12,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 
 #include "ImagePresentation.h"
@@ -72,28 +72,28 @@ ImageView::ImageView(const std::shared_ptr<Settings>& settings,
 
     // Proximity.
     m_innerCorners[i].setProximityCallback(
-        boost::bind(&ImageView::cornerProximity, this, masks_by_corner[i], &m_innerRect, _1));
+        boost::bind(&ImageView::cornerProximity, this, masks_by_corner[i], &m_innerRect, boost::placeholders::_1));
     m_middleCorners[i].setProximityCallback(
-        boost::bind(&ImageView::cornerProximity, this, masks_by_corner[i], &m_middleRect, _1));
+        boost::bind(&ImageView::cornerProximity, this, masks_by_corner[i], &m_middleRect, boost::placeholders::_1));
     m_innerEdges[i].setProximityCallback(
-        boost::bind(&ImageView::edgeProximity, this, masks_by_edge[i], &m_innerRect, _1));
+        boost::bind(&ImageView::edgeProximity, this, masks_by_edge[i], &m_innerRect, boost::placeholders::_1));
     m_middleEdges[i].setProximityCallback(
-        boost::bind(&ImageView::edgeProximity, this, masks_by_edge[i], &m_middleRect, _1));
+        boost::bind(&ImageView::edgeProximity, this, masks_by_edge[i], &m_middleRect, boost::placeholders::_1));
     // Drag initiation.
-    m_innerCorners[i].setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, _1));
-    m_middleCorners[i].setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, _1));
-    m_innerEdges[i].setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, _1));
-    m_middleEdges[i].setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, _1));
+    m_innerCorners[i].setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, boost::placeholders::_1));
+    m_middleCorners[i].setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, boost::placeholders::_1));
+    m_innerEdges[i].setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, boost::placeholders::_1));
+    m_middleEdges[i].setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, boost::placeholders::_1));
 
     // Drag continuation.
     m_innerCorners[i].setDragContinuationCallback(
-        boost::bind(&ImageView::innerRectDragContinuation, this, masks_by_corner[i], _1));
+        boost::bind(&ImageView::innerRectDragContinuation, this, masks_by_corner[i], boost::placeholders::_1));
     m_middleCorners[i].setDragContinuationCallback(
-        boost::bind(&ImageView::middleRectDragContinuation, this, masks_by_corner[i], _1));
+        boost::bind(&ImageView::middleRectDragContinuation, this, masks_by_corner[i], boost::placeholders::_1));
     m_innerEdges[i].setDragContinuationCallback(
-        boost::bind(&ImageView::innerRectDragContinuation, this, masks_by_edge[i], _1));
+        boost::bind(&ImageView::innerRectDragContinuation, this, masks_by_edge[i], boost::placeholders::_1));
     m_middleEdges[i].setDragContinuationCallback(
-        boost::bind(&ImageView::middleRectDragContinuation, this, masks_by_edge[i], _1));
+        boost::bind(&ImageView::middleRectDragContinuation, this, masks_by_edge[i], boost::placeholders::_1));
     // Drag finishing.
     m_innerCorners[i].setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
     m_middleCorners[i].setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
@@ -128,9 +128,9 @@ ImageView::ImageView(const std::shared_ptr<Settings>& settings,
   }
 
   {
-    m_innerRectArea.setProximityCallback(boost::bind(&ImageView::rectProximity, this, boost::ref(m_innerRect), _1));
-    m_innerRectArea.setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, _1));
-    m_innerRectArea.setDragContinuationCallback(boost::bind(&ImageView::innerRectMoveRequest, this, _1, _2));
+    m_innerRectArea.setProximityCallback(boost::bind(&ImageView::rectProximity, this, boost::ref(m_innerRect), boost::placeholders::_1));
+    m_innerRectArea.setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, boost::placeholders::_1));
+    m_innerRectArea.setDragContinuationCallback(boost::bind(&ImageView::innerRectMoveRequest, this, boost::placeholders::_1, boost::placeholders::_2));
     m_innerRectArea.setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
     m_innerRectAreaHandler.setObject(&m_innerRectArea);
     m_innerRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the page content."));
@@ -790,7 +790,7 @@ void ImageView::syncGuidesSettings() {
 void ImageView::setupGuideInteraction(const int index) {
   m_draggableGuides[index].setProximityPriority(1);
   m_draggableGuides[index].setPositionCallback(boost::bind(&ImageView::guidePosition, this, index));
-  m_draggableGuides[index].setMoveRequestCallback(boost::bind(&ImageView::guideMoveRequest, this, index, _1));
+  m_draggableGuides[index].setMoveRequestCallback(boost::bind(&ImageView::guideMoveRequest, this, index, boost::placeholders::_1));
   m_draggableGuides[index].setDragFinishedCallback(boost::bind(&ImageView::guideDragFinished, this));
 
   const Qt::CursorShape cursorShape

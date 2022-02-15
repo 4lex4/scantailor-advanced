@@ -106,7 +106,7 @@ if (WIN32)
   set(ZLIB_INSTALL_PREFIX "${zlib_dir_assumed}" CACHE PATH "Prefix where zlib is installed")
   set(PNG_INSTALL_PREFIX "${png_dir_assumed}" CACHE PATH "Prefix where png is installed")
   set(TIFF_INSTALL_PREFIX "${tiff_dir_assumed}" CACHE PATH "Prefix where tiff is installed")
-  set(QT_INSTALL_PREFIX "${qt_dir_assumed}" CACHE PATH "Prefix where Qt5 is installed")
+  set(QT_INSTALL_PREFIX "${qt_dir_assumed}" CACHE PATH "Prefix where Qt6 is installed")
   set(BOOST_ROOT "${boost_dir_assumed}" CACHE PATH "Prefix where Boost is installed")
 
   macro(list_append_existing_path Var Path)
@@ -204,8 +204,8 @@ endif()
 
 set(qt_min_version 5.6)
 find_package(
-    Qt5 ${qt_min_version}
-    COMPONENTS Core Gui Widgets Xml Network LinguistTools OpenGL Svg
+    Qt6 ${qt_min_version}
+    COMPONENTS Core Gui Widgets OpenGLWidgets Xml Network LinguistTools OpenGL Svg
     CONFIG REQUIRED)
 
 #=================================== Threads ===================================#
@@ -293,7 +293,7 @@ finalize_translations(scantailor ${translation_files})
 update_translations_target(update_translations scantailor)
 
 list(FILTER translation_files EXCLUDE REGEX ".*untranslated.ts")
-qt5_add_translation(qm_files ${translation_files})
+Qt_add_translation(qm_files ${translation_files})
 add_custom_target(compile_translations ALL DEPENDS ${qm_files})
 if (WIN32)
   install(FILES ${qm_files} DESTINATION "${CMAKE_INSTALL_BINDIR}/translations")
@@ -326,8 +326,8 @@ if (WIN32)
   # Install the DLLs of the dependencies.
   set(dep_libs
       JPEG::JPEG PNG::PNG ZLIB::ZLIB TIFF::TIFF
-      Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml 
-      Qt5::Network Qt5::OpenGL Qt5::Svg)
+      Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Xml
+      Qt6::Network Qt6::OpenGL Qt6::OpenGLWidgets Qt6::Svg)
 
   foreach (_target ${dep_libs})
     get_target_property(target_type ${_target} TYPE)
@@ -356,24 +356,24 @@ if (WIN32)
         set_if_undefined(debug_loc "${release_loc}")
 
         copy_to_build_dir("${release_loc}" SUBDIR ${SubDir} CONFIGURATIONS Release MinSizeRel RelWithDebInfo)
-        install(PROGRAMS "${release_loc}" 
-            CONFIGURATIONS Release MinSizeRel RelWithDebInfo 
+        install(PROGRAMS "${release_loc}"
+            CONFIGURATIONS Release MinSizeRel RelWithDebInfo
             DESTINATION "${CMAKE_INSTALL_BINDIR}/${SubDir}")
         copy_to_build_dir("${debug_loc}" SUBDIR ${SubDir} CONFIGURATIONS Debug)
-        install(PROGRAMS "${debug_loc}" 
-            CONFIGURATIONS Debug 
+        install(PROGRAMS "${debug_loc}"
+            CONFIGURATIONS Debug
             DESTINATION "${CMAKE_INSTALL_BINDIR}/${SubDir}")
       endif()
     endif()
   endmacro()
 
-  install_qt_plugin("platforms" Qt5::QWindowsIntegrationPlugin)
-  install_qt_plugin("styles" Qt5::QWindowsVistaStylePlugin)
-  install_qt_plugin("imageformats" Qt5::QJpegPlugin)
-  install_qt_plugin("accessible"  Qt5::QAccessiblePlugin)
-  install_qt_plugin("iconengines" Qt5::QSvgIconPlugin)
-  install_qt_plugin("imageformats" Qt5::QSvgPlugin)
-  
+  install_qt_plugin("platforms" Qt6::QWindowsIntegrationPlugin)
+  install_qt_plugin("styles" Qt6::QWindowsVistaStylePlugin)
+  install_qt_plugin("imageformats" Qt6::QJpegPlugin)
+  install_qt_plugin("accessible"  Qt6::QAccessiblePlugin)
+  install_qt_plugin("iconengines" Qt6::QSvgIconPlugin)
+  install_qt_plugin("imageformats" Qt6::QSvgPlugin)
+
   # Install MinGW runtime components.
   if (MINGW)
     get_filename_component(_mingw_path ${CMAKE_CXX_COMPILER} PATH)

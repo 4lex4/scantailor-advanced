@@ -8,6 +8,7 @@
 
 #include <QImage>
 #include <QPainter>
+#include <QRandomGenerator>
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -244,7 +245,7 @@ QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbgS
   // Run RANSAC on the segments.
 
   RansacAlgo ransac(segments);
-  qsrand(0);  // Repeatablity is important.
+  QRandomGenerator prng(0);  // Repeatablity is important.
 
   // We want to make sure we do pick a few segments closest
   // to the edge, so let's sort segments appropriately
@@ -259,7 +260,7 @@ QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbgS
   // Continue with random samples.
   const int ransacIterations = segments.empty() ? 0 : 200;
   for (int i = 0; i < ransacIterations; ++i) {
-    ransac.buildAndAssessModel(segments[qrand() % segments.size()]);
+    ransac.buildAndAssessModel(segments[prng.generate() % segments.size()]);
   }
 
   if (ransac.bestModel().segments.empty()) {
@@ -291,7 +292,7 @@ QLineF SequentialColumnProcessor::interpolateSegments(const std::vector<Segment>
   assert(accumWeight != 0);
   accumVec /= accumWeight;
 
-  QLineF line(m_path.front(), m_path.front() + accumVec);
+  QLineF line(QPointF(m_path.front()), QPointF(m_path.front()) + accumVec);
   Vec2d normal(-accumVec[1], accumVec[0]);
   if ((m_leftOrRight == RIGHT) != (normal[0] < 0)) {
     normal = -normal;
@@ -392,8 +393,8 @@ QLineF extendLine(const QLineF& line, int height) {
   const QLineF topLine(QPointF(0, 0), QPointF(1, 0));
   const QLineF bottomLine(QPointF(0, height), QPointF(1, height));
 
-  line.intersect(topLine, &topIntersection);
-  line.intersect(bottomLine, &bottomIntersection);
+  line.intersects(topLine, &topIntersection);
+  line.intersects(bottomLine, &bottomIntersection);
   return QLineF(topIntersection, bottomIntersection);
 }
 }  // namespace

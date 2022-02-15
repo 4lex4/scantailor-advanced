@@ -58,7 +58,7 @@ std::list<QString> Application::getLanguagesList() const {
 }
 
 void Application::initTranslations() {
-  const QStringList translationDirs(QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), QString::SkipEmptyParts));
+  const QStringList translationDirs(QString::fromUtf8(TRANSLATION_DIRS).split(QChar(':'), Qt::SkipEmptyParts));
 
   const QStringList languageFileFilter("scantailor_*.qm");
   for (const QString& path : translationDirs) {

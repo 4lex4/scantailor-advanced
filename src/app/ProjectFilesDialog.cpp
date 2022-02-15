@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSortFilterProxyModel>
+#include <QVector>
 #include <deque>
 
 #include "ImageMetadataLoader.h"

@@ -203,7 +203,7 @@ endif()
 
 #=================================== Qt ===================================#
 
-set(qt_min_version 5.6)
+set(qt_min_version 5.15)
 
 find_package(
     Qt6

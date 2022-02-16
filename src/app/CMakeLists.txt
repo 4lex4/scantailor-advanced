@@ -79,4 +79,15 @@ target_include_directories(
     "$<TARGET_PROPERTY:TIFF::TIFF,INTERFACE_INCLUDE_DIRECTORIES>")
 install(TARGETS scantailor RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
+if (Qt6_FOUND AND WIN32)
+  #manage plugins with windeployqt.
+  add_custom_command(
+    TARGET scantailor
+    POST_BUILD
+    COMMAND ${QT_BINDIR}/windeployqt ${CMAKE_BINARY_DIR}
+    COMMENT "deploy qt files alongside binary (e.g. plugins)"
+  )
+  install(CODE "execute_process(COMMAND ${QT_BINDIR}/windeployqt ${CMAKE_INSTALL_PREFIX})")
+endif()
+
 translation_sources(scantailor ${gui_only_sources} ${gui_only_ui_files})

@@ -48,7 +48,11 @@ bool Curve::matches(const Curve& other) const {
 
 std::vector<QPointF> Curve::deserializePolyline(const QDomElement& el) {
   QByteArray ba(QByteArray::fromBase64(el.text().trimmed().toLatin1()));
+#if QT_VERSION_MAJOR == 5
+  QDataStream strm(&ba, QIODevice::ReadOnly);
+#else
   QDataStream strm(&ba, QIODeviceBase::ReadOnly);
+#endif
   strm.setVersion(QDataStream::Qt_4_4);
   strm.setByteOrder(QDataStream::LittleEndian);
 
@@ -71,7 +75,11 @@ QDomElement Curve::serializePolyline(const std::vector<QPointF>& polyline, QDomD
 
   QByteArray ba;
   ba.reserve(static_cast<int>(8 * polyline.size()));
+#if QT_VERSION_MAJOR == 5
+  QDataStream strm(&ba, QIODevice::WriteOnly);
+#else
   QDataStream strm(&ba, QIODeviceBase::WriteOnly);
+#endif
   strm.setVersion(QDataStream::Qt_4_4);
   strm.setByteOrder(QDataStream::LittleEndian);
 

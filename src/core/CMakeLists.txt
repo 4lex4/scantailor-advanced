@@ -121,9 +121,14 @@ add_library(core STATIC ${common_sources} ${common_ui_files})
 target_link_libraries(
     core
     PRIVATE TIFF::TIFF PNG::PNG ZLIB::ZLIB JPEG::JPEG
-    PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGLWidgets Qt6::Xml Qt6::Network Qt6::OpenGL Qt6::Svg
+    PUBLIC Qt::Core Qt::Gui Qt::Widgets Qt::Xml Qt::Network Qt::OpenGL Qt::Svg
     imageproc zones
     fix_orientation page_split deskew select_content page_layout output)
+  if(Qt6_FOUND)
+    target_link_libraries(
+        core
+        PUBLIC Qt::OpenGLWidgets)
+    endif()
 target_include_directories(core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 set_target_properties(core PROPERTIES AUTOUIC ON)
 

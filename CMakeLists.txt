@@ -42,6 +42,7 @@ if (NOT DEFAULT_COMPILER_FLAGS_IS_SET)
   if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror=return-type -Wno-unused")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror=return-type -Wno-unused")
+    add_compile_options("$<$<CONFIG:RELEASE>:-march=native;-mtune=native>")
   endif()
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}"
@@ -203,7 +204,7 @@ endif()
 
 #=================================== Qt ===================================#
 
-set(qt_min_version 5.15)
+set(qt_min_version 5.9)
 
 find_package(
     Qt6
@@ -216,6 +217,26 @@ if (NOT Qt6_FOUND)
 endif()
 
 get_filename_component(QT_BINDIR ${QT_QMAKE_EXECUTABLE} DIRECTORY)
+
+if(Qt6_FOUND)
+  set(Qt_Core_lib Qt::Core)
+  set(Qt_Gui_lib Qt::Gui)
+  set(Qt_Network_lib Qt::Network)
+  set(Qt_OpenGL_lib Qt::OpenGL)
+  set(Qt_Svg_lib Qt::Svg)
+  set(Qt_Widgets_lib Qt::Widgets)
+  set(Qt_Xml_lib Qt::Xml)
+  set(Qt_OpenGLWidgets_lib Qt::OpenGLWidgets)
+else()
+  set(Qt_Core_lib Qt5::Core)
+  set(Qt_Gui_lib Qt5::Gui)
+  set(Qt_Network_lib Qt5::Network)
+  set(Qt_OpenGL_lib Qt5::OpenGL)
+  set(Qt_Svg_lib Qt5::Svg)
+  set(Qt_Widgets_lib Qt5::Widgets)
+  set(Qt_Xml_lib Qt5::Xml)
+endif()
+
 
 #=================================== Threads ===================================#
 
@@ -302,7 +323,11 @@ finalize_translations(scantailor ${translation_files})
 update_translations_target(update_translations scantailor)
 
 list(FILTER translation_files EXCLUDE REGEX ".*untranslated.ts")
-Qt_add_translation(qm_files ${translation_files})
+if(Qt6_FOUND)
+  Qt_add_translation(qm_files ${translation_files})
+else()
+  Qt5_add_translation(qm_files ${translation_files})
+endif()
 add_custom_target(compile_translations ALL DEPENDS ${qm_files})
 if (WIN32)
   install(FILES ${qm_files} DESTINATION "${CMAKE_INSTALL_BINDIR}/translations")
@@ -333,12 +358,16 @@ if (WIN32)
   endmacro()
 
   # Install the DLLs of the dependencies.
-  set(dep_libs
-      JPEG::JPEG PNG::PNG ZLIB::ZLIB TIFF::TIFF
-      Qt::Core Qt::Gui Qt::Widgets Qt::Xml
-      Qt::Network Qt::OpenGL Qt::Svg)
   if(Qt6_FOUND)
-    list(APPEND dep_libs Qt6::OpenGLWidgets)
+    set(dep_libs
+        JPEG::JPEG PNG::PNG ZLIB::ZLIB TIFF::TIFF
+        Qt::Core Qt::Gui Qt::Widgets Qt::Xml
+        Qt::Network Qt::OpenGL Qt::Svg Qt6::OpenGLWidgets)
+  else()
+    set(dep_libs
+        JPEG::JPEG PNG::PNG ZLIB::ZLIB TIFF::TIFF
+        Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml
+        Qt5::Network Qt5::OpenGL Qt5::Svg)
   endif()
 
   foreach (_target ${dep_libs})

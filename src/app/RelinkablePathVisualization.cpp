@@ -53,8 +53,12 @@ void RelinkablePathVisualization::clear() {
 
 void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool clickable) {
   clear();
-
-  QStringList components(path.normalizedPath().split(QChar('/'), Qt::SkipEmptyParts));
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+  auto opt = QString::SkipEmptyParts;
+#else
+  auto opt = Qt::SkipEmptyParts;
+#endif
+  QStringList components(path.normalizedPath().split(QChar('/'), opt));
   if (components.empty()) {
     return;
   }

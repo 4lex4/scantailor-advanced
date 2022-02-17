@@ -53,7 +53,11 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
       focusPoint = QRectF(m_imageView.rect()).center();
       break;
     case CURSOR:
-      focusPoint = event->position() + QPointF(0.5, 0.5);
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+    focusPoint = event->pos() + QPointF(0.5, 0.5);
+#else
+    focusPoint = event->position() + QPointF(0.5, 0.5);
+#endif
       break;
   }
   m_imageView.setWidgetFocalPointWithoutMoving(focusPoint);

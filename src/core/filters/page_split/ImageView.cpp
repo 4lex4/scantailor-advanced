@@ -207,8 +207,13 @@ QLineF ImageView::customInscribedCutterLine(const QLineF& line, const QRectF& re
   QPointF topPt;
   QPointF bottomPt;
 
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+  line.intersect(QLineF(rect.topLeft(), rect.topRight()), &topPt);
+  line.intersect(QLineF(rect.bottomLeft(), rect.bottomRight()), &bottomPt);
+#else
   line.intersects(QLineF(rect.topLeft(), rect.topRight()), &topPt);
   line.intersects(QLineF(rect.bottomLeft(), rect.bottomRight()), &bottomPt);
+#endif
 
   const double topX = qBound(rect.left(), topPt.x(), rect.right());
   const double bottomX = qBound(rect.left(), bottomPt.x(), rect.right());
@@ -234,8 +239,13 @@ void ImageView::handleMoveRequest(int lineIdx, int handleIdx, const QPointF& pos
       QPointF pTopI;
       QPointF pBottomI;
       QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+      anotherLine.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
+      anotherLine.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
+#else
       anotherLine.intersects(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
       anotherLine.intersects(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
+#endif
 
       if ((pTopI.x() < minXTop) || (pTopI.x() > maxXTop) || (pBottomI.x() < minXBottom)
           || (pBottomI.x() > maxXBottom)) {
@@ -274,8 +284,14 @@ void ImageView::lineMoveRequest(int lineIdx, QLineF line) {
   const QRectF validArea(getOccupiedWidgetRect());
   QPointF pTop;
   QPointF pBottom;
+
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+  line.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTop);
+  line.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottom);
+#else
   line.intersects(QLineF(validArea.topLeft(), validArea.topRight()), &pTop);
   line.intersects(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottom);
+#endif
 
   qreal minXTop = validArea.left();
   qreal maxXTop = validArea.right();
@@ -288,8 +304,13 @@ void ImageView::lineMoveRequest(int lineIdx, QLineF line) {
       QPointF pTopI;
       QPointF pBottomI;
       QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+      anotherLine.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
+      anotherLine.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
+#else
       anotherLine.intersects(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
       anotherLine.intersects(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
+#endif
 
       if ((pTopI.x() < minXTop) || (pTopI.x() > maxXTop) || (pBottomI.x() < minXBottom)
           || (pBottomI.x() > maxXBottom)) {

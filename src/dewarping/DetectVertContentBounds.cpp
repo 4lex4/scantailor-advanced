@@ -8,7 +8,9 @@
 
 #include <QImage>
 #include <QPainter>
+#if QT_VERSION_MAJOR > 5 or QT_VERSION_MINOR > 9
 #include <QRandomGenerator>
+#endif
 #include <boost/foreach.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -245,8 +247,11 @@ QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbgS
   // Run RANSAC on the segments.
 
   RansacAlgo ransac(segments);
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+  qsrand(0);  // Repeatablity is important.
+#else
   QRandomGenerator prng(0);  // Repeatablity is important.
-
+#endif
   // We want to make sure we do pick a few segments closest
   // to the edge, so let's sort segments appropriately
   // and manually feed the best ones to RANSAC.
@@ -260,7 +265,12 @@ QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbgS
   // Continue with random samples.
   const int ransacIterations = segments.empty() ? 0 : 200;
   for (int i = 0; i < ransacIterations; ++i) {
-    ransac.buildAndAssessModel(segments[prng.generate() % segments.size()]);
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR <= 9
+    auto r  = qrand();
+#else
+    auto r = prng.generate();
+#endif
+    ransac.buildAndAssessModel(segments[r % segments.size()]);
   }
 
   if (ransac.bestModel().segments.empty()) {
@@ -392,9 +402,13 @@ QLineF extendLine(const QLineF& line, int height) {
 
   const QLineF topLine(QPointF(0, 0), QPointF(1, 0));
   const QLineF bottomLine(QPointF(0, height), QPointF(1, height));
-
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+  line.intersect(topLine, &topIntersection);
+  line.intersect(bottomLine, &bottomIntersection);
+#else
   line.intersects(topLine, &topIntersection);
   line.intersects(bottomLine, &bottomIntersection);
+#endif
   return QLineF(topIntersection, bottomIntersection);
 }
 }  // namespace

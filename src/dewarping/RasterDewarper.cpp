@@ -8,6 +8,7 @@
 
 #include <QDebug>
 #include <cmath>
+#include <stdexcept>
 
 #include "CylindricalSurfaceDewarper.h"
 

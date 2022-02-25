@@ -49,6 +49,7 @@
 #include <boost/bind/bind.hpp>
 #include <boost/function.hpp>
 #include <cmath>
+#include <stdexcept>
 
 #include "ColorParams.h"
 #include "DebugImages.h"

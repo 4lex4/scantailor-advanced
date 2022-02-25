@@ -4,6 +4,7 @@
 #include "SeedFill.h"
 
 #include <QDebug>
+#include <stdexcept>
 
 #include "GrayImage.h"
 #include "SeedFillGeneric.h"

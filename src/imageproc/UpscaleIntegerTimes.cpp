@@ -5,6 +5,8 @@
 
 #include "BinaryImage.h"
 
+#include <stdexcept>
+
 namespace imageproc {
 namespace {
 inline uint32_t multiplyBit(uint32_t bit, int times) {

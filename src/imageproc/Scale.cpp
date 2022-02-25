@@ -3,6 +3,7 @@
 
 #include "Scale.h"
 
+#include <stdexcept>
 #include <cassert>
 
 #include "GrayImage.h"

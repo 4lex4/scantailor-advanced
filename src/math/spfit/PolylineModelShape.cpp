@@ -5,6 +5,8 @@
 
 #include <QDebug>
 
+#include <stdexcept>
+
 #include "FrenetFrame.h"
 #include "ToLineProjector.h"
 

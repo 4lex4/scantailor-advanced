@@ -84,7 +84,7 @@ if (Qt6_FOUND AND WIN32)
   add_custom_command(
     TARGET scantailor
     POST_BUILD
-    COMMAND ${QT_BINDIR}/windeployqt ${CMAKE_BINARY_DIR}
+    COMMAND ${QT_BINDIR}/windeployqt  $<TARGET_FILE_DIR:scantailor>
     COMMENT "deploy qt files alongside binary (e.g. plugins)"
   )
   install(CODE "execute_process(COMMAND ${QT_BINDIR}/windeployqt ${CMAKE_INSTALL_PREFIX})")

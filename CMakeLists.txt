@@ -210,13 +210,14 @@ find_package(
     Qt6
     COMPONENTS Core Gui Widgets Xml Network LinguistTools OpenGL Svg OpenGLWidgets
     CONFIG)
-if (NOT Qt6_FOUND)
+if (Qt6_FOUND)
+    set(QT_BINDIR "${QT6_INSTALL_PREFIX}/bin")
+else()
   find_package(Qt5 ${qt_min_version}
     COMPONENTS Core Gui Widgets Xml Network LinguistTools OpenGL Svg
     CONFIG REQUIRED)
+    set(QT_BINDIR "${QT5_INSTALL_PREFIX}/bin")
 endif()
-
-get_filename_component(QT_BINDIR ${QT_QMAKE_EXECUTABLE} DIRECTORY)
 
 if(Qt6_FOUND)
   set(Qt_Core_lib Qt::Core)

@@ -132,7 +132,7 @@ endif()
 find_package(JPEG REQUIRED)
 
 if (WIN32)
-  add_dynamic_library_locations(JPEG::JPEG)
+  add_dynamic_library_locations(JPEG::JPEG "libjpeg-62.dll")
 endif()
 
 #=================================== ZLIB ===================================#
@@ -148,7 +148,7 @@ endif()
 find_package(PNG REQUIRED)
 
 if (WIN32)
-  add_dynamic_library_locations(PNG::PNG)
+  add_dynamic_library_locations(PNG::PNG "libpng16.dll")
 endif()
 
 #=================================== TIFF ===================================#
@@ -163,6 +163,8 @@ if (WIN32)
 endif()
 
 #================================= Boost ================================#
+
+#set(Boost_NO_WARN_NEW_VERSIONS ON)
 
 if (WIN32)
   if (MINGW)

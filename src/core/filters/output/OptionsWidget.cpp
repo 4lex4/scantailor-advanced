@@ -45,6 +45,7 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
 
   fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
   fillingColorBox->addItem(tr("White"), FILL_WHITE);
+  fillingColorBox->addItem(tr("Black"), FILL_BLACK);
 
   QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget = new OtsuBinarizationOptionsWidget(m_settings);
   QPointer<BinarizationOptionsWidget> sauvolaBinarizationOptionsWidget

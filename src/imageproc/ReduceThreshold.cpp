@@ -3,6 +3,7 @@
 
 #include "ReduceThreshold.h"
 
+#include <stdexcept>
 #include <cassert>
 
 namespace imageproc {

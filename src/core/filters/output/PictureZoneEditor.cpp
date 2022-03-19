@@ -9,7 +9,7 @@
 
 #include <QPainter>
 #include <QPointer>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <utility>
 
 #include "BackgroundExecutor.h"
@@ -90,7 +90,7 @@ PictureZoneEditor::PictureZoneEditor(const QImage& image,
 
   setMouseTracking(true);
 
-  context().setShowPropertiesCommand(boost::bind(&PictureZoneEditor::showPropertiesDialog, this, _1));
+  context().setShowPropertiesCommand(boost::bind(&PictureZoneEditor::showPropertiesDialog, this, boost::placeholders::_1));
 
   connect(&zones(), SIGNAL(committed()), SLOT(commitZones()));
 

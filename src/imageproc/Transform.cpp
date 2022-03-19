@@ -5,6 +5,7 @@
 
 #include <QDebug>
 #include <cassert>
+#include <stdexcept>
 
 #include "BadAllocIfNull.h"
 #include "ColorMixer.h"

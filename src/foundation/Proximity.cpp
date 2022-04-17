@@ -6,6 +6,8 @@
 #include <QLineF>
 #include <QPointF>
 
+#include <algorithm>
+
 Proximity::Proximity(const QPointF& p1, const QPointF& p2) {
   const double dx = p1.x() - p2.x();
   const double dy = p1.y() - p2.y();

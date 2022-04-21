@@ -3,6 +3,8 @@
 
 #include "OutputImageBuilder.h"
 
+#include <stdexcept>
+
 #include <imageproc/BinaryImage.h>
 
 #include "ForegroundType.h"

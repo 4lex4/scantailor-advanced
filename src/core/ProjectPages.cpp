@@ -273,7 +273,7 @@ struct File {
 
   explicit File(const QString& fname) : fileName(fname) {}
 
-  explicit operator ImageFileInfo() const { return ImageFileInfo(fileName, metadata); }
+  explicit operator ImageFileInfo() const { return ImageFileInfo(QFileInfo(fileName), metadata); }
 };
 }  // anonymous namespace
 

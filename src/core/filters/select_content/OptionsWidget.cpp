@@ -5,7 +5,7 @@
 
 #include <UnitsProvider.h>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <utility>
 
 #include "ApplyDialog.h"

@@ -6,6 +6,8 @@
 #include <QLineF>
 #include <QPointF>
 
+#include <algorithm>
+
 Proximity::Proximity(const QPointF& p1, const QPointF& p2) {
   const double dx = p1.x() - p2.x();
   const double dy = p1.y() - p2.y();
@@ -28,7 +30,11 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
   perpendicular.translate(pt);
   // Calculate intersection.
   QPointF intersection;
+#if QT_VERSION_MAJOR  == 5 and QT_VERSION_MINOR < 14
   segment.intersect(perpendicular, &intersection);
+#else
+  segment.intersects(perpendicular, &intersection);
+#endif
 
   const double dx1 = segment.p1().x() - intersection.x();
   const double dy1 = segment.p1().y() - intersection.y();

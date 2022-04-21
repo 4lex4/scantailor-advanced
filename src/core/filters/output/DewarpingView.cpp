@@ -7,8 +7,8 @@
 
 #include <QDebug>
 #include <QPainter>
-#include <QtWidgets/QShortcut>
-#include <boost/bind.hpp>
+#include <QShortcut>
+#include <boost/bind/bind.hpp>
 
 #include "ImagePresentation.h"
 #include "ToLineProjector.h"
@@ -79,8 +79,8 @@ DewarpingView::DewarpingView(const QImage& image,
     ++curveIdx;
     spline->setModifiedCallback(boost::bind(&DewarpingView::curveModified, this, curveIdx));
     spline->setDragFinishedCallback(boost::bind(&DewarpingView::dragFinished, this));
-    spline->setStorageTransform(boost::bind(&DewarpingView::sourceToWidget, this, _1),
-                                boost::bind(&DewarpingView::widgetToSource, this, _1));
+    spline->setStorageTransform(boost::bind(&DewarpingView::sourceToWidget, this, boost::placeholders::_1),
+                                boost::bind(&DewarpingView::widgetToSource, this, boost::placeholders::_1));
     makeLastFollower(*spline);
   }
 
@@ -214,8 +214,14 @@ void DewarpingView::onPaint(QPainter& painter, const InteractionState& interacti
     const dewarping::Curve& bottomCurve = m_distortionModel.bottomCurve();
     painter.drawLine(topCurve.polyline().front(), bottomCurve.polyline().front());
     painter.drawLine(topCurve.polyline().back(), bottomCurve.polyline().back());
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
     painter.drawPolyline(QVector<QPointF>::fromStdVector(topCurve.polyline()));
     painter.drawPolyline(QVector<QPointF>::fromStdVector(bottomCurve.polyline()));
+#else
+    painter.drawPolyline(QVector<QPointF>(topCurve.polyline().begin(), topCurve.polyline().end()));
+    painter.drawPolyline(QVector<QPointF>(bottomCurve.polyline().begin(), bottomCurve.polyline().end()));
+#endif
+
   }
 
   paintXSpline(painter, interaction, m_topSpline);

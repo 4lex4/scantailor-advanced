@@ -15,6 +15,7 @@
 #include <QSortFilterProxyModel>
 #include <QStackedLayout>
 #include <QtWidgets/QInputDialog>
+#include <QActionGroup>
 #include <boost/lambda/lambda.hpp>
 #include <memory>
 

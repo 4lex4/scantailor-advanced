@@ -4,6 +4,7 @@
 #include "SmartFilenameOrdering.h"
 
 #include <QFileInfo>
+#include <QString>
 
 bool SmartFilenameOrdering::operator()(const QFileInfo& lhs, const QFileInfo& rhs) const {
   // First compare directories.
@@ -62,3 +63,11 @@ bool SmartFilenameOrdering::operator()(const QFileInfo& lhs, const QFileInfo& rh
   // them as equal, so let's do a usual comparision now.
   return lhsFname < rhsFname;
 }  // ()
+
+bool SmartFilenameOrdering::operator()(QString const& lhs, QString const& rhs) const
+{
+        QFileInfo lhs_i(lhs);
+        QFileInfo rhs_i(rhs);
+        return this->operator()(lhs_i, rhs_i);
+}
+

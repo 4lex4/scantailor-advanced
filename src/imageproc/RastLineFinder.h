@@ -6,6 +6,7 @@
 
 #include <QLineF>
 #include <QPointF>
+#include <stdexcept>
 #include <cstddef>
 #include <string>
 #include <vector>

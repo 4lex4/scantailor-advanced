@@ -205,6 +205,9 @@ QToolButton:pressed {
             <property name="decimals">
              <number>1</number>
             </property>
+            <property name="minimum">
+             <double>-9999.000000000000000</double>
+            </property>
             <property name="maximum">
              <double>9999.000000000000000</double>
             </property>
@@ -215,6 +218,9 @@ QToolButton:pressed {
             <property name="decimals">
              <number>1</number>
             </property>
+            <property name="minimum">
+             <double>-9999.000000000000000</double>
+            </property>
             <property name="maximum">
              <double>9999.000000000000000</double>
             </property>
@@ -224,6 +230,9 @@ QToolButton:pressed {
            <widget class="QDoubleSpinBox" name="leftMarginSpinBox">
             <property name="decimals">
              <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>-9999.000000000000000</double>
             </property>
             <property name="maximum">
              <double>9999.000000000000000</double>
@@ -241,6 +250,9 @@ QToolButton:pressed {
            <widget class="QDoubleSpinBox" name="rightMarginSpinBox">
             <property name="decimals">
              <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>-9999.000000000000000</double>
             </property>
             <property name="maximum">
              <double>9999.000000000000000</double>

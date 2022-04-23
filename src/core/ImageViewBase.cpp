@@ -7,12 +7,14 @@
 #include <Transform.h>
 
 #include <QApplication>
+
 #if QT_VERSION_MAJOR == 5
 #include <QGLWidget>
 #define QOpenGLWidget QGLWidget
 #else
 #include <QtOpenGLWidgets/QOpenGLWidget>
 #endif
+
 #include <QMouseEvent>
 #include <QPaintEngine>
 #include <QPainter>

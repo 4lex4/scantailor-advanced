@@ -5,7 +5,7 @@
 
 #include <QKeyEvent>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 #include <QtWidgets/QStatusBar>
 
 #include "Utils.h"

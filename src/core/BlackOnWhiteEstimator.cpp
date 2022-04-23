@@ -3,6 +3,8 @@
 
 #include "BlackOnWhiteEstimator.h"
 
+#include <stdexcept>
+
 #include <imageproc/Binarize.h>
 #include <imageproc/Grayscale.h>
 #include <imageproc/Morphology.h>

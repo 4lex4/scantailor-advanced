@@ -413,4 +413,4 @@ has't been moved due to dirty realization. Their functionality is fully covered 
 Building
 ----------
 
-Go to [this repository](https://github.com/4lex4/scantailor-libs-build) and follow the instructions given there.
+Go to [this repository](https://github.com/vigri/scantailor-libs-build) and follow the instructions given there.

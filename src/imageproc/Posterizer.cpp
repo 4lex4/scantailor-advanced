@@ -3,9 +3,11 @@
 
 #include "Posterizer.h"
 
+#include <stdexcept>
 #include <cassert>
 #include <set>
 #include <unordered_set>
+#include <list>
 
 #include "BinaryImage.h"
 

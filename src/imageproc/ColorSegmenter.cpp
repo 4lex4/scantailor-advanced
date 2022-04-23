@@ -5,6 +5,7 @@
 
 #include <QImage>
 #include <cmath>
+#include <stdexcept>
 
 #include "BinaryImage.h"
 #include "BinaryThreshold.h"

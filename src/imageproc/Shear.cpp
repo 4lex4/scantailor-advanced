@@ -3,6 +3,7 @@
 
 #include "Shear.h"
 
+#include <stdexcept>
 #include <cassert>
 #include <cmath>
 

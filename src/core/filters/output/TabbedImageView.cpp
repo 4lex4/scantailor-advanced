@@ -4,7 +4,7 @@
 #include <ImageViewBase.h>
 #include <filters/output/TabbedImageView.h>
 
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 
 #include "../../Utils.h"
 #include "DespeckleView.h"
@@ -16,8 +16,12 @@ TabbedImageView::TabbedImageView(QWidget* parent) : QTabWidget(parent), m_prevIm
   connect(this, SIGNAL(currentChanged(int)), SLOT(tabChangedSlot(int)));
   setStatusTip(tr("Use Ctrl+1..5 to switch the tabs."));
 
+  m_tabShortcuts[0] = new QShortcut(Qt::CTRL | Qt::Key_1, this);
+  m_tabShortcuts[1] = new QShortcut(Qt::CTRL | Qt::Key_2, this);
+  m_tabShortcuts[2] = new QShortcut(Qt::CTRL | Qt::Key_3, this);
+  m_tabShortcuts[3] = new QShortcut(Qt::CTRL | Qt::Key_4, this);
+  m_tabShortcuts[4] = new QShortcut(Qt::CTRL | Qt::Key_5, this);
   for (int i = 0; i < 5; ++i) {
-    m_tabShortcuts[i] = new QShortcut(static_cast<Qt::Key>(Qt::CTRL + (Qt::Key_1 + i)), this);
     m_tabShortcuts[i]->setAutoRepeat(false);
     connect(m_tabShortcuts[i], &QShortcut::activated, std::bind(&QTabWidget::setCurrentIndex, this, i));
   }

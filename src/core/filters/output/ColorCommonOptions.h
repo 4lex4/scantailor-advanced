@@ -11,7 +11,7 @@ class QDomDocument;
 class QDomElement;
 
 namespace output {
-enum FillingColor { FILL_BACKGROUND, FILL_WHITE };
+enum FillingColor { FILL_BACKGROUND, FILL_WHITE, FILL_BLACK };
 
 class ColorCommonOptions {
  public:

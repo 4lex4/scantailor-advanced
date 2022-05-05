@@ -5,7 +5,7 @@
 
 #include <QKeyEvent>
 #include <QPainter>
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 
 #include "ImageViewBase.h"
 #include "ScopedIncDec.h"

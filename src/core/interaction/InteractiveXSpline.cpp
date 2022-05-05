@@ -14,7 +14,7 @@
 
 #ifndef Q_MOC_RUN
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #endif
 
@@ -47,7 +47,7 @@ void InteractiveXSpline::setSpline(const XSpline& spline) {
   for (int i = 0; i < numControlPoints; ++i) {
     newControlPoints[i].point.setPositionCallback(boost::bind(&InteractiveXSpline::controlPointPosition, this, i));
     newControlPoints[i].point.setMoveRequestCallback(
-        boost::bind(&InteractiveXSpline::controlPointMoveRequest, this, i, _1, _2));
+        boost::bind(&InteractiveXSpline::controlPointMoveRequest, this, i, boost::placeholders::_1, boost::placeholders::_2));
     newControlPoints[i].point.setDragFinishedCallback(boost::bind(&InteractiveXSpline::dragFinished, this));
 
     if ((i == 0) || (i == numControlPoints - 1)) {

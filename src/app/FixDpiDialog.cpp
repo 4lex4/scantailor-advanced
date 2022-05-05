@@ -201,6 +201,7 @@ FixDpiDialog::FixDpiDialog(const std::vector<ImageFileInfo>& files, QWidget* par
   dpiCombo->addItem("300 x 300", QSize(300, 300));
   dpiCombo->addItem("400 x 400", QSize(400, 400));
   dpiCombo->addItem("600 x 600", QSize(600, 600));
+  dpiCombo->addItem("1200 x 1200", QSize(1200, 1200));
 
   tabWidget->setTabText(NEED_FIXING_TAB, tr("Need Fixing"));
   tabWidget->setTabText(ALL_PAGES_TAB, tr("All Pages"));

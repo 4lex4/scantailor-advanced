@@ -4,6 +4,7 @@
 #include "AdjustBrightness.h"
 
 #include <QImage>
+#include <stdexcept>
 
 namespace imageproc {
 void adjustBrightness(QImage& rgbImage, const QImage& brightness, const double wr, const double wb) {

@@ -9,7 +9,7 @@
 #include <core/TiffWriter.h>
 
 #include <QDir>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <utility>
 
 #include "DebugImagesImpl.h"
@@ -505,11 +505,13 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   auto imageView = std::make_unique<ImageView>(m_outputImage, m_downscaledOutputImage);
   const QPixmap downscaledOutputPixmap(imageView->downscaledPixmap());
   tabImageRectMap->insert(std::pair<ImageViewTab, QRectF>(TAB_OUTPUT, m_xform.resultingRect()));
-
   auto dewarpingView = std::make_unique<DewarpingView>(
       m_origImage, m_downscaledOrigImage, m_xform.transform(),
-      PolygonUtils::convexHull(m_xform.resultingPreCropArea().toStdVector()), m_virtContentRect, m_pageId,
-      m_params.dewarpingOptions(), m_params.distortionModel(), optWidget->depthPerception());
+        PolygonUtils::convexHull(
+          std::vector<QPointF>(
+            m_xform.resultingPreCropArea().begin(), m_xform.resultingPreCropArea().end())),
+        m_virtContentRect, m_pageId, m_params.dewarpingOptions(), m_params.distortionModel(),
+        optWidget->depthPerception());
   const QPixmap downscaledOrigPixmap(dewarpingView->downscaledPixmap());
   QObject::connect(optWidget, SIGNAL(depthPerceptionChanged(double)), dewarpingView.get(),
                    SLOT(depthPerceptionChanged(double)));
@@ -543,12 +545,12 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
         = Utils::rotate(m_params.dewarpingOptions().getPostDeskewAngle(), m_xform.resultingRect().toRect());
     auto mapper = std::make_shared<DewarpingPointMapper>(m_params.distortionModel(), m_params.depthPerception().value(),
                                                          m_xform.transform(), m_virtContentRect, rotateXform);
-    origToOutput = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, _1);
-    outputToOrig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, _1);
+    origToOutput = boost::bind(&DewarpingPointMapper::mapToDewarpedSpace, mapper, boost::placeholders::_1);
+    outputToOrig = boost::bind(&DewarpingPointMapper::mapToWarpedSpace, mapper, boost::placeholders::_1);
   } else {
     using MapPointFunc = QPointF (QTransform::*)(const QPointF&) const;
-    origToOutput = boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), _1);
-    outputToOrig = boost::bind((MapPointFunc) &QTransform::map, m_xform.transformBack(), _1);
+    origToOutput = boost::bind((MapPointFunc) &QTransform::map, m_xform.transform(), boost::placeholders::_1);
+    outputToOrig = boost::bind((MapPointFunc) &QTransform::map, m_xform.transformBack(), boost::placeholders::_1);
   }
 
   auto fillZoneEditor = std::make_unique<FillZoneEditor>(m_outputImage, downscaledOutputPixmap, origToOutput,

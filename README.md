@@ -56,7 +56,7 @@ For this reason I have created this fork. It contains:
 - German translation
 - Polish translation (PR in the original repository, credit goes to @ukolaj-s)
 - French translation (PR in the original repository, credit goes to @maltaisn)
-- Korean translation (PR in the original repository, credit goes to @brendan-t)
+- Korean translation (PR in the original repository, credit goes to @brendan-t and @mirusu400)
 - Beside 'background' and white you can now choose black as filling color
 - 1200 DPI output option
 

@@ -1,0 +1,14 @@
+name: clang-format-check
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@latest
+    - uses: DoozyX/clang-format-lint-action@latest
+      with:
+        source: '.'
+        extensions: 'h,cpp'

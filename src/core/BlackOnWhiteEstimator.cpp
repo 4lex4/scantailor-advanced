@@ -3,14 +3,14 @@
 
 #include "BlackOnWhiteEstimator.h"
 
-#include <stdexcept>
-
 #include <imageproc/Binarize.h>
 #include <imageproc/Grayscale.h>
 #include <imageproc/Morphology.h>
 #include <imageproc/PolygonRasterizer.h>
 #include <imageproc/RasterOp.h>
 #include <imageproc/Transform.h>
+
+#include <stdexcept>
 
 #include "DebugImages.h"
 #include "Despeckle.h"

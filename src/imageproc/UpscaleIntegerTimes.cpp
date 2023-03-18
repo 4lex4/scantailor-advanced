@@ -3,9 +3,9 @@
 
 #include "UpscaleIntegerTimes.h"
 
-#include "BinaryImage.h"
-
 #include <stdexcept>
+
+#include "BinaryImage.h"
 
 namespace imageproc {
 namespace {

@@ -3,9 +3,9 @@
 
 #include "OutputImageBuilder.h"
 
-#include <stdexcept>
-
 #include <imageproc/BinaryImage.h>
+
+#include <stdexcept>
 
 #include "ForegroundType.h"
 #include "OutputImageWithOriginalBackgroundMask.h"

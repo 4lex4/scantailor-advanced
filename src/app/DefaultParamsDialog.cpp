@@ -598,7 +598,7 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
   DefaultParams::DeskewParams deskewParams(angleSpinBox->value(), deskewAutoBtn->isChecked() ? MODE_AUTO : MODE_MANUAL);
 
   const AutoManualMode pageBoxMode
-      = pageDetectDisableBtn->isChecked()  ? MODE_DISABLED :
+      = pageDetectDisableBtn->isChecked() ? MODE_DISABLED : 
 pageDetectManualBtn->isChecked() ? MODE_MANUAL : MODE_AUTO;
   DefaultParams::SelectContentParams selectContentParams(QSizeF(widthSpinBox->value(), heightSpinBox->value()),
                                                          !contentDetectDisableBtn->isChecked(), pageBoxMode,

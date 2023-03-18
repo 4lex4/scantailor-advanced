@@ -128,9 +128,11 @@ ImageView::ImageView(const std::shared_ptr<Settings>& settings,
   }
 
   {
-    m_innerRectArea.setProximityCallback(boost::bind(&ImageView::rectProximity, this, boost::ref(m_innerRect), boost::placeholders::_1));
+    m_innerRectArea.setProximityCallback(
+        boost::bind(&ImageView::rectProximity, this, boost::ref(m_innerRect), boost::placeholders::_1));
     m_innerRectArea.setDragInitiatedCallback(boost::bind(&ImageView::dragInitiated, this, boost::placeholders::_1));
-    m_innerRectArea.setDragContinuationCallback(boost::bind(&ImageView::innerRectMoveRequest, this, boost::placeholders::_1, boost::placeholders::_2));
+    m_innerRectArea.setDragContinuationCallback(
+        boost::bind(&ImageView::innerRectMoveRequest, this, boost::placeholders::_1, boost::placeholders::_2));
     m_innerRectArea.setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
     m_innerRectAreaHandler.setObject(&m_innerRectArea);
     m_innerRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the page content."));
@@ -790,7 +792,8 @@ void ImageView::syncGuidesSettings() {
 void ImageView::setupGuideInteraction(const int index) {
   m_draggableGuides[index].setProximityPriority(1);
   m_draggableGuides[index].setPositionCallback(boost::bind(&ImageView::guidePosition, this, index));
-  m_draggableGuides[index].setMoveRequestCallback(boost::bind(&ImageView::guideMoveRequest, this, index, boost::placeholders::_1));
+  m_draggableGuides[index].setMoveRequestCallback(
+      boost::bind(&ImageView::guideMoveRequest, this, index, boost::placeholders::_1));
   m_draggableGuides[index].setDragFinishedCallback(boost::bind(&ImageView::guideDragFinished, this));
 
   const Qt::CursorShape cursorShape

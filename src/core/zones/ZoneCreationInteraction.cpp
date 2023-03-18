@@ -15,7 +15,8 @@
 
 ZoneCreationInteraction::ZoneCreationInteraction(ZoneInteractionContext& context, InteractionState& interaction)
     : m_context(context),
-      m_dragHandler(context.imageView(), boost::bind(&ZoneCreationInteraction::isDragHandlerPermitted, this, boost::placeholders::_1)),
+      m_dragHandler(context.imageView(),
+                    boost::bind(&ZoneCreationInteraction::isDragHandlerPermitted, this, boost::placeholders::_1)),
       m_dragWatcher(m_dragHandler),
       m_zoomHandler(context.imageView(), boost::lambda::constant(true)),
       m_spline(std::make_shared<EditableSpline>()),

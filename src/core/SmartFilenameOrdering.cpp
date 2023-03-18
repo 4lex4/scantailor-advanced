@@ -64,10 +64,8 @@ bool SmartFilenameOrdering::operator()(const QFileInfo& lhs, const QFileInfo& rh
   return lhsFname < rhsFname;
 }  // ()
 
-bool SmartFilenameOrdering::operator()(QString const& lhs, QString const& rhs) const
-{
-        QFileInfo lhs_i(lhs);
-        QFileInfo rhs_i(rhs);
-        return this->operator()(lhs_i, rhs_i);
+bool SmartFilenameOrdering::operator()(QString const& lhs, QString const& rhs) const {
+  QFileInfo lhs_i(lhs);
+  QFileInfo rhs_i(rhs);
+  return this->operator()(lhs_i, rhs_i);
 }
-

@@ -3,10 +3,10 @@
 
 #include "RastLineFinder.h"
 
-#include <stdexcept>
 #include <boost/foreach.hpp>
 #include <cassert>
 #include <cmath>
+#include <stdexcept>
 
 #include "Constants.h"
 #include "VecNT.h"

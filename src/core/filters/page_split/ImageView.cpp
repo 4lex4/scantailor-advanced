@@ -66,7 +66,8 @@ void ImageView::setupCuttersInteraction() {
     for (int j = 0; j < 2; ++j) {  // Loop over handles.
       m_handles[i][j].setHitRadius(hitRadius);
       m_handles[i][j].setPositionCallback(boost::bind(&ImageView::handlePosition, this, i, j));
-      m_handles[i][j].setMoveRequestCallback(boost::bind(&ImageView::handleMoveRequest, this, i, j, boost::placeholders::_1));
+      m_handles[i][j].setMoveRequestCallback(
+          boost::bind(&ImageView::handleMoveRequest, this, i, j, boost::placeholders::_1));
       m_handles[i][j].setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
 
       m_handleInteractors[i][j].setObject(&m_handles[i][j]);
@@ -75,7 +76,8 @@ void ImageView::setupCuttersInteraction() {
     }
 
     m_lineSegments[i].setPositionCallback(boost::bind(&ImageView::linePosition, this, i));
-    m_lineSegments[i].setMoveRequestCallback(boost::bind(&ImageView::lineMoveRequest, this, i, boost::placeholders::_1));
+    m_lineSegments[i].setMoveRequestCallback(
+        boost::bind(&ImageView::lineMoveRequest, this, i, boost::placeholders::_1));
     m_lineSegments[i].setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
 
     m_lineInteractors[i].setObject(&m_lineSegments[i]);

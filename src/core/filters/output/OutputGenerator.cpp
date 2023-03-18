@@ -646,7 +646,8 @@ void applyFillZonesInPlace(QImage& img,
 using MapPointFunc = QPointF (QTransform::*)(const QPointF&) const;
 
 void applyFillZonesInPlace(QImage& img, const ZoneSet& zones, const QTransform& transform, bool antialiasing = true) {
-  applyFillZonesInPlace(img, zones, boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, boost::placeholders::_1),
+  applyFillZonesInPlace(img, zones,
+                        boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, boost::placeholders::_1),
                         antialiasing);
 }
 
@@ -666,7 +667,8 @@ void applyFillZonesInPlace(BinaryImage& img,
 }
 
 void applyFillZonesInPlace(BinaryImage& img, const ZoneSet& zones, const QTransform& transform) {
-  applyFillZonesInPlace(img, zones, boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, boost::placeholders::_1));
+  applyFillZonesInPlace(img, zones,
+                        boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, boost::placeholders::_1));
 }
 
 void applyFillZonesToMixedInPlace(QImage& img,
@@ -693,8 +695,9 @@ void applyFillZonesToMixedInPlace(QImage& img,
                                   const QTransform& transform,
                                   const BinaryImage& pictureMask,
                                   bool binaryMode) {
-  applyFillZonesToMixedInPlace(img, zones, boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, boost::placeholders::_1),
-                               pictureMask, binaryMode);
+  applyFillZonesToMixedInPlace(
+      img, zones, boost::bind(static_cast<MapPointFunc>(&QTransform::map), transform, boost::placeholders::_1),
+      pictureMask, binaryMode);
 }
 
 void applyFillZonesToMask(BinaryImage& mask,
@@ -715,8 +718,8 @@ void applyFillZonesToMask(BinaryImage& mask,
                           const ZoneSet& zones,
                           const QTransform& transform,
                           const BWColor fillColor = BLACK) {
-  applyFillZonesToMask(mask, zones, boost::bind((MapPointFunc) &QTransform::map, transform,
-                                                boost::placeholders::_1), fillColor);
+  applyFillZonesToMask(mask, zones, boost::bind((MapPointFunc) &QTransform::map, transform, boost::placeholders::_1),
+                       fillColor);
 }
 
 const int MultiplyDeBruijnBitPosition[32] = {0,  1,  28, 2,  29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4,  8,
@@ -1429,7 +1432,7 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
   }
 
   if (m_renderParams.needBinarization() && !m_renderParams.originalBackground()) {
-    switch(m_colorParams.colorCommonOptions().getFillingColor()) {
+    switch (m_colorParams.colorCommonOptions().getFillingColor()) {
       case FILL_BLACK:
         m_outsideBackgroundColor = Qt::black;
         break;

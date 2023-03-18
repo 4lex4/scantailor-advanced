@@ -28,7 +28,7 @@ Proximity Proximity::pointAndLineSegment(const QPointF& pt, const QLineF& segmen
   perpendicular.translate(pt);
   // Calculate intersection.
   QPointF intersection;
-#if QT_VERSION_MAJOR  == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
   segment.intersect(perpendicular, &intersection);
 #else
   segment.intersects(perpendicular, &intersection);

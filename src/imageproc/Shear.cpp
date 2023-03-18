@@ -3,9 +3,9 @@
 
 #include "Shear.h"
 
-#include <stdexcept>
 #include <cassert>
 #include <cmath>
+#include <stdexcept>
 
 #include "RasterOp.h"
 

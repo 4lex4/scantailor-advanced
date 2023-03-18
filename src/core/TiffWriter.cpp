@@ -225,7 +225,8 @@ bool TiffWriter::writeBitonalOrIndexed8Image(const TiffHandle& tif, const QImage
     TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
                  uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
   } else {
-    TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16_t(ApplicationSettings::getInstance().getTiffBwCompression()));
+    TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
+                 uint16_t(ApplicationSettings::getInstance().getTiffBwCompression()));
   }
 
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, bitsPerSample);
@@ -264,7 +265,8 @@ bool TiffWriter::writeRGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_RGB32);
 
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(3));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
+               uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 
@@ -297,7 +299,8 @@ bool TiffWriter::writeARGB32Image(const TiffHandle& tif, const QImage& image) {
   assert(image.format() == QImage::Format_ARGB32);
 
   TIFFSetField(tif.handle(), TIFFTAG_SAMPLESPERPIXEL, uint16_t(4));
-  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION, uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
+  TIFFSetField(tif.handle(), TIFFTAG_COMPRESSION,
+               uint16_t(ApplicationSettings::getInstance().getTiffColorCompression()));
   TIFFSetField(tif.handle(), TIFFTAG_BITSPERSAMPLE, uint16_t(8));
   TIFFSetField(tif.handle(), TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 

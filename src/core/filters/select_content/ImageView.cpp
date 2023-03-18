@@ -114,7 +114,8 @@ ImageView::ImageView(const QImage& image,
 
     // Setup rectangle drag interaction
     m_contentRectArea.setPositionCallback(boost::bind(&ImageView::contentRectPosition, this));
-    m_contentRectArea.setMoveRequestCallback(boost::bind(&ImageView::contentRectMoveRequest, this, boost::placeholders::_1));
+    m_contentRectArea.setMoveRequestCallback(
+        boost::bind(&ImageView::contentRectMoveRequest, this, boost::placeholders::_1));
     m_contentRectArea.setDragFinishedCallback(boost::bind(&ImageView::contentRectDragFinished, this));
     m_contentRectAreaHandler.setObject(&m_contentRectArea);
     m_contentRectAreaHandler.setProximityStatusTip(tr("Hold left mouse button to drag the content box."));

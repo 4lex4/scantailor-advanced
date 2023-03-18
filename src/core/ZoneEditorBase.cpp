@@ -4,8 +4,8 @@
 #include "ZoneEditorBase.h"
 
 #include <QKeyEvent>
-#include <QtWidgets/QMainWindow>
 #include <QShortcut>
+#include <QtWidgets/QMainWindow>
 #include <QtWidgets/QStatusBar>
 
 #include "Utils.h"

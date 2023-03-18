@@ -266,7 +266,7 @@ QLineF SequentialColumnProcessor::approximateWithLine(std::vector<Segment>* dbgS
   const int ransacIterations = segments.empty() ? 0 : 200;
   for (int i = 0; i < ransacIterations; ++i) {
 #if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR <= 9
-    auto r  = qrand();
+    auto r = qrand();
 #else
     auto r = prng.generate();
 #endif

@@ -221,7 +221,6 @@ void DewarpingView::onPaint(QPainter& painter, const InteractionState& interacti
     painter.drawPolyline(QVector<QPointF>(topCurve.polyline().begin(), topCurve.polyline().end()));
     painter.drawPolyline(QVector<QPointF>(bottomCurve.polyline().begin(), bottomCurve.polyline().end()));
 #endif
-
   }
 
   paintXSpline(painter, interaction, m_topSpline);

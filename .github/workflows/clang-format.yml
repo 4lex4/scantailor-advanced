@@ -11,4 +11,4 @@ jobs:
     - uses: DoozyX/clang-format-lint-action@v0.15
       with:
         source: '.'
-        extensions: 'h,cpp'
+        extensions: 'h,cpp,c'

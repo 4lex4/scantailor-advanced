@@ -507,11 +507,10 @@ void Task::UiUpdater::updateUI(FilterUiInterface* ui) {
   tabImageRectMap->insert(std::pair<ImageViewTab, QRectF>(TAB_OUTPUT, m_xform.resultingRect()));
   auto dewarpingView = std::make_unique<DewarpingView>(
       m_origImage, m_downscaledOrigImage, m_xform.transform(),
-        PolygonUtils::convexHull(
-          std::vector<QPointF>(
-            m_xform.resultingPreCropArea().begin(), m_xform.resultingPreCropArea().end())),
-        m_virtContentRect, m_pageId, m_params.dewarpingOptions(), m_params.distortionModel(),
-        optWidget->depthPerception());
+      PolygonUtils::convexHull(
+          std::vector<QPointF>(m_xform.resultingPreCropArea().begin(), m_xform.resultingPreCropArea().end())),
+      m_virtContentRect, m_pageId, m_params.dewarpingOptions(), m_params.distortionModel(),
+      optWidget->depthPerception());
   const QPixmap downscaledOrigPixmap(dewarpingView->downscaledPixmap());
   QObject::connect(optWidget, SIGNAL(depthPerceptionChanged(double)), dewarpingView.get(),
                    SLOT(depthPerceptionChanged(double)));

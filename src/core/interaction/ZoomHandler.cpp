@@ -3,8 +3,8 @@
 
 #include "ZoomHandler.h"
 
-#include <QWheelEvent>
 #include <QShortcut>
+#include <QWheelEvent>
 #include <cmath>
 
 #include "ImageViewBase.h"
@@ -54,9 +54,9 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
       break;
     case CURSOR:
 #if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
-    focusPoint = event->pos() + QPointF(0.5, 0.5);
+      focusPoint = event->pos() + QPointF(0.5, 0.5);
 #else
-    focusPoint = event->position() + QPointF(0.5, 0.5);
+      focusPoint = event->position() + QPointF(0.5, 0.5);
 #endif
       break;
   }

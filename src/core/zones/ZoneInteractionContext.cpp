@@ -16,15 +16,18 @@ ZoneInteractionContext::ZoneInteractionContext(ImageViewBase& imageView, Editabl
       m_zones(zones),
       m_defaultInteractionCreator(boost::bind(&ZoneInteractionContext::createStdDefaultInteraction, this)),
       m_zoneCreationInteractionCreator(
-          boost::bind(&ZoneInteractionContext::createStdZoneCreationInteraction, this,
-                      boost::placeholders::_1)),
-      m_vertexDragInteractionCreator(
-          boost::bind(&ZoneInteractionContext::createStdVertexDragInteraction, this,
-                      boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3)),
+          boost::bind(&ZoneInteractionContext::createStdZoneCreationInteraction, this, boost::placeholders::_1)),
+      m_vertexDragInteractionCreator(boost::bind(&ZoneInteractionContext::createStdVertexDragInteraction,
+                                                 this,
+                                                 boost::placeholders::_1,
+                                                 boost::placeholders::_2,
+                                                 boost::placeholders::_3)),
       m_zoneDragInteractionCreator(boost::bind(&ZoneInteractionContext::createStdZoneDragInteraction,
-                                               this, boost::placeholders::_1, boost::placeholders::_2)),
-      m_contextMenuInteractionCreator(boost::bind(&ZoneInteractionContext::createStdContextMenuInteraction,
-                                                  this, boost::placeholders::_1)),
+                                               this,
+                                               boost::placeholders::_1,
+                                               boost::placeholders::_2)),
+      m_contextMenuInteractionCreator(
+          boost::bind(&ZoneInteractionContext::createStdContextMenuInteraction, this, boost::placeholders::_1)),
       m_showPropertiesCommand(&ZoneInteractionContext::showPropertiesStub),
       m_zoneCreationMode(ZoneCreationMode::POLYGONAL) {}
 

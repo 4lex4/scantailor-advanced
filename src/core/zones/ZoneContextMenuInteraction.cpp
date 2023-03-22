@@ -27,8 +27,9 @@ class ZoneContextMenuInteraction::OrderByArea {
 
 ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionContext& context,
                                                                InteractionState& interaction) {
-  return create(context, interaction, boost::bind(&ZoneContextMenuInteraction::defaultMenuCustomizer,
-                                                  boost::placeholders::_1, boost::placeholders::_2));
+  return create(context, interaction,
+                boost::bind(&ZoneContextMenuInteraction::defaultMenuCustomizer, boost::placeholders::_1,
+                            boost::placeholders::_2));
 }
 
 ZoneContextMenuInteraction* ZoneContextMenuInteraction::create(ZoneInteractionContext& context,
@@ -201,7 +202,8 @@ void ZoneContextMenuInteraction::highlightItem(const int zoneIdx) {
 }
 
 std::vector<ZoneContextMenuItem> ZoneContextMenuInteraction::defaultMenuCustomizer(
-    const EditableZoneSet::Zone& /*zone*/, const StandardMenuItems& stdItems) {
+    const EditableZoneSet::Zone& /*zone*/,
+    const StandardMenuItems& stdItems) {
   std::vector<ZoneContextMenuItem> items;
   items.reserve(2);
   items.push_back(stdItems.propertiesItem);

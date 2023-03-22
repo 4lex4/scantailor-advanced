@@ -233,7 +233,7 @@ ImageMetadataLoader::Status TiffReader::readMetadata(QIODevice& device,
 static void convertAbgrToArgb(const uint32_t* src, uint32_t* dst, int count) {
   for (int i = 0; i < count; ++i) {
     const uint32_t srcWord = src[i];
-    uint32_t dstWord = srcWord & 0xFF000000;    // A
+    uint32_t dstWord = srcWord & 0xFF000000;  // A
     dstWord |= (srcWord & 0x00FF0000) >> 16;  // B
     dstWord |= srcWord & 0x0000FF00;          // G
     dstWord |= (srcWord & 0x000000FF) << 16;  // R
@@ -287,8 +287,8 @@ QImage TiffReader::readImage(QIODevice& device, const int pageNum) {
 
     if (image.bytesPerLine() == 4 * info.width) {
       // We can avoid creating a temporary buffer in this case.
-      if (!TIFFReadRGBAImageOriented(tif.handle(), info.width, info.height, (uint32_t*) image.bits(), ORIENTATION_TOPLEFT,
-                                     0)) {
+      if (!TIFFReadRGBAImageOriented(tif.handle(), info.width, info.height, (uint32_t*) image.bits(),
+                                     ORIENTATION_TOPLEFT, 0)) {
         return QImage();
       }
       srcLine = (const uint32_t*) image.bits();

@@ -5,8 +5,8 @@
 #define SCANTAILOR_IMAGEPROC_SLICEDHISTOGRAM_H_
 
 #include <cstddef>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 class QRect;
 

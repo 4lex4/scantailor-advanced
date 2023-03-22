@@ -6,6 +6,7 @@
 #include <core/ApplicationSettings.h>
 #include <core/IconProvider.h>
 
+#include <QActionGroup>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -15,7 +16,6 @@
 #include <QSortFilterProxyModel>
 #include <QStackedLayout>
 #include <QtWidgets/QInputDialog>
-#include <QActionGroup>
 #include <boost/lambda/lambda.hpp>
 #include <memory>
 

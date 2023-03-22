@@ -3,11 +3,11 @@
 
 #include "RelinkablePathVisualization.h"
 
+#include <QFile>
 #include <QHBoxLayout>
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QStyle>
-#include <QFile>
 #include <QStyleOption>
 #include <QStylePainter>
 #include <boost/bind/bind.hpp>

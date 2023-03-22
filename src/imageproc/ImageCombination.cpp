@@ -5,9 +5,9 @@
 #include "ImageCombination.h"
 
 #include <QImage>
+#include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
-#include <stdexcept>
 
 #include "BinaryImage.h"
 

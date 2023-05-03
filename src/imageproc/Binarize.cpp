@@ -258,7 +258,7 @@ BinaryImage binarizeEdgePlus(const QImage& src, const QSize windowSize, const do
     }
     grayLine += grayBpl;
   }
-  return BinaryImage(src, BinaryThreshold::otsuThreshold(gray));
+  return BinaryImage(gray, BinaryThreshold::otsuThreshold(gray));
 }  // binarizeEdgePlus
 
 BinaryImage peakThreshold(const QImage& image) {

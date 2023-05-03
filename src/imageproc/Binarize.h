@@ -60,6 +60,14 @@ BinaryImage binarizeWolf(const QImage& src,
                          unsigned char upperBound = 254,
                          double k = 0.3);
 
+/**
+ * \brief Image binarization using EdgePlus local/global thresholding method.
+ *
+ * EdgePlus, zvezdochiot 2023. "Adaptive/global document image binarization".
+ */
+BinaryImage binarizeEdgePlus(const QImage& src, QSize windowSize, double k = 0.34);
+
+
 BinaryImage peakThreshold(const QImage& image);
 }  // namespace imageproc
 #endif

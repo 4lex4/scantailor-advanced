@@ -1,0 +1,63 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build-linux-qt5:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install dependencies
+      run: sudo apt install gcc g++ cmake libjpeg-dev libpng-dev libtiff5 libtiff5-dev libboost-test-dev qtbase5-dev libqt5svg5-dev qttools5-dev qttools5-dev-tools libqt5opengl5-dev libpthread-stubs0-dev rpm
+
+    - name: Configure CMake
+      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      
+    - name: Create DEB package
+      working-directory: ${{github.workspace}}/build
+      run: |
+        cpack -G "DEB"
+        mv scantailor*.deb scantailor.deb
+      
+    - name: Create RPM package
+      working-directory: ${{github.workspace}}/build
+      run: |
+        cpack -G "RPM"
+        mv scantailor*.rpm scantailor.rpm
+      
+    - name: Upload Linux bin
+      uses: actions/upload-artifact@v3
+      with:
+        name: scantailor-linux-ubuntu-latest-qt5
+        path: build/scantailor
+        
+    - name: Upload Linux DEB
+      uses: actions/upload-artifact@v3
+      with:
+        name: scantailor-linux-ubuntu-latest-qt5-deb
+        path: build/scantailor.deb
+        
+    - name: Upload Linux RPM
+      uses: actions/upload-artifact@v3
+      with:
+        name: scantailor-linux-ubuntu-latest-qt5-rpm
+        path: build/scantailor.rpm

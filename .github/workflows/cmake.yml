@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Install dependencies
-      run: sudo apt install gcc g++ cmake libjpeg-dev libpng-dev libtiff5 libtiff5-dev libboost-test-dev qtbase5-dev libqt5svg5-dev qttools5-dev qttools5-dev-tools libqt5opengl5-dev libpthread-stubs0-dev rpm
+      run: sudo apt install gcc g++ cmake libjpeg-dev libpng-dev libtiff5 libtiff5-dev libboost-test-dev qtbase5-dev libqt5svg5-dev qttools5-dev qttools5-dev-tools libqt5opengl5-dev libpthread-stubs0-dev rpm libfuse2
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -43,6 +43,14 @@ jobs:
       run: |
         cpack -G "RPM"
         mv scantailor*.rpm scantailor.rpm
+        
+    - name: Create AppImage package
+      working-directory: ${{github.workspace}}/build
+      run: |
+        wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        chmod +x linuxdeploy-x86_64.AppImage
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file ../src/resources/unix/scantailor.desktop --icon-file ../src/resources/ScanTailor.png --executable scantailor --output appimage
+        mv ScanTailor*.AppImage scantailor.AppImage
       
     - name: Upload Linux bin
       uses: actions/upload-artifact@v3
@@ -61,3 +69,9 @@ jobs:
       with:
         name: scantailor-linux-ubuntu-latest-qt5-rpm
         path: build/scantailor.rpm
+      
+    - name: Upload Linux AppImage
+      uses: actions/upload-artifact@v3
+      with:
+        name: scantailor-linux-appimage
+        path: build/scantailor.AppImage

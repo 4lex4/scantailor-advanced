@@ -209,7 +209,7 @@ QLineF ImageView::customInscribedCutterLine(const QLineF& line, const QRectF& re
   QPointF topPt;
   QPointF bottomPt;
 
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   line.intersect(QLineF(rect.topLeft(), rect.topRight()), &topPt);
   line.intersect(QLineF(rect.bottomLeft(), rect.bottomRight()), &bottomPt);
 #else
@@ -241,7 +241,7 @@ void ImageView::handleMoveRequest(int lineIdx, int handleIdx, const QPointF& pos
       QPointF pTopI;
       QPointF pBottomI;
       QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
       anotherLine.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
       anotherLine.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
 #else
@@ -287,7 +287,7 @@ void ImageView::lineMoveRequest(int lineIdx, QLineF line) {
   QPointF pTop;
   QPointF pBottom;
 
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   line.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTop);
   line.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottom);
 #else
@@ -306,7 +306,7 @@ void ImageView::lineMoveRequest(int lineIdx, QLineF line) {
       QPointF pTopI;
       QPointF pBottomI;
       QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
       anotherLine.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
       anotherLine.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
 #else

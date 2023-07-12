@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QImage>
 #include <QPainter>
-#if QT_VERSION_MAJOR > 5 or QT_VERSION_MINOR > 9
+#if QT_VERSION_MAJOR > 5 || QT_VERSION_MINOR > 9
 #include <QRandomGenerator>
 #endif
 #include <boost/foreach.hpp>
@@ -159,14 +159,14 @@ DistortionModel DistortionModelBuilder::tryBuildModel(DebugImages* dbg, const QI
     }
   }
   // Continue by throwing in some random pairs of lines.
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR <= 9
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR <= 9
   qsrand(0);  // Repeatablity is important.
 #else
   QRandomGenerator prng(0);  // Repeatablity is important.
 #endif
   int randomPairsRemaining = 10;
   while (randomPairsRemaining-- > 0) {
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR <= 9
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR <= 9
     int i = qrand() % numCurves;
     int j = qrand() % numCurves;
 #else
@@ -296,7 +296,7 @@ void DistortionModelBuilder::intersectFront(std::deque<QPointF>& polyline, const
 
   const QLineF frontSegment(polyline.front(), polyline[1]);
   QPointF intersection;
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   auto intersect = bound.intersect(frontSegment, &intersection);
 #else
   auto intersect = bound.intersects(frontSegment, &intersection);
@@ -311,7 +311,7 @@ void DistortionModelBuilder::intersectBack(std::deque<QPointF>& polyline, const 
 
   const QLineF backSegment(polyline[polyline.size() - 2], polyline.back());
   QPointF intersection;
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   auto intersect = bound.intersect(backSegment, &intersection);
 #else
   auto intersect = bound.intersects(backSegment, &intersection);

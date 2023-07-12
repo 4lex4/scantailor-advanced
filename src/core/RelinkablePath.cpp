@@ -12,7 +12,7 @@ QString RelinkablePath::normalize(const QString& path) {
   frontSlashes.replace(QChar('\\'), QLatin1String("/"));
 
   QStringList newComponents;
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   auto opt = QString::KeepEmptyParts;
 #else
   auto opt = Qt::KeepEmptyParts;

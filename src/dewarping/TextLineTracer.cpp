@@ -440,7 +440,7 @@ void TextLineTracer::findMidLineSeeds(const SEDM& sedm, QLineF midLine, std::vec
 
 QLineF TextLineTracer::calcMidLine(const QLineF& line1, const QLineF& line2) {
   QPointF intersection;
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   auto is = line1.intersect(line2, &intersection);
 #else
   auto is = line1.intersects(line2, &intersection);

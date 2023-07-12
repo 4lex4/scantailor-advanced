@@ -27,6 +27,8 @@ class WolfBinarizationOptionsWidget : public BinarizationOptionsWidget, private 
 
  private slots:
 
+  void wolfDeltaChanged(double value);
+
   void windowSizeChanged(int value);
 
   void wolfCoefChanged(double value);

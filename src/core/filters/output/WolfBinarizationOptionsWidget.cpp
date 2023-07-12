@@ -28,6 +28,15 @@ void WolfBinarizationOptionsWidget::updateUi(const PageId& pageId) {
   updateView();
 }
 
+void WolfBinarizationOptionsWidget::wolfDeltaChanged(double value) {
+  BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+  opt.setThresholdAdjustment(value);
+  m_colorParams.setBlackWhiteOptions(opt);
+  m_settings->setColorParams(m_pageId, m_colorParams);
+
+  m_delayedStateChanger.start(750);
+}
+
 void WolfBinarizationOptionsWidget::windowSizeChanged(int value) {
   BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
   opt.setWindowSize(value);
@@ -66,6 +75,7 @@ void WolfBinarizationOptionsWidget::wolfCoefChanged(double value) {
 
 void WolfBinarizationOptionsWidget::updateView() {
   BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+  wolfDelta->setValue(blackWhiteOptions.thresholdAdjustment());
   windowSize->setValue(blackWhiteOptions.getWindowSize());
   lowerBound->setValue(blackWhiteOptions.getWolfLowerBound());
   upperBound->setValue(blackWhiteOptions.getWolfUpperBound());
@@ -79,6 +89,7 @@ void WolfBinarizationOptionsWidget::sendStateChanged() {
 #define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void WolfBinarizationOptionsWidget::setupUiConnections() {
+  CONNECT(wolfDelta, SIGNAL(valueChanged(double)), this, SLOT(wolfDeltaChanged(double)));
   CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
   CONNECT(lowerBound, SIGNAL(valueChanged(int)), this, SLOT(lowerBoundChanged(int)));
   CONNECT(upperBound, SIGNAL(valueChanged(int)), this, SLOT(upperBoundChanged(int)));

@@ -22,7 +22,7 @@ BinaryImage binarizeMokji(const QImage& src, const unsigned maxEdgeWidth, const 
   return BinaryImage(src, threshold);
 }
 
-BinaryImage binarizeSauvola(const QImage& src, const QSize windowSize, const double k) {
+BinaryImage binarizeSauvola(const QImage& src, const QSize windowSize, const double k, const double delta) {
   if (windowSize.isEmpty()) {
     throw std::invalid_argument("binarizeSauvola: invalid windowSize");
   }
@@ -41,7 +41,7 @@ BinaryImage binarizeSauvola(const QImage& src, const QSize windowSize, const dou
   const uint8_t* grayLine = gray.bits();
   const int grayBpl = gray.bytesPerLine();
 
-  for (int y = 0; y < h; ++y, grayLine += grayBpl) {
+  for (int y = 0; y < h; ++y) {
     integralImage.beginRow();
     integralSqimage.beginRow();
     for (int x = 0; x < w; ++x) {
@@ -49,6 +49,7 @@ BinaryImage binarizeSauvola(const QImage& src, const QSize windowSize, const dou
       integralImage.push(pixel);
       integralSqimage.push(pixel * pixel);
     }
+    grayLine += grayBpl;
   }
 
   const int windowLowerHalf = windowSize.height() >> 1;
@@ -84,7 +85,7 @@ BinaryImage binarizeSauvola(const QImage& src, const QSize windowSize, const dou
 
       const uint32_t msb = uint32_t(1) << 31;
       const uint32_t mask = msb >> (x & 31);
-      if (int(grayLine[x]) < threshold) {
+      if (int(grayLine[x]) < (threshold + delta)) {
         // black
         bwLine[x >> 5] |= mask;
       } else {
@@ -92,7 +93,6 @@ BinaryImage binarizeSauvola(const QImage& src, const QSize windowSize, const dou
         bwLine[x >> 5] &= ~mask;
       }
     }
-
     grayLine += grayBpl;
     bwLine += bwWpl;
   }
@@ -103,7 +103,8 @@ BinaryImage binarizeWolf(const QImage& src,
                          const QSize windowSize,
                          const unsigned char lowerBound,
                          const unsigned char upperBound,
-                         const double k) {
+                         const double k,
+                         const double delta) {
   if (windowSize.isEmpty()) {
     throw std::invalid_argument("binarizeWolf: invalid windowSize");
   }
@@ -124,7 +125,7 @@ BinaryImage binarizeWolf(const QImage& src,
 
   uint32_t minGrayLevel = 255;
 
-  for (int y = 0; y < h; ++y, grayLine += grayBpl) {
+  for (int y = 0; y < h; ++y) {
     integralImage.beginRow();
     integralSqimage.beginRow();
     for (int x = 0; x < w; ++x) {
@@ -133,6 +134,7 @@ BinaryImage binarizeWolf(const QImage& src,
       integralSqimage.push(pixel * pixel);
       minGrayLevel = std::min(minGrayLevel, pixel);
     }
+    grayLine += grayBpl;
   }
 
   const int windowLowerHalf = windowSize.height() >> 1;
@@ -176,7 +178,7 @@ BinaryImage binarizeWolf(const QImage& src,
   const int bwWpl = bwImg.wordsPerLine();
 
   grayLine = gray.bits();
-  for (int y = 0; y < h; ++y, grayLine += grayBpl, bwLine += bwWpl) {
+  for (int y = 0; y < h; ++y) {
     for (int x = 0; x < w; ++x) {
       const float mean = means[y * w + x];
       const float deviation = deviations[y * w + x];
@@ -185,7 +187,7 @@ BinaryImage binarizeWolf(const QImage& src,
 
       const uint32_t msb = uint32_t(1) << 31;
       const uint32_t mask = msb >> (x & 31);
-      if ((grayLine[x] < lowerBound) || ((grayLine[x] <= upperBound) && (int(grayLine[x]) < threshold))) {
+      if ((grayLine[x] < lowerBound) || ((grayLine[x] <= upperBound) && (int(grayLine[x]) < (threshold + delta)))) {
         // black
         bwLine[x >> 5] |= mask;
       } else {
@@ -193,9 +195,90 @@ BinaryImage binarizeWolf(const QImage& src,
         bwLine[x >> 5] &= ~mask;
       }
     }
+    grayLine += grayBpl;
+    bwLine += bwWpl;
   }
   return bwImg;
 }  // binarizeWolf
+
+BinaryImage binarizeEdgeDiv(const QImage& src,
+                            const QSize windowSize,
+                            const double kep,
+                            const double kbd,
+                            const double delta) {
+  if (windowSize.isEmpty()) {
+    throw std::invalid_argument("binarizeBlurDiv: invalid windowSize");
+  }
+
+  if (src.isNull()) {
+    return BinaryImage();
+  }
+
+  QImage gray(toGrayscale(src));
+  const int w = gray.width();
+  const int h = gray.height();
+
+  IntegralImage<uint32_t> integralImage(w, h);
+
+  uint8_t* grayLine = gray.bits();
+  const int grayBpl = gray.bytesPerLine();
+
+  for (int y = 0; y < h; ++y) {
+    integralImage.beginRow();
+    for (int x = 0; x < w; ++x) {
+      const uint32_t pixel = grayLine[x];
+      integralImage.push(pixel);
+    }
+    grayLine += grayBpl;
+  }
+
+  const int windowLowerHalf = windowSize.height() >> 1;
+  const int windowUpperHalf = windowSize.height() - windowLowerHalf;
+  const int windowLeftHalf = windowSize.width() >> 1;
+  const int windowRightHalf = windowSize.width() - windowLeftHalf;
+
+  grayLine = gray.bits();
+  for (int y = 0; y < h; ++y) {
+    const int top = std::max(0, y - windowLowerHalf);
+    const int bottom = std::min(h, y + windowUpperHalf);  // exclusive
+    for (int x = 0; x < w; ++x) {
+      const int left = std::max(0, x - windowLeftHalf);
+      const int right = std::min(w, x + windowRightHalf);  // exclusive
+      const int area = (bottom - top) * (right - left);
+      assert(area > 0);  // because windowSize > 0 and w > 0 and h > 0
+      const QRect rect(left, top, right - left, bottom - top);
+      const double windowSum = integralImage.sum(rect);
+
+      const double rArea = 1.0 / area;
+      const double mean = windowSum * rArea;
+      const double origin = grayLine[x];
+      double retval = origin;
+      if (kep > 0.0) {
+        // EdgePlus
+        // edge = I / blur (shift = -0.5) {0.0 .. >1.0}, mean value = 0.5
+        const double edge = (retval + 1) / (mean + 1) - 0.5;
+        // edgeplus = I * edge, mean value = 0.5 * mean(I)
+        const double edgeplus = origin * edge;
+        // return k * edgeplus + (1 - k) * I
+        retval = kep * edgeplus + (1.0 - kep) * origin;
+      }
+      if (kbd > 0.0) {
+        // BlurDiv
+        // edge = blur / I (shift = -0.5) {0.0 .. >1.0}, mean value = 0.5
+        const double edgeinv = (mean + 1) / (retval + 1) - 0.5;
+        // edgenorm = edge * k + max * (1 - k), mean value = {0.5 .. 1.0} * mean(I)
+        const double edgenorm = kbd * edgeinv + (1.0 - kbd);
+        // return I / edgenorm
+        retval = (edgenorm > 0.0) ? (origin / edgenorm) : origin;
+      }
+      // trim value {0..255}
+      retval = (retval < 0.0) ? 0.0 : (retval < 255.0) ? retval : 255.0;
+      grayLine[x] = (int) retval;
+    }
+    grayLine += grayBpl;
+  }
+  return BinaryImage(gray, (BinaryThreshold::otsuThreshold(gray) + delta));
+}  // binarizeBlurDiv
 
 BinaryImage peakThreshold(const QImage& image) {
   return BinaryImage(image, BinaryThreshold::peakThreshold(image));

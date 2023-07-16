@@ -28,6 +28,8 @@ class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
 
  private slots:
 
+  void sauvolaDeltaChanged(double value);
+
   void windowSizeChanged(int value);
 
   void sauvolaCoefChanged(double value);

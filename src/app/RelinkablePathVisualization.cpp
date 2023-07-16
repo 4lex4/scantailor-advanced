@@ -53,7 +53,7 @@ void RelinkablePathVisualization::clear() {
 
 void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool clickable) {
   clear();
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   auto opt = QString::SkipEmptyParts;
 #else
   auto opt = Qt::SkipEmptyParts;

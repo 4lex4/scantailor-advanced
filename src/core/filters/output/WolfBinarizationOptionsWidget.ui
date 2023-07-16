@@ -50,20 +50,30 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="1">
-      <widget class="QSpinBox" name="windowSize">
-       <property name="toolTip">
-        <string>The dimensions of a pixel neighborhood to consider.</string>
-       </property>
-       <property name="minimum">
-        <number>5</number>
-       </property>
-       <property name="maximum">
-        <number>9999</number>
+     <item row="0" column="0">
+      <widget class="QLabel" name="wolfDeltaLabel">
+       <property name="text">
+        <string>Delta:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="wolfDelta">
+       <property name="toolTip">
+        <string>Default value is 0.</string>
+       </property>
+       <property name="minimum">
+        <double>-100.0</double>
+       </property>
+       <property name="maximum">
+        <double>100.0</double>
+       </property>
+       <property name="singleStep">
+        <double>1.0</double>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
       <widget class="QLabel" name="windowSizeLabel">
        <property name="text">
         <string>Window size:</string>
@@ -71,6 +81,26 @@
       </widget>
      </item>
      <item row="1" column="1">
+      <widget class="QSpinBox" name="windowSize">
+       <property name="toolTip">
+        <string>The dimensions of a pixel neighborhood to consider.</string>
+       </property>
+       <property name="minimum">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lowerBoundLabel">
+       <property name="text">
+        <string>Lower bound: </string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
       <widget class="QSpinBox" name="lowerBound">
        <property name="toolTip">
         <string>The minimum possible gray level that can be made white.</string>
@@ -83,21 +113,14 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="upperBoundLabel">
        <property name="text">
         <string>Upper Bound: </string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="lowerBoundLabel">
-       <property name="text">
-        <string>Lower bound: </string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QSpinBox" name="upperBound">
        <property name="toolTip">
         <string>The maximum possible gray level that can be made black.</string>
@@ -110,14 +133,14 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="wolfCoefLabel">
        <property name="text">
         <string>Coeff:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="QDoubleSpinBox" name="wolfCoef">
        <property name="toolTip">
         <string>Default value is 0.3.</string>

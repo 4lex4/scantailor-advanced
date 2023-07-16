@@ -2219,19 +2219,45 @@ BinaryImage OutputGenerator::Processor::binarize(const QImage& image) const {
       break;
     }
     case SAUVOLA: {
+      double thresholdDelta = blackWhiteOptions.thresholdAdjustment();
       QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(), blackWhiteOptions.getWindowSize());
-      double sauvolaCoef = blackWhiteOptions.getSauvolaCoef();
+      double thresholdCoef = blackWhiteOptions.getSauvolaCoef();
 
-      binarized = binarizeSauvola(image, windowsSize, sauvolaCoef);
+      binarized = binarizeSauvola(image, windowsSize, thresholdCoef, thresholdDelta);
       break;
     }
     case WOLF: {
+      double thresholdDelta = blackWhiteOptions.thresholdAdjustment();
       QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(), blackWhiteOptions.getWindowSize());
       auto lowerBound = (unsigned char) blackWhiteOptions.getWolfLowerBound();
       auto upperBound = (unsigned char) blackWhiteOptions.getWolfUpperBound();
-      double wolfCoef = blackWhiteOptions.getWolfCoef();
+      double thresholdCoef = blackWhiteOptions.getWolfCoef();
 
-      binarized = binarizeWolf(image, windowsSize, lowerBound, upperBound, wolfCoef);
+      binarized = binarizeWolf(image, windowsSize, lowerBound, upperBound, thresholdCoef, thresholdDelta);
+      break;
+    }
+    case EDGEPLUS: {
+      double thresholdDelta = blackWhiteOptions.thresholdAdjustment();
+      QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(), blackWhiteOptions.getWindowSize());
+      double thresholdCoef = blackWhiteOptions.getSauvolaCoef();
+
+      binarized = binarizeEdgeDiv(image, windowsSize, thresholdCoef, 0.0, thresholdDelta);
+      break;
+    }
+    case BLURDIV: {
+      double thresholdDelta = blackWhiteOptions.thresholdAdjustment();
+      QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(), blackWhiteOptions.getWindowSize());
+      double thresholdCoef = blackWhiteOptions.getSauvolaCoef();
+
+      binarized = binarizeEdgeDiv(image, windowsSize, 0.0, thresholdCoef, thresholdDelta);
+      break;
+    }
+    case EDGEDIV: {
+      double thresholdDelta = blackWhiteOptions.thresholdAdjustment();
+      QSize windowsSize = QSize(blackWhiteOptions.getWindowSize(), blackWhiteOptions.getWindowSize());
+      double thresholdCoef = blackWhiteOptions.getSauvolaCoef();
+
+      binarized = binarizeEdgeDiv(image, windowsSize, thresholdCoef, thresholdCoef, thresholdDelta);
       break;
     }
   }

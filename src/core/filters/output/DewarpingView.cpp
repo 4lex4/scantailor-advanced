@@ -214,7 +214,7 @@ void DewarpingView::onPaint(QPainter& painter, const InteractionState& interacti
     const dewarping::Curve& bottomCurve = m_distortionModel.bottomCurve();
     painter.drawLine(topCurve.polyline().front(), bottomCurve.polyline().front());
     painter.drawLine(topCurve.polyline().back(), bottomCurve.polyline().back());
-#if QT_VERSION_MAJOR == 5 and QT_VERSION_MINOR < 14
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
     painter.drawPolyline(QVector<QPointF>::fromStdVector(topCurve.polyline()));
     painter.drawPolyline(QVector<QPointF>::fromStdVector(bottomCurve.polyline()));
 #else

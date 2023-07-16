@@ -9,6 +9,7 @@
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <cassert>
+#include <cmath>
 
 #include "NumericTraits.h"
 #include "SidesOfLine.h"

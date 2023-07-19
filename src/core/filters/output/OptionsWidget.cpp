@@ -42,6 +42,7 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   thresholdMethodBox->addItem(tr("Otsu"), OTSU);
   thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
   thresholdMethodBox->addItem(tr("Wolf"), WOLF);
+  thresholdMethodBox->addItem(tr("Bradley"), BRADLEY);
   thresholdMethodBox->addItem(tr("EdgePlus"), EDGEPLUS);
   thresholdMethodBox->addItem(tr("BlurDiv"), BLURDIV);
   thresholdMethodBox->addItem(tr("EdgeDiv"), EDGEDIV);
@@ -54,6 +55,8 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   QPointer<BinarizationOptionsWidget> sauvolaBinarizationOptionsWidget
       = new SauvolaBinarizationOptionsWidget(m_settings);
   QPointer<BinarizationOptionsWidget> wolfBinarizationOptionsWidget = new WolfBinarizationOptionsWidget(m_settings);
+  QPointer<BinarizationOptionsWidget> bradleyBinarizationOptionsWidget
+      = new SauvolaBinarizationOptionsWidget(m_settings);
   QPointer<BinarizationOptionsWidget> edgeplusBinarizationOptionsWidget
       = new SauvolaBinarizationOptionsWidget(m_settings);
   QPointer<BinarizationOptionsWidget> blurdivBinarizationOptionsWidget
@@ -67,6 +70,7 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   addBinarizationOptionsWidget(otsuBinarizationOptionsWidget);
   addBinarizationOptionsWidget(sauvolaBinarizationOptionsWidget);
   addBinarizationOptionsWidget(wolfBinarizationOptionsWidget);
+  addBinarizationOptionsWidget(bradleyBinarizationOptionsWidget);
   addBinarizationOptionsWidget(edgeplusBinarizationOptionsWidget);
   addBinarizationOptionsWidget(blurdivBinarizationOptionsWidget);
   addBinarizationOptionsWidget(edgedivBinarizationOptionsWidget);

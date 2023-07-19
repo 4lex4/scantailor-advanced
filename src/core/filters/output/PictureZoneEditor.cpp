@@ -213,29 +213,47 @@ void PictureZoneEditor::paintOverPictureMask(QPainter& painter) {
 
   using PLP = PictureLayerProperty;
 
+  // Pass 1: ZONEERASER1
   painter.setCompositionMode(QPainter::CompositionMode_Clear);
 
-  // First pass: ERASER1
   for (const EditableZoneSet::Zone& zone : zones()) {
-    if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER1) {
+    if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ZONEERASER1) {
       painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
     }
   }
 
+  // Pass 2: ZONEFG
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
-  // Second pass: PAINTER2
   for (const EditableZoneSet::Zone& zone : zones()) {
-    if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::PAINTER2) {
+    if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ZONEFG) {
       painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
     }
   }
 
+  // Pass 3: ZONEBG
+  painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+
+  for (const EditableZoneSet::Zone& zone : zones()) {
+    if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ZONEBG) {
+      painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
+    }
+  }
+
+  // Pass 4: ZONEPAINTER2
+  painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+
+  for (const EditableZoneSet::Zone& zone : zones()) {
+    if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ZONEPAINTER2) {
+      painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
+    }
+  }
+
+  // Pass 5: ZONEERASER3
   painter.setCompositionMode(QPainter::CompositionMode_Clear);
 
-  // Third pass: ERASER3
   for (const EditableZoneSet::Zone& zone : zones()) {
-    if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ERASER3) {
+    if (zone.properties()->locateOrDefault<PLP>()->layer() == PLP::ZONEERASER3) {
       painter.drawPolygon(zone.spline()->toPolygon(), Qt::WindingFill);
     }
   }

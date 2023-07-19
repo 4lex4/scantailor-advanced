@@ -62,6 +62,14 @@ BinaryImage binarizeWolf(const QImage& src,
                          double delta = 0.0);
 
 /**
+ * \brief Image binarization using Bradley's adaptive thresholding method.
+ *
+ * Derek Bradley, Gerhard Roth. 2005. "Adaptive Thresholding Using the Integral Image".
+ * http://www.scs.carleton.ca/~roth/iit-publications-iti/docs/gerh-50002.pdf
+ */
+BinaryImage binarizeBradley(const QImage& src, QSize windowSize, double k = 0.34, double delta = 0.0);
+
+/**
  * \brief Image binarization using EdgeDiv (EdgePlus & BlurDiv) local/global thresholding method.
  *
  * EdgeDiv, zvezdochiot 2023. "Adaptive/global document image binarization".

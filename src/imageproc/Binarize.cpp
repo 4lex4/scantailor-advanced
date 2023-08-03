@@ -201,6 +201,73 @@ BinaryImage binarizeWolf(const QImage& src,
   return bwImg;
 }  // binarizeWolf
 
+BinaryImage binarizeBradley(const QImage& src, const QSize windowSize, const double k, const double delta) {
+  if (windowSize.isEmpty()) {
+    throw std::invalid_argument("binarizeBradley: invalid windowSize");
+  }
+
+  if (src.isNull()) {
+    return BinaryImage();
+  }
+
+  QImage gray(toGrayscale(src));
+  const int w = gray.width();
+  const int h = gray.height();
+
+  IntegralImage<uint32_t> integralImage(w, h);
+
+  uint8_t* grayLine = gray.bits();
+  const int grayBpl = gray.bytesPerLine();
+
+  for (int y = 0; y < h; ++y) {
+    integralImage.beginRow();
+    for (int x = 0; x < w; ++x) {
+      const uint32_t pixel = grayLine[x];
+      integralImage.push(pixel);
+    }
+    grayLine += grayBpl;
+  }
+
+  const int windowLowerHalf = windowSize.height() >> 1;
+  const int windowUpperHalf = windowSize.height() - windowLowerHalf;
+  const int windowLeftHalf = windowSize.width() >> 1;
+  const int windowRightHalf = windowSize.width() - windowLeftHalf;
+
+  BinaryImage bwImg(w, h);
+  uint32_t* bwLine = bwImg.data();
+  const int bwWpl = bwImg.wordsPerLine();
+
+  grayLine = gray.bits();
+  for (int y = 0; y < h; ++y) {
+    const int top = std::max(0, y - windowLowerHalf);
+    const int bottom = std::min(h, y + windowUpperHalf);  // exclusive
+    for (int x = 0; x < w; ++x) {
+      const int left = std::max(0, x - windowLeftHalf);
+      const int right = std::min(w, x + windowRightHalf);  // exclusive
+      const int area = (bottom - top) * (right - left);
+      assert(area > 0);  // because windowSize > 0 and w > 0 and h > 0
+      const QRect rect(left, top, right - left, bottom - top);
+      const double windowSum = integralImage.sum(rect);
+
+      const double rArea = 1.0 / area;
+      const double mean = windowSum * rArea;
+      const double threshold = (k < 1.0) ? (mean * (1.0 - k)) : 0;
+      const uint32_t msb = uint32_t(1) << 31;
+      const uint32_t mask = msb >> (x & 31);
+      if (int(grayLine[x]) < (threshold + delta)) {
+        // black
+        bwLine[x >> 5] |= mask;
+      } else {
+        // white
+        bwLine[x >> 5] &= ~mask;
+      }
+    }
+    grayLine += grayBpl;
+    bwLine += bwWpl;
+  }
+  return bwImg;
+}  // binarizeBradley
+
 BinaryImage binarizeEdgeDiv(const QImage& src,
                             const QSize windowSize,
                             const double kep,

@@ -16,9 +16,9 @@ class QString;
 namespace output {
 class PictureLayerProperty : public Property {
  public:
-  enum Layer { NO_OP, ERASER1, PAINTER2, ERASER3 };
+  enum Layer { ZONENOOP, ZONEERASER1, ZONEPAINTER2, ZONEERASER3, ZONEFG, ZONEBG };
 
-  explicit PictureLayerProperty(Layer layer = NO_OP);
+  explicit PictureLayerProperty(Layer layer = ZONENOOP);
 
   explicit PictureLayerProperty(const QDomElement& el);
 

@@ -48,6 +48,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
   thresholdMethodBox->addItem(tr("Otsu"), OTSU);
   thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
   thresholdMethodBox->addItem(tr("Wolf"), WOLF);
+  thresholdMethodBox->addItem(tr("Bradley"), BRADLEY);
   thresholdMethodBox->addItem(tr("EdgePlus"), EDGEPLUS);
   thresholdMethodBox->addItem(tr("BlurDiv"), BLURDIV);
   thresholdMethodBox->addItem(tr("EdgeDiv"), EDGEDIV);
@@ -665,8 +666,8 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
   blackWhiteOptions.setBinarizationMethod(binarizationMethod);
   blackWhiteOptions.setThresholdAdjustment(thresholdSlider->value());
   blackWhiteOptions.setSauvolaCoef(sauvolaCoef->value());
-  if (binarizationMethod == SAUVOLA || binarizationMethod == EDGEPLUS || binarizationMethod == BLURDIV
-      || binarizationMethod == EDGEDIV) {
+  if (binarizationMethod == SAUVOLA || binarizationMethod == BRADLEY || binarizationMethod == EDGEPLUS
+      || binarizationMethod == BLURDIV || binarizationMethod == EDGEDIV) {
     blackWhiteOptions.setWindowSize(sauvolaWindowSize->value());
   } else if (binarizationMethod == WOLF) {
     blackWhiteOptions.setWindowSize(wolfWindowSize->value());

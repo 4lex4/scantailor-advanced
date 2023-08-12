@@ -68,6 +68,11 @@ class ColorCommonOptions {
 
   void setNormalizeIllumination(bool val);
 
+  double wienerCoef() const;
+  void setWienerCoef(double val);
+  int wienerWindowSize() const;
+  void setWienerWindowSize(int val);
+
   FillingColor getFillingColor() const;
 
   void setFillingColor(FillingColor fillingColor);
@@ -89,6 +94,8 @@ class ColorCommonOptions {
   bool m_fillOffcut;
   bool m_fillMargins;
   bool m_normalizeIllumination;
+  double m_wienerCoef;
+  int m_wienerWindowSize;
   FillingColor m_fillingColor;
   PosterizationOptions m_posterizationOptions;
 };
@@ -116,6 +123,19 @@ inline bool ColorCommonOptions::normalizeIllumination() const {
 
 inline void ColorCommonOptions::setNormalizeIllumination(bool val) {
   m_normalizeIllumination = val;
+}
+
+inline double ColorCommonOptions::wienerCoef() const {
+  return m_wienerCoef;
+}
+inline void ColorCommonOptions::setWienerCoef(double val) {
+  m_wienerCoef = val;
+}
+inline int ColorCommonOptions::wienerWindowSize() const {
+  return m_wienerWindowSize;
+}
+inline void ColorCommonOptions::setWienerWindowSize(int val) {
+  m_wienerWindowSize = val;
 }
 
 inline const ColorCommonOptions::PosterizationOptions& ColorCommonOptions::getPosterizationOptions() const {

@@ -7,14 +7,28 @@
 
 namespace output {
 ColorCommonOptions::ColorCommonOptions()
-    : m_fillOffcut(true), m_fillMargins(true), m_normalizeIllumination(false), m_fillingColor(FILL_BACKGROUND) {}
+    : m_fillOffcut(true),
+      m_fillMargins(true),
+      m_normalizeIllumination(false),
+      m_fillingColor(FILL_BACKGROUND),
+      m_wienerCoef(0.0),
+      m_wienerWindowSize(5) {}
 
 ColorCommonOptions::ColorCommonOptions(const QDomElement& el)
     : m_fillOffcut(el.attribute("fillOffcut") == "1"),
       m_fillMargins(el.attribute("fillMargins") == "1"),
       m_normalizeIllumination(el.attribute("normalizeIlluminationColor") == "1"),
       m_fillingColor(parseFillingColor(el.attribute("fillingColor"))),
-      m_posterizationOptions(el.namedItem("posterization-options").toElement()) {}
+      m_posterizationOptions(el.namedItem("posterization-options").toElement()),
+      m_wienerCoef(el.attribute("wienerCoef").toDouble()),
+      m_wienerWindowSize(el.attribute("wienerWinSize").toInt()) {
+  if (m_wienerCoef < 0.0 || m_wienerCoef > 1.0) {
+    m_wienerCoef = 0.0;
+  }
+  if (m_wienerWindowSize < 3) {
+    m_wienerWindowSize = 5;
+  }
+}
 
 QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) const {
   QDomElement el(doc.createElement(name));
@@ -23,13 +37,16 @@ QDomElement ColorCommonOptions::toXml(QDomDocument& doc, const QString& name) co
   el.setAttribute("normalizeIlluminationColor", m_normalizeIllumination ? "1" : "0");
   el.setAttribute("fillingColor", formatFillingColor(m_fillingColor));
   el.appendChild(m_posterizationOptions.toXml(doc, "posterization-options"));
+  el.setAttribute("wienerCoef", m_wienerCoef);
+  el.setAttribute("wienerWinSize", m_wienerWindowSize);
   return el;
 }
 
 bool ColorCommonOptions::operator==(const ColorCommonOptions& other) const {
   return (m_normalizeIllumination == other.m_normalizeIllumination) && (m_fillMargins == other.m_fillMargins)
          && (m_fillOffcut == other.m_fillOffcut) && (m_fillingColor == other.m_fillingColor)
-         && (m_posterizationOptions == other.m_posterizationOptions);
+         && (m_posterizationOptions == other.m_posterizationOptions) && (m_wienerCoef == other.m_wienerCoef)
+         && (m_wienerWindowSize == other.m_wienerWindowSize);
 }
 
 bool ColorCommonOptions::operator!=(const ColorCommonOptions& other) const {

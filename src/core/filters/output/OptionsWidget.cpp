@@ -634,6 +634,8 @@ void OptionsWidget::updateColorsDisplay() {
     posterizeCB->setEnabled(true);
     posterizeOptionsWidget->setEnabled(colorCommonOptions.getPosterizationOptions().isEnabled());
   }
+  wienerCoef->setValue(colorCommonOptions.wienerCoef());
+  wienerWindowSize->setValue(colorCommonOptions.wienerWindowSize());
   colorSegmentationCB->setChecked(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
   reduceNoiseSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getNoiseReduction());
   redAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getRedThresholdAdjustment());
@@ -762,6 +764,24 @@ void OptionsWidget::originalBackgroundToggled(bool checked) {
 
   m_settings->setSplittingOptions(m_pageId, m_splittingOptions);
   emit reloadRequested();
+}
+
+void OptionsWidget::wienerCoefChanged(double value) {
+  ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+  colorCommonOptions.setWienerCoef(value);
+  m_colorParams.setColorCommonOptions(colorCommonOptions);
+  m_settings->setColorParams(m_pageId, m_colorParams);
+
+  m_delayedReloadRequest.start(750);
+}
+
+void OptionsWidget::wienerWindowSizeChanged(int value) {
+  ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+  colorCommonOptions.setWienerWindowSize(value);
+  m_colorParams.setColorCommonOptions(colorCommonOptions);
+  m_settings->setColorParams(m_pageId, m_colorParams);
+
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::colorSegmentationToggled(bool checked) {
@@ -908,6 +928,8 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(pictureShapeSensitivitySB, SIGNAL(valueChanged(int)), this, SLOT(pictureShapeSensitivityChanged(int)));
   CONNECT(higherSearchSensitivityCB, SIGNAL(clicked(bool)), this, SLOT(higherSearchSensivityToggled(bool)));
 
+  CONNECT(wienerCoef, SIGNAL(valueChanged(double)), this, SLOT(wienerCoefChanged(double)));
+  CONNECT(wienerWindowSize, SIGNAL(valueChanged(int)), this, SLOT(wienerWindowSizeChanged(int)));
   CONNECT(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
   CONNECT(reduceNoiseSB, SIGNAL(valueChanged(int)), this, SLOT(reduceNoiseChanged(int)));
   CONNECT(redAdjustmentSB, SIGNAL(valueChanged(int)), this, SLOT(redAdjustmentChanged(int)));

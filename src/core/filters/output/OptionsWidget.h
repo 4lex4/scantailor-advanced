@@ -94,6 +94,10 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void higherSearchSensivityToggled(bool checked);
 
+  void wienerCoefChanged(double value);
+
+  void wienerWindowSizeChanged(int value);
+
   void colorSegmentationToggled(bool checked);
 
   void reduceNoiseChanged(int value);

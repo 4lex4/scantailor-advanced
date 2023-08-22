@@ -37,6 +37,7 @@
 #include <imageproc/PolygonUtils.h>
 #include <imageproc/Posterizer.h>
 #include <imageproc/SkewFinder.h>
+#include <imageproc/WienerFilter.h>
 
 #include <QColor>
 #include <QDebug>
@@ -1267,6 +1268,11 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithoutDewarping
     m_dbg->add(maybeNormalized, "maybeNormalized");
   }
 
+  const ColorCommonOptions& colorCommonOptions = m_colorParams.colorCommonOptions();
+  wienerColorFilterInPlace(maybeNormalized,
+                           QSize(colorCommonOptions.wienerWindowSize(), colorCommonOptions.wienerWindowSize()),
+                           colorCommonOptions.wienerCoef());
+
   if (m_renderParams.normalizeIllumination()) {
     m_outsideBackgroundColor
         = BackgroundColorCalculator::calcDominantBackgroundColor(maybeNormalized, m_outCropAreaInWorkingCs);
@@ -1553,6 +1559,11 @@ std::unique_ptr<OutputImage> OutputGenerator::Processor::processWithDewarping(Zo
   }
 
   m_status.throwIfCancelled();
+
+  const ColorCommonOptions& colorCommonOptions = m_colorParams.colorCommonOptions();
+  wienerColorFilterInPlace(normalizedOriginal,
+                           QSize(colorCommonOptions.wienerWindowSize(), colorCommonOptions.wienerWindowSize()),
+                           colorCommonOptions.wienerCoef());
 
   // Picture mask (white indicate a picture) in the same coordinates as
   // warpedGrayOutput.  Only built for Mixed mode.

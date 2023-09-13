@@ -72,6 +72,14 @@ BinarizationMethod BlackWhiteOptions::parseBinarizationMethod(const QString& str
     return WOLF;
   } else if (str == "sauvola") {
     return SAUVOLA;
+  } else if (str == "bradley") {
+    return BRADLEY;
+  } else if (str == "edgeplus") {
+    return EDGEPLUS;
+  } else if (str == "blurdiv") {
+    return BLURDIV;
+  } else if (str == "edgediv") {
+    return EDGEDIV;
   } else {
     return OTSU;
   }
@@ -88,6 +96,18 @@ QString BlackWhiteOptions::formatBinarizationMethod(BinarizationMethod type) {
       break;
     case WOLF:
       str = "wolf";
+      break;
+    case BRADLEY:
+      str = "bradley";
+      break;
+    case EDGEPLUS:
+      str = "edgeplus";
+      break;
+    case BLURDIV:
+      str = "blurdiv";
+      break;
+    case EDGEDIV:
+      str = "edgediv";
       break;
   }
   return str;

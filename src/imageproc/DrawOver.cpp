@@ -5,6 +5,7 @@
 
 #include <QImage>
 #include <cassert>
+#include <stdexcept>
 
 #include "BinaryImage.h"
 #include "RasterOp.h"

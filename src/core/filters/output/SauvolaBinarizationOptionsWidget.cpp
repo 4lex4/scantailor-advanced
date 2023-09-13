@@ -29,6 +29,15 @@ void SauvolaBinarizationOptionsWidget::updateUi(const PageId& pageId) {
   updateView();
 }
 
+void SauvolaBinarizationOptionsWidget::sauvolaDeltaChanged(double value) {
+  BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
+  opt.setThresholdAdjustment(value);
+  m_colorParams.setBlackWhiteOptions(opt);
+  m_settings->setColorParams(m_pageId, m_colorParams);
+
+  m_delayedStateChanger.start(750);
+}
+
 void SauvolaBinarizationOptionsWidget::windowSizeChanged(int value) {
   BlackWhiteOptions opt(m_colorParams.blackWhiteOptions());
   opt.setWindowSize(value);
@@ -49,6 +58,7 @@ void SauvolaBinarizationOptionsWidget::sauvolaCoefChanged(double value) {
 
 void SauvolaBinarizationOptionsWidget::updateView() {
   BlackWhiteOptions blackWhiteOptions = m_colorParams.blackWhiteOptions();
+  sauvolaDelta->setValue(blackWhiteOptions.thresholdAdjustment());
   windowSize->setValue(blackWhiteOptions.getWindowSize());
   sauvolaCoef->setValue(blackWhiteOptions.getSauvolaCoef());
 }
@@ -60,6 +70,7 @@ void SauvolaBinarizationOptionsWidget::sendStateChanged() {
 #define CONNECT(...) m_connectionManager.addConnection(connect(__VA_ARGS__))
 
 void SauvolaBinarizationOptionsWidget::setupUiConnections() {
+  CONNECT(sauvolaDelta, SIGNAL(valueChanged(double)), this, SLOT(sauvolaDeltaChanged(double)));
   CONNECT(windowSize, SIGNAL(valueChanged(int)), this, SLOT(windowSizeChanged(int)));
   CONNECT(sauvolaCoef, SIGNAL(valueChanged(double)), this, SLOT(sauvolaCoefChanged(double)));
   CONNECT(&m_delayedStateChanger, SIGNAL(timeout()), this, SLOT(sendStateChanged()));

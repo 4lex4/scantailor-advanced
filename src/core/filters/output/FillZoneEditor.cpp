@@ -5,7 +5,7 @@
 
 #include <QPainter>
 #include <QPointer>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <utility>
 
 #include "ImagePresentation.h"
@@ -50,7 +50,8 @@ FillZoneEditor::FillZoneEditor(const QImage& image,
 
   setMouseTracking(true);
 
-  context().setContextMenuInteractionCreator(boost::bind(&FillZoneEditor::createContextMenuInteraction, this, _1));
+  context().setContextMenuInteractionCreator(
+      boost::bind(&FillZoneEditor::createContextMenuInteraction, this, boost::placeholders::_1));
 
   connect(&zones(), SIGNAL(committed()), SLOT(commitZones()));
 
@@ -158,7 +159,8 @@ std::vector<ZoneContextMenuItem> FillZoneEditor::MenuCustomizer::operator()(cons
                                                                             const StdMenuItems& stdItems) {
   std::vector<ZoneContextMenuItem> items;
   items.reserve(2);
-  items.emplace_back(tr("Pick color"), boost::bind(&FillZoneEditor::createColorPickupInteraction, m_editor, zone, _1));
+  items.emplace_back(tr("Pick color"), boost::bind(&FillZoneEditor::createColorPickupInteraction, m_editor, zone,
+                                                   boost::placeholders::_1));
   items.push_back(stdItems.deleteItem);
   return items;
 }

@@ -87,7 +87,12 @@ bool PolylineIntersector::intersectsSpan(const QLineF& normal, const QLineF& spa
 QPointF PolylineIntersector::intersectWithSegment(const QLineF& line, int segment) const {
   const QLineF segLine(m_polyline[segment], m_polyline[segment + 1]);
   QPointF intersection;
-  if (line.intersect(segLine, &intersection) == QLineF::NoIntersection) {
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
+  auto intersect = line.intersect(segLine, &intersection);
+#else
+  auto intersect = line.intersects(segLine, &intersection);
+#endif
+  if (intersect == QLineF::NoIntersection) {
     // Considering we were called for a reason, the segment must
     // be on the same line as our subject line.  Just return segment
     // midpoint in this case.

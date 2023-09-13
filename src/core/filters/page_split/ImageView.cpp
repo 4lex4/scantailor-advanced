@@ -7,7 +7,7 @@
 
 #include <QDebug>
 #include <QPainter>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/foreach.hpp>
 #include <utility>
 
@@ -66,7 +66,8 @@ void ImageView::setupCuttersInteraction() {
     for (int j = 0; j < 2; ++j) {  // Loop over handles.
       m_handles[i][j].setHitRadius(hitRadius);
       m_handles[i][j].setPositionCallback(boost::bind(&ImageView::handlePosition, this, i, j));
-      m_handles[i][j].setMoveRequestCallback(boost::bind(&ImageView::handleMoveRequest, this, i, j, _1));
+      m_handles[i][j].setMoveRequestCallback(
+          boost::bind(&ImageView::handleMoveRequest, this, i, j, boost::placeholders::_1));
       m_handles[i][j].setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
 
       m_handleInteractors[i][j].setObject(&m_handles[i][j]);
@@ -75,7 +76,8 @@ void ImageView::setupCuttersInteraction() {
     }
 
     m_lineSegments[i].setPositionCallback(boost::bind(&ImageView::linePosition, this, i));
-    m_lineSegments[i].setMoveRequestCallback(boost::bind(&ImageView::lineMoveRequest, this, i, _1));
+    m_lineSegments[i].setMoveRequestCallback(
+        boost::bind(&ImageView::lineMoveRequest, this, i, boost::placeholders::_1));
     m_lineSegments[i].setDragFinishedCallback(boost::bind(&ImageView::dragFinished, this));
 
     m_lineInteractors[i].setObject(&m_lineSegments[i]);
@@ -207,8 +209,13 @@ QLineF ImageView::customInscribedCutterLine(const QLineF& line, const QRectF& re
   QPointF topPt;
   QPointF bottomPt;
 
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   line.intersect(QLineF(rect.topLeft(), rect.topRight()), &topPt);
   line.intersect(QLineF(rect.bottomLeft(), rect.bottomRight()), &bottomPt);
+#else
+  line.intersects(QLineF(rect.topLeft(), rect.topRight()), &topPt);
+  line.intersects(QLineF(rect.bottomLeft(), rect.bottomRight()), &bottomPt);
+#endif
 
   const double topX = qBound(rect.left(), topPt.x(), rect.right());
   const double bottomX = qBound(rect.left(), bottomPt.x(), rect.right());
@@ -234,8 +241,13 @@ void ImageView::handleMoveRequest(int lineIdx, int handleIdx, const QPointF& pos
       QPointF pTopI;
       QPointF pBottomI;
       QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
       anotherLine.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
       anotherLine.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
+#else
+      anotherLine.intersects(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
+      anotherLine.intersects(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
+#endif
 
       if ((pTopI.x() < minXTop) || (pTopI.x() > maxXTop) || (pBottomI.x() < minXBottom)
           || (pBottomI.x() > maxXBottom)) {
@@ -274,8 +286,14 @@ void ImageView::lineMoveRequest(int lineIdx, QLineF line) {
   const QRectF validArea(getOccupiedWidgetRect());
   QPointF pTop;
   QPointF pBottom;
+
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
   line.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTop);
   line.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottom);
+#else
+  line.intersects(QLineF(validArea.topLeft(), validArea.topRight()), &pTop);
+  line.intersects(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottom);
+#endif
 
   qreal minXTop = validArea.left();
   qreal maxXTop = validArea.right();
@@ -288,8 +306,13 @@ void ImageView::lineMoveRequest(int lineIdx, QLineF line) {
       QPointF pTopI;
       QPointF pBottomI;
       QLineF anotherLine = virtualToWidget().map(m_virtLayout.cutterLine(i));
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
       anotherLine.intersect(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
       anotherLine.intersect(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
+#else
+      anotherLine.intersects(QLineF(validArea.topLeft(), validArea.topRight()), &pTopI);
+      anotherLine.intersects(QLineF(validArea.bottomLeft(), validArea.bottomRight()), &pBottomI);
+#endif
 
       if ((pTopI.x() < minXTop) || (pTopI.x() > maxXTop) || (pBottomI.x() < minXBottom)
           || (pBottomI.x() > maxXBottom)) {

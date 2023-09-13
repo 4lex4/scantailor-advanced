@@ -5,7 +5,7 @@
 
 #include <QMouseEvent>
 #include <QPainter>
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 
 #include "ImageViewBase.h"
 #include "SerializableSpline.h"

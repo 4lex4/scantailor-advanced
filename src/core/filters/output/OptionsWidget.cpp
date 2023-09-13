@@ -42,14 +42,27 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   thresholdMethodBox->addItem(tr("Otsu"), OTSU);
   thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
   thresholdMethodBox->addItem(tr("Wolf"), WOLF);
+  thresholdMethodBox->addItem(tr("Bradley"), BRADLEY);
+  thresholdMethodBox->addItem(tr("EdgePlus"), EDGEPLUS);
+  thresholdMethodBox->addItem(tr("BlurDiv"), BLURDIV);
+  thresholdMethodBox->addItem(tr("EdgeDiv"), EDGEDIV);
 
   fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
   fillingColorBox->addItem(tr("White"), FILL_WHITE);
+  fillingColorBox->addItem(tr("Black"), FILL_BLACK);
 
   QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget = new OtsuBinarizationOptionsWidget(m_settings);
   QPointer<BinarizationOptionsWidget> sauvolaBinarizationOptionsWidget
       = new SauvolaBinarizationOptionsWidget(m_settings);
   QPointer<BinarizationOptionsWidget> wolfBinarizationOptionsWidget = new WolfBinarizationOptionsWidget(m_settings);
+  QPointer<BinarizationOptionsWidget> bradleyBinarizationOptionsWidget
+      = new SauvolaBinarizationOptionsWidget(m_settings);
+  QPointer<BinarizationOptionsWidget> edgeplusBinarizationOptionsWidget
+      = new SauvolaBinarizationOptionsWidget(m_settings);
+  QPointer<BinarizationOptionsWidget> blurdivBinarizationOptionsWidget
+      = new SauvolaBinarizationOptionsWidget(m_settings);
+  QPointer<BinarizationOptionsWidget> edgedivBinarizationOptionsWidget
+      = new SauvolaBinarizationOptionsWidget(m_settings);
 
   while (binarizationOptions->count() != 0) {
     binarizationOptions->removeWidget(binarizationOptions->widget(0));
@@ -57,6 +70,10 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   addBinarizationOptionsWidget(otsuBinarizationOptionsWidget);
   addBinarizationOptionsWidget(sauvolaBinarizationOptionsWidget);
   addBinarizationOptionsWidget(wolfBinarizationOptionsWidget);
+  addBinarizationOptionsWidget(bradleyBinarizationOptionsWidget);
+  addBinarizationOptionsWidget(edgeplusBinarizationOptionsWidget);
+  addBinarizationOptionsWidget(blurdivBinarizationOptionsWidget);
+  addBinarizationOptionsWidget(edgedivBinarizationOptionsWidget);
   updateBinarizationOptionsDisplay(binarizationOptions->currentIndex());
 
   pictureShapeSelector->addItem(tr("Off"), OFF_SHAPE);
@@ -617,6 +634,8 @@ void OptionsWidget::updateColorsDisplay() {
     posterizeCB->setEnabled(true);
     posterizeOptionsWidget->setEnabled(colorCommonOptions.getPosterizationOptions().isEnabled());
   }
+  wienerCoef->setValue(colorCommonOptions.wienerCoef());
+  wienerWindowSize->setValue(colorCommonOptions.wienerWindowSize());
   colorSegmentationCB->setChecked(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
   reduceNoiseSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getNoiseReduction());
   redAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getRedThresholdAdjustment());
@@ -745,6 +764,24 @@ void OptionsWidget::originalBackgroundToggled(bool checked) {
 
   m_settings->setSplittingOptions(m_pageId, m_splittingOptions);
   emit reloadRequested();
+}
+
+void OptionsWidget::wienerCoefChanged(double value) {
+  ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+  colorCommonOptions.setWienerCoef(value);
+  m_colorParams.setColorCommonOptions(colorCommonOptions);
+  m_settings->setColorParams(m_pageId, m_colorParams);
+
+  m_delayedReloadRequest.start(750);
+}
+
+void OptionsWidget::wienerWindowSizeChanged(int value) {
+  ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+  colorCommonOptions.setWienerWindowSize(value);
+  m_colorParams.setColorCommonOptions(colorCommonOptions);
+  m_settings->setColorParams(m_pageId, m_colorParams);
+
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::colorSegmentationToggled(bool checked) {
@@ -891,6 +928,8 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(pictureShapeSensitivitySB, SIGNAL(valueChanged(int)), this, SLOT(pictureShapeSensitivityChanged(int)));
   CONNECT(higherSearchSensitivityCB, SIGNAL(clicked(bool)), this, SLOT(higherSearchSensivityToggled(bool)));
 
+  CONNECT(wienerCoef, SIGNAL(valueChanged(double)), this, SLOT(wienerCoefChanged(double)));
+  CONNECT(wienerWindowSize, SIGNAL(valueChanged(int)), this, SLOT(wienerWindowSizeChanged(int)));
   CONNECT(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
   CONNECT(reduceNoiseSB, SIGNAL(valueChanged(int)), this, SLOT(reduceNoiseChanged(int)));
   CONNECT(redAdjustmentSB, SIGNAL(valueChanged(int)), this, SLOT(redAdjustmentChanged(int)));

@@ -6,6 +6,7 @@
 #include <core/ApplicationSettings.h>
 #include <core/IconProvider.h>
 
+#include <QActionGroup>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -2079,8 +2080,9 @@ void MainWindow::execGotoPageDialog() {
   bool ok;
   const PageSequence pageSequence = m_thumbSequence->toPageSequence();
   const PageId& selectionLeader = m_thumbSequence->selectionLeader().id();
-  int pageNumber = QInputDialog::getInt(this, tr("Go To Page"), tr("Enter the page number:"),
-                                        pageSequence.pageNo(selectionLeader) + 1, 1, pageSequence.numPages(), 1, &ok);
+  int pageNumber
+      = QInputDialog::getInt(this, tr("Go To Page"), tr("Enter the page number:"),
+                             pageSequence.pageNo(selectionLeader) + 1, 1, (int) (pageSequence.numPages()), 1, &ok);
   if (ok) {
     const PageId& newSelectionLeader = pageSequence.pageAt(pageNumber - 1).id();
     if (selectionLeader != newSelectionLeader) {

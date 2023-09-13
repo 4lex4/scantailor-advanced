@@ -4,6 +4,7 @@
 #include "PolylineModelShape.h"
 
 #include <QDebug>
+#include <stdexcept>
 
 #include "FrenetFrame.h"
 #include "ToLineProjector.h"

@@ -4,7 +4,7 @@
 #include "ProjectReader.h"
 
 #include <QDir>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "AbstractFilter.h"
 #include "FileNameDisambiguator.h"
@@ -53,8 +53,8 @@ ProjectReader::ProjectReader(const QDomDocument& doc)
   processPages(pagesEl);
   // Load naming disambiguator.  This needs to be done after processing pages.
   const QDomElement disambigEl(projectEl.namedItem("file-name-disambiguation").toElement());
-  m_disambiguator
-      = std::make_shared<FileNameDisambiguator>(disambigEl, boost::bind(&ProjectReader::expandFilePath, this, _1));
+  m_disambiguator = std::make_shared<FileNameDisambiguator>(
+      disambigEl, boost::bind(&ProjectReader::expandFilePath, this, boost::placeholders::_1));
 }
 
 ProjectReader::~ProjectReader() = default;

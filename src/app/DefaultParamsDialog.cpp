@@ -43,10 +43,15 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
 
   fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
   fillingColorBox->addItem(tr("White"), FILL_WHITE);
+  fillingColorBox->addItem(tr("Black"), FILL_BLACK);
 
   thresholdMethodBox->addItem(tr("Otsu"), OTSU);
   thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
   thresholdMethodBox->addItem(tr("Wolf"), WOLF);
+  thresholdMethodBox->addItem(tr("Bradley"), BRADLEY);
+  thresholdMethodBox->addItem(tr("EdgePlus"), EDGEPLUS);
+  thresholdMethodBox->addItem(tr("BlurDiv"), BLURDIV);
+  thresholdMethodBox->addItem(tr("EdgeDiv"), EDGEDIV);
 
   pictureShapeSelector->addItem(tr("Off"), OFF_SHAPE);
   pictureShapeSelector->addItem(tr("Free"), FREE_SHAPE);
@@ -55,6 +60,7 @@ DefaultParamsDialog::DefaultParamsDialog(QWidget* parent)
   dpiSelector->addItem("300", "300");
   dpiSelector->addItem("400", "400");
   dpiSelector->addItem("600", "600");
+  dpiSelector->addItem("1200", "1200");
   m_customDpiItemIdx = dpiSelector->count();
   m_customDpiValue = "200";
   dpiSelector->addItem(tr("Custom"), m_customDpiValue);
@@ -660,7 +666,8 @@ std::unique_ptr<DefaultParams> DefaultParamsDialog::buildParams() const {
   blackWhiteOptions.setBinarizationMethod(binarizationMethod);
   blackWhiteOptions.setThresholdAdjustment(thresholdSlider->value());
   blackWhiteOptions.setSauvolaCoef(sauvolaCoef->value());
-  if (binarizationMethod == SAUVOLA) {
+  if (binarizationMethod == SAUVOLA || binarizationMethod == BRADLEY || binarizationMethod == EDGEPLUS
+      || binarizationMethod == BLURDIV || binarizationMethod == EDGEDIV) {
     blackWhiteOptions.setWindowSize(sauvolaWindowSize->value());
   } else if (binarizationMethod == WOLF) {
     blackWhiteOptions.setWindowSize(wolfWindowSize->value());

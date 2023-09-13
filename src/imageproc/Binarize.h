@@ -40,7 +40,7 @@ BinaryImage binarizeMokji(const QImage& src, unsigned maxEdgeWidth = 3, unsigned
  * Sauvola, J. and M. Pietikainen. 2000. "Adaptive document image binarization".
  * http://www.mediateam.oulu.fi/publications/pdf/24.pdf
  */
-BinaryImage binarizeSauvola(const QImage& src, QSize windowSize, double k = 0.34);
+BinaryImage binarizeSauvola(const QImage& src, QSize windowSize, double k = 0.34, double delta = 0.0);
 
 /**
  * \brief Image binarization using Wolf's local thresholding method.
@@ -58,7 +58,27 @@ BinaryImage binarizeWolf(const QImage& src,
                          QSize windowSize,
                          unsigned char lowerBound = 1,
                          unsigned char upperBound = 254,
-                         double k = 0.3);
+                         double k = 0.3,
+                         double delta = 0.0);
+
+/**
+ * \brief Image binarization using Bradley's adaptive thresholding method.
+ *
+ * Derek Bradley, Gerhard Roth. 2005. "Adaptive Thresholding Using the Integral Image".
+ * http://www.scs.carleton.ca/~roth/iit-publications-iti/docs/gerh-50002.pdf
+ */
+BinaryImage binarizeBradley(const QImage& src, QSize windowSize, double k = 0.34, double delta = 0.0);
+
+/**
+ * \brief Image binarization using EdgeDiv (EdgePlus & BlurDiv) local/global thresholding method.
+ *
+ * EdgeDiv, zvezdochiot 2023. "Adaptive/global document image binarization".
+ */
+BinaryImage binarizeEdgeDiv(const QImage& src,
+                            QSize windowSize,
+                            double kep = 0.0,
+                            double kdb = 0.0,
+                            double delta = 0.0);
 
 BinaryImage peakThreshold(const QImage& image);
 }  // namespace imageproc

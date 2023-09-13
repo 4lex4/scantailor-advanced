@@ -5,6 +5,7 @@
 
 #include <QDebug>
 #include <cmath>
+#include <stdexcept>
 
 #include "BinaryImage.h"
 #include "BitOps.h"

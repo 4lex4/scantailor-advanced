@@ -354,4 +354,18 @@ VecNT<N, T> operator*(T scalar, const VecNT<N, T>& vec) {
   return res;
 }
 
+template <size_t N, typename T>
+VecNT<N, T> operator/(VecNT<N, T> const& vec, T scalar) {
+  VecNT<N, T> res(vec);
+  res /= scalar;
+  return res;
+}
+
+template <size_t N, typename T>
+VecNT<N, T> operator/(T scalar, VecNT<N, T> const& vec) {
+  VecNT<N, T> res(vec);
+  res /= scalar;
+  return res;
+}
+
 #endif  // ifndef SCANTAILOR_FOUNDATION_VECNT_H_

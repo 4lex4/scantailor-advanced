@@ -457,6 +457,46 @@
             <number>5</number>
            </property>
            <item>
+            <layout class="QGridLayout" name="filterColorOptions">
+             <item row="0" column="0">
+              <widget class="QLabel" name="wienerLabel">
+               <property name="text">
+                <string>Wiener denoiser</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QDoubleSpinBox" name="wienerCoef">
+               <property name="toolTip">
+                <string>Value is 0.0 .. 1.0..</string>
+               </property>
+               <property name="minimum">
+                <double>0.0</double>
+               </property>
+               <property name="maximum">
+                <double>1.0</double>
+               </property>
+               <property name="singleStep">
+                <double>0.01</double>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QSpinBox" name="wienerWindowSize">
+               <property name="toolTip">
+                <string>The dimensions of a pixel neighborhood to consider.</string>
+               </property>
+               <property name="minimum">
+                <number>3</number>
+               </property>
+               <property name="maximum">
+                <number>9999</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <widget class="QCheckBox" name="colorSegmentationCB">
              <property name="toolTip">
               <string>Split the image into color segments and colorize b&amp;w mask.</string>

@@ -235,7 +235,7 @@ void TextLineRefiner::calcFrenetFrames(std::vector<FrenetFrame>& frenetFrames,
       nextSegment /= nextSegmentLen;
     }
 
-    Vec2f tangentVec(0.5 * (prevSegment + nextSegment));
+    Vec2f tangentVec(0.5f * (prevSegment + nextSegment));
     const auto len = static_cast<float>(std::sqrt(tangentVec.squaredNorm()));
     if (len > std::numeric_limits<float>::epsilon()) {
       tangentVec /= len;

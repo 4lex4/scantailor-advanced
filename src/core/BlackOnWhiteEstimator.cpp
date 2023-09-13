@@ -10,6 +10,8 @@
 #include <imageproc/RasterOp.h>
 #include <imageproc/Transform.h>
 
+#include <stdexcept>
+
 #include "DebugImages.h"
 #include "Despeckle.h"
 #include "TaskStatus.h"

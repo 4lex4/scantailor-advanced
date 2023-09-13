@@ -25,6 +25,7 @@ set(sources
     PolygonRasterizer.cpp PolygonRasterizer.h
     HoughLineDetector.cpp HoughLineDetector.h
     GaussBlur.cpp GaussBlur.h
+    WienerFilter.cpp WienerFilter.h
     Sobel.h
     MorphGradientDetect.cpp MorphGradientDetect.h
     PolynomialLine.cpp PolynomialLine.h

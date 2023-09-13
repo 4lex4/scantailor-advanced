@@ -4,6 +4,7 @@
 #include "Scale.h"
 
 #include <cassert>
+#include <stdexcept>
 
 #include "GrayImage.h"
 

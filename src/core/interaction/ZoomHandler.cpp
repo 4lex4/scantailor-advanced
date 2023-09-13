@@ -3,8 +3,8 @@
 
 #include "ZoomHandler.h"
 
+#include <QShortcut>
 #include <QWheelEvent>
-#include <QtWidgets/QShortcut>
 #include <cmath>
 
 #include "ImageViewBase.h"
@@ -26,10 +26,6 @@ ZoomHandler::ZoomHandler(ImageViewBase& imageView,
 ZoomHandler::~ZoomHandler() = default;
 
 void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction) {
-  if (event->orientation() != Qt::Vertical) {
-    return;
-  }
-
   if (!m_interactionPermitter(interaction)) {
     return;
   }
@@ -37,15 +33,15 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
   event->accept();
 
   double zoom = m_imageView.zoomLevel();
-  if ((zoom == 1.0) && (event->delta() < 0)) {
+  if ((zoom == 1.0) && (event->angleDelta().y() < 0)) {
     // Already zoomed out and trying to zoom out more.
     // Scroll amount in terms of typical mouse wheel "clicks".
-    const double deltaClicks = event->delta() / 120;
+    const double deltaClicks = event->angleDelta().y() / 120;
     const double dist = -deltaClicks * 30;  // 30px per "click"
     m_imageView.moveTowardsIdealPosition(dist);
     return;
   }
-  const double degrees = event->delta() / 8.0;
+  const double degrees = event->angleDelta().y() / 8.0;
   zoom *= std::pow(2.0, degrees / 60.0);  // 2 times zoom for every 60 degrees
   if (zoom < 1.0) {
     zoom = 1.0;
@@ -57,7 +53,11 @@ void ZoomHandler::onWheelEvent(QWheelEvent* event, InteractionState& interaction
       focusPoint = QRectF(m_imageView.rect()).center();
       break;
     case CURSOR:
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
       focusPoint = event->pos() + QPointF(0.5, 0.5);
+#else
+      focusPoint = event->position() + QPointF(0.5, 0.5);
+#endif
       break;
   }
   m_imageView.setWidgetFocalPointWithoutMoving(focusPoint);

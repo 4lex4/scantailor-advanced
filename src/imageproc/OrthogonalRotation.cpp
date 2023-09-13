@@ -3,6 +3,8 @@
 
 #include "OrthogonalRotation.h"
 
+#include <stdexcept>
+
 #include "BinaryImage.h"
 #include "RasterOp.h"
 

@@ -1,12 +1,13 @@
-ScanTailor Advanced
-===================
+# ScanTailor Advanced
 
 The ScanTailor version that merges the features of the `ScanTailor Featured` and `ScanTailor Enhanced` versions,
 brings new ones and fixes.  
 
 
-#### <u>Contents</u>:
+## Contents:
 * [Description](#description)
+* [Building](#building)
+* [About this fork](#about-this-fork)
 * [Features](#features)
   * [**ScanTailor Enhanced**](#scantailor-enhanced)
     * [Auto margins \[improved\]](#auto-margins-improved)
@@ -44,10 +45,9 @@ brings new ones and fixes.
     * [Auto adjusting content area](#auto-adjusting-content-area)
     * [Black on white detection](#black-on-white-detection)
     * [Guides](#guides)
-* [Building](#building)
+* [License](#license)
 
-Description
-------------
+## Description
 
 ScanTailor is an interactive post-processing tool for scanned pages. 
 It performs operations such as:
@@ -61,12 +61,30 @@ You give it raw scans, and you get pages ready to be printed or assembled into a
 or [DjVu](http://elpa.gnu.org/packages/djvu.html) file. Scanning, optical character recognition, 
 and assembling multi-page documents are out of scope of this project.
 
-Features
-----------
+## Building
 
-#### ScanTailor Enhanced
+Go to [this repository](https://github.com/ScanTailor-Advanced/scantailor-libs-build) and follow the instructions given there.
 
-* ##### Auto margins \[improved\]
+## About this fork
+
+Unfortunately, the [repository](https://github.com/4lex4/scantailor-advanced/releases) of @4lex4 seems to be no longer active.
+
+For this reason I have created this fork. It contains:
+- German translation
+- Polish translation (PR in the original repository, credit goes to @ukolaj-s)
+- French translation (PR in the original repository, credit goes to @maltaisn)
+- Korean translation (PR in the original repository, credit goes to @brendan-t and @mirusu400)
+- Beside 'background' and white you can now choose black as filling color
+- 1200 DPI output option
+- Some other fixes and improvements ...
+
+PRs are highly welcome ;-)
+
+## Features
+
+### ScanTailor Enhanced
+
+* #### Auto margins \[improved\]
   Auto margins feature allows keep page content on original place. In the Margins step
   you can choose from Auto, Manual (default) and Original mode. The manual mode
   is the original one. Auto mode try to decide if it is better to align page top,
@@ -75,35 +93,35 @@ Features
   *This feature has been improved. See [page area](#page-area) feature description.*
   *Also see [ScanTailor Advanced fixes & improvements](#scantailor-advanced-fixes--improvements)*
 
-* ##### Page detect \[reworked\]
+* #### Page detect \[reworked\]
   Page detect feature allows detect page in black margins or switch off page content
   detection and keep original page layout.
   
   *This feature has been reworked.*
   *See [ScanTailor Advanced fixes & improvements](#scantailor-advanced-fixes--improvements) for more information.*
  
-* ##### Deviation \[reworked\]
+* #### Deviation \[reworked\]
   Deviation feature enables highlighting of different pages. Highlighted in red are pages
   from Deskew filter with too high skew, from Select Content filter pages with different
   size of content and in Margins filter are highlighted pages which does not match others.
   
   *This feature has been reworked. See [ScanTailor Advanced fixes & improvements](#scantailor-advanced-fixes--improvements) for more information.*
  
-* ##### Picture shape \[reworked\]
+* #### Picture shape \[reworked\]
   Picture shape feature adds option for mixed pages to choose from free shape and rectangular
   shape images. This patch does not improve the original algoritm but creates from the
   detected "blobs" rectangular shapes and the rectangles that intersects joins to one.
   
   *This feature has been reworked. See [rectangular picture shape](#rectangular-picture-shape) feature description.*
 
-* ##### Multi column thumbnails view \[reworked\]
+* #### Multi column thumbnails view \[reworked\]
   This allows to expand and un-dock thumbnails view to see more thumbnails at a time.
   
   *This feature had performance and drawing issues and has been reworked.*
- 
-#### ScanTailor Featured
+  
+### ScanTailor Featured
 
-* ##### ScanTailor Featured fixes & improvements
+* #### ScanTailor Featured fixes & improvements
   * Deleted 3 Red Points.   
     The 3 central red points on the topmost (bottom-most) horizontal blue line of the dewarping
     mesh are now eliminated. 
@@ -117,24 +135,24 @@ Features
     this boundary vertical. The patch works ONLY for the linear end of the top (bottom)
     horizontal line of the blue mesh (and not for the opposite curved end).
  
-* ##### Line vertical dragging on dewarp
+* #### Line vertical dragging on dewarp
   You can move the topmost (bottom-most) horizontal blue line of the dewarping mesh up and
   down as a whole - if you grab it at the most left (right) red point - holding down the CTRL key. 
  
-* ##### Square picture zones \[reworked\]
+* #### Square picture zones \[reworked\]
   You can create the rectangular picture zones - holding down the CTRL key. 
   You can move the (rectangular) picture zones corners in an orthogonal manner - holding down the CTRL key.
   
   *This feature has been reworked and is now a part of [new zone interaction modes](#new-zone-interaction-modes) feature.*
   
-* ##### Auto save project \[optimized\]
+* #### Auto save project \[optimized\]
   Set the "auto-save project" checked in the Settings menu and you will get 
   your project auto-saved provided you have originally saved your new project.
   Works at the batch processing too. 
   
   *This feature had performance issues and has been optimized.*
  
-* ##### Quadro Zoner \[reworked\]
+* #### Quadro Zoner \[reworked\]
   Another rectangular picture zone shape. This option is based on [Picture shape](#picture-shape),
   [Square picture zones](#square-picture-zones). It squeezes every Picture shape zone down to the real
   rectangular picture outline and then replaces it (the resulting raster zone) by a vector rectangular zone,
@@ -142,7 +160,7 @@ Features
   
   *This feature has been reworked. See [rectangular picture shape](#rectangular-picture-shape) feature description.*
  
-* ##### Marginal dewarping 
+* #### Marginal dewarping 
   An automatic dewarping mode. Works ONLY with such raw scans that have the top and 
   bottom curved page borders (on the black background). It automatically sets the red points 
   of the blue mesh along these borders (to create a distortion model) and then dewarps the scan 
@@ -154,18 +172,18 @@ has't been moved due to dirty realization. Their functionality is fully covered 
 [full control over settings on output](#full-control-over-settings-on-output) and 
 [splitting output](#splitting-output) features.*
 
-#### ScanTailor Universal
+### ScanTailor Universal
 
-* ##### ScanTailor Universal fixes & improvements
+* #### ScanTailor Universal fixes & improvements
   * Improvements for the thumbnail view.  
     1. More accurate multi-column list handling.
     2. Scaling thumbnails via **`Alt+Wheel`**.
     
   * Fixed some bugs of official and Enhanced version.
 
-#### <a name="scantailor-advanced-features"></a> ScanTailor Advanced
+### ScanTailor Advanced
 
-* ##### ScanTailor Advanced fixes & improvements
+* #### ScanTailor Advanced fixes & improvements
   * Portability.  
     The settings and program files are stored in the folder with the application.  
     *Note: If installed into a system directory, where config and data files can't be written into the
@@ -240,39 +258,39 @@ has't been moved due to dirty realization. Their functionality is fully covered 
 
   * Fixed other bugs of official, Enhanced and Featured versions and made lots of other improvements.
 
-* ##### Light and Dark color schemes
+* #### Light and Dark color schemes
   You can choose a desired color scheme in settings.
 
-* ##### Multi-threading support for batch processing
+* #### Multi-threading support for batch processing
   This significantly increases the speed of processing. The count of threads to use can be
   adjusted while processing.
   
   **Warning!** More threads requires more memory to use. Exclude situations of that to be overflowed.  
 
-* ##### Full control over settings on output
+* #### Full control over settings on output
   This feature enables to control filling margins, normalizing illumination before binarization,
   normalizing illumination in color areas and Savitzky-Golay and morphological smoothing options at the output stage
   in any mode (of course, those setting that can be applied in the current mode).
  
-* ##### Filling outside areas
+* #### Filling outside areas
   Now outside pixels can be filled with the background color of the page.
   
   Added filling setting with the following options:
     1. Background: estimate the background and fill outside pixels with its color.
     2. White: always fill with white.
  
-* ##### Tiff compression
+* #### Tiff compression
   Tiff compression options allow to disable or change compression method in tiff files.
   
   There are two options in settings dialog: B&W and color compression. 
     1. The B&W one has None, LZW, Deflate and CCITT G4 (Default) options.
     2. The color one has None, LZW (Default), Deflate and JPEG options.
 
-* ##### Adaptive binarization
+* #### Adaptive binarization
   Sauvola and Wolf binarization algorithms have been added. They can be applied when
   normalizing illumination does not help.
  
-* ##### Splitting output
+* #### Splitting output
   The feature allows to split the mixed output scans into the pairs of a foreground (letters) 
   and background (images) layer.
   
@@ -287,7 +305,7 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   *Note: That does not rename files to 0001, 0002... It can be made by a third party app, for example 
   [Bulk Rename Utility](http://www.bulkrenameutility.co.uk/Main_Intro.php)*
 
-* ##### Original background
+* #### Original background
   This feature is a part of the [splitting output](#splitting-output) feature.
   
   It allows to preserve the original image background in the format ready for the further processing, when BW foreground is used.
@@ -300,7 +318,7 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     * Picture zones are marked with black when the BW content is marked with white. This property allow to use "select by color" feature of an image editor to select needed areas for their further processing, for example, apply blur to white holes and their nearest areas to get an effective compression level of the background layer in DjVu.
     * Filling zones feature also removes trash and speckles from the original background when applied to the foreground layer.
 
-* ##### Color segmenter and posterization
+* #### Color segmenter and posterization
   Color segmentation and posterization (color quantization) features have been implemented.
   
   Color segmentation allows to split the image into color segments and colorize b&w mask.
@@ -308,11 +326,11 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   The main use of posterization is to be applied to segmented image to get an indexed image, that can then be encoded into DjVu as the foreground layer. It allows to create high-quality DjVu files with color text and elements having maximal compression level.
   Posterization can also be used in color mode and can be applied to usual color gradient images for different purposes, for example, to increase their compression efficiency.
 
-* ##### Rectangular picture shape
+* #### Rectangular picture shape
   "Quadro" picture shape mode from Featured was merged with Rectangular one from Enhanced. Also removed restriction of ver. Featured on deleting all the auto zones. Before it resulted in resetting all the auto zones back.
   Added sensitivity option. If sensitivity equals 25%, the results will be the same as they were in old "Quadro" mode, if 100% - as in old "Rectangular".
 
-* ##### New zone interaction modes  
+* #### New zone interaction modes  
   * Zone creation mode:  
     Press **`Z`** to switch to polygonal mode.  
     Press **`X`** to switch to lasso (free drawing) mode.  
@@ -327,22 +345,22 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     **`D`** when the cursor is over a zone vertex - delete the vertex.  
     Hold **`Ctrl`** when dragging a zone vertex - make the angle of the vertex right.  
 
-* ##### Saving zoom and focus on switching output tabs
+* #### Saving zoom and focus on switching output tabs
   The save is precise and considers the images transformations.  
   Also added a feature of swithing the output tabs by using **`Ctrl+1..5`** keys combinations.  
 
-* ##### Measurement units system
+* #### Measurement units system
   The settings are available in the main window menu.
   Available units: pixels, millimetres, centimetres and inches.
   
   The system affects every aspect of the program, so, for example, it's now possible to adjust margins in pixels, but not only in millimetres or inches.
 
-* ##### Status bar panel
+* #### Status bar panel
   The panel shows the next information: zone creation mode icon, mouse position relative to the image, physical size of the image, position of the selected page in current order and the page name and type (`[L]` or `[R]` - left or right page, if the page has been splitted).
   
   This feature is also affected by [measurement units system](#measurement-units-system).
 
-* ##### Default parameters
+* #### Default parameters
   Default parameters system supporting custom profiles has been implemented.
   
   The system allows to manage the default filter settings for every stage.
@@ -355,11 +373,11 @@ has't been moved due to dirty realization. Their functionality is fully covered 
     2. A user can create its own profiles. User profiles are stored in `config/profiles` folder or in an system specific one for application data.
     3. The system consider the units settings from the [measurement units system](#measurement-units-system). Units are stored in the profile and ST automatically converts the values if needed.
 
-* ##### Collapsible filter options.
+* #### Collapsible filter options.
   Now group boxes containing filter options can be collapsed/expanded.  
   The collapse status is preserved between restarts of the application.  
  
-* ##### Auto adjusting content area.
+* #### Auto adjusting content area.
   Use **`double-click`** on content to automatically adjust the content area.  
   If the content is outside the area, the later will automatically be expanded and adjusted to the content at the position where double-click has been,
   otherwise the area edge, nearest to that position, will be adjusted (on clicking hold **`Shift`** pressed to select
@@ -368,7 +386,7 @@ has't been moved due to dirty realization. Their functionality is fully covered 
   It's much faster now to correct the content area if, for example, the page number has been missed by the auto algorithm.
   It is no more required to manually and laboriously move the corners and edges of the content box.
   
-* ##### Black on white detection
+* #### Black on white detection
   This feature allows to process images with light content on dark background correctly by correcting auto algorithms.  
   
   Peculiarities:
@@ -376,7 +394,7 @@ has't been moved due to dirty realization. Their functionality is fully covered 
        Auto detection at the output stage is controlled separately.
     2. There is per page control over the mode in the output filter options.
     
-* ##### Guides
+* #### Guides
   This feature gives you a more flexible and precise way of positioning content in the page layout.
   These are horizontal or vertical lines you can display on a page at the margins stage \(when aligning enabled\).  
   *Note: Guides are adaptive to the page soft margins, i.e. when the latter changed the guides on the page
@@ -394,7 +412,6 @@ has't been moved due to dirty realization. Their functionality is fully covered 
       Hold **`Shift+Ctrl`** to attach that to both the nearest vertical and horizontal guides.  
     * Use the **context menu** to enable/disable showing the hard margins rectangle.  
 
-Building
-----------
+## License
 
-Go to [this repository](https://github.com/4lex4/scantailor-libs-build) and follow the instructions given there.
+This software is licensed under GNU GPLv3, you can read more about it on our [LICENSE](/LICENSE) file.

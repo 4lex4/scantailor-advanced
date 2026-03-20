@@ -42,12 +42,17 @@ class Settings {
 
   const DeviationProvider<PageId>& deviationProvider() const;
 
+  void setAlgoContentBased(bool contentBased);
+
+  bool algoContentBased() const;
+
  private:
   using PerPageParams = std::unordered_map<PageId, Params>;
 
   mutable QMutex m_mutex;
   PerPageParams m_perPageParams;
   DeviationProvider<PageId> m_deviationProvider;
+  bool m_algoContentBased;
 };
 }  // namespace deskew
 #endif  // ifndef SCANTAILOR_DESKEW_SETTINGS_H_

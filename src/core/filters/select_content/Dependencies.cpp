@@ -36,8 +36,8 @@ bool Dependencies::compatibleWith(const Dependencies& other, bool* updateContent
   bool needUpdatePageBox;
   if (!PolygonUtils::fuzzyCompare(m_rotatedPageOutline, other.m_rotatedPageOutline)) {
     isCompatible = false;
-    needUpdateContentBox = true;
     needUpdatePageBox = true;
+    needUpdateContentBox = true;
   } else {
     needUpdateContentBox = m_params.needUpdateContentBox(other.m_params);
     needUpdatePageBox = m_params.needUpdatePageBox(other.m_params);

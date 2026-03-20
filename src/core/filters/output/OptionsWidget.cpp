@@ -11,10 +11,10 @@
 #include "ChangeDewarpingDialog.h"
 #include "ChangeDpiDialog.h"
 #include "FillZoneComparator.h"
-#include "OtsuBinarizationOptionsWidget.h"
+#include "OptionsWidgetBinarizationOtsu.h"
+#include "OptionsWidgetBinarizationSauvola.h"
+#include "OptionsWidgetBinarizationWolf.h"
 #include "PictureZoneComparator.h"
-#include "SauvolaBinarizationOptionsWidget.h"
-#include "WolfBinarizationOptionsWidget.h"
 
 using namespace core;
 
@@ -32,31 +32,57 @@ OptionsWidget::OptionsWidget(std::shared_ptr<Settings> settings, const PageSelec
   depthPerceptionSlider->setMinimum(qRound(DepthPerception::minValue() * 10));
   depthPerceptionSlider->setMaximum(qRound(DepthPerception::maxValue() * 10));
 
-  despeckleSlider->setMinimum(qRound(1.0 * 10));
-  despeckleSlider->setMaximum(qRound(3.0 * 10));
+  despeckleSlider->setMinimum(qRound(0.5 * 10));
+  despeckleSlider->setMaximum(qRound(3.5 * 10));
 
   colorModeSelector->addItem(tr("Black and White"), BLACK_AND_WHITE);
   colorModeSelector->addItem(tr("Color / Grayscale"), COLOR_GRAYSCALE);
   colorModeSelector->addItem(tr("Mixed"), MIXED);
 
-  thresholdMethodBox->addItem(tr("Otsu"), OTSU);
-  thresholdMethodBox->addItem(tr("Sauvola"), SAUVOLA);
-  thresholdMethodBox->addItem(tr("Wolf"), WOLF);
+  thresholdMethodBox->addItem(tr("Otsu"), T_OTSU);
+  thresholdMethodBox->addItem(tr("Sauvola"), T_SAUVOLA);
+  thresholdMethodBox->addItem(tr("Wolf"), T_WOLF);
+  thresholdMethodBox->addItem(tr("Fox"), T_FOX);
+  thresholdMethodBox->addItem(tr("Window"), T_WINDOW);
+  thresholdMethodBox->addItem(tr("Bradley"), T_BRADLEY);
+  thresholdMethodBox->addItem(tr("Grad"), T_GRAD);
+  thresholdMethodBox->addItem(tr("EdgePlus"), T_EDGEPLUS);
+  thresholdMethodBox->addItem(tr("BlurDiv"), T_BLURDIV);
+  thresholdMethodBox->addItem(tr("EdgeDiv"), T_EDGEDIV);
 
   fillingColorBox->addItem(tr("Background"), FILL_BACKGROUND);
   fillingColorBox->addItem(tr("White"), FILL_WHITE);
+  fillingColorBox->addItem(tr("Black"), FILL_BLACK);
 
-  QPointer<BinarizationOptionsWidget> otsuBinarizationOptionsWidget = new OtsuBinarizationOptionsWidget(m_settings);
-  QPointer<BinarizationOptionsWidget> sauvolaBinarizationOptionsWidget
-      = new SauvolaBinarizationOptionsWidget(m_settings);
-  QPointer<BinarizationOptionsWidget> wolfBinarizationOptionsWidget = new WolfBinarizationOptionsWidget(m_settings);
+  QPointer<OptionsWidgetBinarization> otsuOptionsWidgetBinarization = new OptionsWidgetBinarizationOtsu(m_settings);
+  QPointer<OptionsWidgetBinarization> sauvolaOptionsWidgetBinarization
+      = new OptionsWidgetBinarizationSauvola(m_settings);
+  QPointer<OptionsWidgetBinarization> wolfOptionsWidgetBinarization = new OptionsWidgetBinarizationWolf(m_settings);
+  QPointer<OptionsWidgetBinarization> foxOptionsWidgetBinarization = new OptionsWidgetBinarizationWolf(m_settings);
+  QPointer<OptionsWidgetBinarization> windowOptionsWidgetBinarization = new OptionsWidgetBinarizationWolf(m_settings);
+  QPointer<OptionsWidgetBinarization> bradleyOptionsWidgetBinarization
+      = new OptionsWidgetBinarizationSauvola(m_settings);
+  QPointer<OptionsWidgetBinarization> gradOptionsWidgetBinarization = new OptionsWidgetBinarizationWolf(m_settings);
+  QPointer<OptionsWidgetBinarization> edgeplusOptionsWidgetBinarization
+      = new OptionsWidgetBinarizationSauvola(m_settings);
+  QPointer<OptionsWidgetBinarization> blurdivOptionsWidgetBinarization
+      = new OptionsWidgetBinarizationSauvola(m_settings);
+  QPointer<OptionsWidgetBinarization> edgedivOptionsWidgetBinarization
+      = new OptionsWidgetBinarizationSauvola(m_settings);
 
   while (binarizationOptions->count() != 0) {
     binarizationOptions->removeWidget(binarizationOptions->widget(0));
   }
-  addBinarizationOptionsWidget(otsuBinarizationOptionsWidget);
-  addBinarizationOptionsWidget(sauvolaBinarizationOptionsWidget);
-  addBinarizationOptionsWidget(wolfBinarizationOptionsWidget);
+  addOptionsWidgetBinarization(otsuOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(sauvolaOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(wolfOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(foxOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(windowOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(bradleyOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(gradOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(edgeplusOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(blurdivOptionsWidgetBinarization);
+  addOptionsWidgetBinarization(edgedivOptionsWidgetBinarization);
   updateBinarizationOptionsDisplay(binarizationOptions->currentIndex());
 
   pictureShapeSelector->addItem(tr("Off"), OFF_SHAPE);
@@ -617,6 +643,8 @@ void OptionsWidget::updateColorsDisplay() {
     posterizeCB->setEnabled(true);
     posterizeOptionsWidget->setEnabled(colorCommonOptions.getPosterizationOptions().isEnabled());
   }
+  wienerCoef->setValue(colorCommonOptions.wienerCoef());
+  wienerWindowSize->setValue(colorCommonOptions.wienerWindowSize());
   colorSegmentationCB->setChecked(blackWhiteOptions.getColorSegmenterOptions().isEnabled());
   reduceNoiseSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getNoiseReduction());
   redAdjustmentSB->setValue(blackWhiteOptions.getColorSegmenterOptions().getRedThresholdAdjustment());
@@ -647,7 +675,7 @@ void OptionsWidget::updateColorsDisplay() {
     despeckleSlider->setToolTip(QString::number(0.1 * despeckleSlider->value()));
 
     for (int i = 0; i < binarizationOptions->count(); i++) {
-      auto* widget = dynamic_cast<BinarizationOptionsWidget*>(binarizationOptions->widget(i));
+      auto* widget = dynamic_cast<OptionsWidgetBinarization*>(binarizationOptions->widget(i));
       widget->updateUi(m_pageId);
     }
   }
@@ -745,6 +773,24 @@ void OptionsWidget::originalBackgroundToggled(bool checked) {
 
   m_settings->setSplittingOptions(m_pageId, m_splittingOptions);
   emit reloadRequested();
+}
+
+void OptionsWidget::wienerCoefChanged(double value) {
+  ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+  colorCommonOptions.setWienerCoef(value);
+  m_colorParams.setColorCommonOptions(colorCommonOptions);
+  m_settings->setColorParams(m_pageId, m_colorParams);
+
+  m_delayedReloadRequest.start(750);
+}
+
+void OptionsWidget::wienerWindowSizeChanged(int value) {
+  ColorCommonOptions colorCommonOptions = m_colorParams.colorCommonOptions();
+  colorCommonOptions.setWienerWindowSize(value);
+  m_colorParams.setColorCommonOptions(colorCommonOptions);
+  m_settings->setColorParams(m_pageId, m_colorParams);
+
+  m_delayedReloadRequest.start(750);
 }
 
 void OptionsWidget::colorSegmentationToggled(bool checked) {
@@ -871,7 +917,7 @@ void OptionsWidget::updateBinarizationOptionsDisplay(int idx) {
   connect(widget, SIGNAL(stateChanged()), this, SLOT(binarizationSettingsChanged()));
 }
 
-void OptionsWidget::addBinarizationOptionsWidget(BinarizationOptionsWidget* widget) {
+void OptionsWidget::addOptionsWidgetBinarization(OptionsWidgetBinarization* widget) {
   widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   binarizationOptions->addWidget(widget);
 }
@@ -891,6 +937,8 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(pictureShapeSensitivitySB, SIGNAL(valueChanged(int)), this, SLOT(pictureShapeSensitivityChanged(int)));
   CONNECT(higherSearchSensitivityCB, SIGNAL(clicked(bool)), this, SLOT(higherSearchSensivityToggled(bool)));
 
+  CONNECT(wienerCoef, SIGNAL(valueChanged(double)), this, SLOT(wienerCoefChanged(double)));
+  CONNECT(wienerWindowSize, SIGNAL(valueChanged(int)), this, SLOT(wienerWindowSizeChanged(int)));
   CONNECT(colorSegmentationCB, SIGNAL(clicked(bool)), this, SLOT(colorSegmentationToggled(bool)));
   CONNECT(reduceNoiseSB, SIGNAL(valueChanged(int)), this, SLOT(reduceNoiseChanged(int)));
   CONNECT(redAdjustmentSB, SIGNAL(valueChanged(int)), this, SLOT(redAdjustmentChanged(int)));

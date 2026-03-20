@@ -13,25 +13,39 @@
   <property name="windowTitle">
    <string>Zone Properties</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="zoneverticalLayout">
    <item>
-    <widget class="QRadioButton" name="eraser3">
+    <widget class="QRadioButton" name="zoneeraser3">
      <property name="text">
       <string>Subtract from all layers</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="painter2">
+    <widget class="QRadioButton" name="zonepainter2">
      <property name="text">
       <string>Add to auto layer</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="eraser1">
+    <widget class="QRadioButton" name="zoneeraser1">
      <property name="text">
       <string>Subtract from auto layer</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="zoneforeground">
+     <property name="text">
+      <string>Add to foreground</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="zonebackground">
+     <property name="text">
+      <string>Add to background</string>
      </property>
     </widget>
    </item>

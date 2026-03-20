@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <cassert>
 #include <iostream>
+#include <stdexcept>
 
 #include "Grayscale.h"
 #include "Morphology.h"

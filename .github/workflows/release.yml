@@ -1,0 +1,115 @@
+# Release: build .deb, AppImage and attach to GitHub Release on version tag (issues #64, #37)
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-deb:
+    name: Build .deb
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          sed -i "s/^#define VERSION \"[^\"]*\"/#define VERSION \"${VERSION}\"/" version.h.in
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential cmake \
+            qt5-qmake qtbase5-dev libqt5svg5-dev qttools5-dev \
+            libboost-test-dev libboost-dev \
+            libjpeg-dev libpng-dev libtiff-dev zlib1g-dev
+
+      - name: Build .deb
+        run: ./build-deb.sh build
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-package
+          path: scantailor-advanced_*_amd64.deb
+
+  build-appimage:
+    name: Build AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          sed -i "s/^#define VERSION \"[^\"]*\"/#define VERSION \"${VERSION}\"/" version.h.in
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential cmake \
+            qt5-qmake qtbase5-dev libqt5svg5-dev qttools5-dev \
+            libboost-test-dev libboost-dev \
+            libjpeg-dev libpng-dev libtiff-dev zlib1g-dev \
+            file
+
+      - name: Build and install to AppDir
+        run: |
+          mkdir build-appimage && cd build-appimage
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+          make -j$(nproc)
+          make install DESTDIR=AppDir
+
+      - name: Download linuxdeploy
+        run: |
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy-x86_64.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy-plugin-qt-x86_64.AppImage
+
+      - name: Build AppImage
+        env:
+          VERSION: ${{ github.ref_name }}
+          DISABLE_COPYRIGHT_FILES_DEPLOYMENT: 1
+        run: |
+          cd build-appimage
+          export QMAKE=/usr/bin/qmake
+          ../linuxdeploy-x86_64.AppImage --appdir AppDir -e AppDir/usr/bin/scantailor --output appimage
+          OUT=$(ls -1 *.AppImage 2>/dev/null | head -1)
+          mv "$OUT" "../scantailor-advanced-${{ github.ref_name }}-x86_64.AppImage"
+
+      - name: Upload AppImage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: appimage
+          path: scantailor-advanced-*-x86_64.AppImage
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [build-deb, build-appimage]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: deb-package
+      - uses: actions/download-artifact@v4
+        with:
+          name: appimage
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            scantailor-advanced_*_amd64.deb
+            scantailor-advanced-*-x86_64.AppImage
+          generate_release_notes: true
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -4,10 +4,11 @@
 #include "ZoneEditorBase.h"
 
 #include <QKeyEvent>
+#include <QShortcut>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QShortcut>
 #include <QtWidgets/QStatusBar>
 
+#include "ApplicationSettings.h"
 #include "Utils.h"
 #include "ZoneModeListener.h"
 
@@ -31,6 +32,28 @@ class ZoneEditorBase::ZoneModeProvider {
   const ZoneEditorBase& m_parent;
 };
 
+static ZoneCreationMode zoneCreationModeFromInt(int v) {
+  switch (v) {
+    case 1:
+      return ZoneCreationMode::LASSO;
+    case 2:
+      return ZoneCreationMode::RECTANGULAR;
+    default:
+      return ZoneCreationMode::POLYGONAL;
+  }
+}
+
+static int zoneCreationModeToInt(ZoneCreationMode mode) {
+  switch (mode) {
+    case ZoneCreationMode::LASSO:
+      return 1;
+    case ZoneCreationMode::RECTANGULAR:
+      return 2;
+    default:
+      return 0;
+  }
+}
+
 ZoneEditorBase::ZoneEditorBase(const QImage& image,
                                const ImagePixmapUnion& downscaledVersion,
                                const ImagePresentation& presentation,
@@ -38,6 +61,8 @@ ZoneEditorBase::ZoneEditorBase(const QImage& image,
     : ImageViewBase(image, downscaledVersion, presentation, margins),
       m_context(*this, m_zones),
       m_zoneModeProvider(std::make_unique<ZoneModeProvider>(*this)) {
+  m_context.setZoneCreationMode(
+      zoneCreationModeFromInt(ApplicationSettings::getInstance().getDefaultZoneCreationMode()));  // Issue #15.
   m_shortcutPolygonal = new QShortcut(Qt::Key_Z, this);
   m_shortcutPolygonal->setAutoRepeat(false);
   m_shortcutLasso = new QShortcut(Qt::Key_X, this);
@@ -46,14 +71,17 @@ ZoneEditorBase::ZoneEditorBase(const QImage& image,
   m_shortcutRectangular->setAutoRepeat(false);
   connect(m_shortcutPolygonal, &QShortcut::activated, [this]() {
     m_context.setZoneCreationMode(ZoneCreationMode::POLYGONAL);
+    ApplicationSettings::getInstance().setDefaultZoneCreationMode(0);
     m_zoneModeProvider->updateZoneMode();
   });
   connect(m_shortcutLasso, &QShortcut::activated, [this]() {
     m_context.setZoneCreationMode(ZoneCreationMode::LASSO);
+    ApplicationSettings::getInstance().setDefaultZoneCreationMode(1);
     m_zoneModeProvider->updateZoneMode();
   });
   connect(m_shortcutRectangular, &QShortcut::activated, [this]() {
     m_context.setZoneCreationMode(ZoneCreationMode::RECTANGULAR);
+    ApplicationSettings::getInstance().setDefaultZoneCreationMode(2);
     m_zoneModeProvider->updateZoneMode();
   });
 }

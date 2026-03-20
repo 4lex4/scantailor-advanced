@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>output::WolfBinarizationOptionsWidget</class>
- <widget class="QWidget" name="output::WolfBinarizationOptionsWidget">
+ <class>output::OptionsWidgetBinarizationSauvola</class>
+ <widget class="QWidget" name="output::OptionsWidgetBinarizationSauvola">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>148</width>
-    <height>100</height>
+    <width>138</width>
+    <height>48</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,20 +50,30 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="1">
-      <widget class="QSpinBox" name="windowSize">
-       <property name="toolTip">
-        <string>The dimensions of a pixel neighborhood to consider.</string>
-       </property>
-       <property name="minimum">
-        <number>5</number>
-       </property>
-       <property name="maximum">
-        <number>9999</number>
+     <item row="0" column="0">
+      <widget class="QLabel" name="sauvolaDeltaLabel">
+       <property name="text">
+        <string>Delta:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
+     <item row="0" column="1">
+      <widget class="QDoubleSpinBox" name="sauvolaDelta">
+       <property name="toolTip">
+        <string>Default value is 0.</string>
+       </property>
+       <property name="minimum">
+        <double>-100.0</double>
+       </property>
+       <property name="maximum">
+        <double>100.0</double>
+       </property>
+       <property name="singleStep">
+        <double>1.0</double>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
       <widget class="QLabel" name="windowSizeLabel">
        <property name="text">
         <string>Window size:</string>
@@ -71,56 +81,29 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QSpinBox" name="lowerBound">
+      <widget class="QSpinBox" name="windowSize">
        <property name="toolTip">
-        <string>The minimum possible gray level that can be made white.</string>
+        <string>The dimensions of a pixel neighborhood to consider.</string>
        </property>
        <property name="minimum">
-        <number>1</number>
+        <number>3</number>
        </property>
        <property name="maximum">
-        <number>254</number>
+        <number>9999</number>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="upperBoundLabel">
+      <widget class="QLabel" name="sauvolaCoefLabel">
        <property name="text">
-        <string>Upper Bound: </string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="lowerBoundLabel">
-       <property name="text">
-        <string>Lower bound: </string>
+        <string>Coef:</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QSpinBox" name="upperBound">
+      <widget class="QDoubleSpinBox" name="sauvolaCoef">
        <property name="toolTip">
-        <string>The maximum possible gray level that can be made black.</string>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>254</number>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="wolfCoefLabel">
-       <property name="text">
-        <string>Coeff:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="wolfCoef">
-       <property name="toolTip">
-        <string>Default value is 0.3.</string>
+        <string>Default value is 0.34.</string>
        </property>
        <property name="minimum">
         <double>0.010000000000000</double>

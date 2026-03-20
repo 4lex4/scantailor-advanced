@@ -1,0 +1,34 @@
+{
+  "id": "org.scantailor.Advanced",
+  "runtime": "org.kde.Platform",
+  "runtime-version": "5.15-22.08",
+  "sdk": "org.kde.Sdk",
+  "base": "org.kde.Sdk",
+  "base-version": "5.15-22.08",
+  "command": "scantailor",
+  "finish-args": [
+    "--share=ipc",
+    "--socket=fallback-x11",
+    "--socket=wayland",
+    "--device=dri",
+    "--filesystem=home",
+    "--filesystem=xdg-documents"
+  ],
+  "modules": [
+    {
+      "name": "scantailor-advanced",
+      "buildsystem": "cmake-ninja",
+      "config-opts": [
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DBUILD_TESTS=OFF"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/ScanTailor-Advanced/scantailor-advanced.git",
+          "tag": "v1.1.1"
+        }
+      ]
+    }
+  ]
+}

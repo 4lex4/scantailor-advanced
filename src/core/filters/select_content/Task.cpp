@@ -105,9 +105,13 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
         pageRect = data.xform().resultingRect();
       }
 
-      // Force update the content box if it doesn't fit into the page box updated.
+      // When offcut/page outline changes, preserve manual content box by clipping to new page rect (issue #90).
       if (contentRect.isValid() && (contentRect.intersected(pageRect) != contentRect)) {
-        needUpdateContentBox = true;
+        if (newParams.contentDetectionMode() == MODE_MANUAL) {
+          contentRect = contentRect.intersected(pageRect);
+        } else {
+          needUpdateContentBox = true;
+        }
       }
 
       newParams.setPageRect(pageRect);
@@ -124,6 +128,9 @@ FilterResultPtr Task::process(const TaskStatus& status, const FilterData& data) 
         contentRect &= pageRect;
       }
 
+      newParams.setContentRect(contentRect);
+      newParams.setContentSizeMM(physSizeCalc.sizeMM(contentRect));
+    } else if (contentRect.isValid()) {
       newParams.setContentRect(contentRect);
       newParams.setContentSizeMM(physSizeCalc.sizeMM(contentRect));
     }

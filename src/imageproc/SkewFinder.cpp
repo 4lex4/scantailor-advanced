@@ -4,7 +4,10 @@
 #include "SkewFinder.h"
 
 #include <QDebug>
+#include <algorithm>
 #include <cmath>
+#include <stdexcept>
+#include <vector>
 
 #include "BinaryImage.h"
 #include "BitOps.h"
@@ -206,5 +209,70 @@ double SkewFinder::calcScore(const BinaryImage& image) {
     lastLineBlackPixels = numBlackPixels;
   }
   return score;
+}
+
+Skew SkewFinder::findSkewFromTopEdge(const BinaryImage& image) const {
+  if (image.isNull()) {
+    throw std::invalid_argument("SkewFinder: null image was provided");
+  }
+  const int width = image.width();
+  const int height = image.height();
+  if (width < 10 || height < 10) {
+    return Skew(0.0, 0.0);
+  }
+  // Look at top portion (dark background -> page).
+  const int maxSearchHeight = std::min(height / 3, 200);
+  const int wpl = image.wordsPerLine();
+  const uint32_t* data = image.data();
+
+  std::vector<double> xs;
+  std::vector<double> ys;
+  const int colStep = std::max(1, width / 80);
+  for (int col = colStep; col < width - colStep; col += colStep) {
+    const int wordIdx = col >> 5;
+    const int bitIdx = 31 - (col & 31);
+    int edgeY = -1;
+    int blackCount = 0;
+    const int window = 3;
+    for (int y = 0; y < maxSearchHeight; ++y) {
+      const uint32_t word = data[y * wpl + wordIdx];
+      const int black = (word >> bitIdx) & 1;
+      blackCount += black;
+      if (y >= window) {
+        const uint32_t prevWord = data[(y - window) * wpl + wordIdx];
+        blackCount -= (prevWord >> bitIdx) & 1;
+      }
+      if (y >= window - 1 && blackCount <= 1) {
+        edgeY = y;
+        break;
+      }
+    }
+    if (edgeY >= 0) {
+      xs.push_back(static_cast<double>(col));
+      ys.push_back(static_cast<double>(edgeY));
+    }
+  }
+  if (xs.size() < 10) {
+    return Skew(0.0, 0.0);
+  }
+  double sumX = 0, sumY = 0, sumXX = 0, sumXY = 0;
+  const double n = static_cast<double>(xs.size());
+  for (size_t i = 0; i < xs.size(); ++i) {
+    sumX += xs[i];
+    sumY += ys[i];
+    sumXX += xs[i] * xs[i];
+    sumXY += xs[i] * ys[i];
+  }
+  const double denom = n * sumXX - sumX * sumX;
+  if (std::fabs(denom) < 1e-10) {
+    return Skew(0.0, 0.0);
+  }
+  const double slope = (n * sumXY - sumX * sumY) / denom;
+  double angleDeg = std::atan(slope) * (180.0 / constants::PI);
+  angleDeg = std::max(-m_maxAngle, std::min(m_maxAngle, angleDeg));
+  if (std::fabs(angleDeg) < m_minAngle) {
+    return Skew(0.0, Skew::GOOD_CONFIDENCE);
+  }
+  return Skew(-angleDeg, Skew::GOOD_CONFIDENCE);
 }
 }  // namespace imageproc

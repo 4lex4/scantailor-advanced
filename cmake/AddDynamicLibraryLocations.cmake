@@ -14,6 +14,7 @@
 # appropriate <prefix name>_DYNAMIC_LIBRARY_<Config> cache variables should be set
 # or the locations should be added to CMAKE_PROGRAM_PATH or CMAKE_PREFIX_PATH variables.
 #
+# An optional argument can be used to specify a non-standard name for the dynamic library.
 
 function(add_dynamic_library_locations Targets)
   foreach(_target ${Targets})
@@ -38,10 +39,16 @@ function(add_dynamic_library_locations Targets)
       get_filename_component(imp_loc_ext ${imp_loc} EXT)
       if (imp_loc_ext STREQUAL CMAKE_IMPORT_LIBRARY_SUFFIX)
         get_filename_component(lib_name_we ${imp_loc} NAME_WE)
+        set(candidate_names
+          "${lib_name_we}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+        if(DEFINED ARGV1)
+          list(APPEND candidate_names ${ARGV1})
+        endif()
         find_program(
             ${_target}_${dynamic_lib}
-            NAMES ${lib_name_we}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            DOC Path to the dynamic library of the shared target \(skip it if the target is not shared\).)
+            NAMES  ${candidate_names}
+            DOC Path to the dynamic library of the shared target \(skip it if the target is not shared\).
+            NO_CACHE)
         if (${_target}_${dynamic_lib})
           set_target_properties(
               ${_target} PROPERTIES

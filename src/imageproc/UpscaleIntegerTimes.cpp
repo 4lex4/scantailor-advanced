@@ -3,6 +3,8 @@
 
 #include "UpscaleIntegerTimes.h"
 
+#include <stdexcept>
+
 #include "BinaryImage.h"
 
 namespace imageproc {

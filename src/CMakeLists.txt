@@ -6,3 +6,8 @@ add_subdirectory(imageproc)
 add_subdirectory(dewarping)
 add_subdirectory(core)
 add_subdirectory(app)
+add_subdirectory(cli)
+
+if (BUILD_TESTS)
+  add_subdirectory(qt_tests)
+endif()

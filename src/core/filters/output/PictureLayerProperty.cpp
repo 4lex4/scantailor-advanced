@@ -33,13 +33,17 @@ std::shared_ptr<Property> PictureLayerProperty::construct(const QDomElement& el)
 
 PictureLayerProperty::Layer PictureLayerProperty::layerFromString(const QString& str) {
   if (str == "eraser1") {
-    return ERASER1;
+    return ZONEERASER1;
   } else if (str == "painter2") {
-    return PAINTER2;
+    return ZONEPAINTER2;
   } else if (str == "eraser3") {
-    return ERASER3;
+    return ZONEERASER3;
+  } else if (str == "foreground") {
+    return ZONEFG;
+  } else if (str == "background") {
+    return ZONEBG;
   } else {
-    return NO_OP;
+    return ZONENOOP;
   }
 }
 
@@ -47,14 +51,20 @@ QString PictureLayerProperty::layerToString(Layer layer) {
   QString str;
 
   switch (layer) {
-    case ERASER1:
+    case ZONEERASER1:
       str = "eraser1";
       break;
-    case PAINTER2:
+    case ZONEPAINTER2:
       str = "painter2";
       break;
-    case ERASER3:
+    case ZONEERASER3:
       str = "eraser3";
+      break;
+    case ZONEFG:
+      str = "foreground";
+      break;
+    case ZONEBG:
+      str = "background";
       break;
     default:
       str = "";

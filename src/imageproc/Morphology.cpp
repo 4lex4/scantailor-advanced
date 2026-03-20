@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <cassert>
 #include <cmath>
+#include <stdexcept>
 
 #include "BinaryImage.h"
 #include "GrayImage.h"

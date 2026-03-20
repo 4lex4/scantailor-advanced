@@ -37,6 +37,7 @@ void CacheDrivenTask::process(const PageInfo& pageInfo,
 
   ImageTransformation newXform(xform);
   newXform.setPostRotation(params->deskewAngle());
+  newXform.setPostOblique(params->obliqueAngle());
 
   if (m_nextTask) {
     m_nextTask->process(pageInfo, collector, newXform);

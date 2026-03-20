@@ -84,7 +84,12 @@ void WorkerThreadPool::updateNumberOfThreads() {
     maxThreads = std::min(maxThreads, 2);
   }
 
-  int numThreads = m_settings.value("settings/batch_processing_threads", maxThreads).toInt();
-  numThreads = std::min(numThreads, maxThreads);
+  int numThreads;
+  if (m_maxThreadsOverride >= 0) {
+    numThreads = std::min(m_maxThreadsOverride, maxThreads);
+  } else {
+    numThreads = m_settings.value("settings/batch_processing_threads", maxThreads).toInt();
+    numThreads = std::min(numThreads, maxThreads);
+  }
   m_pool->setMaxThreadCount(numThreads);
 }

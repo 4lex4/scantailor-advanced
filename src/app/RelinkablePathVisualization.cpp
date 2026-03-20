@@ -3,13 +3,14 @@
 
 #include "RelinkablePathVisualization.h"
 
+#include <QFile>
 #include <QHBoxLayout>
 #include <QPaintEvent>
 #include <QPushButton>
 #include <QStyle>
 #include <QStyleOption>
 #include <QStylePainter>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "ColorSchemeManager.h"
 #include "RelinkablePath.h"
@@ -38,7 +39,6 @@ class RelinkablePathVisualization::ComponentButton : public QPushButton {
 RelinkablePathVisualization::RelinkablePathVisualization(QWidget* parent)
     : QWidget(parent), m_layout(new QHBoxLayout(this)) {
   m_layout->setSpacing(0);
-  m_layout->setMargin(0);
 }
 
 void RelinkablePathVisualization::clear() {
@@ -53,8 +53,12 @@ void RelinkablePathVisualization::clear() {
 
 void RelinkablePathVisualization::setPath(const RelinkablePath& path, bool clickable) {
   clear();
-
-  QStringList components(path.normalizedPath().split(QChar('/'), QString::SkipEmptyParts));
+#if QT_VERSION_MAJOR == 5 && QT_VERSION_MINOR < 14
+  auto opt = QString::SkipEmptyParts;
+#else
+  auto opt = Qt::SkipEmptyParts;
+#endif
+  QStringList components(path.normalizedPath().split(QChar('/'), opt));
   if (components.empty()) {
     return;
   }

@@ -42,7 +42,7 @@ class FastQueue {
 
    public:
     explicit Chunk(size_t capacity) {
-      const uintptr_t p = (uintptr_t)(this + 1);
+      const uintptr_t p = (uintptr_t) (this + 1);
       const size_t alignment = boost::alignment_of<T>::value;
       pBegin = (T*) (((p + alignment - 1) / alignment) * alignment);
       pEnd = pBegin;
@@ -69,7 +69,7 @@ class FastQueue {
   struct ChunkDisposer {
     void operator()(Chunk* chunk) {
       chunk->~Chunk();
-      delete[](char*) chunk;
+      delete[] (char*) chunk;
     }
   };
 

@@ -205,6 +205,9 @@ QToolButton:pressed {
             <property name="decimals">
              <number>1</number>
             </property>
+            <property name="minimum">
+             <double>-9999.000000000000000</double>
+            </property>
             <property name="maximum">
              <double>9999.000000000000000</double>
             </property>
@@ -215,6 +218,9 @@ QToolButton:pressed {
             <property name="decimals">
              <number>1</number>
             </property>
+            <property name="minimum">
+             <double>-9999.000000000000000</double>
+            </property>
             <property name="maximum">
              <double>9999.000000000000000</double>
             </property>
@@ -224,6 +230,9 @@ QToolButton:pressed {
            <widget class="QDoubleSpinBox" name="leftMarginSpinBox">
             <property name="decimals">
              <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>-9999.000000000000000</double>
             </property>
             <property name="maximum">
              <double>9999.000000000000000</double>
@@ -241,6 +250,9 @@ QToolButton:pressed {
            <widget class="QDoubleSpinBox" name="rightMarginSpinBox">
             <property name="decimals">
              <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>-9999.000000000000000</double>
             </property>
             <property name="maximum">
              <double>9999.000000000000000</double>
@@ -283,6 +295,13 @@ QToolButton:pressed {
          <widget class="QPushButton" name="applyMarginsBtn">
           <property name="text">
            <string>Apply To ...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="fixDpiBtn">
+          <property name="text">
+           <string>Fix DPI...</string>
           </property>
          </widget>
         </item>
@@ -717,6 +736,16 @@ QToolButton:pressed {
          <widget class="QPushButton" name="applyAlignmentBtn">
           <property name="text">
            <string>Apply To ...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="matchSizeToAllBtn">
+          <property name="text">
+           <string>Match size to all pages</string>
+          </property>
+          <property name="toolTip">
+           <string>Apply &quot;Match size with other pages&quot; to every page so they all share the same output size.</string>
           </property>
          </widget>
         </item>

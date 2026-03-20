@@ -92,7 +92,8 @@ class FittableSpline {
   virtual void sample(const VirtualFunction<void, const QPointF&, double, SampleFlags>& sink,
                       const SamplingParams& params,
                       double fromT = 0.0,
-                      double toT = 1.0) const = 0;
+                      double toT = 1.0) const
+      = 0;
 };
 
 

@@ -133,9 +133,20 @@ class ImageTransformation {
   void setPostRotation(double degrees);
 
   /**
+   * \brief Set oblique (shear) in degrees for the 4th step (issue #53).
+   * Applied after rotation. Vertical shear: x' = x + tan(degrees)*y.
+   */
+  void setPostOblique(double degrees);
+
+  /**
    * \brief Returns the 4th step rotation in degrees, as specified.
    */
   double postRotation() const { return m_postRotation; }
+
+  /**
+   * \brief Returns the 4th step oblique (shear) in degrees.
+   */
+  double postOblique() const { return m_postOblique; }
 
   /**
    * \brief Returns the sine of the 4th step rotation angle.
@@ -196,7 +207,7 @@ class ImageTransformation {
  private:
   QTransform calcCropXform(const QPolygonF& cropArea);
 
-  QTransform calcPostRotateXform(double degrees);
+  QTransform calcPostRotateXform(double rotationDegrees, double obliqueDegrees = 0.0);
 
   QTransform calcPostScaleXform(const Dpi& targetDpi);
 
@@ -219,6 +230,7 @@ class ImageTransformation {
   QTransform m_transform;
   QTransform m_invTransform;
   double m_postRotation;
+  double m_postOblique;
   QRectF m_origRect;
   QRectF m_resultingRect;  // Managed by update().
   QPolygonF m_preCropArea;

@@ -4,6 +4,7 @@
 #include "BackgroundColorCalculator.h"
 
 #include <cassert>
+#include <stdexcept>
 
 #include "Binarize.h"
 #include "BinaryImage.h"

@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <stdexcept>
 
 #include "RasterOp.h"
 

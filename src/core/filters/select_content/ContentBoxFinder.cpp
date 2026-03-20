@@ -768,7 +768,7 @@ imageproc::BinaryImage ContentBoxFinder::estimateTextMask(const imageproc::Binar
       }
     }
 
-    for (const Range range : ranges) {
+    for (const Range& range : qAsConst(ranges)) {
       const auto first = static_cast<int>(range.first - &hist[0]);
       const auto last = static_cast<int>(range.second - &hist[0]);
       if (last - first < minTextHeight - 1) {

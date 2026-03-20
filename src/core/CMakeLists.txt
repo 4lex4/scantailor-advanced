@@ -39,6 +39,7 @@ set(common_sources
     PageInfo.cpp PageInfo.h
     BackgroundTask.cpp BackgroundTask.h
     ProcessingTaskQueue.cpp ProcessingTaskQueue.h
+    BatchPipeline.cpp BatchPipeline.h
     PageSequence.cpp PageSequence.h
     StageSequence.cpp StageSequence.h
     ProjectPages.cpp ProjectPages.h
@@ -118,12 +119,22 @@ set(common_sources
     ContentMask.cpp ContentMask.h)
 
 add_library(core STATIC ${common_sources} ${common_ui_files})
-target_link_libraries(
+
+if(Qt6_FOUND)
+  target_link_libraries(
+    core
+    PRIVATE TIFF::TIFF PNG::PNG ZLIB::ZLIB JPEG::JPEG
+    PUBLIC Qt::Core Qt::Gui Qt::Widgets Qt::Xml Qt::Network Qt::OpenGL Qt::Svg Qt::OpenGLWidgets
+    imageproc zones
+    fix_orientation page_split deskew select_content page_layout output)
+else()
+  target_link_libraries(
     core
     PRIVATE TIFF::TIFF PNG::PNG ZLIB::ZLIB JPEG::JPEG
     PUBLIC Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Xml Qt5::Network Qt5::OpenGL Qt5::Svg
     imageproc zones
     fix_orientation page_split deskew select_content page_layout output)
+endif()
 target_include_directories(core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 set_target_properties(core PROPERTIES AUTOUIC ON)
 
@@ -131,7 +142,9 @@ translation_sources(scantailor ${common_sources} ${common_ui_files})
 
 add_subdirectory(interaction)
 add_subdirectory(zones)
-add_subdirectory(tests)
+if (BUILD_TESTS)
+  add_subdirectory(tests)
+endif()
 add_subdirectory(filters/fix_orientation)
 add_subdirectory(filters/page_split)
 add_subdirectory(filters/deskew)

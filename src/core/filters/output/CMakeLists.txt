@@ -1,14 +1,14 @@
 set(CMAKE_AUTOUIC ON)
 
 set(ui_files
-    OtsuBinarizationOptionsWidget.ui
     ApplyColorsDialog.ui
     ChangeDewarpingDialog.ui
     ChangeDpiDialog.ui
     OptionsWidget.ui
-    PictureZonePropDialog.ui
-    SauvolaBinarizationOptionsWidget.ui
-    WolfBinarizationOptionsWidget.ui)
+    OptionsWidgetBinarizationOtsu.ui
+    OptionsWidgetBinarizationSauvola.ui
+    OptionsWidgetBinarizationWolf.ui
+    PictureZonePropDialog.ui)
 
 set(sources
     ApplyColorsDialog.cpp ApplyColorsDialog.h
@@ -53,10 +53,10 @@ set(sources
     ChangeDewarpingDialog.cpp ChangeDewarpingDialog.h
     DepthPerception.cpp DepthPerception.h
     SplittingOptions.cpp SplittingOptions.h
-    OtsuBinarizationOptionsWidget.cpp OtsuBinarizationOptionsWidget.h
-    SauvolaBinarizationOptionsWidget.cpp SauvolaBinarizationOptionsWidget.h 
-    WolfBinarizationOptionsWidget.cpp WolfBinarizationOptionsWidget.h 
-    BinarizationOptionsWidget.h 
+    OptionsWidgetBinarizationOtsu.cpp OptionsWidgetBinarizationOtsu.h
+    OptionsWidgetBinarizationSauvola.cpp OptionsWidgetBinarizationSauvola.h 
+    OptionsWidgetBinarizationWolf.cpp OptionsWidgetBinarizationWolf.h 
+    OptionsWidgetBinarization.h 
     PictureShapeOptions.cpp PictureShapeOptions.h 
     OutputProcessingParams.cpp OutputProcessingParams.h
     OutputImage.h

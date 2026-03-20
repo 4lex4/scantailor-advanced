@@ -8,6 +8,7 @@
 #include <QPolygonF>
 #include <boost/foreach.hpp>
 #include <cassert>
+#include <stdexcept>
 
 #include "BinaryImage.h"
 #include "PolygonUtils.h"

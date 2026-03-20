@@ -6,6 +6,7 @@
 #include <core/ApplicationSettings.h>
 #include <core/IconProvider.h>
 
+#include <QActionGroup>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileSystemModel>
@@ -20,6 +21,7 @@
 
 #include "AbstractRelinker.h"
 #include "Application.h"
+#include "BatchPipeline.h"
 #include "AutoRemovingFile.h"
 #include "BasicImageView.h"
 #include "ContentBoxPropagator.h"
@@ -31,6 +33,7 @@
 #include "FixDpiDialog.h"
 #include "ImageInfo.h"
 #include "ImageMetadataLoader.h"
+#include "ImageViewBase.h"
 #include "LoadFileTask.h"
 #include "LoadFilesStatusDialog.h"
 #include "NewOpenProjectPanel.h"
@@ -104,6 +107,7 @@ MainWindow::MainWindow()
       m_interactiveQueue(std::make_unique<ProcessingTaskQueue>()),
       m_outOfMemoryDialog(std::make_unique<OutOfMemoryDialog>()),
       m_curFilter(0),
+      m_savedZoomLevel(1.0),
       m_ignoreSelectionChanges(0),
       m_ignorePageOrderingChanges(0),
       m_debug(false),
@@ -689,6 +693,7 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
                SLOT(invalidateThumbnail(const PageInfo&)));
     disconnect(m_optionsWidget, SIGNAL(invalidateAllThumbnails()), this, SLOT(invalidateAllThumbnails()));
     disconnect(m_optionsWidget, SIGNAL(goToPage(const PageId&)), this, SLOT(goToPage(const PageId&)));
+    disconnect(m_optionsWidget, SIGNAL(fixDpiRequested()), this, SLOT(fixDpiDialogRequested()));
   }
 
   m_optionsFrameLayout->addWidget(widget);
@@ -703,6 +708,7 @@ void MainWindow::setOptionsWidget(FilterOptionsWidget* widget, const Ownership o
   connect(widget, SIGNAL(invalidateThumbnail(const PageInfo&)), this, SLOT(invalidateThumbnail(const PageInfo&)));
   connect(widget, SIGNAL(invalidateAllThumbnails()), this, SLOT(invalidateAllThumbnails()));
   connect(widget, SIGNAL(goToPage(const PageId&)), this, SLOT(goToPage(const PageId&)));
+  connect(widget, SIGNAL(fixDpiRequested()), this, SLOT(fixDpiDialogRequested()));
 }  // MainWindow::setOptionsWidget
 
 void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, DebugImages* debugImages, bool overlay) {
@@ -711,6 +717,13 @@ void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, Debu
       delete widget;
     }
     return;
+  }
+
+  if (!overlay && m_imageFrameLayout->count() > 0) {
+    QWidget* oldW = m_imageFrameLayout->widget(0);
+    if (ImageViewBase* oldView = Utils::castOrFindChild<ImageViewBase*>(oldW)) {
+      m_savedZoomLevel = oldView->zoomLevel();
+    }
   }
 
   if (!overlay) {
@@ -726,6 +739,9 @@ void MainWindow::setImageWidget(QWidget* widget, const Ownership ownership, Debu
       m_imageFrameLayout->addWidget(widget);
       if (overlay) {
         m_imageFrameLayout->setCurrentWidget(widget);
+      }
+      if (ImageViewBase* newView = Utils::castOrFindChild<ImageViewBase*>(widget)) {
+        newView->setZoomLevel(m_savedZoomLevel);
       }
     }
   } else {
@@ -898,7 +914,8 @@ void MainWindow::currentPageChanged(const PageInfo& pageInfo,
 
   if ((flags & ThumbnailSequence::SELECTED_BY_USER) || focusButton->isChecked()) {
     if (!(flags & ThumbnailSequence::AVOID_SCROLLING_TO)) {
-      thumbView->ensureVisible(thumbRect, 0, 0);
+      const int scrollMargin = 20;  // Keep selected thumbnail away from edge (issue #51).
+      thumbView->ensureVisible(thumbRect, scrollMargin, scrollMargin);
     }
   }
 
@@ -981,7 +998,8 @@ void MainWindow::thumbViewFocusToggled(const bool checked) {
   }
 
   if (checked) {
-    thumbView->ensureVisible(rect, 0, 0);
+    const int scrollMargin = 20;  // Follow Page: keep thumbnail visible with padding (issue #51).
+    thumbView->ensureVisible(rect, scrollMargin, scrollMargin);
   }
 }
 
@@ -1117,8 +1135,11 @@ void MainWindow::startBatchProcessing() {
   m_interactiveQueue->cancelAndClear();
 
   m_batchQueue = std::make_unique<ProcessingTaskQueue>();
-  PageInfo page(m_thumbSequence->selectionLeader());
-  for (; !page.isNull(); page = m_thumbSequence->nextPage(page.id())) {
+  // Use full page sequence in current display order so all pages are processed
+  // (fixes batch missing pages when e.g. order is "decreasing deviation" and
+  // selection was not at the first page).
+  const PageSequence sequence(m_thumbSequence->toPageSequence());
+  for (const PageInfo& page : sequence) {
     for (int i = 0; i < m_stages->count(); i++) {
       m_stages->filterAt(i)->loadDefaultSettings(page);
     }
@@ -1143,9 +1164,9 @@ void MainWindow::startBatchProcessing() {
     stopBatchProcessing();
   }
 
-  page = m_batchQueue->selectedPage();
-  if (!page.isNull()) {
-    m_thumbSequence->setSelection(page.id());
+  PageInfo selectedPage(m_batchQueue->selectedPage());
+  if (!selectedPage.isNull()) {
+    m_thumbSequence->setSelection(selectedPage.id());
   }
   // Display the batch processing screen.
   updateMainArea();
@@ -1709,7 +1730,8 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId
   if (isBatchProcessingInProgress() || !isProjectLoaded()) {
     return;
   }
-  // We need to filter out files already in project.
+  // We need to filter out files already in project (issue #88: use normalized paths so
+  // dialog and project paths compare correctly when project already has images).
   class ProxyModel : public QSortFilterProxyModel {
    public:
     explicit ProxyModel(const ProjectPages& pages) {
@@ -1717,7 +1739,10 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId
 
       const PageSequence sequence(pages.toPageSequence(IMAGE_VIEW));
       for (const PageInfo& page : sequence) {
-        m_inProjectFiles.push_back(QFileInfo(page.imageId().filePath()));
+        const QString path(QFileInfo(page.imageId().filePath()).absoluteFilePath());
+        if (!path.isEmpty()) {
+          m_inProjectPaths.insert(QDir::cleanPath(path));
+        }
       }
     }
 
@@ -1728,18 +1753,26 @@ void MainWindow::showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId
       if (data.isNull()) {
         return true;
       }
-      return !m_inProjectFiles.contains(QFileInfo(data.toString()));
+      const QString path(QDir::cleanPath(QFileInfo(data.toString()).absoluteFilePath()));
+      return !m_inProjectPaths.contains(path);
     }
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override { return left.row() < right.row(); }
 
    private:
-    QFileInfoList m_inProjectFiles;
+    QSet<QString> m_inProjectPaths;
   };
 
-
-  auto dialog
-      = std::make_unique<QFileDialog>(this, tr("Files to insert"), QFileInfo(existing.filePath()).absolutePath());
+  QString dialogDir;
+  if (existing.isNull()) {
+    dialogDir = m_projectFile.isEmpty() ? QDir::homePath() : QFileInfo(m_projectFile).absolutePath();
+  } else {
+    dialogDir = QFileInfo(existing.filePath()).absolutePath();
+    if (dialogDir.isEmpty()) {
+      dialogDir = m_projectFile.isEmpty() ? QDir::homePath() : QFileInfo(m_projectFile).absolutePath();
+    }
+  }
+  auto dialog = std::make_unique<QFileDialog>(this, tr("Files to insert"), dialogDir);
   dialog->setFileMode(QFileDialog::ExistingFiles);
   dialog->setProxyModel(new ProxyModel(*m_pages));
   dialog->setNameFilter(tr("Images not in project (%1)").arg("*.png *.tiff *.tif *.jpeg *.jpg"));
@@ -1937,44 +1970,8 @@ BackgroundTaskPtr MainWindow::createCompositeTask(const PageInfo& page,
                                                   const int lastFilterIdx,
                                                   const bool batch,
                                                   bool debug) {
-  std::shared_ptr<fix_orientation::Task> fixOrientationTask;
-  std::shared_ptr<page_split::Task> pageSplitTask;
-  std::shared_ptr<deskew::Task> deskewTask;
-  std::shared_ptr<select_content::Task> selectContentTask;
-  std::shared_ptr<page_layout::Task> pageLayoutTask;
-  std::shared_ptr<output::Task> outputTask;
-
-  if (batch) {
-    debug = false;
-  }
-
-  if (lastFilterIdx >= m_stages->outputFilterIdx()) {
-    outputTask = m_stages->outputFilter()->createTask(page.id(), m_thumbnailCache, m_outFileNameGen, batch, debug);
-    debug = false;
-  }
-  if (lastFilterIdx >= m_stages->pageLayoutFilterIdx()) {
-    pageLayoutTask = m_stages->pageLayoutFilter()->createTask(page.id(), outputTask, batch, debug);
-    debug = false;
-  }
-  if (lastFilterIdx >= m_stages->selectContentFilterIdx()) {
-    selectContentTask = m_stages->selectContentFilter()->createTask(page.id(), pageLayoutTask, batch, debug);
-    debug = false;
-  }
-  if (lastFilterIdx >= m_stages->deskewFilterIdx()) {
-    deskewTask = m_stages->deskewFilter()->createTask(page.id(), selectContentTask, batch, debug);
-    debug = false;
-  }
-  if (lastFilterIdx >= m_stages->pageSplitFilterIdx()) {
-    pageSplitTask = m_stages->pageSplitFilter()->createTask(page, deskewTask, batch, debug);
-    debug = false;
-  }
-  if (lastFilterIdx >= m_stages->fixOrientationFilterIdx()) {
-    fixOrientationTask = m_stages->fixOrientationFilter()->createTask(page.id(), pageSplitTask, batch);
-    debug = false;
-  }
-  assert(fixOrientationTask);
-  return std::make_shared<LoadFileTask>(batch ? BackgroundTask::BATCH : BackgroundTask::INTERACTIVE, page,
-                                        m_thumbnailCache, m_pages, fixOrientationTask);
+  return BatchPipeline::createCompositeTask(page, lastFilterIdx, *m_stages, m_thumbnailCache, m_outFileNameGen,
+                                            m_pages, batch, debug);
 }  // MainWindow::createCompositeTask
 
 std::shared_ptr<CompositeCacheDrivenTask> MainWindow::createCompositeCacheDrivenTask(const int lastFilterIdx) {
@@ -2079,8 +2076,9 @@ void MainWindow::execGotoPageDialog() {
   bool ok;
   const PageSequence pageSequence = m_thumbSequence->toPageSequence();
   const PageId& selectionLeader = m_thumbSequence->selectionLeader().id();
-  int pageNumber = QInputDialog::getInt(this, tr("Go To Page"), tr("Enter the page number:"),
-                                        pageSequence.pageNo(selectionLeader) + 1, 1, pageSequence.numPages(), 1, &ok);
+  int pageNumber
+      = QInputDialog::getInt(this, tr("Go To Page"), tr("Enter the page number:"),
+                             pageSequence.pageNo(selectionLeader) + 1, 1, (int) (pageSequence.numPages()), 1, &ok);
   if (ok) {
     const PageId& newSelectionLeader = pageSequence.pageAt(pageNumber - 1).id();
     if (selectionLeader != newSelectionLeader) {

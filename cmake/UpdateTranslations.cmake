@@ -72,7 +72,7 @@ macro (update_translations_target _update_target) #, _targets
   set(_commands "")
   foreach (_target ${ARGN})
     list(
-        APPEND _commands COMMAND Qt5::lupdate -locations absolute -no-obsolete
+        APPEND _commands COMMAND Qt6::lupdate -locations absolute -no-obsolete
         -pro "${CMAKE_BINARY_DIR}/update_translations_${_target}.pro")
   endforeach()
 

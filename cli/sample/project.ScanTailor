@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+<project version="3" outputDirectory="out" layoutDirection="LTR">
+  <directories>
+    <directory id="1" path="in"/>
+  </directories>
+  <files>
+    <file id="1" dirId="1" name="page1.png"/>
+    <file id="2" dirId="1" name="page2.png"/>
+  </files>
+  <images>
+    <image id="1" subPages="1" fileId="1" fileImage="1">
+      <size width="50" height="50"/>
+      <dpi horizontal="300" vertical="300"/>
+    </image>
+    <image id="2" subPages="1" fileId="2" fileImage="1">
+      <size width="50" height="50"/>
+      <dpi horizontal="300" vertical="300"/>
+    </image>
+  </images>
+  <pages>
+    <page id="1" imageId="1" subPage="single" selected="selected"/>
+    <page id="2" imageId="2" subPage="single"/>
+  </pages>
+  <file-name-disambiguation>
+    <mapping file="1" label="1"/>
+    <mapping file="2" label="2"/>
+  </file-name-disambiguation>
+  <filters>
+    <fix-orientation>
+      <image id="1">
+        <rotation degrees="0"/>
+      </image>
+      <image id="2">
+        <rotation degrees="0"/>
+      </image>
+      <image-settings/>
+    </fix-orientation>
+    <page-split defaultLayoutType="single-uncut"/>
+    <deskew>
+      <page id="1">
+        <params mode="auto" angle="0" oblique="0">
+          <dependencies>
+            <rotation degrees="0"/>
+            <page-outline>
+              <point x="0" y="0"/>
+              <point x="50" y="0"/>
+              <point x="50" y="50"/>
+              <point x="0" y="50"/>
+            </page-outline>
+          </dependencies>
+        </params>
+      </page>
+      <page id="2">
+        <params mode="auto" angle="0" oblique="0">
+          <dependencies>
+            <rotation degrees="0"/>
+            <page-outline>
+              <point x="0" y="0"/>
+              <point x="50" y="0"/>
+              <point x="50" y="50"/>
+              <point x="0" y="50"/>
+            </page-outline>
+          </dependencies>
+        </params>
+      </page>
+      <image-settings/>
+    </deskew>
+    <select-content pageDetectionTolerance="0.1">
+      <page-detection-box width="0" height="0"/>
+      <page id="1">
+        <params contentDetectionMode="auto" pageDetectionMode="disabled" fineTuneCorners="0">
+          <content-rect x="0" y="0" width="50" height="50"/>
+          <page-rect x="0" y="0" width="50" height="50"/>
+          <content-size-mm width="42.33" height="42.33"/>
+          <dependencies>
+            <rotation degrees="0"/>
+          </dependencies>
+        </params>
+      </page>
+      <page id="2">
+        <params contentDetectionMode="auto" pageDetectionMode="disabled" fineTuneCorners="0">
+          <content-rect x="0" y="0" width="50" height="50"/>
+          <page-rect x="0" y="0" width="50" height="50"/>
+          <content-size-mm width="42.33" height="42.33"/>
+          <dependencies>
+            <rotation degrees="0"/>
+          </dependencies>
+        </params>
+      </page>
+    </select-content>
+    <page-layout showMiddleRect="0">
+      <page id="1">
+        <params autoMargins="1">
+          <hardMarginsMM left="0" top="0" right="0" bottom="0"/>
+          <contentRect x="0" y="0" width="50" height="50"/>
+          <pageRect x="0" y="0" width="50" height="50"/>
+          <contentSizeMM width="42.33" height="42.33"/>
+          <alignment vert="top" hor="left"/>
+        </params>
+      </page>
+      <page id="2">
+        <params autoMargins="1">
+          <hardMarginsMM left="0" top="0" right="0" bottom="0"/>
+          <contentRect x="0" y="0" width="50" height="50"/>
+          <pageRect x="0" y="0" width="50" height="50"/>
+          <contentSizeMM width="42.33" height="42.33"/>
+          <alignment vert="top" hor="left"/>
+        </params>
+      </page>
+    </page-layout>
+    <output>
+      <page id="1">
+        <zones/>
+        <fill-zones/>
+        <params depthPerception="1" despeckleLevel="1" blackOnWhite="1">
+          <distortion-model/>
+          <picture-shape-options pictureShape="free" sensitivity="100" higherSearchSensitivity="0"/>
+          <dewarping-options mode="off" postDeskew="1" postDeskewAngle="0"/>
+          <dpi horizontal="300" vertical="300"/>
+          <color-params colorMode="bw">
+            <color-or-grayscale fillOffcut="1" fillMargins="1" normalizeIlluminationColor="0" fillingColor="background" wienerCoef="0" wienerWinSize="5">
+              <posterization-options enabled="0" level="4" normalizationEnabled="0" forceBlackAndWhite="1"/>
+            </color-or-grayscale>
+            <bw thresholdAdj="0" savitzkyGolaySmoothing="1" morphologicalSmoothing="1" normalizeIlluminationBW="1" windowSize="200" binarizationMethod="otsu">
+              <color-segmenter-options enabled="0" noiseReduction="7" redThresholdAdjustment="0" greenThresholdAdjustment="0" blueThresholdAdjustment="0"/>
+            </bw>
+          </color-params>
+          <splitting splitOutput="0" splittingMode="bw" originalBackground="0"/>
+        </params>
+        <processing-params autoZonesFound="0"/>
+      </page>
+      <page id="2">
+        <zones/>
+        <fill-zones/>
+        <params depthPerception="1" despeckleLevel="1" blackOnWhite="1">
+          <distortion-model/>
+          <picture-shape-options pictureShape="free" sensitivity="100" higherSearchSensitivity="0"/>
+          <dewarping-options mode="off" postDeskew="1" postDeskewAngle="0"/>
+          <dpi horizontal="300" vertical="300"/>
+          <color-params colorMode="bw">
+            <color-or-grayscale fillOffcut="1" fillMargins="1" normalizeIlluminationColor="0" fillingColor="background" wienerCoef="0" wienerWinSize="5">
+              <posterization-options enabled="0" level="4" normalizationEnabled="0" forceBlackAndWhite="1"/>
+            </color-or-grayscale>
+            <bw thresholdAdj="0" savitzkyGolaySmoothing="1" morphologicalSmoothing="1" normalizeIlluminationBW="1" windowSize="200" binarizationMethod="otsu">
+              <color-segmenter-options enabled="0" noiseReduction="7" redThresholdAdjustment="0" greenThresholdAdjustment="0" blueThresholdAdjustment="0"/>
+            </bw>
+          </color-params>
+          <splitting splitOutput="0" splittingMode="bw" originalBackground="0"/>
+        </params>
+        <processing-params autoZonesFound="0"/>
+      </page>
+    </output>
+  </filters>
+</project>

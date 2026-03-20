@@ -29,7 +29,7 @@ ChangeDpiDialog::ChangeDpiDialog(QWidget* parent,
 
   dpiSelector->setValidator(new QIntValidator(dpiSelector));
 
-  static const int common_dpis[] = {300, 400, 600};
+  static const int common_dpis[] = {300, 400, 600, 1200};
 
   const int requestedDpi = std::max(dpi.horizontal(), dpi.vertical());
   m_customDpiString = QString::number(requestedDpi);

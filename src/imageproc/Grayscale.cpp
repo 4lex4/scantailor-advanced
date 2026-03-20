@@ -3,6 +3,8 @@
 
 #include "Grayscale.h"
 
+#include <stdexcept>
+
 #include "BinaryImage.h"
 #include "BitOps.h"
 

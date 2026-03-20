@@ -105,7 +105,7 @@
 <context>
     <name>ColorPickupInteraction</name>
     <message>
-        <location filename="../core/filters/output/ColorPickupInteraction.cpp" line="14"/>
+        <location filename="../core/filters/output/ColorPickupInteraction.cpp" line="17"/>
         <source>Click on an area to pick up its color, or ESC to cancel.</source>
         <translation>Кликните на область, чтобы захватить ее цвет, или ESC для отмены.</translation>
     </message>
@@ -145,17 +145,17 @@
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="227"/>
         <location filename="../app/DefaultParamsDialog.ui" line="244"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1241"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1310"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1684"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1707"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1730"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1753"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1776"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1802"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1825"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1848"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1871"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1238"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1307"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1613"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1636"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1659"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1682"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1705"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1731"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1754"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1777"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1800"/>
         <source>...</source>
         <translation></translation>
     </message>
@@ -171,7 +171,7 @@
     </message>
     <message>
         <location filename="../app/DefaultParamsDialog.ui" line="404"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1957"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1886"/>
         <source>Mode</source>
         <translation>Режим</translation>
     </message>
@@ -181,555 +181,569 @@
         <translation>Тип разреза</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="619"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="688"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="616"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="685"/>
         <source>Deskew</source>
         <translation>Компенс. накл.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="699"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="994"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1048"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="36"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="62"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="696"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="991"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1045"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="37"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="65"/>
         <source>Auto</source>
         <translation>Автоматически</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="715"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1007"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="37"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="63"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="712"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1004"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="38"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="66"/>
         <source>Manual</source>
         <translation>Вручную</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="791"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="788"/>
         <source>Select Content</source>
         <translation>Полезная обл.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="847"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="844"/>
         <source>Page Box</source>
         <translation>Зона распознавания</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="856"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1035"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="853"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1032"/>
         <source>Disable</source>
         <translation>Выключить</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="872"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1977"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="869"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1906"/>
         <source>Options</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="893"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="890"/>
         <source>Shift with corners while they are in black. </source>
         <translation>Скорректировать края по черной области. </translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="896"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="893"/>
         <source>Fine Tune Page Corners</source>
         <translation>Тонкая настройка краев страницы</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="933"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="930"/>
         <source>Width</source>
         <translation>Ширина</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="940"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="937"/>
         <source>Height</source>
         <translation>Высота</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1026"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1023"/>
         <source>Content Box</source>
         <translation>Полезная область</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1098"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="1143"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1095"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1140"/>
         <source>Margins</source>
         <translation>Поля</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1167"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1164"/>
         <source>Auto Margins</source>
         <translation>Автоматические поля</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1258"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1255"/>
         <source>Top</source>
         <translation>Сверху</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1265"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1262"/>
         <source>Right</source>
         <translation>Справа</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1272"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1269"/>
         <source>Left</source>
         <translation>Слева</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1360"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1357"/>
         <source>Bottom</source>
         <translation>Снизу</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1455"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1452"/>
         <source>Alignment</source>
         <translation>Выравнивание</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1530"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1536"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1558"/>
         <source>Auto</source>
         <comment>auto</comment>
         <translation>Автоматически</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1535"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1541"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1563"/>
         <source>Manual</source>
         <comment>manual</comment>
         <translation>Вручную</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1540"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1546"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1568"/>
         <source>Original</source>
         <comment>original</comment>
         <translation>Оригинал</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1563"/>
         <source>Auto aligning</source>
-        <translation>Авто выравнивание</translation>
+        <translation type="vanished">Авто выравнивание</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1596"/>
         <source>Enable horizontal</source>
-        <translation>Вкл. горизонтальное</translation>
+        <translation type="vanished">Вкл. горизонтальное</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1636"/>
         <source>Enable vertical</source>
-        <translation>Вкл. вертикальное</translation>
+        <translation type="vanished">Вкл. вертикальное</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1479"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1476"/>
         <source>Match size with other pages</source>
         <translation>Выровнять размер с остальн. стр.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1919"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1518"/>
+        <source>Horizontal mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/DefaultParamsDialog.ui" line="1525"/>
+        <source>Vertical mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/DefaultParamsDialog.ui" line="1848"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2042"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1971"/>
         <source>Normalize illumination before binarization.</source>
         <translation>Нормализовать освещенность перед бинаризацией.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2045"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1974"/>
         <source>Equalize illumination (B&amp;&amp;W)</source>
         <translation>Выровнять освещение (ЧБ)</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2052"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1981"/>
         <source>Normalize illumination in color mode / in picture zones in mixed mode.</source>
         <translation>Нормализовать освещенность в цветном режиме / в зонах картинок в смешанном режиме.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2055"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1984"/>
         <source>Equalize illumination (Color)</source>
         <translation>Выровнять освещение (Цвет.)</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2062"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1991"/>
         <source>Savitzky-Golay smoothing</source>
         <translation>Сглаживание Савицкого-Голея</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2069"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1998"/>
         <source>Morphological smoothing</source>
         <translation>Морфологическое сглаживание</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2094"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2023"/>
         <source>Filling</source>
         <translation>Заливка</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2121"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2050"/>
         <source>Color: </source>
         <translation>Цвет: </translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2152"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2081"/>
         <source>Color operations</source>
         <translation>Цветовые операции</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2203"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2132"/>
         <source>Split the image into color segments and colorize b&amp;w mask.</source>
         <translation>Поделить изображение на цветовые сегменты и раскрасить ЧБ маску.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2209"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2138"/>
         <source>Color segmentation</source>
         <translation>Цветовая сегментация</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2252"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2181"/>
         <source>R</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2265"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2194"/>
         <source>Red component adjustment. A negative value means the segmenter will be more sensitive to red and vice versa for a positive one.</source>
         <translation>Настройка красного компонента. Отрицательные значения обозначают, что сегментер будет более чувствителен к красному и наоборот для положительных.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2287"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2216"/>
         <source>G</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2300"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2229"/>
         <source>Green component adjustment. A negative value means the segmenter will be more sensitive to green and vice versa for a positive one.</source>
         <translation>Настройка зеленого компонента. Отрицательные значения обозначают, что сегментер будет более чувствителен к зеленому и наоборот для положительных.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2322"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2251"/>
         <source>B</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2335"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2264"/>
         <source>Blue component adjustment. A negative value means the segmenter will be more sensitive to blue and vice versa for a positive one.</source>
         <translation>Настройка синего компонента. Отрицательные значения обозначают, что сегментер будет более чувствителен к синему и наоборот для положительных.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2390"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2319"/>
         <source>Reduce noise:</source>
         <translation>Уменьшить шум:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2437"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2366"/>
         <source>Reduce the number of colors of the output image by grouping similar colors.</source>
         <translation>Уменьшить количество цветов выходного изображения, группируя похожие цвета.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2443"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2372"/>
         <source>Posterize</source>
         <translation>Постеризовать</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2486"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2415"/>
         <source>Level:</source>
         <translation>Уровень:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2493"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2422"/>
         <source>Lower value means lower count of colors in the output image, values between 2 and 6 inclusive guarantee an indexed image.</source>
         <translation>Меньшее значение обозначает меньшее кол-во цветов в выходном изображении, значения 2 и 6 включительно гарантируют индексированое изображение.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2554"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2483"/>
         <source>Normalize</source>
         <translation>Нормализовать</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2597"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2526"/>
         <source>Make dark and light gray gradients black and white respectively.</source>
         <translation>Сделать темные и светлые оттенки серого черными и белыми соответственно.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2603"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2532"/>
         <source>Force b&amp;&amp;w</source>
         <translation>Принудительный ЧБ</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2666"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2595"/>
         <source>Threshold</source>
         <translation>Порог</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2693"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2622"/>
         <source>Method:</source>
         <translation>Метод:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2763"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2692"/>
         <source>0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2818"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2747"/>
         <source>Thinner</source>
         <translation>Тоньше</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2850"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2779"/>
         <source>Thicker</source>
         <translation>Жирнее</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2907"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2836"/>
         <source>Coef:</source>
         <translation>Коэф.:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2914"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="3010"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2843"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2939"/>
         <source>The dimensions of a pixel neighborhood to consider.</source>
         <translation>Размер области с соседними пикселями для расчета.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2927"/>
-        <location filename="../app/DefaultParamsDialog.ui" line="3023"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2856"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2952"/>
         <source>Window size:</source>
         <translation>Размер окна:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2934"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2863"/>
         <source>Default value is 0.34.</source>
         <translation>Значение по умолчанию - 0.34.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3030"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2959"/>
         <source>The minimum possible gray level that can be made white.</source>
         <translation>Минимальный уровень серого, который можно сделать белым.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3043"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2972"/>
         <source>Upper Bound: </source>
         <translation>Верхняя граница: </translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3050"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2979"/>
         <source>Lower bound: </source>
         <translation>Нижняя граница: </translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3057"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2986"/>
         <source>The maximum possible gray level that can be made black.</source>
         <translation>Максимальный уровень серого, который можно сделать черным.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3070"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="2999"/>
         <source>Coeff:</source>
         <translation>Коэф.:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3077"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3006"/>
         <source>Default value is 0.3.</source>
         <translation>Значение по умолчанию — 0.3.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3130"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3059"/>
         <source>Picture Shape</source>
         <translation>Форма картинок</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3200"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3129"/>
         <source>Sensitivity (%):</source>
         <translation>Чувствительность (%):</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3248"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3177"/>
         <source>Higher search sensivity</source>
         <translation>Большая чувств. поиска</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3347"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3276"/>
         <source>Output Resolution (DPI)</source>
         <translation>Разрешение на выходе (DPI)</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3401"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3330"/>
         <source>Splitting</source>
         <translation>Разделение</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3427"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3356"/>
         <source>Split output</source>
         <translation>Разделить выход</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3434"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3363"/>
         <source>B&amp;&amp;W foreground</source>
         <translation>ЧБ передний слой</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3462"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3391"/>
         <source>Save the original background of the foreground layer.</source>
         <translation>Сохранить оригинальный фон переднего слоя.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3465"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3394"/>
         <source>Original background</source>
         <translation>Оригинальный фон</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3474"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3403"/>
         <source>Color foreground</source>
         <translation>Цветной передний слой</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3501"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3430"/>
         <source>Despeckling</source>
         <translation>Удаление пятен</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3607"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3536"/>
         <source>Dewarping</source>
         <translation>Выпрямление</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3667"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3596"/>
         <source>Post deskew</source>
         <translation>Компенсировать поворот</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3692"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3621"/>
         <source>Depth perception</source>
         <translation>Восприятие глубины</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="39"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="40"/>
         <source>Black and White</source>
         <translation>Черно-белый</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="40"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="41"/>
         <source>Color / Grayscale</source>
         <translation>Цветной / Серый</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="41"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="42"/>
         <source>Mixed</source>
         <translation>Смешанный</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="43"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="44"/>
         <source>Background</source>
         <translation>Фон</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="44"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="45"/>
         <source>White</source>
         <translation>Белый</translation>
     </message>
     <message>
         <location filename="../app/DefaultParamsDialog.cpp" line="46"/>
+        <source>Black</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/DefaultParamsDialog.cpp" line="48"/>
         <source>Otsu</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="47"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="49"/>
         <source>Sauvola</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="48"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="50"/>
         <source>Wolf</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="50"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="61"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="52"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="64"/>
         <source>Off</source>
         <translation>Отключено</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="51"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="53"/>
         <source>Free</source>
         <translation>Свободная</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="52"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="54"/>
         <source>Rectangular</source>
         <translation>Прямоугольная</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="59"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="79"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="967"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="62"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="82"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="944"/>
         <source>Custom</source>
         <translation>Выборочный</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="64"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="67"/>
         <source>Marginal</source>
         <translation>По краям</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="70"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="73"/>
         <source>Default</source>
         <translation>Стандартный</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="71"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="74"/>
         <source>Source</source>
         <translation>Источник</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="930"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="936"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="956"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="973"/>
-        <location filename="../app/DefaultParamsDialog.cpp" line="988"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="907"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="913"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="933"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="950"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="965"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="936"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="913"/>
         <source>Error loading the profile.</source>
         <translation>Ошибка при загрузке профиля.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="957"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="934"/>
         <source>The name conflicts with a default profile name. Please enter a different name.</source>
         <translation>Это имя конфликтует со стандартным именем профиля. Введите другое имя.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="973"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="950"/>
         <source>Error saving the profile.</source>
         <translation>Ошибка при сохранении профиля.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="988"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="965"/>
         <source>Error deleting the profile.</source>
         <translation>Ошибка при удалении профиля.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2028"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1957"/>
         <source>Fill offcut</source>
         <translation>Залить отрезан. обл.</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="2035"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="1964"/>
         <source>Fill margins</source>
         <translation>Залить поля</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="3556"/>
+        <location filename="../app/DefaultParamsDialog.ui" line="3485"/>
         <source>Despeckle</source>
         <translation>Удалить пятна</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.ui" line="1519"/>
         <source>Mode:</source>
-        <translation>Режим:</translation>
+        <translation type="vanished">Режим:</translation>
     </message>
     <message>
-        <location filename="../app/DefaultParamsDialog.cpp" line="930"/>
+        <location filename="../app/DefaultParamsDialog.cpp" line="907"/>
         <source>The profile file is not compatible with the current application version. Remove?</source>
         <translation>Файл профиля несовместим с текущей версией приложения. Удалить?</translation>
     </message>
@@ -737,7 +751,7 @@
 <context>
     <name>DragHandler</name>
     <message>
-        <location filename="../core/interaction/DragHandler.cpp" line="20"/>
+        <location filename="../core/interaction/DragHandler.cpp" line="22"/>
         <source>Unrestricted dragging is possible by holding down the Shift key.</source>
         <translation>Удерживая кнопку Shift, можно перетаскивать без ограничений.</translation>
     </message>
@@ -788,13 +802,13 @@
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="202"/>
+        <location filename="../app/FixDpiDialog.cpp" line="206"/>
         <source>Need Fixing</source>
         <translation>Необх. испр.</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="203"/>
-        <location filename="../app/FixDpiDialog.cpp" line="598"/>
+        <location filename="../app/FixDpiDialog.cpp" line="207"/>
+        <location filename="../app/FixDpiDialog.cpp" line="593"/>
         <source>All Pages</source>
         <translation>Все страницы</translation>
     </message>
@@ -814,7 +828,7 @@
         <translation>DPI слишком мал для этого пиксельного размера. Такая комбинация, вероятно, приведет к ошибкам переполнения памяти.</translation>
     </message>
     <message>
-        <location filename="../app/FixDpiDialog.cpp" line="624"/>
+        <location filename="../app/FixDpiDialog.cpp" line="619"/>
         <source>%1 (page %2)</source>
         <translation>%1 (стр. %2)</translation>
     </message>
@@ -822,7 +836,7 @@
 <context>
     <name>ImageViewBase</name>
     <message>
-        <location filename="../core/ImageViewBase.cpp" line="196"/>
+        <location filename="../core/ImageViewBase.cpp" line="201"/>
         <source>Use the mouse wheel or +/- to zoom.  When zoomed, dragging is possible.</source>
         <translation>Используйте колесо мыши для увеличения.  В увеличенном виде доступно перетаскивание.</translation>
     </message>
@@ -830,31 +844,35 @@
 <context>
     <name>InteractiveXSpline</name>
     <message>
-        <location filename="../core/interaction/InteractiveXSpline.cpp" line="35"/>
+        <location filename="../core/interaction/InteractiveXSpline.cpp" line="38"/>
         <source>Click to create a new control point.</source>
         <translation>Кликните для создания новой контрольной точки.</translation>
     </message>
     <message>
-        <location filename="../core/interaction/InteractiveXSpline.cpp" line="55"/>
+        <location filename="../core/interaction/InteractiveXSpline.cpp" line="58"/>
         <source>This point can be dragged. Hold Ctrl or Shift to drag along axes.</source>
         <translation>Контрольная точка доступна для перетаскивания. Удерживайте Ctrl или Shift для перетаскивания вдоль осей.</translation>
     </message>
     <message>
-        <location filename="../core/interaction/InteractiveXSpline.cpp" line="57"/>
+        <location filename="../core/interaction/InteractiveXSpline.cpp" line="60"/>
+        <source>Drag this point or delete it by pressing D key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Drag this point or delete it by pressing Del or D.</source>
-        <translation>Контрольная точка доступна для перетаскивания и для удаления через Del или D.</translation>
+        <translation type="vanished">Контрольная точка доступна для перетаскивания и для удаления через Del или D.</translation>
     </message>
 </context>
 <context>
     <name>LoadFileTask</name>
     <message>
-        <location filename="../core/LoadFileTask.cpp" line="130"/>
+        <location filename="../core/LoadFileTask.cpp" line="132"/>
         <source>The following file could not be loaded:
 %1</source>
         <translation>Файл не загрузился:%1</translation>
     </message>
     <message>
-        <location filename="../core/LoadFileTask.cpp" line="133"/>
+        <location filename="../core/LoadFileTask.cpp" line="135"/>
         <source>The following file doesn&apos;t exist:&lt;br&gt;%1&lt;br&gt;&lt;br&gt;Use the &lt;a href=&quot;#relink&quot;&gt;Relinking Tool&lt;/a&gt; to locate it.</source>
         <translation>Следующий файл не существует:&lt;br&gt;%1&lt;br&gt;&lt;br&gt;Используйте &lt;a href=&quot;#relink&quot;&gt;Relinking Tool&lt;/a&gt; чтобы найти его.</translation>
     </message>
@@ -915,204 +933,266 @@
         <translation>Держать текущую страницу в поле зрения.</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="494"/>
+        <location filename="../app/MainWindow.ui" line="354"/>
+        <source>Navigate through selected pages only.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="424"/>
+        <source>Magnify thumbnails.  (Ctrl++)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="481"/>
+        <source>Diminish thumbnails.  (Ctrl+-)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="548"/>
+        <source>Go To Page...  (Ctrl+G)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="605"/>
+        <source>Enable multi page selection mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="677"/>
+        <source>Single/multi column display.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="737"/>
+        <source>Sorting order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="797"/>
+        <source>Highlight deviation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="916"/>
         <source>Filters</source>
         <translation>Фильтры</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="610"/>
+        <location filename="../app/MainWindow.ui" line="1032"/>
         <source>Debug Mode</source>
         <translation>Режим отладки</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="618"/>
-        <location filename="../app/MainWindow.cpp" line="524"/>
+        <location filename="../app/MainWindow.ui" line="1043"/>
+        <location filename="../app/MainWindow.cpp" line="555"/>
         <source>Save Project</source>
         <translation>Сохранить проект</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="626"/>
+        <location filename="../app/MainWindow.ui" line="1054"/>
         <source>Save Project As ...</source>
         <translation>Сохранить проект как ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="634"/>
-        <location filename="../app/MainWindow.ui" line="683"/>
+        <location filename="../app/MainWindow.ui" line="1065"/>
+        <location filename="../app/MainWindow.ui" line="1120"/>
         <source>Next Page</source>
         <translation>Следующая страница</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="645"/>
-        <location filename="../app/MainWindow.ui" line="672"/>
+        <location filename="../app/MainWindow.ui" line="1076"/>
+        <location filename="../app/MainWindow.ui" line="1109"/>
         <source>Previous Page</source>
         <translation>Предыдущая страница</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="656"/>
+        <location filename="../app/MainWindow.ui" line="1087"/>
         <source>New Project ...</source>
         <translation>Новый проект ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="664"/>
+        <location filename="../app/MainWindow.ui" line="1098"/>
         <source>Open Project ...</source>
         <translation>Открыть проект ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="694"/>
+        <location filename="../app/MainWindow.ui" line="1131"/>
         <source>Close Project</source>
         <translation>Закрыть проект</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="702"/>
+        <location filename="../app/MainWindow.ui" line="1142"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="710"/>
+        <location filename="../app/MainWindow.ui" line="1153"/>
         <source>Settings ...</source>
         <translation>Настройки ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="718"/>
+        <location filename="../app/MainWindow.ui" line="1164"/>
         <source>First Page</source>
         <translation>Первая страница</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="726"/>
+        <location filename="../app/MainWindow.ui" line="1175"/>
         <source>Last Page</source>
         <translation>Последняя страница</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="734"/>
+        <location filename="../app/MainWindow.ui" line="1186"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="742"/>
+        <location filename="../app/MainWindow.ui" line="1197"/>
         <source>Fix DPI ...</source>
         <translation>Исправить DPI ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="750"/>
+        <location filename="../app/MainWindow.ui" line="1208"/>
         <source>Relinking ...</source>
         <translation>Пути в проекте ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="758"/>
-        <location filename="../app/MainWindow.ui" line="766"/>
-        <location filename="../app/MainWindow.ui" line="777"/>
-        <location filename="../app/MainWindow.ui" line="788"/>
-        <location filename="../app/MainWindow.ui" line="799"/>
-        <location filename="../app/MainWindow.ui" line="810"/>
+        <location filename="../app/MainWindow.ui" line="1219"/>
+        <location filename="../app/MainWindow.ui" line="1230"/>
+        <location filename="../app/MainWindow.ui" line="1244"/>
+        <location filename="../app/MainWindow.ui" line="1258"/>
+        <location filename="../app/MainWindow.ui" line="1272"/>
+        <location filename="../app/MainWindow.ui" line="1286"/>
         <source>Switch filter to orientation</source>
         <translation>Перейти к ориентации</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="769"/>
+        <location filename="../app/MainWindow.ui" line="1233"/>
         <source>Switch filter to split pages</source>
         <translation>Перейти к разрезке страниц</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="780"/>
+        <location filename="../app/MainWindow.ui" line="1247"/>
         <source>Switch filter to deskew</source>
         <translation>Перейти к компенсации наклона</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="791"/>
+        <location filename="../app/MainWindow.ui" line="1261"/>
         <source>Switch filter to select content</source>
         <translation>Перейти к полезной области</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="802"/>
+        <location filename="../app/MainWindow.ui" line="1275"/>
         <source>Switch filter to margins</source>
         <translation>Перейти к полям</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="813"/>
+        <location filename="../app/MainWindow.ui" line="1289"/>
         <source>Switch filter to output</source>
         <translation>Перейти к выводу</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="824"/>
+        <location filename="../app/MainWindow.ui" line="1303"/>
         <source>Pixels</source>
         <translation>Пиксели</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="841"/>
+        <location filename="../app/MainWindow.ui" line="1320"/>
         <source>Millimetres</source>
         <translation>Миллиметры</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="855"/>
+        <location filename="../app/MainWindow.ui" line="1334"/>
         <source>Inches</source>
         <translation>Дюймы</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="869"/>
+        <location filename="../app/MainWindow.ui" line="1348"/>
         <source>Centimetres</source>
         <translation>Сантиметры</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="880"/>
+        <location filename="../app/MainWindow.ui" line="1359"/>
         <source>Default parameters ...</source>
         <translation>Параметры по умолчанию...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="441"/>
+        <location filename="../app/MainWindow.ui" line="1426"/>
+        <location filename="../app/MainWindow.cpp" line="2082"/>
+        <source>Go To Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="1437"/>
+        <source>Magnify thumbnails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="1445"/>
+        <source>Diminish thumbnails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="1453"/>
+        <location filename="../app/MainWindow.ui" line="1456"/>
+        <source>Reload current page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.cpp" line="468"/>
         <source>Stop batch processing</source>
         <translation>Остановить пакетную обработку</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="524"/>
+        <location filename="../app/MainWindow.cpp" line="555"/>
         <source>Save the project?</source>
         <translation>Сохранить этот проект?</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="922"/>
+        <location filename="../app/MainWindow.cpp" line="946"/>
         <source>Insert before ...</source>
         <translation>Вставить перед ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="923"/>
+        <location filename="../app/MainWindow.cpp" line="947"/>
         <source>Insert after ...</source>
         <translation>Вставить после ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="927"/>
+        <location filename="../app/MainWindow.cpp" line="951"/>
         <source>Remove from project ...</source>
         <translation>Удалить из проекта ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="945"/>
+        <location filename="../app/MainWindow.cpp" line="969"/>
         <source>Insert here ...</source>
         <translation>Вставить сюда ...</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1305"/>
-        <location filename="../app/MainWindow.cpp" line="1351"/>
+        <location filename="../app/MainWindow.cpp" line="1318"/>
+        <location filename="../app/MainWindow.cpp" line="1363"/>
         <source>Scan Tailor Projects</source>
         <translation>Проекты Scan Tailor</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1350"/>
+        <location filename="../app/MainWindow.cpp" line="1362"/>
         <source>Open Project</source>
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1363"/>
-        <location filename="../app/MainWindow.cpp" line="1370"/>
-        <location filename="../app/MainWindow.cpp" line="1679"/>
-        <location filename="../app/MainWindow.cpp" line="1705"/>
+        <location filename="../app/MainWindow.cpp" line="1375"/>
+        <location filename="../app/MainWindow.cpp" line="1381"/>
+        <location filename="../app/MainWindow.cpp" line="1675"/>
+        <location filename="../app/MainWindow.cpp" line="1699"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1363"/>
+        <location filename="../app/MainWindow.cpp" line="1375"/>
         <source>Unable to open the project file.</source>
         <translation>Не удалось открыть файл проекта.</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1370"/>
+        <location filename="../app/MainWindow.cpp" line="1381"/>
         <source>The project file is broken.</source>
         <translation>Файл проекта поврежден.</translation>
     </message>
@@ -1129,76 +1209,80 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
 Для их определения, прогоните пакетную обработку на этапах &quot;Полезная Область&apos; или &quot;Поля&quot;.</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1612"/>
+        <location filename="../app/MainWindow.cpp" line="1611"/>
         <source>Unnamed</source>
         <translation>Без имени</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1617"/>
+        <location filename="../app/MainWindow.cpp" line="1616"/>
         <source>%2 - ScanTailor Advanced [%1bit]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1679"/>
-        <location filename="../app/MainWindow.cpp" line="1705"/>
+        <location filename="../app/MainWindow.cpp" line="1675"/>
+        <location filename="../app/MainWindow.cpp" line="1699"/>
         <source>Error saving the project file!</source>
         <translation>Ошибка при сохранении файла!</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1751"/>
+        <location filename="../app/MainWindow.cpp" line="1742"/>
         <source>Files to insert</source>
         <translation>Файлы для вставки</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1754"/>
+        <location filename="../app/MainWindow.cpp" line="1745"/>
         <source>Images not in project (%1)</source>
         <translation>Изображения не в проекте (%1)</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1798"/>
+        <location filename="../app/MainWindow.cpp" line="1789"/>
         <source>Skip failed files</source>
         <translation>Пропустить файлы с ошибкой</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.cpp" line="1838"/>
+        <location filename="../app/MainWindow.cpp" line="1829"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="455"/>
+        <location filename="../app/MainWindow.cpp" line="2082"/>
+        <source>Enter the page number:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/MainWindow.ui" line="877"/>
         <source>Use Home, End, PgUp/Q, PgDown/W to navigate between pages or Shift+PgUp/Q and Shift+PgDown/W to navigate between selected ones. Alt+Wheel - scale thumbnails.</source>
         <translation>Используйте Home, End, PgUp/Q, PgDown/W для навигации по страницам или Shift+PgUp/Q и Shift+PgDown/W - по выделенным. Alt+Колесо - масштабировать миниматюры.</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="888"/>
-        <location filename="../app/MainWindow.ui" line="891"/>
-        <location filename="../app/MainWindow.ui" line="930"/>
-        <location filename="../app/MainWindow.ui" line="933"/>
+        <location filename="../app/MainWindow.ui" line="1370"/>
+        <location filename="../app/MainWindow.ui" line="1373"/>
+        <location filename="../app/MainWindow.ui" line="1412"/>
+        <location filename="../app/MainWindow.ui" line="1415"/>
         <source>Previous Selected Page</source>
         <translation>Предыдущая выделенная страница</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="902"/>
-        <location filename="../app/MainWindow.ui" line="905"/>
-        <location filename="../app/MainWindow.ui" line="916"/>
-        <location filename="../app/MainWindow.ui" line="919"/>
+        <location filename="../app/MainWindow.ui" line="1384"/>
+        <location filename="../app/MainWindow.ui" line="1387"/>
+        <location filename="../app/MainWindow.ui" line="1398"/>
+        <location filename="../app/MainWindow.ui" line="1401"/>
         <source>Next Selected Page</source>
         <translation>Следующая выделенная страница</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="251"/>
+        <location filename="../app/MainWindow.ui" line="240"/>
         <source>Previous page.</source>
         <translation>Предыдущая страница.</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="313"/>
+        <location filename="../app/MainWindow.ui" line="297"/>
         <source>Next page.</source>
         <translation>Следующая страница.</translation>
     </message>
     <message>
-        <location filename="../app/MainWindow.ui" line="375"/>
         <source>Filter selected pages only.</source>
-        <translation>Только выделенные страницы.</translation>
+        <translation type="vanished">Только выделенные страницы.</translation>
     </message>
 </context>
 <context>
@@ -1319,17 +1403,17 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
         <translation>Обратите внимание на то, что хотя Scan Tailor и пытается обработать ситуации нехватки памяти, чтобы дать вам возможность сохранить проект, это не всегда бывает возможно. В этот раз все получилось, но в следующий раз программа может просто &quot;упасть&quot;.</translation>
     </message>
     <message>
-        <location filename="../app/OutOfMemoryDialog.cpp" line="60"/>
+        <location filename="../app/OutOfMemoryDialog.cpp" line="62"/>
         <source>Scan Tailor Projects</source>
         <translation>Проекты Scan Tailor</translation>
     </message>
     <message>
-        <location filename="../app/OutOfMemoryDialog.cpp" line="87"/>
+        <location filename="../app/OutOfMemoryDialog.cpp" line="89"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../app/OutOfMemoryDialog.cpp" line="87"/>
+        <location filename="../app/OutOfMemoryDialog.cpp" line="89"/>
         <source>Error saving the project file!</source>
         <translation>Ошибка при сохранении файла!</translation>
     </message>
@@ -1343,7 +1427,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location filename="../app/ProjectFilesDialog.ui" line="20"/>
-        <location filename="../app/ProjectFilesDialog.cpp" line="245"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="243"/>
         <source>Input Directory</source>
         <translation>Директория ввода</translation>
     </message>
@@ -1355,7 +1439,7 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location filename="../app/ProjectFilesDialog.ui" line="43"/>
-        <location filename="../app/ProjectFilesDialog.cpp" line="259"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="257"/>
         <source>Output Directory</source>
         <translation>Директория вывода</translation>
     </message>
@@ -1366,12 +1450,12 @@ To determine it, run batch processing at &quot;Select Content&quot; or &quot;Mar
     </message>
     <message>
         <location filename="../app/ProjectFilesDialog.ui" line="77"/>
-        <location filename="../app/ProjectFilesDialog.ui" line="201"/>
+        <location filename="../app/ProjectFilesDialog.ui" line="191"/>
         <source>Select All</source>
         <translation>Выбрать все</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.ui" line="113"/>
+        <location filename="../app/ProjectFilesDialog.ui" line="108"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -1382,7 +1466,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Добавить выбранные файлы в проект.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.ui" line="147"/>
+        <location filename="../app/ProjectFilesDialog.ui" line="137"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -1393,67 +1477,67 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Убрать выбранные файлы из проекта.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.ui" line="185"/>
+        <location filename="../app/ProjectFilesDialog.ui" line="175"/>
         <source>Files In Project</source>
         <translation>Файлы в проекте</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.ui" line="213"/>
+        <location filename="../app/ProjectFilesDialog.ui" line="203"/>
         <source>Right to left layout (for Hebrew and Arabic)</source>
         <translation>Система письменности справа-налево (для Иврита или Арабского)</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.ui" line="220"/>
+        <location filename="../app/ProjectFilesDialog.ui" line="210"/>
         <source>Fix DPIs, even if they look OK</source>
         <translation>Исправить DPI, даже если он выглядят нормально</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="368"/>
-        <location filename="../app/ProjectFilesDialog.cpp" line="375"/>
-        <location filename="../app/ProjectFilesDialog.cpp" line="382"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="365"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="371"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="377"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="394"/>
         <location filename="../app/ProjectFilesDialog.cpp" line="400"/>
-        <location filename="../app/ProjectFilesDialog.cpp" line="407"/>
-        <location filename="../app/ProjectFilesDialog.cpp" line="473"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="464"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="368"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="365"/>
         <source>No files in project!</source>
         <translation>В проекте нет файлов!</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="375"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="371"/>
         <source>Input directory is not set or doesn&apos;t exist.</source>
         <translation>Директория ввода не задана или не существует.</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="382"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="377"/>
         <source>Input and output directories can&apos;t be the same.</source>
         <translation>Директории ввода и вывода не могут совпадать.</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="391"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="385"/>
         <source>Create Directory?</source>
         <translation>Создать директорию?</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="391"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="385"/>
         <source>Output directory doesn&apos;t exist.  Create it?</source>
         <translation>Директория вывода не существует.  Создать ее?</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="400"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="394"/>
         <source>Unable to create output directory.</source>
         <translation>Невозможно создать директорию вывода.</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="407"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="400"/>
         <source>Output directory is not set or doesn&apos;t exist.</source>
         <translation>Директория вывода не задана или не существует.</translation>
     </message>
     <message>
-        <location filename="../app/ProjectFilesDialog.cpp" line="474"/>
+        <location filename="../app/ProjectFilesDialog.cpp" line="465"/>
         <source>Some of the files failed to load.
 Either we don&apos;t support their format, or they are broken.
 You should remove them from the project.</source>
@@ -1465,18 +1549,18 @@ You should remove them from the project.</source>
 <context>
     <name>ProjectOpeningContext</name>
     <message>
-        <location filename="../app/ProjectOpeningContext.cpp" line="23"/>
-        <location filename="../app/ProjectOpeningContext.cpp" line="29"/>
+        <location filename="../app/ProjectOpeningContext.cpp" line="25"/>
+        <location filename="../app/ProjectOpeningContext.cpp" line="30"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../app/ProjectOpeningContext.cpp" line="24"/>
+        <location filename="../app/ProjectOpeningContext.cpp" line="26"/>
         <source>The project file is not compatible with the current application version.</source>
         <translation>Файл проекта несовместим с текущей версией приложения.</translation>
     </message>
     <message>
-        <location filename="../app/ProjectOpeningContext.cpp" line="29"/>
+        <location filename="../app/ProjectOpeningContext.cpp" line="30"/>
         <source>Unable to interpret the project file.</source>
         <translation>Не удалось интерпретировать файл проекта.</translation>
     </message>
@@ -1503,6 +1587,21 @@ You should remove them from the project.</source>
         <source>in</source>
         <translation></translation>
     </message>
+    <message>
+        <location filename="../app/ThumbnailSequence.cpp" line="703"/>
+        <source>Canceling multi page selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/ThumbnailSequence.cpp" line="704"/>
+        <source>%1 pages selection are going to be canceled. Continue?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/ThumbnailSequence.cpp" line="708"/>
+        <source>Don&apos;t show this message again.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>RelinkingDialog</name>
@@ -1522,17 +1621,17 @@ You should remove them from the project.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/RelinkingDialog.cpp" line="67"/>
+        <location filename="../app/RelinkingDialog.cpp" line="68"/>
         <source>Substitution File for %1</source>
         <translation>Файл для %1</translation>
     </message>
     <message>
-        <location filename="../app/RelinkingDialog.cpp" line="72"/>
+        <location filename="../app/RelinkingDialog.cpp" line="73"/>
         <source>Substitution Directory for %1</source>
         <translation>Папка для %1</translation>
     </message>
     <message>
-        <location filename="../app/RelinkingDialog.cpp" line="96"/>
+        <location filename="../app/RelinkingDialog.cpp" line="97"/>
         <source>This change would merge several files into one.</source>
         <translation>Это изменение объединит несколько файлов в один.</translation>
     </message>
@@ -1583,46 +1682,51 @@ You should remove them from the project.</source>
         <translation>Автосохранение текущего проекта</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="283"/>
+        <location filename="../app/SettingsDialog.ui" line="220"/>
+        <source>Show question on canceling multi page selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/SettingsDialog.ui" line="290"/>
         <source>Processing</source>
         <translation>Обработка</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="318"/>
+        <location filename="../app/SettingsDialog.ui" line="325"/>
         <source>Deviation</source>
         <translation>Отклонение</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="324"/>
+        <location filename="../app/SettingsDialog.ui" line="331"/>
         <source>Highlight the thumbnails of pages with high deviation</source>
         <translation>Подсвечивать страницы с большим отклонением</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="331"/>
+        <location filename="../app/SettingsDialog.ui" line="338"/>
         <source>Params</source>
         <translation>Параметры</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="346"/>
+        <location filename="../app/SettingsDialog.ui" line="353"/>
         <source>Select content:</source>
         <translation>Полезн. обл.:</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="353"/>
-        <location filename="../app/SettingsDialog.ui" line="376"/>
-        <location filename="../app/SettingsDialog.ui" line="421"/>
+        <location filename="../app/SettingsDialog.ui" line="360"/>
+        <location filename="../app/SettingsDialog.ui" line="383"/>
+        <location filename="../app/SettingsDialog.ui" line="431"/>
         <source>Deviation multiplier: a higher value means lower sensivity.</source>
         <translation>Множитель отклонения: большее значение обозначает меньшую чувствительность.</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="369"/>
+        <location filename="../app/SettingsDialog.ui" line="376"/>
         <source>Margins:</source>
         <translation>Поля:</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="392"/>
-        <location filename="../app/SettingsDialog.ui" line="405"/>
-        <location filename="../app/SettingsDialog.ui" line="437"/>
+        <location filename="../app/SettingsDialog.ui" line="399"/>
+        <location filename="../app/SettingsDialog.ui" line="415"/>
+        <location filename="../app/SettingsDialog.ui" line="447"/>
         <source>The minimum deviation to be highlighted.</source>
         <translation>Минимальное отклонение, которое будет подсвечено.</translation>
     </message>
@@ -1637,70 +1741,70 @@ You should remove them from the project.</source>
         <translation>Язык: </translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="223"/>
+        <location filename="../app/SettingsDialog.ui" line="230"/>
         <source>Saving</source>
         <translation>Сохранение</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="231"/>
+        <location filename="../app/SettingsDialog.ui" line="238"/>
         <source>B&amp;W Compression: </source>
         <translation>ЧБ сжатие: </translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="241"/>
+        <location filename="../app/SettingsDialog.ui" line="248"/>
         <source>Color Compression: </source>
         <translation>Цветное сжатие: </translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="22"/>
+        <location filename="../app/SettingsDialog.cpp" line="25"/>
         <source>Your hardware / driver don&apos;t provide the necessary features</source>
         <translation>Вашим оборудованием / драйвером эта функция не поддерживается</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="29"/>
+        <location filename="../app/SettingsDialog.cpp" line="32"/>
         <source>Dark</source>
         <translation>Темная</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="30"/>
+        <location filename="../app/SettingsDialog.cpp" line="33"/>
         <source>Light</source>
         <translation>Светлая</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="38"/>
-        <location filename="../app/SettingsDialog.cpp" line="44"/>
+        <location filename="../app/SettingsDialog.cpp" line="41"/>
+        <location filename="../app/SettingsDialog.cpp" line="47"/>
         <source>None</source>
         <translation>Без сжатия</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="39"/>
-        <location filename="../app/SettingsDialog.cpp" line="45"/>
+        <location filename="../app/SettingsDialog.cpp" line="42"/>
+        <location filename="../app/SettingsDialog.cpp" line="48"/>
         <source>LZW</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="40"/>
-        <location filename="../app/SettingsDialog.cpp" line="46"/>
+        <location filename="../app/SettingsDialog.cpp" line="43"/>
+        <location filename="../app/SettingsDialog.cpp" line="49"/>
         <source>Deflate</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="41"/>
+        <location filename="../app/SettingsDialog.cpp" line="44"/>
         <source>CCITT G4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="47"/>
+        <location filename="../app/SettingsDialog.cpp" line="50"/>
         <source>JPEG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="34"/>
+        <location filename="../app/SettingsDialog.cpp" line="37"/>
         <source>Information</source>
         <translation>Информация</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="35"/>
+        <location filename="../app/SettingsDialog.cpp" line="38"/>
         <source>ScanTailor need to be restarted to apply the color scheme changes.</source>
         <translation>Для применения цветовой схемы перезапустите приложение.</translation>
     </message>
@@ -1735,32 +1839,32 @@ You should remove them from the project.</source>
         <translation>Размер миниатюры при отображении. Значение по умолчанию - 250.</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="289"/>
+        <location filename="../app/SettingsDialog.ui" line="296"/>
         <source>White on black detection</source>
         <translation>Определение белого на черном</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="295"/>
+        <location filename="../app/SettingsDialog.ui" line="302"/>
         <source>Auto detect pages with light content on dark background. The corrections to all the auto algorithms are made for such pages.</source>
         <translation>Автоматически определять страницы со светлым контентом на темном фоне, чтобы откорректировать все автоматические алгоритмы.</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="298"/>
+        <location filename="../app/SettingsDialog.ui" line="305"/>
         <source>Auto detect light content on dark background</source>
         <translation>Автом. определять светлый контент на темном фоне</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="305"/>
+        <location filename="../app/SettingsDialog.ui" line="312"/>
         <source>Whether to use auto detection at the output stage. The wrong result can be changed manually in the output filter options.</source>
         <translation>Нужно ли использовать авто-определение на стадии выхода. Неверный результат может быть изменен вручную в опциях на стадии выхода.</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="308"/>
+        <location filename="../app/SettingsDialog.ui" line="315"/>
         <source>Use auto detection at the output stage</source>
         <translation>Авто-определение на стадии выхода</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.cpp" line="31"/>
+        <location filename="../app/SettingsDialog.cpp" line="34"/>
         <source>Native</source>
         <translation>Нативная</translation>
     </message>
@@ -1770,7 +1874,7 @@ You should remove them from the project.</source>
         <translation>Одноколоночное отображение миниатюр</translation>
     </message>
     <message>
-        <location filename="../app/SettingsDialog.ui" line="339"/>
+        <location filename="../app/SettingsDialog.ui" line="346"/>
         <source>Deskew:</source>
         <translation>Компенсация наклона:</translation>
     </message>
@@ -1778,7 +1882,7 @@ You should remove them from the project.</source>
 <context>
     <name>StageListView</name>
     <message>
-        <location filename="../core/StageListView.cpp" line="96"/>
+        <location filename="../core/StageListView.cpp" line="98"/>
         <source>Launch batch processing</source>
         <translation>Запустить пакетную обработку</translation>
     </message>
@@ -1792,56 +1896,74 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location filename="../app/StatusBarPanel.ui" line="44"/>
+        <source>Zone creation mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/StatusBarPanel.ui" line="47"/>
+        <source>The type of a new zone created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/StatusBarPanel.ui" line="76"/>
         <source>Mouse position.</source>
         <translation>Позиция курсора.</translation>
     </message>
     <message>
-        <location filename="../app/StatusBarPanel.ui" line="47"/>
+        <location filename="../app/StatusBarPanel.ui" line="79"/>
         <source>Mouse position relative to page.</source>
         <translation>Позиция курсора по отношению к странице.</translation>
     </message>
     <message>
-        <location filename="../app/StatusBarPanel.ui" line="76"/>
-        <source>Physical size.</source>
-        <translation>Физический размер.</translation>
-    </message>
-    <message>
-        <location filename="../app/StatusBarPanel.ui" line="79"/>
-        <source>Physical size of image.</source>
-        <translation>Физический размер изображения.</translation>
+        <location filename="../app/StatusBarPanel.ui" line="108"/>
+        <source>Image size.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/StatusBarPanel.ui" line="111"/>
+        <source>Image size in current units.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Physical size.</source>
+        <translation type="vanished">Физический размер.</translation>
+    </message>
+    <message>
+        <source>Physical size of image.</source>
+        <translation type="vanished">Физический размер изображения.</translation>
+    </message>
+    <message>
+        <location filename="../app/StatusBarPanel.ui" line="143"/>
         <source>Page number.</source>
         <translation>Номер страницы.</translation>
     </message>
     <message>
-        <location filename="../app/StatusBarPanel.ui" line="114"/>
+        <location filename="../app/StatusBarPanel.ui" line="146"/>
         <source>Position of the selected page in current order.</source>
         <translation>Позиция выбранной страницы в текущем порядке.</translation>
     </message>
     <message>
-        <location filename="../app/StatusBarPanel.ui" line="149"/>
+        <location filename="../app/StatusBarPanel.ui" line="181"/>
         <source>Page information.</source>
         <translation>Информация о странице.</translation>
     </message>
     <message>
-        <location filename="../app/StatusBarPanel.ui" line="152"/>
+        <location filename="../app/StatusBarPanel.ui" line="184"/>
         <source>Page name and type.</source>
         <translation>Имя страницы и тип.</translation>
     </message>
     <message>
-        <location filename="../app/StatusBarPanel.cpp" line="36"/>
+        <location filename="../app/StatusBarPanel.cpp" line="40"/>
         <source>p. %1 / %2</source>
         <translation>с. %1 / %2</translation>
     </message>
     <message>
-        <location filename="../app/StatusBarPanel.cpp" line="43"/>
+        <location filename="../app/StatusBarPanel.cpp" line="48"/>
         <source> [L]</source>
         <translation> [Л]</translation>
     </message>
     <message>
-        <location filename="../app/StatusBarPanel.cpp" line="43"/>
+        <location filename="../app/StatusBarPanel.cpp" line="48"/>
         <source> [R]</source>
         <translation> [П]</translation>
     </message>
@@ -1868,7 +1990,7 @@ You should remove them from the project.</source>
 <context>
     <name>ThumbnailSequence</name>
     <message>
-        <location filename="../app/ThumbnailSequence.cpp" line="1267"/>
+        <location filename="../app/ThumbnailSequence.cpp" line="1305"/>
         <source>%1 (page %2)</source>
         <translation>%1 (стр. %2)</translation>
     </message>
@@ -1876,12 +1998,12 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneContextMenuInteraction</name>
     <message>
-        <location filename="../core/zones/ZoneContextMenuInteraction.cpp" line="187"/>
+        <location filename="../core/zones/ZoneContextMenuInteraction.cpp" line="185"/>
         <source>Delete</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneContextMenuInteraction.cpp" line="191"/>
+        <location filename="../core/zones/ZoneContextMenuInteraction.cpp" line="189"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
@@ -1889,63 +2011,71 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneCreationInteraction</name>
     <message>
-        <location filename="../core/zones/ZoneCreationInteraction.cpp" line="295"/>
+        <location filename="../core/zones/ZoneCreationInteraction.cpp" line="303"/>
         <source>Click to finish this rectangular zone.  ESC to cancel.</source>
         <translation>Кликните для завершения этой прямоугольной зоны.  ESC для отмены.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneCreationInteraction.cpp" line="300"/>
+        <location filename="../core/zones/ZoneCreationInteraction.cpp" line="308"/>
         <source>Click to finish this zone.  ESC to cancel.</source>
         <translation>Кликните для завершения этой зоны.  ESC для отмены.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneCreationInteraction.cpp" line="302"/>
+        <location filename="../core/zones/ZoneCreationInteraction.cpp" line="310"/>
         <source>Connect first and last points to finish this zone.  ESC to cancel.</source>
         <translation>Соедините первую и последнюю точку для завершения этой зоны.  ESC для отмены.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneCreationInteraction.cpp" line="305"/>
-        <source>Hold Ctrl to create a rectangular zone or Shift+Alt+LMB to use lasso mode.  ESC to cancel.</source>
-        <translation></translation>
+        <location filename="../core/zones/ZoneCreationInteraction.cpp" line="313"/>
+        <source>Use Z and X keys to switch zone creation mode.  ESC to cancel.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ZoneDefaultInteraction</name>
     <message>
-        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="16"/>
         <source>Drag the vertex. Hold Ctrl to make the vertex angle right.</source>
-        <translation>Перетаскивайте вершину. Удерживайте Ctrl, чтобы сделать угол при вершине прямым.</translation>
+        <translation type="vanished">Перетаскивайте вершину. Удерживайте Ctrl, чтобы сделать угол при вершине прямым.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="17"/>
+        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="20"/>
+        <source>Drag the vertex. Hold Ctrl to make the vertex angle right. Press D to delete the vertex.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="21"/>
         <source>Click to create a new vertex here.</source>
         <translation>Кликните для создания новой вершины.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="19"/>
+        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="23"/>
         <source>Right click to edit zone properties. Hold Shift to drag the zone or Shift+Ctrl to copy. Press Del to delete this zone.</source>
         <translation>ПКМ для редактирования свойств зоны. Удерживайте Shift для перетаскивания зоны или Shift+Ctrl для копирования. Нажмите Del, чтобы удалить зону.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="21"/>
+        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="25"/>
         <source>Hold left mouse button to drag the zone.</source>
         <translation>Удерживайте ЛКМ для перетаскивания зоны.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="23"/>
+        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="27"/>
         <source>Hold left mouse button to copy and drag the zone.</source>
         <translation>Удерживайте ЛКМ чтобы скопировать и перетащить зону.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="26"/>
+        <location filename="../core/zones/ZoneDefaultInteraction.cpp" line="30"/>
+        <source>Click to start creating a new zone. Ctrl+Alt+Click to copy the latest created zone. Use Z, X and C keys to switch zone creation mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Click to start creating a new zone. Use Ctrl+Alt+Click to copy the latest created zone.</source>
-        <translation>Кликните, чтобы создать новую зону. Используйте Ctrl+Alt+Клик для копирования последней созданной зоны.</translation>
+        <translation type="vanished">Кликните, чтобы создать новую зону. Используйте Ctrl+Alt+Клик для копирования последней созданной зоны.</translation>
     </message>
 </context>
 <context>
     <name>ZoneDragInteraction</name>
     <message>
-        <location filename="../core/zones/ZoneDragInteraction.cpp" line="19"/>
+        <location filename="../core/zones/ZoneDragInteraction.cpp" line="21"/>
         <source>Release left mouse button to finish dragging.</source>
         <translation>Отпустите левую кнопку мыши для завершения перетаскивания.</translation>
     </message>
@@ -1953,12 +2083,12 @@ You should remove them from the project.</source>
 <context>
     <name>ZoneVertexDragInteraction</name>
     <message>
-        <location filename="../core/zones/ZoneVertexDragInteraction.cpp" line="154"/>
+        <location filename="../core/zones/ZoneVertexDragInteraction.cpp" line="156"/>
         <source>Merge these two vertices.</source>
         <translation>Объединить эти две вершины.</translation>
     </message>
     <message>
-        <location filename="../core/zones/ZoneVertexDragInteraction.cpp" line="156"/>
+        <location filename="../core/zones/ZoneVertexDragInteraction.cpp" line="158"/>
         <source>Move the vertex to one of its neighbors to merge them.</source>
         <translation>Придвиньте вершину к одной из соседних вершин, чтобы объединить их.</translation>
     </message>
@@ -2022,17 +2152,17 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::Filter</name>
     <message>
-        <location filename="../core/filters/deskew/Filter.cpp" line="28"/>
+        <location filename="../core/filters/deskew/Filter.cpp" line="30"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
     <message>
-        <location filename="../core/filters/deskew/Filter.cpp" line="29"/>
+        <location filename="../core/filters/deskew/Filter.cpp" line="31"/>
         <source>Order by decreasing deviation</source>
         <translation>Сортировка по убывающему отклонению</translation>
     </message>
     <message>
-        <location filename="../core/filters/deskew/Filter.cpp" line="35"/>
+        <location filename="../core/filters/deskew/Filter.cpp" line="37"/>
         <source>Deskew</source>
         <translation>Компенсация наклона</translation>
     </message>
@@ -2040,12 +2170,12 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::ImageView</name>
     <message>
-        <location filename="../core/filters/deskew/ImageView.cpp" line="28"/>
+        <location filename="../core/filters/deskew/ImageView.cpp" line="31"/>
         <source>Use Ctrl+Wheel to rotate or Ctrl+Shift+Wheel for finer rotation.</source>
         <translation>Используйте Ctrl+Колесо мыши для вращения, или Ctrl+Shift+Колесо мыши для более точного вращения.</translation>
     </message>
     <message>
-        <location filename="../core/filters/deskew/ImageView.cpp" line="30"/>
+        <location filename="../core/filters/deskew/ImageView.cpp" line="33"/>
         <source>Drag this handle to rotate the image.</source>
         <translation>Тяните эту рукоятку чтобы повернуть изображение.</translation>
     </message>
@@ -2053,7 +2183,7 @@ You should remove them from the project.</source>
 <context>
     <name>deskew::OptionsWidget</name>
     <message>
-        <location filename="../core/filters/deskew/OptionsWidget.cpp" line="33"/>
+        <location filename="../core/filters/deskew/OptionsWidget.cpp" line="32"/>
         <source>Apply Deskew</source>
         <translation>Область примененияомпенсацию наклона</translation>
     </message>
@@ -2148,7 +2278,7 @@ You should remove them from the project.</source>
 <context>
     <name>fix_orientation::Filter</name>
     <message>
-        <location filename="../core/filters/fix_orientation/Filter.cpp" line="33"/>
+        <location filename="../core/filters/fix_orientation/Filter.cpp" line="32"/>
         <source>Fix Orientation</source>
         <translation>Исправление ориентации</translation>
     </message>
@@ -2296,24 +2426,24 @@ You should remove them from the project.</source>
 <context>
     <name>output::ChangeDpiDialog</name>
     <message>
-        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="45"/>
+        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="47"/>
         <source>Custom</source>
         <translation>Особый</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="85"/>
-        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="92"/>
+        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="87"/>
+        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="93"/>
         <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="98"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="85"/>
+        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="87"/>
         <source>DPI is not set.</source>
         <translation>DPI не указан.</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="92"/>
+        <location filename="../core/filters/output/ChangeDpiDialog.cpp" line="93"/>
         <source>DPI is too low!</source>
         <translation>DPI слишком маленький!</translation>
     </message>
@@ -2366,7 +2496,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::FillZoneEditor</name>
     <message>
-        <location filename="../core/filters/output/FillZoneEditor.cpp" line="164"/>
+        <location filename="../core/filters/output/FillZoneEditor.cpp" line="161"/>
         <source>Pick color</source>
         <translation>Выбрать цвет</translation>
     </message>
@@ -2374,17 +2504,17 @@ You should remove them from the project.</source>
 <context>
     <name>output::Filter</name>
     <message>
-        <location filename="../core/filters/output/Filter.cpp" line="35"/>
+        <location filename="../core/filters/output/Filter.cpp" line="34"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/Filter.cpp" line="28"/>
+        <location filename="../core/filters/output/Filter.cpp" line="27"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/Filter.cpp" line="29"/>
+        <location filename="../core/filters/output/Filter.cpp" line="28"/>
         <source>Order by completeness</source>
         <translation>Сортировка по завершенности</translation>
     </message>
@@ -2392,52 +2522,57 @@ You should remove them from the project.</source>
 <context>
     <name>output::OptionsWidget</name>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="35"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="38"/>
         <source>Black and White</source>
         <translation>Черно-белый</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="36"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="39"/>
         <source>Color / Grayscale</source>
         <translation>Цветной / Серый</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="37"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="40"/>
         <source>Mixed</source>
         <translation>Смешанный</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="39"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="42"/>
         <source>Otsu</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="40"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="43"/>
         <source>Sauvola</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="41"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="44"/>
         <source>Wolf</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="43"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="46"/>
         <source>Background</source>
         <translation>Фон</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="44"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="47"/>
         <source>White</source>
         <translation>Белый</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="60"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="48"/>
+        <source>Black</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="64"/>
         <source>Free</source>
         <translation>Свободная</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="61"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="65"/>
         <source>Rectangular</source>
         <translation>Прямоугольная</translation>
     </message>
@@ -2457,33 +2592,33 @@ You should remove them from the project.</source>
         <translation>Применить восприятие глубины</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="59"/>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="670"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="63"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="664"/>
         <source>Off</source>
         <translation>Отключено</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="673"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="667"/>
         <source>Auto</source>
         <translation>Автоматически</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="676"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="670"/>
         <source>Manual</source>
         <translation>Вручную</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="679"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="673"/>
         <source>Marginal</source>
         <translation>По краям</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="689"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="683"/>
         <source>deskew disabled</source>
         <translation>Выравнивание отключено</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="969"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="956"/>
         <source>Apply Processing Settings</source>
         <translation>Применить настройки обработки</translation>
     </message>
@@ -2753,7 +2888,7 @@ You should remove them from the project.</source>
         <translation>Выпрямление</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/OptionsWidget.cpp" line="687"/>
+        <location filename="../core/filters/output/OptionsWidget.cpp" line="681"/>
         <source>deskew</source>
         <translation>компенс. наклона</translation>
     </message>
@@ -2835,7 +2970,7 @@ You should remove them from the project.</source>
 <context>
     <name>output::TabbedImageView</name>
     <message>
-        <location filename="../core/filters/output/TabbedImageView.cpp" line="15"/>
+        <location filename="../core/filters/output/TabbedImageView.cpp" line="17"/>
         <source>Use Ctrl+1..5 to switch the tabs.</source>
         <translation>Используйте Ctrl+1..5 для переключения табов.</translation>
     </message>
@@ -2843,37 +2978,37 @@ You should remove them from the project.</source>
 <context>
     <name>output::Task::UiUpdater</name>
     <message>
-        <location filename="../core/filters/output/Task.cpp" line="518"/>
+        <location filename="../core/filters/output/Task.cpp" line="523"/>
         <source>Picture zones are only available in Mixed mode.</source>
         <translation>Зоны картинок доступны только в режиме &quot;Смешанный&quot;.</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/Task.cpp" line="557"/>
+        <location filename="../core/filters/output/Task.cpp" line="562"/>
         <source>Despeckling can&apos;t be done in Color / Grayscale mode.</source>
         <translation>Удаление пятен не делается в режиме &quot;Цветной / Серый&quot;.</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/Task.cpp" line="568"/>
+        <location filename="../core/filters/output/Task.cpp" line="573"/>
         <source>Output</source>
         <translation>Вывод</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/Task.cpp" line="569"/>
+        <location filename="../core/filters/output/Task.cpp" line="574"/>
         <source>Picture Zones</source>
         <translation>Зоны картинок</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/Task.cpp" line="570"/>
+        <location filename="../core/filters/output/Task.cpp" line="575"/>
         <source>Fill Zones</source>
         <translation>Зоны заливки</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/Task.cpp" line="571"/>
+        <location filename="../core/filters/output/Task.cpp" line="576"/>
         <source>Dewarping</source>
         <translation>Выпрямл. строк</translation>
     </message>
     <message>
-        <location filename="../core/filters/output/Task.cpp" line="572"/>
+        <location filename="../core/filters/output/Task.cpp" line="577"/>
         <source>Despeckling</source>
         <translation>Удаление пятен</translation>
     </message>
@@ -2984,27 +3119,27 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::Filter</name>
     <message>
-        <location filename="../core/filters/page_layout/Filter.cpp" line="37"/>
+        <location filename="../core/filters/page_layout/Filter.cpp" line="35"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/Filter.cpp" line="38"/>
+        <location filename="../core/filters/page_layout/Filter.cpp" line="36"/>
         <source>Order by increasing width</source>
         <translation>Сортировка по возрастающей ширине</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/Filter.cpp" line="39"/>
+        <location filename="../core/filters/page_layout/Filter.cpp" line="37"/>
         <source>Order by increasing height</source>
         <translation>Сортировка по возрастающей высоте</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/Filter.cpp" line="40"/>
+        <location filename="../core/filters/page_layout/Filter.cpp" line="38"/>
         <source>Order by decreasing deviation</source>
         <translation>Сортировка по убывающему отклонению</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/Filter.cpp" line="46"/>
+        <location filename="../core/filters/page_layout/Filter.cpp" line="44"/>
         <source>Margins</source>
         <translation>Поля</translation>
     </message>
@@ -3012,47 +3147,47 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::ImageView</name>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="60"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="61"/>
         <source>Resize margins by dragging any of the solid lines.</source>
         <translation>Меняйте размеры полей, перетаскивая хоть внешние, хоть внутренние сплошные линии.</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="135"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="136"/>
         <source>Hold left mouse button to drag the page content.</source>
         <translation>Удерживайте ЛКМ для перетаскивания области страницы.</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="136"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="137"/>
         <source>Release left mouse button to finish dragging.</source>
         <translation>Отпустите левую кнопку мыши для завершения перетаскивания.</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="657"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="650"/>
         <source>Add a horizontal guide</source>
         <translation>Добавить горизонтальн. направл.</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="658"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="651"/>
         <source>Add a vertical guide</source>
         <translation>Добавить вертикальн. направл.</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="659"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="652"/>
         <source>Remove all the guides</source>
         <translation>Удалить все направляющие</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="660"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="653"/>
         <source>Remove this guide</source>
         <translation>Удалить направляющую</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="662"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="655"/>
         <source>Show hard margins rectangle</source>
         <translation>Показывать жесткие поля</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/ImageView.cpp" line="809"/>
+        <location filename="../core/filters/page_layout/ImageView.cpp" line="801"/>
         <source>Drag the guide.</source>
         <translation>Перетаскивайте направляющую.</translation>
     </message>
@@ -3060,12 +3195,12 @@ You should remove them from the project.</source>
 <context>
     <name>page_layout::OptionsWidget</name>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.cpp" line="315"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.cpp" line="296"/>
         <source>Apply Margins</source>
         <translation>Применить поля</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.cpp" line="323"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.cpp" line="304"/>
         <source>Apply Alignment</source>
         <translation>Применить выравнивание</translation>
     </message>
@@ -3087,15 +3222,15 @@ You should remove them from the project.</source>
     <message>
         <location filename="../core/filters/page_layout/OptionsWidget.ui" line="117"/>
         <location filename="../core/filters/page_layout/OptionsWidget.ui" line="186"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="548"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="571"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="594"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="617"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="640"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="666"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="689"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="712"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="735"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="477"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="500"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="523"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="546"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="569"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="595"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="618"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="641"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="664"/>
         <source>...</source>
         <translation></translation>
     </message>
@@ -3121,7 +3256,7 @@ You should remove them from the project.</source>
     </message>
     <message>
         <location filename="../core/filters/page_layout/OptionsWidget.ui" line="285"/>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="790"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="719"/>
         <source>Apply To ...</source>
         <translation>Применить...</translation>
     </message>
@@ -3136,50 +3271,72 @@ You should remove them from the project.</source>
         <translation>Выровнять размер с остальн. стр.</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="380"/>
-        <source>Mode:</source>
-        <translation>Режим:</translation>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="382"/>
+        <source>Horizontal mode:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="391"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="389"/>
+        <source>Vertical mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="819"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to create/remove guides from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Right-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on a guide to delete that guide from the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; called.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Ctrl+Alt+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; - drag the guide under the cursor.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to restrict moving along the horizontal axis only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for the vertical one. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for usual dragging.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Double-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to select vertical guides only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode:</source>
+        <translation type="vanished">Режим:</translation>
+    </message>
+    <message>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="400"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="422"/>
         <source>Auto</source>
         <comment>auto</comment>
         <translation>Автоматически</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="396"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="405"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="427"/>
         <source>Manual</source>
         <comment>manual</comment>
         <translation>Вручную</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="401"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="410"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="432"/>
         <source>Original</source>
         <comment>original</comment>
         <translation>Оригинал</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="424"/>
         <source>Auto aligning</source>
-        <translation>Авто выравнивание</translation>
+        <translation type="vanished">Авто выравнивание</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="460"/>
         <source>Enable horizontal</source>
-        <translation>Вкл. горизонтальное</translation>
+        <translation type="vanished">Вкл. горизонтальное</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="500"/>
         <source>Enable vertical</source>
-        <translation>Вкл. вертикальное</translation>
+        <translation type="vanished">Вкл. вертикальное</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="821"/>
+        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="750"/>
         <source>Guides Help</source>
         <translation>Помощь по направляющим</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_layout/OptionsWidget.ui" line="890"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -3190,7 +3347,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Shift/Ctrl+LMB&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on the content rectangle - drag the page content. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to restrict moving along the horizontal axis only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for the vertical one. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for usual dragging.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣ Double-click&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; on content - automatically attach that content to the nearest guide. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; pressed to select vertical guides only or &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; for horizontal ones. Hold &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;Shift+Ctrl&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to attach that to both the nearest vertical and horizontal guides.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;‣&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; Use the &lt;/span&gt;&lt;span style=&quot; font-size:7pt; font-weight:600;&quot;&gt;context menu&lt;/span&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt; to enable/disable showing the hard margins rectangle.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -3223,7 +3380,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>page_split::ImageView</name>
     <message>
-        <location filename="../core/filters/page_split/ImageView.cpp" line="57"/>
+        <location filename="../core/filters/page_split/ImageView.cpp" line="60"/>
         <source>Drag the line or the handles.</source>
         <translation>Тяните линию или рукоятки.</translation>
     </message>
@@ -3231,15 +3388,15 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>page_split::OptionsWidget</name>
     <message>
-        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="74"/>
-        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="165"/>
-        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="259"/>
+        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="73"/>
+        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="157"/>
+        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="251"/>
         <source>Set manually</source>
         <translation>Установлено вручную</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="124"/>
-        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="256"/>
+        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="118"/>
+        <location filename="../core/filters/page_split/OptionsWidget.cpp" line="248"/>
         <source>Auto detected</source>
         <translation>Определено автоматически</translation>
     </message>
@@ -3254,27 +3411,27 @@ p, li { white-space: pre-wrap; }
         <translation>Тип разреза</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_split/OptionsWidget.ui" line="137"/>
+        <location filename="../core/filters/page_split/OptionsWidget.ui" line="134"/>
         <source>?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/filters/page_split/OptionsWidget.ui" line="162"/>
+        <location filename="../core/filters/page_split/OptionsWidget.ui" line="159"/>
         <source>Change ...</source>
         <translation>Применить...</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_split/OptionsWidget.ui" line="187"/>
+        <location filename="../core/filters/page_split/OptionsWidget.ui" line="184"/>
         <source>Split Line</source>
         <translation>Разделительная линия</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_split/OptionsWidget.ui" line="207"/>
+        <location filename="../core/filters/page_split/OptionsWidget.ui" line="204"/>
         <source>Auto</source>
         <translation>Автоматически</translation>
     </message>
     <message>
-        <location filename="../core/filters/page_split/OptionsWidget.ui" line="223"/>
+        <location filename="../core/filters/page_split/OptionsWidget.ui" line="220"/>
         <source>Manual</source>
         <translation>Вручную</translation>
     </message>
@@ -3365,7 +3522,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>page_split::UnremoveButton</name>
     <message>
-        <location filename="../core/filters/page_split/UnremoveButton.cpp" line="17"/>
+        <location filename="../core/filters/page_split/UnremoveButton.cpp" line="19"/>
         <source>Restore removed page.</source>
         <translation>Вернуть на место удаленную страницу.</translation>
     </message>
@@ -3448,27 +3605,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>select_content::Filter</name>
     <message>
-        <location filename="../core/filters/select_content/Filter.cpp" line="37"/>
+        <location filename="../core/filters/select_content/Filter.cpp" line="36"/>
         <source>Natural order</source>
         <translation>Естественный порядок</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/Filter.cpp" line="38"/>
+        <location filename="../core/filters/select_content/Filter.cpp" line="37"/>
         <source>Order by increasing width</source>
         <translation>Сортировка по возрастающей ширине</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/Filter.cpp" line="39"/>
+        <location filename="../core/filters/select_content/Filter.cpp" line="38"/>
         <source>Order by increasing height</source>
         <translation>Сортировка по возрастающей высоте</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/Filter.cpp" line="40"/>
+        <location filename="../core/filters/select_content/Filter.cpp" line="39"/>
         <source>Order by decreasing deviation</source>
         <translation>Сортировка по убывающему отклонению</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/Filter.cpp" line="46"/>
+        <location filename="../core/filters/select_content/Filter.cpp" line="45"/>
         <source>Select Content</source>
         <translation>Полезная область</translation>
     </message>
@@ -3476,43 +3633,43 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>select_content::ImageView</name>
     <message>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="47"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="45"/>
         <source>Use the context menu to enable / disable the content box. Hold Shift to drag a box. Use double-click on content to automatically adjust the content area.</source>
         <translation>Исп. контекстное меню для вкл. / выкл. полезной области. Удерж. Shift для перетаскивания области. Исп. двойной клик по контенту, чтобы автом. настроить полезную область.</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="50"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="48"/>
         <source>Drag lines or corners to resize the content box.</source>
         <translation>Перетаскивайте линии или углы, чтобы изменить размеры полезной области.</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="51"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="49"/>
         <source>Drag lines or corners to resize the page box.</source>
         <translation>Перетаскивайте стороны или углы для изменения размера области страницы.</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="122"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="120"/>
         <source>Hold left mouse button to drag the content box.</source>
         <translation>Зажмите левую кнопку мыши для перетаскивания полезной области.</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="123"/>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="129"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="121"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="127"/>
         <source>Release left mouse button to finish dragging.</source>
         <translation>Отпустите левую кнопку мыши для завершения перетаскивания.</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="128"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="126"/>
         <source>Hold left mouse button to drag the page box.</source>
         <translation>Удерживайте левую кнопку мыши для перетаскивания области страницы.</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="151"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="149"/>
         <source>Create Content Box</source>
         <translation>Создать полезную область</translation>
     </message>
     <message>
-        <location filename="../core/filters/select_content/ImageView.cpp" line="152"/>
+        <location filename="../core/filters/select_content/ImageView.cpp" line="150"/>
         <source>Remove Content Box</source>
         <translation>Убрать полезную область</translation>
     </message>

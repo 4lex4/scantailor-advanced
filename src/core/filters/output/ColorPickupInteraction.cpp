@@ -5,8 +5,9 @@
 
 #include <QKeyEvent>
 #include <QPainter>
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 
+#include "ApplicationSettings.h"
 #include "ImageViewBase.h"
 #include "ScopedIncDec.h"
 #include "ZoneInteractionContext.h"
@@ -67,14 +68,22 @@ void ColorPickupInteraction::takeColor() {
   const ScopedIncDec<int> guard(m_dontDrawCircle);
 
   const QRect rect(targetBoundingRect());
-  const QPixmap pixmap = m_context.imageView().grab(rect);
-  if (pixmap.isNull()) {
-    return;
+  QImage image;
+  if (ApplicationSettings::getInstance().isOpenGlEnabled()) {
+    image = m_context.imageView().sampleImageAtWidgetRect(rect);
   }
-  const QImage image(pixmap.toImage().convertToFormat(QImage::Format_RGB32));
+  if (image.isNull()) {
+    const QPixmap pixmap = m_context.imageView().grab(rect);
+    if (pixmap.isNull()) {
+      return;
+    }
+    image = pixmap.toImage().convertToFormat(QImage::Format_RGB32);
+  } else {
+    image = image.convertToFormat(QImage::Format_RGB32);
+  }
 
-  const int width = rect.width();
-  const int height = rect.height();
+  const int width = image.width();
+  const int height = image.height();
   const int xCenter = width / 2;
   const int yCenter = height / 2;
   const int sqdistThreshold = xCenter * yCenter;

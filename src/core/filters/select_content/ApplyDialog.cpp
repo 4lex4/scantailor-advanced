@@ -49,12 +49,11 @@ void ApplyDialog::onSubmit() {
   } else if (everyOtherRB->isChecked()) {
     m_pages.selectEveryOther(m_curPage).swap(pages);
   } else if (thisEveryOtherRB->isChecked()) {
-    std::set<PageId> tmp;
-    m_pages.selectPagePlusFollowers(m_curPage).swap(tmp);
-    auto it = tmp.begin();
-    for (int i = 0; it != tmp.end(); ++it, ++i) {
-      if (i % 2 == 0) {
-        pages.insert(*it);
+    // "This page and the following every other" in document order (issue #84).
+    const int baseIdx = m_pages.pageNo(m_curPage);
+    if (baseIdx >= 0) {
+      for (size_t i = static_cast<size_t>(baseIdx); i < m_pages.numPages(); i += 2) {
+        pages.insert(m_pages.pageAt(i).id());
       }
     }
   } else if (everyOtherSelectedRB->isChecked()) {

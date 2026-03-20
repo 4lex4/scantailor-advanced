@@ -9,7 +9,7 @@
 #include <QWidget>
 
 namespace output {
-class BinarizationOptionsWidget : public QWidget {
+class OptionsWidgetBinarization : public QWidget {
   Q_OBJECT
  public:
   virtual void updateUi(const PageId& m_pageId) = 0;

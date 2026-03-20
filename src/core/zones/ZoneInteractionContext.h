@@ -4,6 +4,7 @@
 #ifndef SCANTAILOR_ZONES_ZONEINTERACTIONCONTEXT_H_
 #define SCANTAILOR_ZONES_ZONEINTERACTIONCONTEXT_H_
 
+#include <QPoint>
 #include <boost/function.hpp>
 
 #include "EditableSpline.h"
@@ -87,6 +88,10 @@ class ZoneInteractionContext {
 
   void setShowPropertiesCommand(const ShowPropertiesCommand& command) { m_showPropertiesCommand = command; }
 
+  void setLastContextMenuScreenPos(const QPoint& pos) { m_lastContextMenuScreenPos = pos; }
+
+  QPoint lastContextMenuScreenPos() const { return m_lastContextMenuScreenPos; }
+
   ZoneCreationMode getZoneCreationMode() const { return m_zoneCreationMode; }
 
   void setZoneCreationMode(ZoneCreationMode zoneCreationMode) { m_zoneCreationMode = zoneCreationMode; }
@@ -130,6 +135,7 @@ class ZoneInteractionContext {
   ContextMenuInteractionCreator m_contextMenuInteractionCreator;
   ShowPropertiesCommand m_showPropertiesCommand;
   ZoneCreationMode m_zoneCreationMode;
+  QPoint m_lastContextMenuScreenPos;
 };
 
 

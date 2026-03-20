@@ -57,6 +57,19 @@
        </layout>
       </item>
       <item>
+       <widget class="QCheckBox" name="topEdgeCheckBox">
+        <property name="toolTip">
+         <string>Use the top page edge for deskew (recommended for book scans with dark background).</string>
+        </property>
+        <property name="text">
+         <string>Top page edge (book scans)</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout">
         <item>
          <spacer>
@@ -93,6 +106,33 @@
            </size>
           </property>
          </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout">
+        <item>
+         <widget class="QLabel" name="obliqueLabel">
+          <property name="text">
+           <string>Oblique (°):</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="obliqueSpinBox">
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="minimum">
+           <double>-5.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>5.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

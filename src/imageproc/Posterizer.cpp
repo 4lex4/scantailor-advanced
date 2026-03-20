@@ -4,7 +4,9 @@
 #include "Posterizer.h"
 
 #include <cassert>
+#include <list>
 #include <set>
+#include <stdexcept>
 #include <unordered_set>
 
 #include "BinaryImage.h"
@@ -43,7 +45,7 @@ QVector<QRgb> paletteFromRgb(const QImage& image) {
     imgLine += imgStride;
   }
 
-  QVector<QRgb> palette(colorSet.size());
+  QVector<QRgb> palette((int) (colorSet.size()));
   std::copy(colorSet.begin(), colorSet.end(), std::back_inserter(palette));
   return palette;
 }
@@ -177,7 +179,7 @@ void remapColorsInIndexedImage(QImage& image, const std::unordered_map<uint32_t,
     }
   }
 
-  QVector<QRgb> newColorTable(colorToIndexMap.size());
+  QVector<QRgb> newColorTable((int) (colorToIndexMap.size()));
   for (const auto& colorAndIndex : colorToIndexMap) {
     newColorTable[colorAndIndex.second] = colorAndIndex.first;
   }

@@ -83,10 +83,10 @@ class TiffReader::TiffBuffer {
 struct TiffReader::TiffInfo {
   int width;
   int height;
-  uint16 bitsPerSample;
-  uint16 samplesPerPixel;
-  uint16 sampleFormat;
-  uint16 photometric;
+  uint16_t bitsPerSample;
+  uint16_t samplesPerPixel;
+  uint16_t sampleFormat;
+  uint16_t photometric;
   bool hostBigEndian;
   bool fileBigEndian;
 
@@ -105,7 +105,7 @@ TiffReader::TiffInfo::TiffInfo(const TiffHandle& tif, const TiffHeader& header)
       photometric(PHOTOMETRIC_MINISBLACK),
       hostBigEndian(QSysInfo::ByteOrder == QSysInfo::BigEndian),
       fileBigEndian(header.signature() == TiffHeader::TIFF_BIG_ENDIAN) {
-  uint16 compression = 1;
+  uint16_t compression = 1;
   TIFFGetField(tif.handle(), TIFFTAG_COMPRESSION, &compression);
   switch (compression) {
     case COMPRESSION_CCITTFAX3:
@@ -230,10 +230,10 @@ ImageMetadataLoader::Status TiffReader::readMetadata(QIODevice& device,
   return ImageMetadataLoader::LOADED;
 }
 
-static void convertAbgrToArgb(const uint32* src, uint32* dst, int count) {
+static void convertAbgrToArgb(const uint32_t* src, uint32_t* dst, int count) {
   for (int i = 0; i < count; ++i) {
-    const uint32 srcWord = src[i];
-    uint32 dstWord = srcWord & 0xFF000000;    // A
+    const uint32_t srcWord = src[i];
+    uint32_t dstWord = srcWord & 0xFF000000;  // A
     dstWord |= (srcWord & 0x00FF0000) >> 16;  // B
     dstWord |= srcWord & 0x0000FF00;          // G
     dstWord |= (srcWord & 0x000000FF) << 16;  // R
@@ -261,7 +261,7 @@ QImage TiffReader::readImage(QIODevice& device, const int pageNum) {
     return QImage();
   }
 
-  if (!TIFFSetDirectory(tif.handle(), (uint16) pageNum)) {
+  if (!TIFFSetDirectory(tif.handle(), (uint16_t) pageNum)) {
     return QImage();
   }
 
@@ -282,25 +282,25 @@ QImage TiffReader::readImage(QIODevice& device, const int pageNum) {
     }
 
     // For ABGR -> ARGB conversion.
-    TiffBuffer<uint32> tmpBuffer;
-    const uint32* srcLine = nullptr;
+    TiffBuffer<uint32_t> tmpBuffer;
+    const uint32_t* srcLine = nullptr;
 
     if (image.bytesPerLine() == 4 * info.width) {
       // We can avoid creating a temporary buffer in this case.
-      if (!TIFFReadRGBAImageOriented(tif.handle(), info.width, info.height, (uint32*) image.bits(), ORIENTATION_TOPLEFT,
-                                     0)) {
+      if (!TIFFReadRGBAImageOriented(tif.handle(), info.width, info.height, (uint32_t*) image.bits(),
+                                     ORIENTATION_TOPLEFT, 0)) {
         return QImage();
       }
-      srcLine = (const uint32*) image.bits();
+      srcLine = (const uint32_t*) image.bits();
     } else {
-      TiffBuffer<uint32>(info.width * info.height).swap(tmpBuffer);
+      TiffBuffer<uint32_t>(info.width * info.height).swap(tmpBuffer);
       if (!TIFFReadRGBAImageOriented(tif.handle(), info.width, info.height, tmpBuffer.data(), ORIENTATION_TOPLEFT, 0)) {
         return QImage();
       }
       srcLine = tmpBuffer.data();
     }
 
-    auto* dstLine = (uint32*) image.bits();
+    auto* dstLine = (uint32_t*) image.bits();
     assert(image.bytesPerLine() % 4 == 0);
     const int dstStride = image.bytesPerLine() / 4;
     for (int y = 0; y < info.height; ++y) {
@@ -324,14 +324,14 @@ TiffReader::TiffHeader TiffReader::readHeader(QIODevice& device) {
     return TiffHeader();
   }
 
-  const uint16 versionByte0 = data[2];
-  const uint16 versionByte1 = data[3];
+  const uint16_t versionByte0 = data[2];
+  const uint16_t versionByte1 = data[3];
 
   if ((data[0] == 0x4d) && (data[1] == 0x4d)) {
-    const uint16 version = (versionByte0 << 8) + versionByte1;
+    const uint16_t version = (versionByte0 << 8) + versionByte1;
     return TiffHeader(TiffHeader::TIFF_BIG_ENDIAN, version);
   } else if ((data[0] == 0x49) && (data[1] == 0x49)) {
-    const uint16 version = (versionByte1 << 8) + versionByte0;
+    const uint16_t version = (versionByte1 << 8) + versionByte0;
     return TiffHeader(TiffHeader::TIFF_LITTLE_ENDIAN, version);
   } else {
     return TiffHeader();
@@ -349,9 +349,9 @@ bool TiffReader::checkHeader(const TiffHeader& header) {
 }
 
 ImageMetadata TiffReader::currentPageMetadata(const TiffHandle& tif) {
-  uint32 width = 0, height = 0;
+  uint32_t width = 0, height = 0;
   float xres = 0, yres = 0;
-  uint16 resUnit = 0;
+  uint16_t resUnit = 0;
   TIFFGetField(tif.handle(), TIFFTAG_IMAGEWIDTH, &width);
   TIFFGetField(tif.handle(), TIFFTAG_IMAGELENGTH, &height);
   TIFFGetField(tif.handle(), TIFFTAG_XRESOLUTION, &xres);
@@ -389,9 +389,9 @@ QImage TiffReader::extractBinaryOrIndexed8Image(const TiffHandle& tif, const Tif
   image.setColorCount(numColors);
 
   if (info.photometric == PHOTOMETRIC_PALETTE) {
-    uint16* pr = nullptr;
-    uint16* pg = nullptr;
-    uint16* pb = nullptr;
+    uint16_t* pr = nullptr;
+    uint16_t* pg = nullptr;
+    uint16_t* pb = nullptr;
     TIFFGetField(tif.handle(), TIFFTAG_COLORMAP, &pr, &pg, &pb);
     if (!pr || !pg || !pb) {
       return QImage();
@@ -403,10 +403,10 @@ QImage TiffReader::extractBinaryOrIndexed8Image(const TiffHandle& tif, const Tif
     }
     const double f = 255.0 / 65535.0;
     for (int i = 0; i < numColors; ++i) {
-      const auto r = (uint32) std::lround(pr[i] * f);
-      const auto g = (uint32) std::lround(pg[i] * f);
-      const auto b = (uint32) std::lround(pb[i] * f);
-      const uint32 a = 0xFF000000;
+      const auto r = (uint32_t) std::lround(pr[i] * f);
+      const auto g = (uint32_t) std::lround(pg[i] * f);
+      const auto b = (uint32_t) std::lround(pb[i] * f);
+      const uint32_t a = 0xFF000000;
       image.setColor(i, a | (r << 16) | (g << 8) | b);
     }
   } else if (info.photometric == PHOTOMETRIC_MINISBLACK) {
@@ -442,7 +442,7 @@ void TiffReader::readLines(const TiffHandle& tif, QImage& image) {
 }
 
 void TiffReader::readAndUnpackLines(const TiffHandle& tif, const TiffInfo& info, QImage& image) {
-  TiffBuffer<uint8> buf(TIFFScanlineSize(tif.handle()));
+  TiffBuffer<uint8_t> buf(TIFFScanlineSize(tif.handle()));
 
   const int width = image.width();
   const int height = image.height();
@@ -455,7 +455,7 @@ void TiffReader::readAndUnpackLines(const TiffHandle& tif, const TiffInfo& info,
     unsigned accum = 0;
     int bitsInAccum = 0;
 
-    const uint8* src = buf.data();
+    const uint8_t* src = buf.data();
     auto* dst = image.scanLine(y);
 
     for (int i = width; i > 0; --i, ++dst) {
@@ -466,7 +466,7 @@ void TiffReader::readAndUnpackLines(const TiffHandle& tif, const TiffInfo& info,
         ++src;
       }
       bitsInAccum -= bitsPerSample;
-      *dst = static_cast<uint8>((accum >> bitsInAccum) & dstMask);
+      *dst = static_cast<uint8_t>((accum >> bitsInAccum) & dstMask);
     }
   }
 }

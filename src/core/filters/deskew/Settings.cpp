@@ -10,7 +10,7 @@
 using namespace core;
 
 namespace deskew {
-Settings::Settings() {
+Settings::Settings() : m_algoContentBased(true) {
   m_deviationProvider.setComputeValueByKey([this](const PageId& pageId) -> double {
     auto it(m_perPageParams.find(pageId));
     if (it != m_perPageParams.end()) {
@@ -86,5 +86,15 @@ bool Settings::isParamsNull(const PageId& pageId) const {
 
 const DeviationProvider<PageId>& Settings::deviationProvider() const {
   return m_deviationProvider;
+}
+
+void Settings::setAlgoContentBased(bool contentBased) {
+  QMutexLocker locker(&m_mutex);
+  m_algoContentBased = contentBased;
+}
+
+bool Settings::algoContentBased() const {
+  QMutexLocker locker(&m_mutex);
+  return m_algoContentBased;
 }
 }  // namespace deskew

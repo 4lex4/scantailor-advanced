@@ -4,6 +4,7 @@
 #include "InfluenceMap.h"
 
 #include <QImage>
+#include <stdexcept>
 
 #include "BinaryImage.h"
 #include "BitOps.h"

@@ -46,7 +46,7 @@ std::unique_ptr<DefaultParams> DefaultParamsProfileManager::readProfile(const QS
   QDir dir(m_path);
   QFileInfo profile(dir.absoluteFilePath(name + ".stp"));
   if (!profile.exists()) {
-    profile = dir.absoluteFilePath(name + ".xml");
+    profile = QFileInfo(dir.absoluteFilePath(name + ".xml"));
     if (!profile.exists()) {
       if (status) {
         *status = IO_ERROR;
@@ -149,7 +149,7 @@ bool DefaultParamsProfileManager::deleteProfile(const QString& name) const {
   QDir dir(m_path);
   QFileInfo profile(dir.absoluteFilePath(name + ".stp"));
   if (!profile.exists()) {
-    profile = dir.absoluteFilePath(name + ".xml");
+    profile = QFileInfo(dir.absoluteFilePath(name + ".xml"));
     if (!profile.exists()) {
       return false;
     }

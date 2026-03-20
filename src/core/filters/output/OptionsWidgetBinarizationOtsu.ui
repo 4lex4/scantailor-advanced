@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>output::OtsuBinarizationOptionsWidget</class>
- <widget class="QWidget" name="output::OtsuBinarizationOptionsWidget">
+ <class>output::OptionsWidgetBinarizationOtsu</class>
+ <widget class="QWidget" name="output::OptionsWidgetBinarizationOtsu">
   <property name="geometry">
    <rect>
     <x>0</x>

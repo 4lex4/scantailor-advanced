@@ -33,6 +33,9 @@ class FilterOptionsWidget : public QWidget {
    * there is no one using this signal.  It's a candidate for removal.
    */
   void goToPage(const PageId& pageId);
+
+  /** Emitted when the user requests the Fix DPI dialog (e.g. from Margins panel, issue #93). */
+  void fixDpiRequested();
 };
 
 

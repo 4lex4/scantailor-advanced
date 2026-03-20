@@ -1,0 +1,129 @@
+CMakeLists.txt.user
+build/
+build-*/
+cmake-build-*/
+out/
+bin/
+lib/
+*.dir/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+*.cbp
+CTestTestfile.cmake
+_deps/
+install_manifest.txt
+compile_commands.json
+
+# C/C++ compilado
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.i
+*.ii
+*.s
+*.S
+*.gcno
+*.gcda
+*.gcov
+
+# Qt
+*.pro.user
+*.pro.user.*
+*.qmlc
+*.jsc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.qm
+.qmake.stash
+*.autosave
+
+# Qt Creator
+*.creator
+*.creator.user
+*.files
+*.includes
+*.config
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*~
+*.swp
+*.swo
+.*.sw?
+
+# Sistema operativo
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Depuradores y profiling
+*.core
+/core
+*.stackdump
+*.pdb
+*.ilk
+*.exp
+*.idb
+*.pgc
+*.pgd
+perf.data
+perf.data.old
+
+# Documentación generada
+doc/html/
+doc/latex/
+docs/_build/
+*.dox
+
+# Tests y cobertura
+Testing/
+test_results/
+coverage/
+*.gcov
+lcov.info
+
+# Empaquetado y distribución
+*.tar
+*.tar.gz
+*.zip
+*.rar
+*.deb
+*.rpm
+*.msi
+packaging/build/
+
+# Variables de entorno / local
+.env
+.env.local
+*.local
+local.cmake
+
+# Otros
+*.log
+*.tmp
+*.temp
+*.bak
+*.cache
+.cache/

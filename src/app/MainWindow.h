@@ -262,7 +262,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
 
   bool saveProjectWithFeedback(const QString& projectFile);
 
-  void showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId& existig);
+  void showInsertFileDialog(BeforeOrAfter beforeOrAfter, const ImageId& existing);
 
   void showRemovePagesDialog(const std::set<PageId>& pages);
 
@@ -323,6 +323,7 @@ class MainWindow : public QMainWindow, private FilterUiInterface, private Ui::Ma
   QObjectCleanupHandler m_imageWidgetCleanup;
   std::unique_ptr<OutOfMemoryDialog> m_outOfMemoryDialog;
   int m_curFilter;
+  double m_savedZoomLevel;
   int m_ignoreSelectionChanges;
   int m_ignorePageOrderingChanges;
   bool m_debug;

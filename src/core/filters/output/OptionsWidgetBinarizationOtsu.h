@@ -1,8 +1,8 @@
 // Copyright (C) 2019  Joseph Artsimovich <joseph.artsimovich@gmail.com>, 4lex4 <4lex49@zoho.com>
 // Use of this source code is governed by the GNU GPLv3 license that can be found in the LICENSE file.
 
-#ifndef SCANTAILOR_OUTPUT_SAUVOLABINARIZATIONOPTIONSWIDGET_H_
-#define SCANTAILOR_OUTPUT_SAUVOLABINARIZATIONOPTIONSWIDGET_H_
+#ifndef SCANTAILOR_OUTPUT_OTSUBINARIZATIONOPTIONSWIDGET_H_
+#define SCANTAILOR_OUTPUT_OTSUBINARIZATIONOPTIONSWIDGET_H_
 
 #include <core/ConnectionManager.h>
 
@@ -10,32 +10,39 @@
 #include <list>
 #include <memory>
 
-#include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
+#include "OptionsWidgetBinarization.h"
 #include "Settings.h"
-#include "ui_SauvolaBinarizationOptionsWidget.h"
+#include "ui_OptionsWidgetBinarizationOtsu.h"
 
 namespace output {
-class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
-                                         private Ui::SauvolaBinarizationOptionsWidget {
+class OptionsWidgetBinarizationOtsu : public OptionsWidgetBinarization, private Ui::OptionsWidgetBinarizationOtsu {
   Q_OBJECT
  public:
-  explicit SauvolaBinarizationOptionsWidget(std::shared_ptr<Settings> settings);
+  explicit OptionsWidgetBinarizationOtsu(std::shared_ptr<Settings> settings);
 
-  ~SauvolaBinarizationOptionsWidget() override = default;
+  ~OptionsWidgetBinarizationOtsu() override = default;
 
   void updateUi(const PageId& m_pageId) override;
 
  private slots:
 
-  void windowSizeChanged(int value);
+  void thresholdSliderReleased();
 
-  void sauvolaCoefChanged(double value);
+  void thresholdSliderValueChanged(int value);
+
+  void setLighterThreshold();
+
+  void setDarkerThreshold();
+
+  void setNeutralThreshold();
 
   void sendStateChanged();
 
  private:
   void updateView();
+
+  void setThresholdAdjustment(int value);
 
   void setupUiConnections();
 
@@ -43,11 +50,10 @@ class SauvolaBinarizationOptionsWidget : public BinarizationOptionsWidget,
   PageId m_pageId;
   ColorParams m_colorParams;
   QTimer m_delayedStateChanger;
-  OutputProcessingParams m_outputProcessingParams;
 
   ConnectionManager m_connectionManager;
 };
 }  // namespace output
 
 
-#endif  // SCANTAILOR_OUTPUT_SAUVOLABINARIZATIONOPTIONSWIDGET_H_
+#endif  // SCANTAILOR_OUTPUT_OTSUBINARIZATIONOPTIONSWIDGET_H_

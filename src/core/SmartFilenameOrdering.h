@@ -5,6 +5,7 @@
 #define SCANTAILOR_CORE_SMARTFILENAMEORDERING_H_
 
 class QFileInfo;
+class QString;
 
 class SmartFilenameOrdering {
  public:
@@ -21,6 +22,7 @@ class SmartFilenameOrdering {
    * \return true if \p lhs should go before \p rhs.
    */
   bool operator()(const QFileInfo& lhs, const QFileInfo& rhs) const;
+  bool operator()(QString const& lhs, QString const& rhs) const;
 };
 
 

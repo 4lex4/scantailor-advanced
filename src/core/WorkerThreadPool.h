@@ -30,6 +30,11 @@ class WorkerThreadPool : public QObject {
 
   bool hasSpareCapacity() const;
 
+  /**
+   * \brief Override max thread count (e.g. for CLI). If >= 0, used instead of QSettings.
+   */
+  void setMaxThreadOverride(int count) { m_maxThreadsOverride = count; }
+
   void submitTask(const BackgroundTaskPtr& task);
 
  signals:
@@ -45,6 +50,7 @@ class WorkerThreadPool : public QObject {
 
   QThreadPool* m_pool;
   QSettings m_settings;
+  int m_maxThreadsOverride = -1;
 };
 
 

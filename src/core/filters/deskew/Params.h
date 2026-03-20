@@ -21,11 +21,15 @@ class Params {
 
   Params(double deskewAngleDeg, const Dependencies& deps, AutoManualMode mode);
 
+  Params(double deskewAngleDeg, double obliqueDeg, const Dependencies& deps, AutoManualMode mode);
+
   explicit Params(const QDomElement& deskewEl);
 
   ~Params();
 
   double deskewAngle() const;
+
+  double obliqueAngle() const;
 
   const Dependencies& dependencies() const;
 
@@ -35,6 +39,7 @@ class Params {
 
  private:
   double m_deskewAngleDeg;
+  double m_obliqueDeg;
   Dependencies m_deps;
   AutoManualMode m_mode;
 };
@@ -42,6 +47,10 @@ class Params {
 
 inline double Params::deskewAngle() const {
   return m_deskewAngleDeg;
+}
+
+inline double Params::obliqueAngle() const {
+  return m_obliqueDeg;
 }
 
 inline const Dependencies& Params::dependencies() const {

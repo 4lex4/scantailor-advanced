@@ -5,7 +5,7 @@
 
 #include <QMouseEvent>
 #include <QPainter>
-#include <QtWidgets/QShortcut>
+#include <QShortcut>
 
 #include "ImageViewBase.h"
 #include "SerializableSpline.h"
@@ -261,6 +261,7 @@ void ZoneDefaultInteraction::onKeyReleaseEvent(QKeyEvent* event, InteractionStat
 
 void ZoneDefaultInteraction::onContextMenuEvent(QContextMenuEvent* event, InteractionState& interaction) {
   event->accept();
+  m_context.setLastContextMenuScreenPos(event->globalPos());  // Multi-monitor: use event position (issue #75).
 
   InteractionHandler* cmInteraction = m_context.createContextMenuInteraction(interaction);
   if (!cmInteraction) {

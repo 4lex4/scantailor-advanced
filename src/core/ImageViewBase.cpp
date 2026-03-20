@@ -7,7 +7,14 @@
 #include <Transform.h>
 
 #include <QApplication>
+
+#if QT_VERSION_MAJOR == 5
 #include <QGLWidget>
+#define QOpenGLWidget QGLWidget
+#else
+#include <QtOpenGLWidgets/QOpenGLWidget>
+#endif
+
 #include <QMouseEvent>
 #include <QPaintEngine>
 #include <QPainter>
@@ -149,17 +156,7 @@ ImageViewBase::ImageViewBase(const QImage& image,
 
   if (ApplicationSettings::getInstance().isOpenGlEnabled()) {
     if (OpenGLSupport::supported()) {
-      QGLFormat format;
-      format.setSampleBuffers(true);
-      format.setStencil(true);
-      format.setAlpha(true);
-      format.setRgba(true);
-      format.setDepth(false);
-
-      // Most of hardware refuses to work for us with direct rendering enabled.
-      format.setDirectRendering(false);
-
-      setViewport(new QGLWidget(format));
+      setViewport(new QOpenGLWidget());
     }
   }
 
@@ -276,6 +273,25 @@ QRectF ImageViewBase::dynamicViewportRect() const {
 QRectF ImageViewBase::getOccupiedWidgetRect() const {
   const QRectF widgetRect(m_virtualToWidget.mapRect(virtualDisplayRect()));
   return widgetRect.intersected(dynamicViewportRect());
+}
+
+QImage ImageViewBase::sampleImageAtWidgetRect(const QRect& widgetRect, const int maxImageSide) const {
+  if (m_image.isNull() || widgetRect.isEmpty()) {
+    return QImage();
+  }
+  const QPointF widgetCenter(widgetRect.center());
+  const QPointF imagePoint(widgetToImage().map(widgetCenter));
+  const int ix = qRound(imagePoint.x());
+  const int iy = qRound(imagePoint.y());
+  const int half = maxImageSide / 2;
+  const int x1 = qBound(0, ix - half, m_image.width());
+  const int y1 = qBound(0, iy - half, m_image.height());
+  const int x2 = qBound(0, ix + half, m_image.width());
+  const int y2 = qBound(0, iy + half, m_image.height());
+  if (x2 <= x1 || y2 <= y1) {
+    return QImage();
+  }
+  return m_image.copy(x1, y1, x2 - x1, y2 - y1);
 }
 
 void ImageViewBase::setWidgetFocalPoint(const QPointF& widgetFp) {
@@ -511,7 +527,11 @@ void ImageViewBase::mouseMoveEvent(QMouseEvent* event) {
   event->setAccepted(true);
   updateStatusTipAndCursor();
   maybeQueueRedraw();
+#if QT_VERSION_MAJOR == 5
   updateCursorPos(event->localPos());
+#else
+  updateCursorPos(event->position());
+#endif
 }
 
 void ImageViewBase::wheelEvent(QWheelEvent* event) {
@@ -550,7 +570,11 @@ void ImageViewBase::resizeEvent(QResizeEvent* event) {
   }
 }
 
+#if QT_VERSION_MAJOR == 5
 void ImageViewBase::enterEvent(QEvent* event) {
+#else
+void ImageViewBase::enterEvent(QEnterEvent* event) {
+#endif
   viewport()->setFocus();
   QAbstractScrollArea::enterEvent(event);
 }

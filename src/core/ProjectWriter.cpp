@@ -3,6 +3,7 @@
 
 #include "ProjectWriter.h"
 
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
@@ -20,7 +21,7 @@
 
 #ifndef Q_MOC_RUN
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #endif
 
@@ -64,20 +65,34 @@ ProjectWriter::ProjectWriter(const std::shared_ptr<ProjectPages>& pageSequence,
 
 ProjectWriter::~ProjectWriter() = default;
 
+static QString toRelativeIfPossible(const QString& projectDirPath, const QString& absolutePath) {
+  if (absolutePath.isEmpty()) {
+    return absolutePath;
+  }
+  const QDir projectDir(projectDirPath);
+  const QString rel(projectDir.relativeFilePath(absolutePath));
+  if (QDir::isAbsolutePath(rel) || rel.startsWith("..")) {
+    return absolutePath;
+  }
+  return rel;
+}
+
 bool ProjectWriter::write(const QString& filePath, const std::vector<FilterPtr>& filters) const {
+  const QString projectDirPath(QFileInfo(filePath).absolutePath());
+
   QDomDocument doc;
   QDomElement rootEl(doc.createElement("project"));
   doc.appendChild(rootEl);
   rootEl.setAttribute("version", PROJECT_VERSION);
-  rootEl.setAttribute("outputDirectory", m_outFileNameGen.outDir());
+  rootEl.setAttribute("outputDirectory", toRelativeIfPossible(projectDirPath, m_outFileNameGen.outDir()));
   rootEl.setAttribute("layoutDirection", m_layoutDirection == Qt::LeftToRight ? "LTR" : "RTL");
 
-  rootEl.appendChild(processDirectories(doc));
+  rootEl.appendChild(processDirectories(doc, projectDirPath));
   rootEl.appendChild(processFiles(doc));
   rootEl.appendChild(processImages(doc));
   rootEl.appendChild(processPages(doc));
-  rootEl.appendChild(m_outFileNameGen.disambiguator()->toXml(doc, "file-name-disambiguation",
-                                                             boost::bind(&ProjectWriter::packFilePath, this, _1)));
+  rootEl.appendChild(m_outFileNameGen.disambiguator()->toXml(
+      doc, "file-name-disambiguation", boost::bind(&ProjectWriter::packFilePath, this, boost::placeholders::_1)));
 
   QDomElement filtersEl(doc.createElement("filters"));
   rootEl.appendChild(filtersEl);
@@ -96,13 +111,13 @@ bool ProjectWriter::write(const QString& filePath, const std::vector<FilterPtr>&
   return false;
 }  // ProjectWriter::write
 
-QDomElement ProjectWriter::processDirectories(QDomDocument& doc) const {
+QDomElement ProjectWriter::processDirectories(QDomDocument& doc, const QString& projectDirPath) const {
   QDomElement dirsEl(doc.createElement("directories"));
 
   for (const Directory& dir : m_dirs.get<Sequenced>()) {
     QDomElement dirEl(doc.createElement("directory"));
     dirEl.setAttribute("id", dir.numericId);
-    dirEl.setAttribute("path", dir.path);
+    dirEl.setAttribute("path", toRelativeIfPossible(projectDirPath, dir.path));
     dirsEl.appendChild(dirEl);
   }
   return dirsEl;

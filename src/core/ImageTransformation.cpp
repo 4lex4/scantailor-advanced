@@ -3,8 +3,18 @@
 
 #include "ImageTransformation.h"
 
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 ImageTransformation::ImageTransformation(const QRectF& origImageRect, const Dpi& origDpi)
-    : m_postRotation(0.0), m_origRect(origImageRect), m_resultingRect(origImageRect), m_origDpi(origDpi) {
+    : m_postRotation(0.0),
+      m_postOblique(0.0),
+      m_origRect(origImageRect),
+      m_resultingRect(origImageRect),
+      m_origDpi(origDpi) {
   preScaleToEqualizeDpi();
 }
 
@@ -38,8 +48,8 @@ void ImageTransformation::preScaleToDpi(const Dpi& dpi) {
   m_preCropArea = (undo21 * redo12).map(m_preCropArea);
   m_preCropXform = calcCropXform(m_preCropArea);
 
-  // Update transform #4: post-rotate.
-  m_postRotateXform = calcPostRotateXform(m_postRotation);
+  // Update transform #4: post-rotate (+ optional oblique).
+  m_postRotateXform = calcPostRotateXform(m_postRotation, m_postOblique);
 
   // Update transform #5: post-crop.
   const QTransform redo1234(redo12 * m_preCropXform * m_postRotateXform);
@@ -76,8 +86,16 @@ void ImageTransformation::setPreCropArea(const QPolygonF& area) {
 }
 
 void ImageTransformation::setPostRotation(const double degrees) {
-  m_postRotateXform = calcPostRotateXform(degrees);
   m_postRotation = degrees;
+  m_postRotateXform = calcPostRotateXform(m_postRotation, m_postOblique);
+  resetPostCrop();
+  resetPostScale();
+  update();
+}
+
+void ImageTransformation::setPostOblique(const double degrees) {
+  m_postOblique = degrees;
+  m_postRotateXform = calcPostRotateXform(m_postRotation, m_postOblique);
   resetPostCrop();
   resetPostScale();
   update();
@@ -103,20 +121,26 @@ QTransform ImageTransformation::calcCropXform(const QPolygonF& area) {
   return xform;
 }
 
-QTransform ImageTransformation::calcPostRotateXform(const double degrees) {
+QTransform ImageTransformation::calcPostRotateXform(const double rotationDegrees, const double obliqueDegrees) {
   QTransform xform;
-  if (degrees != 0.0) {
-    const QPointF origin(m_preCropArea.boundingRect().center());
+  const QPointF origin(m_preCropArea.boundingRect().center());
+  if (rotationDegrees != 0.0) {
     xform.translate(-origin.x(), -origin.y());
-    xform *= QTransform().rotate(degrees);
+    xform *= QTransform().rotate(rotationDegrees);
     xform *= QTransform().translate(origin.x(), origin.y());
-
-    // Calculate size changes.
+  }
+  if (obliqueDegrees != 0.0) {
+    // Save proportions: shear formula per maintainer feedback (PR #108).
+    const double shear = std::tan(obliqueDegrees * 0.5 * M_PI / 180.0);
+    xform.translate(-origin.x(), -origin.y());
+    xform *= QTransform(1.0, 0.0, -shear, 1.0, 0.0, shear);  // Vertical shear: x' = x + shear*y
+    xform *= QTransform().translate(origin.x(), origin.y());
+  }
+  if ((rotationDegrees != 0.0) || (obliqueDegrees != 0.0)) {
     const QPolygonF preRotatePoly(m_preCropXform.map(m_preCropArea));
     const QRectF preRotateRect(preRotatePoly.boundingRect());
     const QPolygonF postRotatePoly(xform.map(preRotatePoly));
     const QRectF postRotateRect(postRotatePoly.boundingRect());
-
     xform *= QTransform().translate(preRotateRect.left() - postRotateRect.left(),
                                     preRotateRect.top() - postRotateRect.top());
   }
@@ -154,6 +178,7 @@ void ImageTransformation::resetPreCropArea() {
 
 void ImageTransformation::resetPostRotation() {
   m_postRotation = 0.0;
+  m_postOblique = 0.0;
   m_postRotateXform.reset();
 }
 

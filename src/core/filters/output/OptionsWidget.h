@@ -14,7 +14,6 @@
 #include <memory>
 #include <set>
 
-#include "BinarizationOptionsWidget.h"
 #include "ColorParams.h"
 #include "DepthPerception.h"
 #include "DespeckleLevel.h"
@@ -22,6 +21,7 @@
 #include "Dpi.h"
 #include "FilterOptionsWidget.h"
 #include "ImageViewTab.h"
+#include "OptionsWidgetBinarization.h"
 #include "OutputProcessingParams.h"
 #include "PageId.h"
 #include "PageSelectionAccessor.h"
@@ -93,6 +93,10 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
   void pictureShapeSensitivityChanged(int value);
 
   void higherSearchSensivityToggled(bool checked);
+
+  void wienerCoefChanged(double value);
+
+  void wienerWindowSizeChanged(int value);
 
   void colorSegmentationToggled(bool checked);
 
@@ -171,7 +175,7 @@ class OptionsWidget : public FilterOptionsWidget, private Ui::OptionsWidget {
 
   void updateProcessingDisplay();
 
-  void addBinarizationOptionsWidget(BinarizationOptionsWidget* widget);
+  void addOptionsWidgetBinarization(OptionsWidgetBinarization* widget);
 
   void setupUiConnections();
 

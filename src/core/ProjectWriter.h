@@ -117,7 +117,7 @@ class ProjectWriter {
           boost::multi_index::hashed_unique<boost::multi_index::member<Page, PageId, &Page::id>, std::hash<PageId>>,
           boost::multi_index::sequenced<boost::multi_index::tag<Sequenced>>>>;
 
-  QDomElement processDirectories(QDomDocument& doc) const;
+  QDomElement processDirectories(QDomDocument& doc, const QString& projectDirPath) const;
 
   QDomElement processFiles(QDomDocument& doc) const;
 

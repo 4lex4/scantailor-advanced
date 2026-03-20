@@ -26,7 +26,7 @@ class ProjectReader {
  public:
   using FilterPtr = std::shared_ptr<AbstractFilter>;
 
-  explicit ProjectReader(const QDomDocument& doc);
+  explicit ProjectReader(const QDomDocument& doc, const QString& projectFilePath = QString());
 
   ~ProjectReader();
 
@@ -81,7 +81,10 @@ class ProjectReader {
 
   ImageInfo getImageInfo(int id) const;
 
+  QString resolvePath(const QString& path) const;
+
   QDomDocument m_doc;
+  QString m_projectDirPath;
   QString m_outDir;
   QString m_version;
   DirMap m_dirMap;

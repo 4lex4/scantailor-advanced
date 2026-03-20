@@ -10,15 +10,21 @@
 #include <core/IconProvider.h>
 #include <core/StyledIconPack.h>
 
+#include <QGuiApplication>
 #include <QSettings>
 #include <QStringList>
 
 #include "MainWindow.h"
 
 int main(int argc, char* argv[]) {
+#if QT_VERSION_MAJOR == 5
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  // Issue #99: better quality with fractional UI scaling (125%, 150%, etc.)
+  QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
+#endif
   Application app(argc, argv);
 
 #ifdef _WIN32

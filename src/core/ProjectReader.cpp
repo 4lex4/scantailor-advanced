@@ -4,7 +4,8 @@
 #include "ProjectReader.h"
 
 #include <QDir>
-#include <boost/bind.hpp>
+#include <QFileInfo>
+#include <boost/bind/bind.hpp>
 
 #include "AbstractFilter.h"
 #include "FileNameDisambiguator.h"
@@ -12,8 +13,12 @@
 #include "XmlUnmarshaller.h"
 #include "version.h"
 
-ProjectReader::ProjectReader(const QDomDocument& doc)
+ProjectReader::ProjectReader(const QDomDocument& doc, const QString& projectFilePath)
     : m_doc(doc), m_disambiguator(std::make_shared<FileNameDisambiguator>()) {
+  if (!projectFilePath.isEmpty()) {
+    m_projectDirPath = QFileInfo(projectFilePath).absolutePath();
+  }
+
   QDomElement projectEl(m_doc.documentElement());
 
   m_version = projectEl.attribute("version");
@@ -21,7 +26,7 @@ ProjectReader::ProjectReader(const QDomDocument& doc)
     return;
   }
 
-  m_outDir = projectEl.attribute("outputDirectory");
+  m_outDir = resolvePath(projectEl.attribute("outputDirectory"));
 
   Qt::LayoutDirection layoutDirection = Qt::LeftToRight;
   if (projectEl.attribute("layoutDirection") == "RTL") {
@@ -53,11 +58,21 @@ ProjectReader::ProjectReader(const QDomDocument& doc)
   processPages(pagesEl);
   // Load naming disambiguator.  This needs to be done after processing pages.
   const QDomElement disambigEl(projectEl.namedItem("file-name-disambiguation").toElement());
-  m_disambiguator
-      = std::make_shared<FileNameDisambiguator>(disambigEl, boost::bind(&ProjectReader::expandFilePath, this, _1));
+  m_disambiguator = std::make_shared<FileNameDisambiguator>(
+      disambigEl, boost::bind(&ProjectReader::expandFilePath, this, boost::placeholders::_1));
 }
 
 ProjectReader::~ProjectReader() = default;
+
+QString ProjectReader::resolvePath(const QString& path) const {
+  if (path.isEmpty()) {
+    return path;
+  }
+  if (m_projectDirPath.isEmpty() || QDir::isAbsolutePath(path)) {
+    return path;
+  }
+  return QDir(m_projectDirPath).absoluteFilePath(path);
+}
 
 void ProjectReader::readFilterSettings(const std::vector<FilterPtr>& filters) const {
   QDomElement projectEl(m_doc.documentElement());
@@ -89,10 +104,11 @@ void ProjectReader::processDirectories(const QDomElement& dirsEl) {
       continue;
     }
 
-    const QString path(el.attribute("path"));
+    QString path(el.attribute("path"));
     if (path.isEmpty()) {
       continue;
     }
+    path = resolvePath(path);
 
     m_dirMap.insert(DirMap::value_type(id, path));
   }

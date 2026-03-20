@@ -10,6 +10,9 @@
 #include "ImageViewBase.h"
 #include "ZoomHandler.h"
 
+#include <QPaintEvent>
+#include <QPainter>
+
 class ImageTransformation;
 
 namespace output {
@@ -20,7 +23,14 @@ class ImageView : public ImageViewBase {
 
   ~ImageView() override;
 
+ protected:
+  void paintEvent(QPaintEvent* event) override;
+
+  void contextMenuEvent(QContextMenuEvent* event) override;
+
  private:
+  void drawGuides(QPainter& painter);
+
   DragHandler m_dragHandler;
   ZoomHandler m_zoomHandler;
 };

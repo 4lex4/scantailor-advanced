@@ -11,6 +11,7 @@
 
 #include "../../Utils.h"
 #include "ApplyDialog.h"
+#include "ApplyMarginsDialog.h"
 #include "Settings.h"
 
 using namespace core;
@@ -291,10 +292,11 @@ void OptionsWidget::alignmentButtonClicked() {
 }
 
 void OptionsWidget::showApplyMarginsDialog() {
-  auto* dialog = new ApplyDialog(this, m_pageId, m_pageSelectionAccessor);
+  auto* dialog = new ApplyMarginsDialog(this, m_pageId, m_pageSelectionAccessor);
   dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->setWindowTitle(tr("Apply Margins"));
-  connect(dialog, SIGNAL(accepted(const std::set<PageId>&)), this, SLOT(applyMargins(const std::set<PageId>&)));
+  connect(dialog, SIGNAL(accepted(const std::set<PageId>&, bool, bool, bool, bool)), this,
+          SLOT(applyMargins(const std::set<PageId>&, bool, bool, bool, bool)));
   dialog->show();
 }
 
@@ -306,7 +308,11 @@ void OptionsWidget::showApplyAlignmentDialog() {
   dialog->show();
 }
 
-void OptionsWidget::applyMargins(const std::set<PageId>& pages) {
+void OptionsWidget::applyMargins(const std::set<PageId>& pages,
+                                 bool applyLeft,
+                                 bool applyRight,
+                                 bool applyTop,
+                                 bool applyBottom) {
   if (pages.empty()) {
     return;
   }
@@ -321,7 +327,20 @@ void OptionsWidget::applyMargins(const std::set<PageId>& pages) {
     if (autoMarginsEnabled) {
       m_settings->invalidateContentSize(pageId);
     } else {
-      m_settings->setHardMarginsMM(pageId, m_marginsMM);
+      Margins target = m_settings->getHardMarginsMM(pageId);
+      if (applyLeft) {
+        target.setLeft(m_marginsMM.left());
+      }
+      if (applyRight) {
+        target.setRight(m_marginsMM.right());
+      }
+      if (applyTop) {
+        target.setTop(m_marginsMM.top());
+      }
+      if (applyBottom) {
+        target.setBottom(m_marginsMM.bottom());
+      }
+      m_settings->setHardMarginsMM(pageId, target);
     }
   }
 
@@ -343,6 +362,22 @@ void OptionsWidget::applyAlignment(const std::set<PageId>& pages) {
   }
 
   emit invalidateAllThumbnails();
+}
+
+void OptionsWidget::matchSizeToAllPages() {
+  std::set<PageId> allPages;
+  m_pageSelectionAccessor.allPages().selectAll().swap(allPages);
+  if (allPages.empty()) {
+    return;
+  }
+  m_alignment.setNull(false);
+  {
+    auto block = m_connectionManager.getScopedBlock();
+    alignWithOthersCB->setChecked(true);
+    updateAlignmentButtonsEnabled();
+  }
+  applyAlignment(allPages);
+  emit aggregateHardSizeChanged();
 }
 
 void OptionsWidget::updateMarginsDisplay() {
@@ -409,8 +444,10 @@ void OptionsWidget::setupUiConnections() {
   CONNECT(topBottomLink, SIGNAL(clicked()), this, SLOT(topBottomLinkClicked()));
   CONNECT(leftRightLink, SIGNAL(clicked()), this, SLOT(leftRightLinkClicked()));
   CONNECT(applyMarginsBtn, SIGNAL(clicked()), this, SLOT(showApplyMarginsDialog()));
+  CONNECT(fixDpiBtn, SIGNAL(clicked()), this, SLOT(onFixDpiClicked()));
   CONNECT(alignWithOthersCB, SIGNAL(toggled(bool)), this, SLOT(alignWithOthersToggled()));
   CONNECT(applyAlignmentBtn, SIGNAL(clicked()), this, SLOT(showApplyAlignmentDialog()));
+  CONNECT(matchSizeToAllBtn, SIGNAL(clicked()), this, SLOT(matchSizeToAllPages()));
   for (const auto& kv : m_alignmentByButton) {
     CONNECT(kv.first, SIGNAL(clicked()), this, SLOT(alignmentButtonClicked()));
   }
@@ -496,5 +533,9 @@ void OptionsWidget::setupIcons() {
   alignCenterBtn->setIcon(iconProvider.getIcon("stock-center"));
   m_chainIcon = iconProvider.getIcon("stock-vchain");
   m_brokenChainIcon = iconProvider.getIcon("stock-vchain-broken");
+}
+
+void OptionsWidget::onFixDpiClicked() {
+  emit fixDpiRequested();  // MainWindow opens FixDpiDialog (issue #93).
 }
 }  // namespace page_layout

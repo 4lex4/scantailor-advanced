@@ -470,7 +470,7 @@ void BinaryImage::setPixel(int x, int y, BWColor color) {
 
 BWColor BinaryImage::getPixel(int x, int y) const {
   const uint32_t* line = this->data() + m_wpl * y;
-  return (BWColor)((line[x >> 5] >> (31 - (x & 31))) & 1);
+  return (BWColor) ((line[x >> 5] >> (31 - (x & 31))) & 1);
 }
 
 uint32_t* BinaryImage::data() {

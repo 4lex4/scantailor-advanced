@@ -1,0 +1,49 @@
+# Lint: clang-format check on changed files only (fails if changed code would be reformatted)
+name: Lint
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  clang-format:
+    name: clang-format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Get changed source files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+          fi
+          if [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            BASE=$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)
+          fi
+          SRC_FILES=$(git diff --name-only "$BASE" HEAD -- src/ \
+            | grep -E '\.(cpp|h)$' \
+            | grep -v '/translations/' \
+            || true)
+          COUNT=$(echo "$SRC_FILES" | grep -c . || echo 0)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+          if [ "$COUNT" = "0" ]; then
+            echo "No changed source files to check."
+            exit 0
+          fi
+          echo "$SRC_FILES" > changed_files.txt
+
+      - name: Check formatting
+        if: steps.changed.outputs.count != '0'
+        run: |
+          cat changed_files.txt | xargs clang-format --dry-run -Werror
+          echo "All changed files are formatted."

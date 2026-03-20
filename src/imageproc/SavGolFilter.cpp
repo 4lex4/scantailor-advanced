@@ -3,6 +3,8 @@
 
 #include "SavGolFilter.h"
 
+#include <stdexcept>
+
 #include "Grayscale.h"
 #include "SavGolKernel.h"
 

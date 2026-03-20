@@ -132,6 +132,13 @@ class SkewFinder {
    */
   Skew findSkew(const BinaryImage& image) const;
 
+  /**
+   * \brief Determine skew from the top page edge only (dark-to-light transition).
+   * Useful for book scans where the top edge is clear and content-based deskew fails.
+   * Returns low confidence if the top edge cannot be detected reliably.
+   */
+  Skew findSkewFromTopEdge(const BinaryImage& image) const;
+
  private:
   static const double LOW_SCORE;
 

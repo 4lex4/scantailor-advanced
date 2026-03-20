@@ -5,7 +5,7 @@
 
 #include <UnitsProvider.h>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <utility>
 
 #include "ApplyDialog.h"
@@ -240,6 +240,11 @@ void OptionsWidget::applySelection(const std::set<PageId>& pages, const bool app
           newParams.setContentRect(correctedContentRect);
         }
       }
+    }
+
+    if (applyContentBox && newParams.contentDetectionMode() == MODE_AUTO) {
+      newParams.setDependencies(
+          Dependencies(QPolygonF(), MODE_DISABLED, newParams.pageDetectionMode(), newParams.isFineTuningEnabled()));
     }
 
     m_settings->setPageParams(pageId, newParams);

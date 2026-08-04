@@ -523,18 +523,19 @@ void fillMarginsInPlace(QImage& image,
                         const QPolygonF& contentPoly,
                         const QColor& color,
                         const bool antialiasing = true) {
-  if (contentPoly.intersected(QRectF(image.rect())) != contentPoly) {
-    throw std::invalid_argument("fillMarginsInPlace: the content area exceeds image rect.");
-  }
+  // Vertex rounding and transform round-trips can push the polygon a fraction
+  // of a pixel outside the image rect. Clip rather than treat that as an error.
+  const QPolygonF clippedContentPoly = contentPoly.intersected(QRectF(image.rect()));
 
   if ((image.format() == QImage::Format_Mono) || (image.format() == QImage::Format_MonoLSB)) {
     BinaryImage binaryImage(image);
-    PolygonRasterizer::fillExcept(binaryImage, (color == Qt::black) ? BLACK : WHITE, contentPoly, Qt::WindingFill);
+    PolygonRasterizer::fillExcept(binaryImage, (color == Qt::black) ? BLACK : WHITE, clippedContentPoly,
+                                  Qt::WindingFill);
     image = binaryImage.toQImage();
     return;
   }
   if ((image.format() == QImage::Format_Indexed8) && image.isGrayscale()) {
-    PolygonRasterizer::grayFillExcept(image, static_cast<unsigned char>(qGray(color.rgb())), contentPoly,
+    PolygonRasterizer::grayFillExcept(image, static_cast<unsigned char>(qGray(color.rgb())), clippedContentPoly,
                                       Qt::WindingFill);
     return;
   }
@@ -552,7 +553,7 @@ void fillMarginsInPlace(QImage& image,
     QPainterPath outerPath;
     outerPath.addRect(image.rect());
     QPainterPath innerPath;
-    innerPath.addPolygon(PolygonUtils::round(contentPoly));
+    innerPath.addPolygon(PolygonUtils::round(clippedContentPoly));
 
     painter.drawPath(outerPath.subtracted(innerPath));
   }
@@ -560,11 +561,11 @@ void fillMarginsInPlace(QImage& image,
 }
 
 void fillMarginsInPlace(BinaryImage& image, const QPolygonF& contentPoly, const BWColor color) {
-  if (contentPoly.intersected(QRectF(image.rect())) != contentPoly) {
-    throw std::invalid_argument("fillMarginsInPlace: the content area exceeds image rect.");
-  }
+  // Vertex rounding and transform round-trips can push the polygon a fraction
+  // of a pixel outside the image rect. Clip rather than treat that as an error.
+  const QPolygonF clippedContentPoly = contentPoly.intersected(QRectF(image.rect()));
 
-  PolygonRasterizer::fillExcept(image, color, contentPoly, Qt::WindingFill);
+  PolygonRasterizer::fillExcept(image, color, clippedContentPoly, Qt::WindingFill);
 }
 
 void fillMarginsInPlace(BinaryImage& image, const BinaryImage& contentMask, const BWColor color) {

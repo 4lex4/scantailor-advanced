@@ -57,6 +57,11 @@ void WorkerThreadPool::submitTask(const BackgroundTaskPtr& task) {
         }
       } catch (const std::bad_alloc&) {
         OutOfMemoryHandler::instance().handleOutOfMemorySituation();
+      } catch (const std::exception& e) {
+        // An exception escaping run() would terminate the application.
+        qWarning("Background task failed: %s", e.what());
+      } catch (...) {
+        qWarning("Background task failed with an unknown exception.");
       }
     }
 

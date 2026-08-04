@@ -26,7 +26,7 @@ using namespace imageproc;
 class LoadFileTask::ErrorResult : public FilterResult {
   Q_DECLARE_TR_FUNCTIONS(LoadFileTask)
  public:
-  explicit ErrorResult(const QString& filePath);
+  explicit ErrorResult(const QString& filePath, const QString& errorDetails = QString());
 
   void updateUI(FilterUiInterface* ui) override;
 
@@ -34,6 +34,7 @@ class LoadFileTask::ErrorResult : public FilterResult {
 
  private:
   QString m_filePath;
+  QString m_errorDetails;
   bool m_fileExists;
 };
 
@@ -71,6 +72,12 @@ FilterResultPtr LoadFileTask::operator()() {
     }
   } catch (const CancelledException&) {
     return nullptr;
+  } catch (const std::bad_alloc&) {
+    throw;  // Handled by the out-of-memory machinery in WorkerThreadPool.
+  } catch (const std::exception& e) {
+    // Without this, the exception would escape the worker thread and abort
+    // the application via std::terminate().
+    return std::make_shared<ErrorResult>(m_imageId.filePath(), QString::fromUtf8(e.what()));
   }
 }
 
@@ -108,8 +115,10 @@ void LoadFileTask::convertToSupportedFormat(QImage& image) const {
 
 /*======================= LoadFileTask::ErrorResult ======================*/
 
-LoadFileTask::ErrorResult::ErrorResult(const QString& filePath)
-    : m_filePath(QDir::toNativeSeparators(filePath)), m_fileExists(QFile::exists(filePath)) {}
+LoadFileTask::ErrorResult::ErrorResult(const QString& filePath, const QString& errorDetails)
+    : m_filePath(QDir::toNativeSeparators(filePath)),
+      m_errorDetails(errorDetails),
+      m_fileExists(QFile::exists(filePath)) {}
 
 void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
   class ErrWidget : public ErrorWidget {
@@ -128,7 +137,10 @@ void LoadFileTask::ErrorResult::updateUI(FilterUiInterface* ui) {
 
   QString errMsg;
   Qt::TextFormat fmt = Qt::AutoText;
-  if (m_fileExists) {
+  if (!m_errorDetails.isEmpty()) {
+    errMsg = tr("An error occurred while processing this page:\n%1\n\nFile: %2").arg(m_errorDetails, m_filePath);
+    fmt = Qt::PlainText;
+  } else if (m_fileExists) {
     errMsg = tr("The following file could not be loaded:\n%1").arg(m_filePath);
     fmt = Qt::PlainText;
   } else {

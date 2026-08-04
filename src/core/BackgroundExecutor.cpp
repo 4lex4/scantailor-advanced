@@ -75,6 +75,11 @@ void BackgroundExecutor::Dispatcher::customEvent(QEvent* event) {
     }
   } catch (const std::bad_alloc&) {
     OutOfMemoryHandler::instance().handleOutOfMemorySituation();
+  } catch (const std::exception& e) {
+    // An exception escaping the executor thread would terminate the application.
+    qWarning("Background task failed: %s", e.what());
+  } catch (...) {
+    qWarning("Background task failed with an unknown exception.");
   }
 }
 
